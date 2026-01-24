@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db261c29d3f65ce409ed17f4862ae975, type: 3}
+  m_Name: Mari_SO
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Guardian
+  CharacterName: Mari
+  ModelPrefab: {fileID: 919132149155446097, guid: c0257a00c6b93334089af3c663957143, type: 3}
+  MaxHealth: 400
+  HealthRegen: 5
+  MoveSpeed: 8
+  AttackSpeed: 1
+  AttackPower: 50
+  AbilityPower: 80
+  CooldownReduction: 0
+  CriticalChance: 0
+  CriticalDamage: 1.5
+  LifeSteal: 0
+  CurrentShield: 0
+  PassiveAbility: {fileID: 11400000, guid: a2918ca0995db0c42a2f7db025250e30, type: 2}
+  AbilityQ: {fileID: 0}
+  AbilityE: {fileID: 0}
+  AbilityR: {fileID: 0}
