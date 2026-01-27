@@ -13,17 +13,20 @@ MonoBehaviour:
   m_Name: Rajah_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Guardian
   CharacterName: Rajah Bagwis
-  ModelPrefab: {fileID: 919132149155446097, guid: c0257a00c6b93334089af3c663957143, type: 3}
   MaxHealth: 500
   HealthRegen: 10
-  MoveSpeed: 8
+  MoveSpeed: 10
   AttackSpeed: 1
   AttackPower: 100
   AbilityPower: 80
   CooldownReduction: 0
   CriticalChance: 0
   CriticalDamage: 1.5
+  LifeSteal: 0
+  Shielding: 0
   PassiveAbility: {fileID: 11400000, guid: d937f7c92b0eebc49b1f3e64b6b2743f, type: 2}
   AbilityQ: {fileID: 11400000, guid: 78fd94f3a65641f4c84c11c5f45029f6, type: 2}
   AbilityE: {fileID: 11400000, guid: a16bacafbe4f67347b1cb70aa48f6a9a, type: 2}
   AbilityR: {fileID: 11400000, guid: 201715c94299c6844bea6fe4d9eb504d, type: 2}
+  PrimaryAttack: {fileID: 11400000, guid: d1ae8e1969e9c62408eaf4e7629d6db0, type: 2}
+  SecondaryAttack: {fileID: 11400000, guid: f701f33fbebbc7e4dae8886acef3277e, type: 2}

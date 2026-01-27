@@ -10,7 +10,7 @@ public class SO_Guardian : ScriptableObject
     [Header("General")]
     public string CharacterName;
     //public Sprite icon;
-    public GameObject ModelPrefab;          // The 3D model specific to this guardian
+    //public GameObject ModelPrefab;          // The 3D model specific to this guardian
 
     [Header("Base Stats")]
     public float MaxHealth = 500f;          // Maximum health points
@@ -24,12 +24,14 @@ public class SO_Guardian : ScriptableObject
     public float CriticalDamage = 1.5f;     // Multiplier for critical damage
     // additional stats
     public float LifeSteal = 0f;            // Percentage of damage dealt returned as health
-    public float CurrentShield = 0f;        // Current shield value
+    public float Shielding = 0f;            // Current shield value
 
     [Header("Ability SObjects")]
     public SO_Ability PassiveAbility;       // Passive Ability
     public SO_Ability AbilityQ;             // Q Ability
     public SO_Ability AbilityE;             // E Ability
     public SO_Ability AbilityR;             // R Ability
+    public SO_Ability PrimaryAttack;        // Primary Attack or Left Click
+    public SO_Ability SecondaryAttack;      // Secondary Attack or Right Click
 
 }

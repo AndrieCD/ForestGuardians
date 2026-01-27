@@ -4,13 +4,15 @@
 /// </summary>
 using UnityEngine;
 using System;
+using NUnit.Framework;
+using System.Collections.Generic;
 
-public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable
+public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable, I_StatModifiable
 {
     public SO_Guardian _GuardianTemplate;
     protected string _GuardianName;
 
-    // STATS //
+    // BASE STATS //   
     public Sc_Stat MaxHealth { get; set; }          // Maximum health points
     public Sc_Stat HealthRegen { get; set; }        // Health regenerated per second
     public Sc_Stat MoveSpeed { get; set; }          // Units per second
@@ -21,13 +23,20 @@ public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable
     public Sc_Stat CriticalChance { get; set; }     // Chance to deal critical damage (0.0 to 1.0)
     public Sc_Stat CriticalDamage { get; set; }     // Critical damage multiplier
     public Sc_Stat Lifesteal { get; set; }          // Percentage of damage dealt returned as health
-    public Sc_Stat CurrentShield { get; set; }      // Current shield value
+    public Sc_Stat Shielding { get; set; }      // Current shield value
+    public Sc_Stat JumpPower { get; set; }         // Jump height/power
+
+    // MODIFIER LIST
+    protected List<Sc_Modifier> _ActiveModifiers = new List<Sc_Modifier>( );
+
 
     [Header("Abilities")]
     protected Sc_BaseAbility _PassiveAbility; // Passive Ability
     protected Sc_BaseAbility _QAbility;       // Q Ability
     protected Sc_BaseAbility _EAbility;       // E Ability 
     protected Sc_BaseAbility _RAbility;       // R Ability 
+    protected Sc_BaseAbility _PrimaryAttack;    
+    protected Sc_BaseAbility _SecondaryAttack;
 
 
     // Runtime Stats (These change during gameplay)
@@ -44,6 +53,7 @@ public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable
     {
         if (_GuardianTemplate != null)
             InitializeGuardian( );
+
     }
 
     // Reset stats to the base values from the ScriptableObject
@@ -61,18 +71,27 @@ public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable
         CriticalChance = new Sc_Stat(_GuardianTemplate.CriticalChance);
         CriticalDamage = new Sc_Stat(_GuardianTemplate.CriticalDamage);
         Lifesteal = new Sc_Stat(_GuardianTemplate.LifeSteal);
-        CurrentShield = new Sc_Stat(_GuardianTemplate.CurrentShield);
+        Shielding = new Sc_Stat(_GuardianTemplate.Shielding);
+        JumpPower = new Sc_Stat(8f);    // ( 8 ) Default jump power
 
 
         // Initialize Abilities
-        _PassiveAbility = new Passive_Ability(_GuardianTemplate.PassiveAbility);
-        _QAbility = new Q_Ability(_GuardianTemplate.AbilityQ);
-        _EAbility = new Rajah_E_Ability(_GuardianTemplate.AbilityE);
-        _RAbility = new R_Ability(_GuardianTemplate.AbilityR);
+        _PassiveAbility = new Passive_Ability(_GuardianTemplate.PassiveAbility, this);
+        _QAbility = new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this);
+        _EAbility = new Rajah_E_Ability(_GuardianTemplate.AbilityE, this);
+        //_RAbility = new R_Ability(_GuardianTemplate.AbilityR, this);
+        _PrimaryAttack = new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this);
+        _SecondaryAttack = new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this);
 
         // Set current health to max at start
         _CurrentHealth = MaxHealth.Value();
         IsDead = false;
+
+        // Equip Abilities (Starts Passives)
+        _PassiveAbility?.OnEquip(this);
+        _QAbility?.OnEquip(this);
+        _EAbility?.OnEquip(this);
+        _RAbility?.OnEquip(this);
     }
 
     /// <summary>
@@ -109,5 +128,20 @@ public abstract class Mb_GuardianBase : MonoBehaviour, I_Damageable
         //OnDeath?.Invoke( );
         Debug.Log($"{gameObject.name} has died.");
         // Standard cleanup or animation trigger here
+    }
+
+    public void AddModifier(Sc_Modifier modifier)
+    {
+        _ActiveModifiers.Add(modifier);
+    }
+
+    public void RemoveModifier(Sc_Modifier modifier)
+    {
+        _ActiveModifiers.Remove(modifier);
+    }
+
+    public void ClearAllModifiers( )
+    {
+        _ActiveModifiers.Clear( );
     }
 }

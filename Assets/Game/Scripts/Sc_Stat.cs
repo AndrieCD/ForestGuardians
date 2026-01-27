@@ -6,50 +6,49 @@ using UnityEngine;
 public class Sc_Stat
 {
     public float BaseValue;
-    // A simple list of modifiers
-    public List<Sc_StatModifier> Modifiers = new List<Sc_StatModifier>( );
+    // A simple list of effects (effects are stat-specific buff/debuff instances)
+    public List<Sc_StatEffect> Effects = new List<Sc_StatEffect>( );
 
     public Sc_Stat(float baseValue)
     {
         BaseValue = baseValue;
     }
 
-    public void AddModifier(Sc_StatModifier mod, MonoBehaviour runner)
+    public void AddEffect(Sc_StatEffect effect, MonoBehaviour runner)
     {
-        Modifiers.Add(mod);
+        Effects.Add(effect);
 
-        if (mod.Duration == float.PositiveInfinity) return;
-        runner.StartCoroutine(RemoveAfterDuration(mod));
+        if (effect.Duration == float.PositiveInfinity) return;
+        runner.StartCoroutine(RemoveAfterDuration(effect));
     }
 
-    IEnumerator RemoveAfterDuration(Sc_StatModifier mod)
+    IEnumerator RemoveAfterDuration(Sc_StatEffect effect)
     {
-        yield return new WaitForSeconds(mod.Duration);
-        RemoveModifier(mod);
+        yield return new WaitForSeconds(effect.Duration);
+        RemoveEffect(effect);
     }
 
-    public void RemoveModifier(Sc_StatModifier mod)
+    public void RemoveEffect(Sc_StatEffect effect)
     {
-        Modifiers.Remove(mod);
+        Effects.Remove(effect);
     }
 
-    // This is the core logic. It's just a loop!
     public float Value( )
     {
         float finalValue = BaseValue;
         float percentBonus = 0;
 
         // Apply stat modifiers in order
-        foreach (Sc_StatModifier mod in Modifiers)
+        foreach (Sc_StatEffect effect in Effects)
         {
-            if (mod.Type == StatModType.Percent)
+            if (effect.Type == StatModType.Percent)
             {
                 // We add up all percentages first (e.g., 0.1 + 0.1 = 20%)
-                percentBonus += mod.Value;
+                percentBonus += effect.Value;
             } else
             {
                 // Add flat amounts (e.g., +10 HP)
-                finalValue += mod.Value;
+                finalValue += effect.Value;
             }
         }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a686431b16deec4aa24b92791074c71, type: 3}
   m_Name: Passive_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
-  AbilityName: Passive
+  AbilityName: Royal Plumage
   Cooldown: 0
   BaseDamage: 0
   ATKScaling: 0

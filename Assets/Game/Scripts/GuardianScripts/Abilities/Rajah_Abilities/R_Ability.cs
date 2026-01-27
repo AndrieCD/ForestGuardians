@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class R_Ability : Sc_BaseAbility
 {
-    public R_Ability(SO_Ability abilityObject) : base(abilityObject)
+    public R_Ability(SO_Ability abilityObject, Mb_GuardianBase user) : base(abilityObject, user)
     {
     }
 
