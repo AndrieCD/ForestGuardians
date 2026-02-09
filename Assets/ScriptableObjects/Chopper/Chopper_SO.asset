@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afb92f12c326254aa0a128756a461e6, type: 3}
+  m_Name: Chopper_SO
+  m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
+  CharacterName: Chopper
+  MaxHealth: 100
+  HealthRegen: 2
+  MoveSpeed: 5
+  AttackSpeed: 0.5
+  AttackPower: 25
+  AbilityPower: 0
+  CooldownReduction: 0
+  CriticalChance: 0
+  CriticalDamage: 1.5
+  LifeSteal: 0
+  Shielding: 0
+  PassiveAbility: {fileID: 0}
+  AbilityQ: {fileID: 0}
+  AbilityE: {fileID: 0}
+  AbilityR: {fileID: 0}
+  PrimaryAttack: {fileID: 11400000, guid: 6e3d3666f86d026478e131cf6db63433, type: 2}
+  SecondaryAttack: {fileID: 0}
