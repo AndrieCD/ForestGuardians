@@ -11,7 +11,7 @@ public class Mb_Projectile : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>( );
         rigidBody.isKinematic = false;
-        rigidBody.AddRelativeForce(Vector3.forward * 500f);
+        rigidBody.AddRelativeForce(Vector3.forward * 1000f);
     }
 
     public void SetDamageAmount(float amount)

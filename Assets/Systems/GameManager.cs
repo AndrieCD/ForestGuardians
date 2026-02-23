@@ -6,6 +6,7 @@ public enum GameState
     MainMenu,
     LoadingStage,
     Playing,
+    RewardsPanel,
     Paused,
     Victory,
     Defeat

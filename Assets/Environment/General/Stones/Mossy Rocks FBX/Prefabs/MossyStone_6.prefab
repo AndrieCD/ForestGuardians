@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3904518421938025613}
+  - component: {fileID: 8849405735732520579}
   m_Layer: 0
   m_Name: MossyStone_6
   m_TagString: Untagged
@@ -26,12 +27,34 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17.74, y: 0.69698656, z: 1.72}
-  m_LocalScale: {x: 1, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 108691341891515302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8849405735732520579
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8359313279469867696}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8821433027111690726, guid: 6b7ce92c8e3fcbb4e8804396e4247a8e, type: 3}
 --- !u!1001 &434772523161736269
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80,6 +103,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6b7ce92c8e3fcbb4e8804396e4247a8e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6b7ce92c8e3fcbb4e8804396e4247a8e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fa8dd6a73e05639419dde2ddf513da69, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6b7ce92c8e3fcbb4e8804396e4247a8e, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 20beb2a9d0ad1e24d923d45ba753f0ed, type: 2}
     - target: {fileID: 919132149155446097, guid: 6b7ce92c8e3fcbb4e8804396e4247a8e, type: 3}
       propertyPath: m_Name
       value: MossyRocks6

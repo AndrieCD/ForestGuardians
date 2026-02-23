@@ -42,6 +42,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
     #region Damage & Healing
     public virtual void TakeDamage(float amount)
     {
+        Debug.Log($"{_CharacterName} takes {amount} damage.");
+
         if (IsDead) return;
 
         _CurrentHealth -= amount;
@@ -60,6 +62,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
         );
     }
 
+
+    // Die method can be overridden by derived classes to implement custom death behavior
     protected virtual void Die( )
     {
         IsDead = true;

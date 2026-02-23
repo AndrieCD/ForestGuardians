@@ -28,7 +28,7 @@ public class Sc_BaseAbility
     {
         if (_CooldownRemaining > 0)
         {
-            Debug.Log($"{this._AbilityData.AbilityName} is on cooldown for {_CooldownRemaining} more seconds.");
+            //Debug.Log($"{this._AbilityData.AbilityName} is on cooldown for {_CooldownRemaining} more seconds.");
             return false;
         }
         return true;

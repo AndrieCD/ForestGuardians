@@ -24,7 +24,7 @@ public class Sc_ChopperMeleeAttack : Sc_BaseAbility
         foreach (Collider hit in hits)
         {
             I_Damageable damageable = hit.GetComponent<I_Damageable>( );
-            if (damageable != null && hit.gameObject != user.gameObject)
+            if (damageable != null && !hit.gameObject.CompareTag("CuBot"))
             {
                 damageable.TakeDamage(_Damage);
                 break; // Single-target melee
@@ -34,4 +34,5 @@ public class Sc_ChopperMeleeAttack : Sc_BaseAbility
         _CooldownRemaining = _Cooldown;
         user.StartCoroutine(RefreshCooldown( ));
     }
+
 }

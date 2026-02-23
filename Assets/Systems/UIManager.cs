@@ -45,5 +45,8 @@ public class UIManager : MonoBehaviour
         // Pause menu
         if (PauseMenuCanvas != null)
             PauseMenuCanvas.SetActive(state == GameState.Paused);
+
+        // Rewards Panel
+        // ...
     }
 }

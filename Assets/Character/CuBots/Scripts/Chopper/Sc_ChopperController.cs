@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class Sc_ChopperController : MB_CuBotBase
 {
     [Header("Targeting")]
-    [SerializeField] private float _AttackRange = 2f;
+    private float _attackRange;
 
     private NavMeshAgent _Agent;
     private Transform _Target;
@@ -13,6 +13,8 @@ public class Sc_ChopperController : MB_CuBotBase
     protected override void Awake( )
     {
         base.Awake( );
+
+        _attackRange = _CuBotTemplate.AttackRange;
 
         _Agent = GetComponent<NavMeshAgent>( );
         _Agent.speed = MoveSpeed.Value( );
@@ -37,7 +39,7 @@ public class Sc_ChopperController : MB_CuBotBase
             _Target.position
         );
 
-        if (distance > _AttackRange)
+        if (distance > _attackRange)
         {
             ChaseTarget( );
         } else
@@ -60,4 +62,6 @@ public class Sc_ChopperController : MB_CuBotBase
         transform.LookAt(_Target);
         TryUsePrimaryAttack( );
     }
+
+    
 }

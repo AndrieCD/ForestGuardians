@@ -13,6 +13,7 @@ public class SO_CuBots : ScriptableObject
     //public GameObject ModelPrefab;          // The 3D model specific to this guardian
 
     [Header("Base Stats")]
+    public float AttackRange = 1f;          // Range of basic attacks
     public float MaxHealth = 500f;          // Maximum health points
     public float HealthRegen = 10f;         // Health regenerated per second
     public float MoveSpeed = 8f;            // Units per second

@@ -4,6 +4,7 @@
 /// </summary>
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public abstract class Mb_GuardianBase : Mb_CharacterBase
 {
@@ -23,8 +24,8 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
 
     #region Events
     //// Events for UI or Sound to listen to
-    //public event Action<float> OnHealthChanged;
-    //public event Action OnDeath;
+    public event Action<float> OnHealthChanged;
+    public event Action OnDeath;
     #endregion
 
     protected override void Awake( )
@@ -33,7 +34,7 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
             InitializeFromTemplate( );
 
     }
-
+    #region Initialization
     // Reset stats to the base values from the ScriptableObject
     protected override void InitializeFromTemplate( )
     {
@@ -75,4 +76,5 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         _EAbility?.OnEquip(this);
         _RAbility?.OnEquip(this);
     }
+    #endregion
 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Chopper_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Chopper
+  AttackRange: 2
   MaxHealth: 100
   HealthRegen: 2
   MoveSpeed: 5

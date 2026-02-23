@@ -56,25 +56,6 @@ public class Mb_PlayerController : Mb_GuardianBase
         //_RAbility?.OnEquip(this);
     }
 
-    //private void InstantiateVisualModel( )
-    //{
-    //    if (_GuardianTemplate.ModelPrefab != null)
-    //    {
-    //        // Spawn the character model inside the player prefab container
-    //        GameObject model = Instantiate(_GuardianTemplate.ModelPrefab, transform);
-
-    //        // Reparent main camera to the model's camera mount point if it exists
-    //        Transform cameraMount = gameObject.transform.Find("CameraMount");
-    //        if (cameraMount != null && _mainCamera != null)
-    //        {
-    //            _mainCamera.transform.SetParent(cameraMount, false);
-    //            _mainCamera.transform.localPosition = Vector3.zero;
-    //            _mainCamera.transform.localRotation = Quaternion.identity;
-    //        }
-
-    //    }
-    //}
-
     private void OnEnable( )
     {
         // Setup Input Actions
@@ -102,11 +83,6 @@ public class Mb_PlayerController : Mb_GuardianBase
     {
         _jumpAction.performed -= ctx => OnJumpPressed?.Invoke( );
         _playerActionMap.Disable( );
-    }
-
-    private void OnJump(InputAction.CallbackContext ctx)
-    {
-        OnJumpPressed?.Invoke( );
     }
 
     private void Update( )

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b10f739b356569438d6a8f319aab7e7, type: 3}
+  m_Name: TestStageData
+  m_EditorClassIdentifier: Assembly-CSharp::SO_StageData
+  WaveDataList:
+  - {fileID: 11400000, guid: 85cd655b03bffc84389d76d1cb691174, type: 2}
+  - {fileID: 11400000, guid: 99e4c3cc589c9224087bb2b9c1080946, type: 2}
+  - {fileID: 11400000, guid: 7c1392be09069964d831f12d4c13fac4, type: 2}
+  - {fileID: 11400000, guid: 86c58f592dc7d5c4cb06d2ca30be5742, type: 2}
+  - {fileID: 11400000, guid: bfe84f3f52f85074198e114e79503325, type: 2}
