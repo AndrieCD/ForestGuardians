@@ -32,7 +32,7 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     {
         if (_GuardianTemplate != null)
             InitializeFromTemplate( );
-
+        this.Movement = GetComponent<Mb_Movement>( );
     }
     #region Initialization
     // Reset stats to the base values from the ScriptableObject

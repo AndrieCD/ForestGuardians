@@ -8,7 +8,7 @@ public class Rajah_Secondary : Sc_BaseAbility
     public Rajah_Secondary(SO_Ability abilityObject, Mb_CharacterBase user) : base(abilityObject, user)
     {
         //projectilePrefab = Resources.Load<GameObject>("FeatherPrototype");
-        projectilePrefab = abilityObject.ProjectileModel;
+        projectilePrefab = _AbilityData.ProjectileModel;
         _Cooldown = 1 / user.AttackSpeed.Value( );
     }
 
@@ -16,14 +16,14 @@ public class Rajah_Secondary : Sc_BaseAbility
     public override void OnEquip(Mb_CharacterBase user)
     {
         // Debug
-        Debug.Log($"{user.name} has equipped {this._AbilityData.AbilityName}.");
+        Debug.Log($"{user.name} has equipped {_AbilityData.AbilityName}.");
     }
 
     // Called when the Player presses the button (Active)
     public override void Activate(Mb_CharacterBase user)
     {
         // Debug
-        Debug.Log($"{user.name} has activated {this._AbilityData.AbilityName}.");
+        Debug.Log($"{user.name} has activated {_AbilityData.AbilityName}.");
         if (CheckCooldown( ))   
             CreateProjectile(user);
     }
@@ -67,15 +67,13 @@ public class Rajah_Secondary : Sc_BaseAbility
             }
         }
 
-        // Start cooldown
-        _CooldownRemaining = _Cooldown;
-        user.StartCoroutine(RefreshCooldown( ));
+        StartCooldown(user);
     }
 
 
     // Called when Character dies (Cleanup)
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} has unequipped {this._AbilityData.AbilityName}.");
+        Debug.Log($"{user.name} has unequipped {_AbilityData.AbilityName}.");
     }
 }

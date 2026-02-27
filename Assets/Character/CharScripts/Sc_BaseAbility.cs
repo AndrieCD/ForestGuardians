@@ -43,4 +43,11 @@ public class Sc_BaseAbility
         }
         _CooldownRemaining = 0;
     }
+
+    protected void StartCooldown(MonoBehaviour user)
+    {
+        // Start cooldown
+        _CooldownRemaining = _Cooldown;
+        user.StartCoroutine(RefreshCooldown( ));
+    }
 }

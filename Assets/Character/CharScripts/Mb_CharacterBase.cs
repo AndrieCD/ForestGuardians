@@ -5,6 +5,7 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
 {
     [Header("Identity")]
     protected string _CharacterName;
+    public Mb_Movement Movement { get; protected set; }
 
     #region Stats
     public Sc_Stat MaxHealth { get; protected set; }

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: E_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Feather Barrage
-  Cooldown: 0
+  Cooldown: 1
   BaseDamage: 0
   ATKScaling: 0
   APScaling: 0
   BaseHealing: 0
   BaseShield: 0
+  ProjectileModel: {fileID: 531380711534864579, guid: b35db28fadd4fcc44a3c895bec68a0a5, type: 3}

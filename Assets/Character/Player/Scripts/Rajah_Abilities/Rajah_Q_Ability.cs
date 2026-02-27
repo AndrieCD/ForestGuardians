@@ -1,51 +1,54 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Rajah_Q_Ability : Sc_BaseAbility
 {
-    public Rajah_Q_Ability(SO_Ability abilityObject, Mb_CharacterBase user) : base(abilityObject, user)
+    private Camera _cam;
+
+    [Header("Dash Settings")]
+    public float dashSpeed = 80;       
+    public float dashDuration = 0.175f;   // How long the dash lasts in seconds
+
+    public Rajah_Q_Ability(SO_Ability abilityObject, Mb_CharacterBase user)
+        : base(abilityObject, user)
     {
+        _cam = Camera.main;
+        _Cooldown = _AbilityData.Cooldown;
     }
 
-
-    // 1. Called when the Character spawns (Setup Passive)
     public override void OnEquip(Mb_CharacterBase user)
     {
-        // Debug
-        Debug.Log($"{user.name} has equipped {this._AbilityData.AbilityName}.");
+        Debug.Log($"{user.name} equipped {_AbilityData.AbilityName}.");
     }
 
-    // 2. Called when the Player presses the button (Active)
     public override void Activate(Mb_CharacterBase user)
     {
-        // Debug
-        Debug.Log($"{user.name} has activated {this._AbilityData.AbilityName}.");
+        if (!CheckCooldown( )) return;
 
+        // Dash direction: camera forward, flattened to XZ so we don't fly upward
+        Vector3 dashDirection = _cam.transform.forward;
+        dashDirection.y = 0f;
+        dashDirection.Normalize( );
 
-        ////// EXAMPLE EFFECT ///
-        // Example: +10% MoveSpeed, -20 Flat HP
-        List<Sc_StatEffect> effects = new List<Sc_StatEffect>
-        {
-            new Sc_StatEffect(StatType.MoveSpeed, 0.10f, StatModType.Percent, 2f),
-            new Sc_StatEffect(StatType.MaxHealth, -20f, StatModType.Flat)
-        };  // The list or bundled effects to apply
+        // If somehow forward is straight up (edge case), fall back to player forward
+        if (dashDirection == Vector3.zero)
+            dashDirection = user.transform.forward;
 
-        Dictionary<StatType, Sc_Stat> playerStatsDict = new Dictionary<StatType, Sc_Stat>
-        {
-            { StatType.MoveSpeed, user.MoveSpeed },
-            { StatType.MaxHealth, user.MaxHealth }
-        }; // A dictionary to map StatTypes to the player's actual stats
+        Vector3 dashVelocity = dashDirection * dashSpeed;
 
-        // Constructing the modifier with name "Sample" lasting 10 seconds
-        // The modifier itself lasts for 10 seconds, but individual effects can have their own durations
-        Sc_Modifier modifier = new Sc_Modifier("Sample", effects, playerStatsDict, user, 10f);
+        // Drive the dash through CharacterController via Mb_Movement
+        user.Movement.StartDash(dashVelocity, dashDuration);
 
+        // TODO: Hit detection on enemies in dash path goes here (Physics.OverlapCapsule, etc.)
+        // TODO: Shield calculation based on enemies hit goes here
+
+        StartCooldown(user);
+
+        Debug.Log($"{user.name} activated {_AbilityData.AbilityName} — dashing {dashDirection}.");
     }
 
-    // 3. Called when Character dies or ability is swapped (Cleanup)
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} has unequipped {this._AbilityData.AbilityName}.");
+        Debug.Log($"{user.name} unequipped {_AbilityData.AbilityName}.");
     }
 }

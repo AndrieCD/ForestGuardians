@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Q_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Sky Rend
-  Cooldown: 0
+  Cooldown: 1
   BaseDamage: 0
   ATKScaling: 0
   APScaling: 0
   BaseHealing: 0
   BaseShield: 0
+  ProjectileModel: {fileID: 0}
