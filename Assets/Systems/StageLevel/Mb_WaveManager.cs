@@ -51,12 +51,9 @@ public class Mb_WaveManager : MonoBehaviour
             if (!enemy.activeInHierarchy)
             {
                 ActiveEnemies.Remove(enemy);
-                Debug.Log($"Removing enemy from active list... {ActiveEnemies.Count} left");
                 break;
             }
         }
-
-        Debug.Log($"CuBot died. Checking active enemies... {ActiveEnemies.Count} left");
 
         // If there are no more active enemies, end the wave
         if (ActiveEnemies.Count == 0 && IsWaveActive)
@@ -69,6 +66,11 @@ public class Mb_WaveManager : MonoBehaviour
     public void StarWaveManager( )
     {
         Debug.Log($"Start Wave Manager");
+        // Initialize CuBot Pool by disabling all CuBot GameObjects in the pool at the start of the stage
+        foreach (Transform child in CuBotPool.transform)
+        {
+            child.gameObject.SetActive(false);
+        }
         StartPreparationPhase( );
     }
 

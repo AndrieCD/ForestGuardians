@@ -26,6 +26,19 @@ public class SO_Guardian : ScriptableObject
     public float LifeSteal = 0f;            // Percentage of damage dealt returned as health
     public float Shielding = 0f;            // Current shield value
 
+
+    // Stat Scaling
+    public float MaxHealthScaling;
+    public float HealthRegenScaling;
+    public float MoveSpeedScaling;
+    public float AttackSpeedScaling;
+    public float AttackPowerScaling;
+    public float AbilityPowerScaling;
+    public float CooldownReductionScaling;
+    public float CriticalChanceScaling;
+    public float CriticalDamageScaling;
+
+
     [Header("Ability SObjects")]
     public SO_Ability PassiveAbility;       // Passive Ability
     public SO_Ability AbilityQ;             // Q Ability

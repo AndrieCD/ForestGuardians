@@ -4,7 +4,6 @@ public class Rajah_Secondary : Sc_BaseAbility
 {
     GameObject projectilePrefab;
 
-    // Constructor for initialization
     public Rajah_Secondary(SO_Ability abilityObject, Mb_CharacterBase user) : base(abilityObject, user)
     {
         //projectilePrefab = Resources.Load<GameObject>("FeatherPrototype");
@@ -12,14 +11,12 @@ public class Rajah_Secondary : Sc_BaseAbility
         _Cooldown = 1 / user.AttackSpeed.Value( );
     }
 
-    // Called when the Player spawns (Setup Passive)
     public override void OnEquip(Mb_CharacterBase user)
     {
         // Debug
         Debug.Log($"{user.name} has equipped {_AbilityData.AbilityName}.");
     }
 
-    // Called when the Player presses the button (Active)
     public override void Activate(Mb_CharacterBase user)
     {
         // Debug
@@ -42,7 +39,9 @@ public class Rajah_Secondary : Sc_BaseAbility
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             Vector3 targetPoint;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+            // Exclude Character layer
+            int layerMask = ~( 1 << LayerMask.NameToLayer("Character") );
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000f, layerMask))
             {
                 targetPoint = hit.point;
             } else
@@ -63,7 +62,8 @@ public class Rajah_Secondary : Sc_BaseAbility
             Mb_Projectile mb_Projectile = projectileInstance.GetComponent<Mb_Projectile>( );
             if (mb_Projectile != null)
             {
-                mb_Projectile.SetDamageAmount(user.AttackPower.Value( ) * _AbilityData.ATKScaling);
+                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ));
+                mb_Projectile.SetDamageAmount(damage);
             }
         }
 

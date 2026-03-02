@@ -14,17 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Chopper
   AttackRange: 2
-  MaxHealth: 100
-  HealthRegen: 2
-  MoveSpeed: 5
-  AttackSpeed: 0.5
-  AttackPower: 25
+  MaxHealth: 150
+  HealthRegen: 0
+  MoveSpeed: 8
+  AttackSpeed: 1.4
+  AttackPower: 35
   AbilityPower: 0
   CooldownReduction: 0
   CriticalChance: 0
   CriticalDamage: 1.5
   LifeSteal: 0
   Shielding: 0
+  MaxHealthScaling: 0.4
+  HealthRegenScaling: 0
+  MoveSpeedScaling: 0
+  AttackSpeedScaling: 0
+  AttackPowerScaling: 0.4
+  AbilityPowerScaling: 0
+  CooldownReductionScaling: 0
+  CriticalChanceScaling: 0
+  CriticalDamageScaling: 0
   PassiveAbility: {fileID: 0}
   AbilityQ: {fileID: 0}
   AbilityE: {fileID: 0}

@@ -54,6 +54,13 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         JumpPower = new Sc_Stat(8f);    // ( 8 ) Default jump power
 
 
+        // Stat scaling
+        _StatScaling[StatType.MaxHealth]  = _GuardianTemplate.MaxHealthScaling;  // Max Health increases by this % per level
+        _StatScaling[StatType.AttackPower] = _GuardianTemplate.AttackPowerScaling; 
+        _StatScaling[StatType.AbilityPower] = _GuardianTemplate.AbilityPowerScaling;
+        _StatScaling[StatType.AttackSpeed] = _GuardianTemplate.AttackSpeedScaling;
+
+
         // Initialize Abilities
         _PassiveAbility = new Passive_Ability(_GuardianTemplate.PassiveAbility, this);
         _QAbility = new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this);

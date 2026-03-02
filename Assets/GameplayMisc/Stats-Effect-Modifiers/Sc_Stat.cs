@@ -78,4 +78,5 @@ public class Sc_Stat
 
         return bonusValue + ( BaseValue * percentBonus );
     }
+
 }

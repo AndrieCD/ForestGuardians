@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Deadly Plumage
   Cooldown: 0
-  BaseDamage: 0
-  ATKScaling: 0.8
-  APScaling: 0
-  BaseHealing: 0
-  BaseShield: 0
   ProjectileModel: {fileID: 531380711534864579, guid: b35db28fadd4fcc44a3c895bec68a0a5, type: 3}
+  ScalingStats:
+  - StatName: Damage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 0.85
+    APScalingPerLevel:
+    - 0

@@ -7,6 +7,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
     protected string _CharacterName;
     public Mb_Movement Movement { get; protected set; }
 
+    protected int _CharacterLevel;  // Starts at 1 on wave 1, increases by 1 each wave up to level 15
+
     #region Stats
     public Sc_Stat MaxHealth { get; protected set; }
     public Sc_Stat HealthRegen { get; protected set; }
@@ -19,6 +21,10 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
     public Sc_Stat CriticalDamage { get; protected set; }
     public Sc_Stat Lifesteal { get; protected set; }
     public Sc_Stat Shielding { get; protected set; }
+    #endregion
+
+    #region StatScaling
+    protected Dictionary<StatType, float> _StatScaling = new Dictionary<StatType, float>( );
     #endregion
 
     #region Runtime
@@ -34,6 +40,7 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
     {
         InitializeFromTemplate( );
     }
+
 
     /// <summary>
     /// Called during Awake. Derived classes must initialize stats here.
@@ -71,6 +78,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
         Debug.Log($"{_CharacterName} has died.");
     }
     #endregion
+
+    protected abstract void LevelUp( );
 
     #region Modifiers
     public void AddModifier(Sc_Modifier modifier)

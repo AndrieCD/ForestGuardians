@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 6626841185958245851}
   - component: {fileID: 7150038650951453872}
   - component: {fileID: 2411467176442064774}
-  - component: {fileID: 7209347160001563894}
   - component: {fileID: 951839605038414060}
   m_Layer: 0
   m_Name: Rajah
@@ -126,13 +125,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755061731143313870}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.42042926, z: -0, w: 0.9073253}
+  m_LocalRotation: {x: 0, y: 0.4204262, z: 0, w: 0.9073268}
   m_LocalPosition: {x: 11.161206, y: 0.79999995, z: -4.0585117}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4159468132015982841}
   - {fileID: 7228573469357025920}
+  - {fileID: 5223484468684007052}
   - {fileID: 766608836120219847}
   - {fileID: 5440143148272402519}
   - {fileID: 3791644741141221873}
@@ -179,8 +179,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   PlayerController: {fileID: 6626841185958245851}
   CinemachineCameraTarget: {fileID: 4159468132015982841}
-  TopClamp: 30
-  BottomClamp: -30
+  TopClamp: 60
+  BottomClamp: -60
   CameraAngleOverride: 0
   LockCameraPosition: 0
 --- !u!143 &2411467176442064774
@@ -196,7 +196,7 @@ CharacterController:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -204,37 +204,10 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.5
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.92, z: 0}
---- !u!54 &7209347160001563894
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1755061731143313870}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!136 &951839605038414060
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -404,7 +377,7 @@ Transform:
   m_GameObject: {fileID: 7206735418338164004}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalPosition: {x: -0, y: 1.5, z: 0}
   m_LocalScale: {x: 25.891539, y: 25.89154, z: 25.89154}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -501,6 +474,88 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &5762129290583032167
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1650657078772448535}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.8999999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8999999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8999999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0020952
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.021879
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_Name
+      value: RajahModel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 70e2f76014f486345887fe654b248898, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+--- !u!4 &5223484468684007052 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9e7a4bd064d92f64c8890437d06b46bb, type: 3}
+  m_PrefabInstance: {fileID: 5762129290583032167}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7195542986282487147
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -552,6 +607,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c0257a00c6b93334089af3c663957143, type: 3}
       propertyPath: m_Name
       value: raja prototype
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c0257a00c6b93334089af3c663957143, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 929486630070556415, guid: c0257a00c6b93334089af3c663957143, type: 3}
       propertyPath: m_Materials.Array.size

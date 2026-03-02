@@ -52,11 +52,12 @@ public class MB_CuBotBase : Mb_CharacterBase
     #region OnEnable/OnDisable
     private void OnEnable( )
     {
+        Mb_WaveManager.OnWaveEnd += LevelUp;
         OnCuBotSpawn?.Invoke( );
         // Reset the CuBot's state when it is enabled (spawned)
         Reset( );
     }
-    
+
     #endregion
 
 
@@ -87,4 +88,36 @@ public class MB_CuBotBase : Mb_CharacterBase
     {
         InitializeFromTemplate( );
     }
+
+
+    protected override void LevelUp( )
+    {
+        _CharacterLevel++;
+        Debug.Log($"{_CharacterName} leveled up to level {_CharacterLevel}!");
+
+        foreach (var statType in _StatScaling.Keys)
+        {
+            float scalingAmount = _StatScaling[statType];   // in percentage
+            if (scalingAmount != 0)
+            {
+                // Increase the base value of the stat according to the scaling amount
+                switch (statType)
+                {
+                    case StatType.MaxHealth:
+                        MaxHealth.BaseValue *= ( 1 + scalingAmount );
+                        break;
+                    case StatType.AttackPower:
+                        AttackPower.BaseValue *= ( 1 + scalingAmount );
+                        break;
+                    case StatType.AbilityPower:
+                        AbilityPower.BaseValue *= ( 1 + scalingAmount );
+                        break;
+
+                }
+            }
+
+        }
+    }
+
+
 }

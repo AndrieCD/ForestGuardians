@@ -13,13 +13,13 @@ GameObject:
   - component: {fileID: 8549838830980014889}
   - component: {fileID: -1564925470065923901}
   - component: {fileID: -755259738969307294}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Chopper
   m_TagString: CuBot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5565989384772844910
 Transform:
   m_ObjectHideFlags: 0
@@ -84,7 +84,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -168,9 +168,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8383124558419344257, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -3798597711559607027, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -3477458294799913631, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -2764512629625626004, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -2040254050740271484, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
       propertyPath: m_Name
       value: Cubot-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7833249854982934595, guid: be47fb54abbb5a741b610a5b4ad21e8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
