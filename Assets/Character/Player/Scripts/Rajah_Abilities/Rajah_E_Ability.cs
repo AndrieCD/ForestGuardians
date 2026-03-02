@@ -28,6 +28,9 @@ public class Rajah_E_Ability : Sc_BaseAbility
     {
         if (!CheckCooldown( )) return;
 
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerSecondaryAttack( );
+
         LeapBackward(user);
         FireFeatherSpread(user);
         StartCooldown(user);

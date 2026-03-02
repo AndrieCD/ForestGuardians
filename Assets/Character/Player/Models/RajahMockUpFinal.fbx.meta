@@ -3,7 +3,12 @@ guid: 963a97ac71d2a5b45942fc0ee1c53f55
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rajah_MTL
+    second: {fileID: 2100000, guid: 00b344dee5b350d4188f299545711e99, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -93,7 +98,7 @@ ModelImporter:
       takeName: Armature|ArmatureAction
       internalID: 4594303134292970328
       firstFrame: 222
-      lastFrame: 234
+      lastFrame: 232
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -122,7 +127,7 @@ ModelImporter:
       takeName: Armature|ArmatureAction
       internalID: 3696890337287820257
       firstFrame: 236
-      lastFrame: 248
+      lastFrame: 246
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

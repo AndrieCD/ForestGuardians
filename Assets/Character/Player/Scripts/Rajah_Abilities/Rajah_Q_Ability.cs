@@ -11,8 +11,8 @@ public class Rajah_Q_Ability : Sc_BaseAbility
     private Camera _cam;
 
     // --- Dash tuning ---
-    public float dashSpeed = 80f;
-    public float dashDuration = 0.175f;
+    public float dashSpeed = 50f;
+    public float dashDuration = 0.25f;
 
     // --- Hit detection tuning ---
     // The overlap sphere radius around Rajah while dashing — adjust to match his character width
@@ -51,6 +51,10 @@ public class Rajah_Q_Ability : Sc_BaseAbility
     public override void Activate(Mb_CharacterBase user)
     {
         if (!CheckCooldown( )) return;
+
+        // PLAY ANIMATION
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerQAbility( );
 
         // Flatten camera forward to XZ so we dash horizontally, not into the ground
         Vector3 dashDirection = _cam.transform.forward;

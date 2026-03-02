@@ -3,7 +3,12 @@ guid: fe40cf160e8c09140af568340eaa5613
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ChopperMTL
+    second: {fileID: 2100000, guid: 0951d1d9f7c5bab44ae353bea9342bc0, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
