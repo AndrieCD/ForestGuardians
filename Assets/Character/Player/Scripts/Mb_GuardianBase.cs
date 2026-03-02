@@ -11,6 +11,10 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     [Header("Guardian Template")]
     [SerializeField] protected SO_Guardian _GuardianTemplate;
 
+    // Animation Control
+    public Mb_GuardianAnimator GuardianAnimator { get; protected set; }
+
+
     public Sc_Stat JumpPower { get; protected set; }
 
     #region Abilities
@@ -32,8 +36,16 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     {
         if (_GuardianTemplate != null)
             InitializeFromTemplate( );
+        this.GuardianAnimator = GetComponent<Mb_GuardianAnimator>( );
         this.Movement = GetComponent<Mb_Movement>( );
     }
+
+    protected override void Die( )
+    {
+        base.Die( );
+        GuardianAnimator?.TriggerDefeat( );
+    }
+
     #region Initialization
     // Reset stats to the base values from the ScriptableObject
     protected override void InitializeFromTemplate( )
@@ -84,4 +96,7 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         _RAbility?.OnEquip(this);
     }
     #endregion
+
+    protected abstract void LevelUp( );
+
 }

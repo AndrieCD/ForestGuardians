@@ -154,7 +154,7 @@ public class Mb_PlayerController : Mb_GuardianBase
                     case StatType.AbilityPower:
                         AbilityPower.BaseValue *= ( 1 + scalingAmount );
                         break;
-                   
+
                 }
             }
         }

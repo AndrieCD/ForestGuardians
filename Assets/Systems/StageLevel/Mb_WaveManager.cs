@@ -66,11 +66,6 @@ public class Mb_WaveManager : MonoBehaviour
     public void StarWaveManager( )
     {
         Debug.Log($"Start Wave Manager");
-        // Initialize CuBot Pool by disabling all CuBot GameObjects in the pool at the start of the stage
-        foreach (Transform child in CuBotPool.transform)
-        {
-            child.gameObject.SetActive(false);
-        }
         StartPreparationPhase( );
     }
 

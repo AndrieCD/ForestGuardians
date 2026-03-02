@@ -19,10 +19,14 @@ public class Rajah_Secondary : Sc_BaseAbility
 
     public override void Activate(Mb_CharacterBase user)
     {
+        if (!CheckCooldown( )) return;
+
         // Debug
         Debug.Log($"{user.name} has activated {_AbilityData.AbilityName}.");
-        if (CheckCooldown( ))   
-            CreateProjectile(user);
+        CreateProjectile(user);
+
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerSecondaryAttack( );
     }
 
     private void CreateProjectile(Mb_CharacterBase user)
@@ -63,6 +67,8 @@ public class Rajah_Secondary : Sc_BaseAbility
             if (mb_Projectile != null)
             {
                 float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ));
+                // Roll for critical strike
+                damage = ApplyCriticalStrike(damage, user);
                 mb_Projectile.SetDamageAmount(damage);
             }
         }
@@ -75,5 +81,26 @@ public class Rajah_Secondary : Sc_BaseAbility
     public override void OnUnequip(Mb_CharacterBase user)
     {
         Debug.Log($"{user.name} has unequipped {_AbilityData.AbilityName}.");
+    }
+
+
+
+    // Rolls a random number against the user's crit chance.
+    // On a crit, multiplies damage by CriticalDamage stat.
+    // Returns the final damage value (either normal or crit).
+    private float ApplyCriticalStrike(float baseDamage, Mb_CharacterBase user)
+    {
+        // CriticalChance is stored as a percentage (e.g. 10 = 10%), so divide by 100
+        float critChance = user.CriticalChance.Value( ) / 100f;
+        float roll = Random.value; // Random float between 0.0 and 1.0
+
+        if (roll <= critChance)
+        {
+            float critMultiplier = user.CriticalDamage.Value( ) / 100f;
+            Debug.Log($"Critical Strike! Multiplier: {critMultiplier}x");
+            return baseDamage * critMultiplier;
+        }
+
+        return baseDamage;
     }
 }

@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 1650657078772448535}
   - component: {fileID: 6626841185958245851}
   - component: {fileID: 7150038650951453872}
+  - component: {fileID: -1112737344964761199}
   - component: {fileID: 2411467176442064774}
   - component: {fileID: 951839605038414060}
   m_Layer: 0
@@ -183,6 +184,20 @@ MonoBehaviour:
   BottomClamp: -60
   CameraAngleOverride: 0
   LockCameraPosition: 0
+--- !u!114 &-1112737344964761199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973f390e0ecdbbb4dbf05242b3238eb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_GuardianAnimator
+  _Animator: {fileID: 0}
+  _SpeedDampTime: 0.1
 --- !u!143 &2411467176442064774
 CharacterController:
   m_ObjectHideFlags: 0

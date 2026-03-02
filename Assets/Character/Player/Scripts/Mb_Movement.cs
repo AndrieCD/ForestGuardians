@@ -3,6 +3,7 @@ using UnityEngine;
 public class Mb_Movement : MonoBehaviour
 {
     [SerializeField] Mb_PlayerController PlayerController;
+    private Mb_GuardianAnimator _GuardianAnimator;  // Animation controller
 
     protected CharacterController _CharacterController;
     protected Camera _MainCamera;
@@ -31,6 +32,7 @@ public class Mb_Movement : MonoBehaviour
     {
         _CharacterController = GetComponent<CharacterController>( );
         _MainCamera = Camera.main;
+        _GuardianAnimator = GetComponent<Mb_GuardianAnimator>( ); 
         if (CinemachineCameraTarget != null)
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
     }
@@ -87,6 +89,12 @@ public class Mb_Movement : MonoBehaviour
         Vector3 velocity = moveDir * moveSpeed;
         velocity.y = _verticalVelocity;
         _CharacterController.Move(velocity * Time.deltaTime);
+
+        // Speed: normalize the XZ move magnitude so 0 = idle, 1 = running
+        moveInput = PlayerController.GetMoveVector( );
+        _GuardianAnimator?.SetSpeed(moveInput.magnitude);
+        _GuardianAnimator?.SetGrounded(_CharacterController.isGrounded);
+        _GuardianAnimator?.SetVerticalVelocity(_verticalVelocity);
     }
 
     private void CameraRotation( )

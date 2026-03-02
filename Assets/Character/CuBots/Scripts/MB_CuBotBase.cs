@@ -6,6 +6,7 @@ public class MB_CuBotBase : Mb_CharacterBase
     [Header("CuBot Template")]
     [SerializeField] protected SO_CuBots _CuBotTemplate;
 
+
     #region Events
     // EVENTS
     public static event Action OnCuBotSpawn; // Event triggered when a CuBot spawns, can be used to update UI, trigger effects, etc.
@@ -49,10 +50,42 @@ public class MB_CuBotBase : Mb_CharacterBase
     #endregion
 
 
+    #region Wave Scaling
+    // Called by WaveManager right after activating this CuBot from the pool.
+    // waveNumber is 0-indexed (wave 0 = no scaling, wave 1 = first scale-up, etc.)
+    public void ApplyWaveScaling(int waveNumber)
+    {
+        if (_CuBotTemplate == null || waveNumber <= 0) return;
+
+        // We scale HP and ATK using compound growth: base * (1 + rate)^wave, capped at max.
+        // This matches Table 12 in the thesis design document.
+        MaxHealth.BaseValue = ScaleStat(_CuBotTemplate.MaxHealth, _CuBotTemplate.MaxHealthScaling, waveNumber);
+        AttackPower.BaseValue = ScaleStat(_CuBotTemplate.AttackPower, _CuBotTemplate.AttackPowerScaling, waveNumber);
+
+        // Only scale AP if this CuBot type uses it (e.g. Bernie, Toxion)
+        if (_CuBotTemplate.AbilityPower > 0)
+        {
+            AbilityPower.BaseValue = ScaleStat(_CuBotTemplate.AbilityPower, _CuBotTemplate.AbilityPowerScaling, waveNumber);
+        }
+
+        // After scaling MaxHealth, also set current health to the new max (fresh spawn)
+        _CurrentHealth = MaxHealth.Value( );
+    }
+
+    // Applies compound growth capped at a maximum value.
+    // Formula: scaledValue = baseValue * (1 + growthRate)^waveNumber
+    private float ScaleStat(float baseValue, float growthRate, int waveNumber)
+    {
+        float scaled = baseValue * Mathf.Pow(1f + growthRate, waveNumber);
+        return scaled;
+    }
+    #endregion
+
+
     #region OnEnable/OnDisable
     private void OnEnable( )
     {
-        Mb_WaveManager.OnWaveEnd += LevelUp;
+        //Mb_WaveManager.OnWaveEnd += LevelUp;
         OnCuBotSpawn?.Invoke( );
         // Reset the CuBot's state when it is enabled (spawned)
         Reset( );
@@ -90,34 +123,34 @@ public class MB_CuBotBase : Mb_CharacterBase
     }
 
 
-    protected override void LevelUp( )
-    {
-        _CharacterLevel++;
-        Debug.Log($"{_CharacterName} leveled up to level {_CharacterLevel}!");
+    //protected override void LevelUp( )
+    //{
+    //    _CharacterLevel++;
+    //    Debug.Log($"{_CharacterName} leveled up to level {_CharacterLevel}!");
 
-        foreach (var statType in _StatScaling.Keys)
-        {
-            float scalingAmount = _StatScaling[statType];   // in percentage
-            if (scalingAmount != 0)
-            {
-                // Increase the base value of the stat according to the scaling amount
-                switch (statType)
-                {
-                    case StatType.MaxHealth:
-                        MaxHealth.BaseValue *= ( 1 + scalingAmount );
-                        break;
-                    case StatType.AttackPower:
-                        AttackPower.BaseValue *= ( 1 + scalingAmount );
-                        break;
-                    case StatType.AbilityPower:
-                        AbilityPower.BaseValue *= ( 1 + scalingAmount );
-                        break;
+    //    foreach (var statType in _StatScaling.Keys)
+    //    {
+    //        float scalingAmount = _StatScaling[statType];   // in percentage
+    //        if (scalingAmount != 0)
+    //        {
+    //            // Increase the base value of the stat according to the scaling amount
+    //            switch (statType)
+    //            {
+    //                case StatType.MaxHealth:
+    //                    MaxHealth.BaseValue *= ( 1 + scalingAmount );
+    //                    break;
+    //                case StatType.AttackPower:
+    //                    AttackPower.BaseValue *= ( 1 + scalingAmount );
+    //                    break;
+    //                case StatType.AbilityPower:
+    //                    AbilityPower.BaseValue *= ( 1 + scalingAmount );
+    //                    break;
 
-                }
-            }
+    //            }
+    //        }
 
-        }
-    }
+    //    }
+    //}
 
 
 }

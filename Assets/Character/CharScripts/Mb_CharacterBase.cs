@@ -79,7 +79,7 @@ public abstract class Mb_CharacterBase : MonoBehaviour, I_Damageable, I_StatModi
     }
     #endregion
 
-    protected abstract void LevelUp( );
+    //protected abstract void LevelUp( );
 
     #region Modifiers
     public void AddModifier(Sc_Modifier modifier)
