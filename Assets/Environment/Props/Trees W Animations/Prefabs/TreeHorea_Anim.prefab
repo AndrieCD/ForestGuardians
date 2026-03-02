@@ -1,113 +1,110 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5660557796107149054
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 57.213364
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.35000008
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.7540205
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_DirtyAABB
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Center.x
-      value: -0.5381465
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Center.y
-      value: 7.0001426
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Center.z
-      value: -0.5427666
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Extent.x
-      value: 5.67268
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Extent.y
-      value: 6.999662
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_AABB.m_Extent.z
-      value: 6.244185
-      objectReference: {fileID: 0}
-    - target: {fileID: -3887185075125053422, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 0a1eb59c7ff83974abe51efdea63e680, type: 2}
-    - target: {fileID: 919132149155446097, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      propertyPath: m_Name
-      value: TreeHorea_Anim
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6061701944886748150}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2406725371944746966}
-  m_SourcePrefab: {fileID: 100100000, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
---- !u!1 &4778106462017020847 stripped
+--- !u!1 &2161861152358162378
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
-  m_PrefabInstance: {fileID: 5660557796107149054}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 4778106462017020847, guid: b747c8d90278db243a19898ef5bf3850, type: 3}
+  m_PrefabInstance: {fileID: 779060226484258273}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &6061701944886748150
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 391312010488561276}
+  - component: {fileID: 6400773880361185585}
+  - component: {fileID: 494816459994025483}
+  - component: {fileID: 2789561428418027976}
+  m_Layer: 0
+  m_Name: TreeHorea_Anim
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &391312010488561276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 5261592147709507861, guid: b747c8d90278db243a19898ef5bf3850, type: 3}
+  m_PrefabInstance: {fileID: 779060226484258273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2161861152358162378}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5438872772974965593}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &6400773880361185585
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 325286769588193004, guid: b747c8d90278db243a19898ef5bf3850, type: 3}
+  m_PrefabInstance: {fileID: 779060226484258273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2161861152358162378}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 0a1eb59c7ff83974abe51efdea63e680, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 1
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: 2182809659426475, guid: 9d138a89ec63ca140ac4efeb5bc9317d, type: 3}
+  m_Bones: []
+  m_BlendShapeWeights:
+  - 0
+  - 0
+  - 0
+  m_RootBone: {fileID: 0}
+  m_AABB:
+    m_Center: {x: -0.5381465, y: 7.0001426, z: -0.5427666}
+    m_Extent: {x: 5.67268, y: 6.999662, z: 6.244185}
+  m_DirtyAABB: 0
+--- !u!95 &494816459994025483
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6061701944886748150, guid: b747c8d90278db243a19898ef5bf3850, type: 3}
+  m_PrefabInstance: {fileID: 779060226484258273}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4778106462017020847}
+  m_GameObject: {fileID: 2161861152358162378}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: a33dcb9a88017554a9efe4d8c110d034, type: 2}
@@ -122,13 +119,13 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!65 &2406725371944746966
+--- !u!65 &2789561428418027976
 BoxCollider:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2406725371944746966, guid: b747c8d90278db243a19898ef5bf3850, type: 3}
+  m_PrefabInstance: {fileID: 779060226484258273}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4778106462017020847}
+  m_GameObject: {fileID: 2161861152358162378}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -143,3 +140,92 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5457344, y: 13.999324, z: 0.43063354}
   m_Center: {x: 0.0054569244, y: 7.0001426, z: 0.009618044}
+--- !u!1 &4119543769213949308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5438872772974965593}
+  m_Layer: 0
+  m_Name: TreeHorea_Anim
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5438872772974965593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4119543769213949308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 391312010488561276}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &779060226484258273
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5438872772974965593}
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Name
+      value: TreeHorea_Anim
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 0}
