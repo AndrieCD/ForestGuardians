@@ -8,14 +8,18 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass_MTL
-  m_Shader: {fileID: 4800000, guid: 99d2d2c914cc168459c9933cb590ba85, type: 3}
+  m_Shader: {fileID: 4800000, guid: a2e2c5366cdcd20409a76a70f8172457, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _ALPHACLIP_ON
+  - _AOINSHADOWSONLY_ON
+  - _CROSSHATCH_ON
   - _DOUBLESIDED_ON
+  - _HATCHENABLED_ON
   - _OUTLINE_ON
+  - _SCREENSPACEHALFTONE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -27,7 +31,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 58e1c029a67dc9947ae77a81de0dd20b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -68,10 +72,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AOChannel: 1
+    - _AOInShadowsOnly: 1
+    - _AOStrength: 0
     - _AlphaClip: 1
     - _AmbientBoost: 2
     - _BandStrength: 0.96
     - _BumpScale: 1
+    - _CrossHatch: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DoubleSided: 1
@@ -79,6 +87,19 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _HalftoneFadeEnd: 60
+    - _HalftoneFadeStart: 20
+    - _HalftoneScale: 180
+    - _HalftoneSoftness: 0.08
+    - _HalftoneStrength: 0.35
+    - _HalftoneThreshold: 0.6
+    - _HatchAngle: 35
+    - _HatchEnabled: 1
+    - _HatchLineWidth: 0.12
+    - _HatchScale: 240
+    - _HatchSoftness: 0.12
+    - _HatchStrength: 0.28
+    - _HatchThreshold: 0.68
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -89,10 +110,11 @@ Material:
     - _Parallax: 0.02
     - _PosterizeSteps: 2
     - _PosterizeStrength: 0
-    - _RampSmoothness: 0.102
+    - _RampSmoothness: 0.001
     - _RampThreshold: 0
     - _RimPower: 12
     - _RimStrength: 0.2
+    - _ScreenSpaceHalftone: 1
     - _ShadowBands: 1
     - _ShadowStrength: 0.56
     - _SmoothnessTextureChannel: 0
@@ -101,9 +123,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.15185557, g: 0.6981132, b: 0.12701514, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.26253718, g: 0.74663067, b: 0.17609203, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightTint: {r: 1, g: 0.85, b: 0.85, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}

@@ -227,7 +227,7 @@ AnimatorController:
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 0
+    m_DefaultBool: 1
     m_Controller: {fileID: 9100000}
   - m_Name: QAbility
     m_Type: 9
@@ -271,7 +271,7 @@ AnimatorStateMachine:
     m_Position: {x: 360, y: 10, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -602354573381829746}
-    m_Position: {x: 360, y: -60, z: 0}
+    m_Position: {x: 540, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6410647541993777365}
     m_Position: {x: 360, y: -120, z: 0}
