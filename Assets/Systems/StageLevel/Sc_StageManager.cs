@@ -12,6 +12,11 @@ public class Mb_StageManager : MonoBehaviour
     public static event Action OnStageEnd;
     #endregion
 
+    private void Awake( )
+    {
+        Cursor.visible = false;
+    }
+
     private void Start( )
     {
         StartStage( );
