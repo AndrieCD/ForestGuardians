@@ -50,16 +50,14 @@ public class Rajah_Q_Ability : Sc_BaseAbility
     // Called when the player presses [Q]
     public override void Activate(Mb_CharacterBase user)
     {
-        if (!CheckCooldown( )) return;
+        if (!CheckCooldown()) return;
 
-        // PLAY ANIMATION
-        if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerQAbility( );
+        PlayAbilityAnimation(user);
 
         // Flatten camera forward to XZ so we dash horizontally, not into the ground
         Vector3 dashDirection = _cam.transform.forward;
         dashDirection.y = 0f;
-        dashDirection.Normalize( );
+        dashDirection.Normalize();
 
         if (dashDirection == Vector3.zero)
             dashDirection = user.transform.forward;
@@ -73,6 +71,13 @@ public class Rajah_Q_Ability : Sc_BaseAbility
         StartCooldown(user);
 
         Debug.Log($"{user.name} activated {_AbilityData.AbilityName}.");
+    }
+
+    private static void PlayAbilityAnimation(Mb_CharacterBase user)
+    {
+        //// PLAY ANIMATION
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerQAbility();
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
@@ -105,9 +110,9 @@ public class Rajah_Q_Ability : Sc_BaseAbility
                 if (cuBot == null) continue;
 
                 // Deal damage — Sky Rend uses ATK and AP scaling from the SO
-                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ), user.AbilityPower.Value( ));
+                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ), user.Stats.AbilityPower.Value( ));
 
-                cuBot.TakeDamage(damage);
+                cuBot.Health.TakeDamage(damage);
                 _hitThisDash.Add(col); // Mark as hit so we don't hit them again mid-dash
 
                 Debug.Log($"Sky Rend hit {col.name} for {damage} damage.");
@@ -133,17 +138,18 @@ public class Rajah_Q_Ability : Sc_BaseAbility
 
         // Additional shielding based on enemies hit
         float bonusShield = baseShield * (enemiesHit * _shieldPerEnemyFraction);
-        float shieldAmount = bonusShield + _AbilityData.GetStat("Shield", _currentAbilityLevel, 0f, user.AbilityPower.Value( ));
+        float shieldAmount = bonusShield + _AbilityData.GetStat("Shield", _currentAbilityLevel, 0f, user.Stats.AbilityPower.Value( ));
 
         // Apply shield as a temporary additive effect on the Shielding stat
         Sc_StatEffect shieldEffect = new Sc_StatEffect(StatType.Shielding, shieldAmount, StatModType.Flat, _shieldDuration);
 
         // Apply shield modifier to the user
         Sc_Modifier shieldModifier = new Sc_Modifier("Sky Rend Shield", 
-            new List<Sc_StatEffect> { shieldEffect}, 
-            new Dictionary<StatType, Sc_Stat> { { StatType.Shielding, user.Shielding } },
-            user, _shieldDuration);
+            ModifierSource.Ability,
+            new List<Sc_StatEffect> { shieldEffect},
+            _shieldDuration);
 
+        user.Stats.AddModifier(shieldModifier);
 
         Debug.Log($"Sky Rend granted {shieldAmount} shield from {enemiesHit} enemies hit.");
     }

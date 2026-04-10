@@ -1,12 +1,22 @@
 using UnityEngine;
 
+/// <summary>
+/// Handles all physical movement for the player: walking, gravity, jumping, dashing, and camera rotation.
+/// 
+/// Reads MoveSpeed and JumpPower directly from Mb_StatBlock on the same GameObject,
+/// so stat changes from augments apply immediately without any extra wiring.
+///
+/// Input vectors are pulled from Mb_PlayerController each frame.
+/// Movement is blocked while paused by subscribing to Mb_PauseManager events.
+/// </summary>
 public class Mb_Movement : MonoBehaviour
 {
-    [SerializeField] Mb_PlayerController PlayerController;
-    private Mb_GuardianAnimator _GuardianAnimator;  // Animation controller
+    // PlayerController lives on the same GameObject — used only to get input vectors
+    [SerializeField] Mb_PlayerController _playerController;
 
-    protected CharacterController _CharacterController;
-    protected Camera _MainCamera;
+    private Mb_StatBlock _statBlock;
+    private CharacterController _characterController;
+    private Camera _mainCamera;
 
     private float _verticalVelocity = 0f;
     private float _gravity = -20f;
@@ -14,8 +24,7 @@ public class Mb_Movement : MonoBehaviour
 
     private Vector3 _dashVelocity = Vector3.zero;
     private bool _isDashing = false;
-
-    
+    private bool _isPaused = false;
 
     [Header("Cinemachine")]
     public Transform CinemachineCameraTarget;
@@ -28,78 +37,95 @@ public class Mb_Movement : MonoBehaviour
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
 
-    private void Awake( )
+    private void Awake()
     {
-        _CharacterController = GetComponent<CharacterController>( );
-        _MainCamera = Camera.main;
-        _GuardianAnimator = GetComponent<Mb_GuardianAnimator>( ); 
+        _characterController = GetComponent<CharacterController>();
+        _mainCamera = Camera.main;
+
+        // Fetch StatBlock from the same GameObject to read MoveSpeed and JumpPower
+        _statBlock = GetComponent<Mb_StatBlock>();
+        if (_statBlock == null)
+            Debug.LogError($"[Mb_Movement] No Mb_StatBlock found on {gameObject.name}.");
+
         if (CinemachineCameraTarget != null)
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
     }
 
-    private void LateUpdate( )
-    {
-        CameraRotation( );
-    }
-
-    private void Update( )
-    {
-        HandleMovement( );
-    }
-
-    private void OnEnable( )
+    private void OnEnable()
     {
         Mb_PlayerController.OnJumpPressed += Jump;
+        Mb_PauseManager.OnPaused += HandlePause;
+        Mb_PauseManager.OnResumed += HandleResume;
     }
 
-    private void OnDisable( )
+    private void OnDisable()
     {
         Mb_PlayerController.OnJumpPressed -= Jump;
+        Mb_PauseManager.OnPaused -= HandlePause;
+        Mb_PauseManager.OnResumed -= HandleResume;
     }
 
-    private void Jump( )
+    private void Update()
     {
-        if (_CharacterController.isGrounded)
-        {
-            float jumpPower = PlayerController.JumpPower.Value( );
-            _verticalVelocity = jumpPower;
-        }
+        if (_isPaused) return;
+        HandleMovement();
     }
 
-    private void HandleMovement( )
+    private void LateUpdate()
+    {
+        if (_isPaused) return;
+        CameraRotation();
+    }
+
+    private void Jump()
+    {
+        if (_isPaused) return;
+        if (!_characterController.isGrounded) return;
+
+        float jumpPower = _statBlock.JumpPower.Value();
+        _verticalVelocity = jumpPower;
+    }
+
+    private void HandleMovement()
     {
         // While dashing, bypass all normal movement logic entirely
         if (_isDashing)
         {
-            _CharacterController.Move(_dashVelocity * Time.deltaTime);
+            _characterController.Move(_dashVelocity * Time.deltaTime);
             return;
         }
 
-        Vector2 moveInput = PlayerController.GetMoveVector( );
-        float moveSpeed = PlayerController.MoveSpeed.Value( );
+        Vector2 moveInput = _playerController.GetMoveVector();
+        float moveSpeed = _statBlock.MoveSpeed.Value(); // Read fresh — catches augment changes mid-wave
+
         Vector3 moveDir = transform.TransformDirection(
             new Vector3(moveInput.x, 0f, moveInput.y).normalized
         );
 
-        if (_CharacterController.isGrounded && _verticalVelocity < 0)
+        // Keep character grounded instead of slowly floating down slopes
+        if (_characterController.isGrounded && _verticalVelocity < 0)
+        {
             _verticalVelocity = -2f;
+            // For animator 
+            _playerController.GuardianAnimator.SetGrounded(true);
+        }
 
         _verticalVelocity += _gravity * Time.deltaTime;
 
         Vector3 velocity = moveDir * moveSpeed;
         velocity.y = _verticalVelocity;
-        _CharacterController.Move(velocity * Time.deltaTime);
+        _characterController.Move(velocity * Time.deltaTime);
 
-        // Speed: normalize the XZ move magnitude so 0 = idle, 1 = running
-        moveInput = PlayerController.GetMoveVector( );
-        _GuardianAnimator?.SetSpeed(moveInput.magnitude);
-        _GuardianAnimator?.SetGrounded(_CharacterController.isGrounded);
-        _GuardianAnimator?.SetVerticalVelocity(_verticalVelocity);
+        // For animator
+        _playerController.GuardianAnimator.SetVerticalVelocity(velocity.y);
+        // (XZ velocity)
+        _playerController.GuardianAnimator.SetSpeed(new Vector3(velocity.x, 0f, velocity.z).magnitude / moveSpeed);
     }
 
-    private void CameraRotation( )
+    private void CameraRotation()
     {
-        Vector2 lookInput = PlayerController.GetLookVector( ) * _mouseSensitivity;
+        Vector2 lookInput = _playerController.GetLookVector() * _mouseSensitivity;
+
         if (lookInput.sqrMagnitude >= _threshold && !LockCameraPosition)
         {
             _cinemachineTargetYaw += lookInput.x;
@@ -116,13 +142,6 @@ public class Mb_Movement : MonoBehaviour
         }
     }
 
-    private static float ClampAngle(float angle, float min, float max)
-    {
-        if (angle < -360f) angle += 360f;
-        if (angle > 360f) angle -= 360f;
-        return Mathf.Clamp(angle, min, max);
-    }
-
     public void StartDash(Vector3 dashVelocity, float duration)
     {
         _dashVelocity = dashVelocity;
@@ -135,7 +154,19 @@ public class Mb_Movement : MonoBehaviour
         yield return new WaitForSeconds(duration);
         _isDashing = false;
         _dashVelocity = Vector3.zero;
-        // Bleed off vertical momentum so the player doesn't float after a dash
+        // Bleed off vertical momentum so the player doesn't float after dashing
         _verticalVelocity = 0f;
     }
+
+    private static float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360f) angle += 360f;
+        if (angle > 360f) angle -= 360f;
+        return Mathf.Clamp(angle, min, max);
+    }
+
+    #region Pause Handling
+    private void HandlePause() => _isPaused = true;
+    private void HandleResume() => _isPaused = false;
+    #endregion
 }

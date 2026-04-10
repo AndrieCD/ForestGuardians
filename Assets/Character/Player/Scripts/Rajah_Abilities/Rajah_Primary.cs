@@ -18,7 +18,7 @@ public class Rajah_Primary : Sc_BaseAbility
     {
         // Cooldown is driven by Attack Speed: faster AS = shorter time between swings
         // e.g. AS of 1.0 = 1 swing/sec, AS of 2.0 = 0.5 sec cooldown
-        _Cooldown = 1f / user.AttackSpeed.Value( );
+        _Cooldown = 1f / user.Stats.AttackSpeed.Value( );
     }
 
     // Called when Rajah spawns
@@ -30,13 +30,18 @@ public class Rajah_Primary : Sc_BaseAbility
     // Called when the player clicks LMB
     public override void Activate(Mb_CharacterBase user)
     {
-        if (!CheckCooldown( )) return;
+        if (!CheckCooldown()) return;
 
         PerformSlash(user);
         StartCooldown(user);
 
+        PlayAbilityAnimation(user);
+    }
+
+    private static void PlayAbilityAnimation(Mb_CharacterBase user)
+    {
         if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerPrimaryAttack( );
+            guardian.GuardianAnimator?.TriggerPrimaryAttack();
     }
 
     // Called when Rajah dies or swaps abilities
@@ -67,12 +72,12 @@ public class Rajah_Primary : Sc_BaseAbility
             if (cuBot == null || alreadyHit.Contains(cuBot)) continue;
 
             // Calculate damage — Feathery Slash scales 100% ATK
-            float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ));
+            float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ));
 
             // Roll for critical strike
             damage = ApplyCriticalStrike(damage, user);
 
-            cuBot.TakeDamage(damage);
+            cuBot.Health.TakeDamage(damage);
             alreadyHit.Add(cuBot);
 
             Debug.Log($"Feathery Slash hit {cuBot.name} for {damage} damage.");
@@ -85,12 +90,12 @@ public class Rajah_Primary : Sc_BaseAbility
     private float ApplyCriticalStrike(float baseDamage, Mb_CharacterBase user)
     {
         // CriticalChance is stored as a percentage (e.g. 10 = 10%), so divide by 100
-        float critChance = user.CriticalChance.Value( ) / 100f;
+        float critChance = user.Stats.CriticalChance.Value( ) / 100f;
         float roll = Random.value; // Random float between 0.0 and 1.0
 
         if (roll <= critChance)
         {
-            float critMultiplier = user.CriticalDamage.Value( ) / 100f;
+            float critMultiplier = user.Stats.CriticalDamage.Value( ) / 100f;
             Debug.Log($"Critical Strike! Multiplier: {critMultiplier}x");
             return baseDamage * critMultiplier;
         }

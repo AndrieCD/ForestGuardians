@@ -26,14 +26,19 @@ public class Rajah_E_Ability : Sc_BaseAbility
 
     public override void Activate(Mb_CharacterBase user)
     {
-        if (!CheckCooldown( )) return;
+        if (!CheckCooldown()) return;
 
-        if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerSecondaryAttack( );
+        PlayAbilityAnimation(user);
 
         LeapBackward(user);
         FireFeatherSpread(user);
         StartCooldown(user);
+    }
+
+    private static void PlayAbilityAnimation(Mb_CharacterBase user)
+    {
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerSecondaryAttack();
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
@@ -89,7 +94,7 @@ public class Rajah_E_Ability : Sc_BaseAbility
         Vector3 centerDirection = ( aimTarget - origin.position ).normalized;
 
         // Calculate damage once — all feathers deal the same amount for simplicity
-        float damagePerFeather = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ), user.AbilityPower.Value( ));
+        float damagePerFeather = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ), user.Stats.AbilityPower.Value( ));
 
         // Spawn each feather and tell them to ignore each other so they don't self-collide
         GameObject[] spawnedFeathers = new GameObject[_featherCount];

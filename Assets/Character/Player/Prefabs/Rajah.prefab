@@ -108,6 +108,9 @@ GameObject:
   - component: {fileID: 1650657078772448535}
   - component: {fileID: 6626841185958245851}
   - component: {fileID: 7150038650951453872}
+  - component: {fileID: 20886371245523107}
+  - component: {fileID: 3245448085556182171}
+  - component: {fileID: 7329516506002784736}
   - component: {fileID: -1112737344964761199}
   - component: {fileID: 2411467176442064774}
   - component: {fileID: 951839605038414060}
@@ -151,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController_Mb
   _GuardianTemplate: {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  GuardianAnimator: {fileID: -1112737344964761199}
   GuardianName: Rajah Bagwis
   CurrentHealthValue: 0
   MaxHPValue: 0
@@ -164,7 +168,7 @@ MonoBehaviour:
   CriticalDamageValue: 0
   LifestealValue: 0
   CurrentShieldValue: 0
-  InputAction: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
+  InputActions: {fileID: 0}
 --- !u!114 &7150038650951453872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,12 +181,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bec3ed764d63b4fb9a7f0ac98d7a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  PlayerController: {fileID: 6626841185958245851}
+  _playerController: {fileID: 0}
   CinemachineCameraTarget: {fileID: 4159468132015982841}
   TopClamp: 60
   BottomClamp: -60
   CameraAngleOverride: 0
   LockCameraPosition: 0
+--- !u!114 &20886371245523107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a2ef08471e01c74f915df084bd64551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_StatBlock
+--- !u!114 &3245448085556182171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e7fc9a88e17174fa1e0ef2fca3d549, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_HealthComponent
+--- !u!114 &7329516506002784736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da5fc976ccb958a4db1ec680c7d16603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityController
 --- !u!114 &-1112737344964761199
 MonoBehaviour:
   m_ObjectHideFlags: 0

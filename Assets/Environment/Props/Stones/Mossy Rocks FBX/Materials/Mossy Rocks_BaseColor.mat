@@ -86,7 +86,7 @@ Material:
     - _HalftoneScale: 200
     - _HalftoneSoftness: 0.001
     - _HalftoneStrength: 0.9
-    - _HalftoneThreshold: 0.56
+    - _HalftoneThreshold: 0.5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -97,12 +97,12 @@ Material:
     - _Parallax: 0.02
     - _PosterizeSteps: 2
     - _PosterizeStrength: 0
-    - _RampSmoothness: 0.372
-    - _RampThreshold: 0.07
+    - _RampSmoothness: 0.3
+    - _RampThreshold: 0.1
     - _RimPower: 12
     - _RimStrength: 0.2
     - _ScreenSpaceHalftone: 0
-    - _ShadowBands: 3.07
+    - _ShadowBands: 2
     - _ShadowStrength: 0.11
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

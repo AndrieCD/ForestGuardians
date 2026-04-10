@@ -19,12 +19,17 @@ public enum StatType
     Shielding
 }
 
+[Serializable]
 public class Sc_StatEffect
 {
-    public readonly StatType TargetStat;
-    public readonly float Value;
-    public readonly StatModType Type;   // 0 = Flat, 1 = PercentAdd, 2 = PercentMult
-    public readonly float Duration;
+    // Make fields non-readonly so Unity can serialize and display them in the Inspector
+    public StatType TargetStat;
+    public float Value;
+    public StatModType Type;   // Flat, Percent
+    public float Duration = float.PositiveInfinity;
+
+    // Parameterless constructor is helpful for Unity serialization / default-initialized entries in the inspector
+    public Sc_StatEffect() { }
 
     public Sc_StatEffect(StatType stat, float value, StatModType type, float duration = float.PositiveInfinity)
     {

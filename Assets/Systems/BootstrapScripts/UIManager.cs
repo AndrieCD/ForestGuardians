@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour
 
         // HUD
         if (HUDCanvas != null)
-            HUDCanvas.SetActive(state == GameState.Playing);
+            HUDCanvas.SetActive(state == GameState.Playing || state == GameState.Paused);
 
         // Pause menu
         if (PauseMenuCanvas != null)
@@ -48,5 +48,31 @@ public class UIManager : MonoBehaviour
 
         // Rewards Panel
         // ...
+    }
+
+
+
+
+    public void RegisterHUD(GameObject hud)
+    {
+        HUDCanvas = hud;
+        UpdateUI(GameManager.Instance.CurrentState);
+    }
+
+    public void RegisterPauseMenu(GameObject pauseMenu)
+    {
+        PauseMenuCanvas = pauseMenu;
+        UpdateUI(GameManager.Instance.CurrentState);
+    }
+
+    public void RegisterMainMenu(GameObject mainMenu)
+    {
+        MainMenuCanvas = mainMenu;
+        UpdateUI(GameManager.Instance.CurrentState);
+    }
+
+    public void UnregisterHUD(GameObject hud)
+    {
+        if (HUDCanvas == hud) HUDCanvas = null;
     }
 }

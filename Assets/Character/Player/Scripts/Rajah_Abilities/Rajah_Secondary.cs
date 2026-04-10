@@ -8,7 +8,7 @@ public class Rajah_Secondary : Sc_BaseAbility
     {
         //projectilePrefab = Resources.Load<GameObject>("FeatherPrototype");
         projectilePrefab = _AbilityData.ProjectileModel;
-        _Cooldown = 1 / user.AttackSpeed.Value( );
+        _Cooldown = 1 / user.Stats.AttackSpeed.Value( );
     }
 
     public override void OnEquip(Mb_CharacterBase user)
@@ -26,7 +26,7 @@ public class Rajah_Secondary : Sc_BaseAbility
         CreateProjectile(user);
 
         if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerSecondaryAttack( );
+            guardian.GuardianAnimator?.TriggerSecondaryAttack();
     }
 
     private void CreateProjectile(Mb_CharacterBase user)
@@ -66,7 +66,7 @@ public class Rajah_Secondary : Sc_BaseAbility
             Mb_Projectile mb_Projectile = projectileInstance.GetComponent<Mb_Projectile>( );
             if (mb_Projectile != null)
             {
-                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ));
+                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ));
                 // Roll for critical strike
                 damage = ApplyCriticalStrike(damage, user);
                 mb_Projectile.SetDamageAmount(damage);
@@ -91,12 +91,12 @@ public class Rajah_Secondary : Sc_BaseAbility
     private float ApplyCriticalStrike(float baseDamage, Mb_CharacterBase user)
     {
         // CriticalChance is stored as a percentage (e.g. 10 = 10%), so divide by 100
-        float critChance = user.CriticalChance.Value( ) / 100f;
+        float critChance = user.Stats.CriticalChance.Value( ) / 100f;
         float roll = Random.value; // Random float between 0.0 and 1.0
 
         if (roll <= critChance)
         {
-            float critMultiplier = user.CriticalDamage.Value( ) / 100f;
+            float critMultiplier = user.Stats.CriticalDamage.Value( ) / 100f;
             Debug.Log($"Critical Strike! Multiplier: {critMultiplier}x");
             return baseDamage * critMultiplier;
         }

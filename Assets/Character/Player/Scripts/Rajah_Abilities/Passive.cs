@@ -11,7 +11,6 @@ public class Passive_Ability : Sc_BaseAbility
     {
 
         // Debug log to confirm activation
-        Debug.Log($"{user.name} has equipped {this._AbilityData.AbilityName}, increasing Max Health by 20%.");
     }
 
     // 3. Called when Character dies or ability is swapped (Cleanup)
@@ -19,6 +18,5 @@ public class Passive_Ability : Sc_BaseAbility
     {
         
         // Debug log to confirm deactivation
-        Debug.Log($"{user.name} has unequipped {this._AbilityData.AbilityName}, removing Max Health bonus.");
     }
 }

@@ -1,156 +1,120 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Base class for all CuBot enemy types.
+/// Reads from SO_CuBots to populate Stats and Health via the component system.
+///
+/// Uses object pooling — instead of being destroyed on death, CuBots are
+/// deactivated and Reset() when reactivated from the pool.
+///
+/// Derived classes: Mb_Chopper, Mb_Hunter, Mb_Minny, etc.
+/// </summary>
 public class MB_CuBotBase : Mb_CharacterBase
 {
     [Header("CuBot Template")]
     [SerializeField] protected SO_CuBots _CuBotTemplate;
 
+    // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
+    private bool _isInitialized = false;
 
     #region Events
-    // EVENTS
-    public static event Action OnCuBotSpawn; // Event triggered when a CuBot spawns, can be used to update UI, trigger effects, etc.
-    public static event Action OnCuBotDeath; // Event triggered when a CuBot dies, can be used to update UI, trigger effects, etc.
+    // Static events so WaveManager can listen without a direct reference to each CuBot
+    public static event Action OnCuBotSpawn;
+    public static event Action OnCuBotDeath;
     #endregion
 
-    #region Abilities
-    protected Sc_BaseAbility _PrimaryAttack;
-    #endregion
-
-
-    #region Initializations
-    protected override void InitializeFromTemplate( )
+    protected override void Awake()
     {
-        if (_CuBotTemplate == null) return;
+        // Base Awake fetches Stats, Health, Abilities, Movement components
+        // then calls InitializeFromTemplate()
+        base.Awake();
+        _isInitialized = true;
+    }
+
+    private void OnEnable()
+    {
+        OnCuBotSpawn?.Invoke();
+
+        // Guard: skip Reset on the very first enable because Awake hasn't run yet.
+        // On first spawn, Awake handles initialization. On every pool reuse after
+        // that, Reset() re-runs so the CuBot starts clean.
+        if (_isInitialized)
+            Reset();
+    }
+
+    /// <summary>
+    /// Populates stats and health from the CuBot SO.
+    /// Called automatically by Mb_CharacterBase.Awake() on first spawn.
+    /// Also called by Reset() on every subsequent pool reuse.
+    /// </summary>
+    protected override void InitializeFromTemplate()
+    {
+        if (_CuBotTemplate == null)
+        {
+            Debug.LogError($"[MB_CuBotBase] No SO_CuBots template assigned on {gameObject.name}.");
+            return;
+        }
 
         _CharacterName = _CuBotTemplate.name;
 
-        MaxHealth = new Sc_Stat(_CuBotTemplate.MaxHealth);
-        HealthRegen = new Sc_Stat(_CuBotTemplate.HealthRegen);
-        MoveSpeed = new Sc_Stat(_CuBotTemplate.MoveSpeed);
-        AttackSpeed = new Sc_Stat(_CuBotTemplate.AttackSpeed);
-        AttackPower = new Sc_Stat(_CuBotTemplate.AttackPower);
-        AbilityPower = new Sc_Stat(_CuBotTemplate.AbilityPower);
-        CooldownReduction = new Sc_Stat(_CuBotTemplate.CooldownReduction);
-        CriticalChance = new Sc_Stat(_CuBotTemplate.CriticalChance);
-        CriticalDamage = new Sc_Stat(_CuBotTemplate.CriticalDamage);
-        Lifesteal = new Sc_Stat(_CuBotTemplate.LifeSteal);
-        Shielding = new Sc_Stat(_CuBotTemplate.Shielding);
+        // Clear any leftover stat effects from the previous wave before repopulating
+        Stats.RemoveAllModifiers();
 
-        _CurrentHealth = MaxHealth.Value( );
-        IsDead = false;
-        InitializeAbilities( );
+        // Repopulate stats from the ScriptableObject base values
+        Stats.BuildFromTemplate(_CuBotTemplate);
+
+        // Restore full health and clear the dead flag.
+        // Must happen AFTER Stats.BuildFromTemplate() so MaxHealth is ready.
+        Health.Initialize();
+
+        // Unsubscribe before resubscribing to avoid stacking duplicate listeners
+        // across multiple pool reuses
+        Health.OnDeath -= HandleDeath;
+        Health.OnDeath += HandleDeath;
+
+        // Let derived classes assign their specific ability
+        AssignAbilities();
     }
 
-    private void InitializeAbilities( )
+    /// <summary>
+    /// Override in derived CuBot classes to assign their primary attack.
+    /// Called every time InitializeFromTemplate() runs, including pool reuses.
+    /// </summary>
+    protected virtual void AssignAbilities()
     {
-        // Equip Abilities (Starts Passives)
-        _PrimaryAttack?.OnEquip(this);
-    }
-    #endregion
-
-
-    #region Wave Scaling
-    // Called by WaveManager right after activating this CuBot from the pool.
-    // waveNumber is 0-indexed (wave 0 = no scaling, wave 1 = first scale-up, etc.)
-    public void ApplyWaveScaling(int waveNumber)
-    {
-        if (_CuBotTemplate == null || waveNumber <= 0) return;
-
-        // We scale HP and ATK using compound growth: base * (1 + rate)^wave, capped at max.
-        // This matches Table 12 in the thesis design document.
-        MaxHealth.BaseValue = ScaleStat(_CuBotTemplate.MaxHealth, _CuBotTemplate.MaxHealthScaling, waveNumber);
-        AttackPower.BaseValue = ScaleStat(_CuBotTemplate.AttackPower, _CuBotTemplate.AttackPowerScaling, waveNumber);
-
-        // Only scale AP if this CuBot type uses it (e.g. Bernie, Toxion)
-        if (_CuBotTemplate.AbilityPower > 0)
-        {
-            AbilityPower.BaseValue = ScaleStat(_CuBotTemplate.AbilityPower, _CuBotTemplate.AbilityPowerScaling, waveNumber);
-        }
-
-        // After scaling MaxHealth, also set current health to the new max (fresh spawn)
-        _CurrentHealth = MaxHealth.Value( );
+        // Base has no ability — derived classes override this
     }
 
-    // Applies compound growth capped at a maximum value.
-    // Formula: scaledValue = baseValue * (1 + growthRate)^waveNumber
-    private float ScaleStat(float baseValue, float growthRate, int waveNumber)
+    /// <summary>
+    /// Resets the CuBot fully so it's clean for reuse from the pool.
+    /// </summary>
+    protected virtual void Reset()
     {
-        float scaled = baseValue * Mathf.Pow(1f + growthRate, waveNumber);
-        return scaled;
-    }
-    #endregion
-
-
-    #region OnEnable/OnDisable
-    private void OnEnable( )
-    {
-        //Mb_WaveManager.OnWaveEnd += LevelUp;
-        OnCuBotSpawn?.Invoke( );
-        // Reset the CuBot's state when it is enabled (spawned)
-        Reset( );
+        InitializeFromTemplate();
     }
 
-    #endregion
-
-
-    // For prototyping, CuBot takes damage from projectiles on collision //
-    private void OnCollisionEnter(Collision collision)
+    private void HandleDeath()
     {
-        Mb_Projectile projectile = collision.gameObject.GetComponent<Mb_Projectile>( );
-        if (projectile == null) return;
-
-        TakeDamage(projectile.GetDamageAmount( ));
-    }
-
-    protected void TryUsePrimaryAttack( )
-    {
-        _PrimaryAttack?.Activate(this);
-    }
-
-    protected override void Die( )
-    {
-        base.Die( );
-        gameObject.SetActive(false);    // Deactivate the CuBot GameObject in the pool instead of destroying it, so it can be reused later.
+        gameObject.SetActive(false);
         OnCuBotDeath?.Invoke();
     }
 
-
-    // Reset restores the character to its initial state, including health and modifiers. Can be called when respawning.
-    protected virtual void Reset( )
+    // For prototyping: CuBot takes damage when a projectile collides with it
+    private void OnCollisionEnter(Collision collision)
     {
-        InitializeFromTemplate( );
+        Mb_Projectile projectile = collision.gameObject.GetComponent<Mb_Projectile>();
+        if (projectile == null) return;
+
+        Health.TakeDamage(projectile.GetDamageAmount());
     }
 
-
-    //protected override void LevelUp( )
-    //{
-    //    _CharacterLevel++;
-    //    Debug.Log($"{_CharacterName} leveled up to level {_CharacterLevel}!");
-
-    //    foreach (var statType in _StatScaling.Keys)
-    //    {
-    //        float scalingAmount = _StatScaling[statType];   // in percentage
-    //        if (scalingAmount != 0)
-    //        {
-    //            // Increase the base value of the stat according to the scaling amount
-    //            switch (statType)
-    //            {
-    //                case StatType.MaxHealth:
-    //                    MaxHealth.BaseValue *= ( 1 + scalingAmount );
-    //                    break;
-    //                case StatType.AttackPower:
-    //                    AttackPower.BaseValue *= ( 1 + scalingAmount );
-    //                    break;
-    //                case StatType.AbilityPower:
-    //                    AbilityPower.BaseValue *= ( 1 + scalingAmount );
-    //                    break;
-
-    //            }
-    //        }
-
-    //    }
-    //}
-
-
+    /// <summary>
+    /// Called from derived CuBot AI logic to fire the primary attack.
+    /// Routed through AbilityController so pause blocking applies automatically.
+    /// </summary>
+    protected void TryUsePrimaryAttack()
+    {
+        Abilities.ActivatePrimaryAsAI();
+    }
 }

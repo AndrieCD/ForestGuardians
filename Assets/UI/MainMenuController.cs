@@ -5,8 +5,9 @@ public class MainMenuController : MonoBehaviour
 {
     public void OnPlayClicked( )
     {
+
         GameManager.Instance.ChangeState(GameState.LoadingStage);
-        SceneManager.LoadScene("TestScene");
+        SceneManager.LoadScene("Stage1");
 
         Debug.Log("Play button clicked - loading stage...");
     }

@@ -8,8 +8,8 @@ public class Sc_ChopperMeleeAttack : Sc_BaseAbility
     public Sc_ChopperMeleeAttack(SO_Ability abilityData, Mb_CharacterBase user)
         : base(abilityData, user)
     {
-        _Cooldown = 1f / user.AttackSpeed.Value( );
-        _Damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.AttackPower.Value( ));
+        _Cooldown = 1f / user.Stats.AttackSpeed.Value( );
+        _Damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ));
     }
 
     public override void Activate(Mb_CharacterBase user)

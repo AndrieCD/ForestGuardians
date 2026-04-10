@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8162656911966494678}
   - component: {fileID: 4575251199669182538}
   m_Layer: 5
-  m_Name: Wave
+  m_Name: TopHUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 910570455770006415}
   - component: {fileID: 2535940738932902859}
   m_Layer: 5
-  m_Name: GuardianContainer
+  m_Name: PrimaryHUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,14 +278,14 @@ RectTransform:
   m_GameObject: {fileID: 7308928034134497061}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10.879768, y: 2.334156, z: 2.334156}
+  m_LocalScale: {x: 8.200734, y: 2.334156, z: 2.334156}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4347244177226938432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -366, y: -372}
+  m_AnchoredPosition: {x: -511, y: -396}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &910570455770006415

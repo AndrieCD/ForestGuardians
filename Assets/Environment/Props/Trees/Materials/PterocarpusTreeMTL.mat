@@ -85,7 +85,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
-    - _HalftoneScale: 38
+    - _HalftoneScale: 100
     - _HalftoneSoftness: 0.001
     - _HalftoneStrength: 1.03
     - _HalftoneThreshold: 0

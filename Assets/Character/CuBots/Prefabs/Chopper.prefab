@@ -389,6 +389,9 @@ GameObject:
   - component: {fileID: 5565989384772844910}
   - component: {fileID: 8336990304729591145}
   - component: {fileID: 8549838830980014889}
+  - component: {fileID: 4605224199310148109}
+  - component: {fileID: 3811971333214390839}
+  - component: {fileID: 7922363256464047793}
   - component: {fileID: -1564925470065923901}
   - component: {fileID: -755259738969307294}
   m_Layer: 6
@@ -397,7 +400,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5565989384772844910
 Transform:
   m_ObjectHideFlags: 0
@@ -450,6 +453,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc_ChopperController
   _CuBotTemplate: {fileID: 11400000, guid: f89a80ebf3b37ef46aa9946281a77d64, type: 2}
+--- !u!114 &4605224199310148109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105497819398190046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a2ef08471e01c74f915df084bd64551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_StatBlock
+--- !u!114 &3811971333214390839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105497819398190046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e7fc9a88e17174fa1e0ef2fca3d549, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_HealthComponent
+--- !u!114 &7922363256464047793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105497819398190046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da5fc976ccb958a4db1ec680c7d16603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityController
 --- !u!65 &-1564925470065923901
 BoxCollider:
   m_ObjectHideFlags: 0
