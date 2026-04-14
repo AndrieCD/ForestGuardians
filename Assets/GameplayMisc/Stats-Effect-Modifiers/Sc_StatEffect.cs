@@ -12,7 +12,7 @@ public enum StatType
     AttackSpeed ,
     AttackPower,
     AbilityPower ,
-    CooldownReduction,
+    Haste,
     CriticalChance,
     CriticalDamage,
     Lifesteal,

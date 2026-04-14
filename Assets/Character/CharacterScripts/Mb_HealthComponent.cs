@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -20,6 +22,19 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     #region Runtime State   //----------------------------------------
 
     public float CurrentHealth { get; private set; }
+    private List<Sc_ShieldInstance> _shields = new List<Sc_ShieldInstance>();
+
+    public float CurrentShield
+    {
+        get
+        {
+            float total = 0;
+            foreach (var s in _shields)
+                total += s.CurrentValue;
+            return total;
+        }
+    }
+
     public bool IsDead { get; private set; }
 
     #endregion              //----------------------------------------
@@ -29,6 +44,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     // UI, sound, and VFX should subscribe to these instead of polling CurrentHealth
     public event Action<float, float> OnHealthChanged;  // (currentHealth, maxHealth)
+    public event Action<float> OnShieldChanged;  // (currentShield
     public event Action OnDeath;
 
     #endregion              //----------------------------------------
@@ -51,7 +67,11 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         }
 
         IsDead = false;
-        CurrentHealth = _statBlock.MaxHealth.Value();
+        CurrentHealth = _statBlock.MaxHealth.GetValue();
+
+        // Invoke OnChanged events to initialize UI and other listeners with the correct starting values
+        OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
+        OnShieldChanged?.Invoke(CurrentShield);
     }
 
 
@@ -65,12 +85,17 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     {
         if (IsDead) return;
 
-        CurrentHealth -= amount;
-        CurrentHealth = Mathf.Max(CurrentHealth, 0f); // Clamp so health never goes below zero
+        float remainingDamage = AbsorbWithShields(amount);
 
-        Debug.Log($"[{gameObject.name}] took {amount} damage. Health: {CurrentHealth}/{_statBlock.MaxHealth.Value()}");
+        if (remainingDamage > 0)
+        {
+            CurrentHealth -= remainingDamage;
+            CurrentHealth = Mathf.Max(CurrentHealth, 0f);
 
-        OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.Value());
+            OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
+        }
+
+        Debug.Log($"[{gameObject.name}] took {amount} damage. Remaining HP: {CurrentHealth}");
 
         if (CurrentHealth <= 0f)
             Die();
@@ -84,9 +109,9 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     {
         if (IsDead) return;
 
-        CurrentHealth = Mathf.Min(CurrentHealth + amount, _statBlock.MaxHealth.Value());
+        CurrentHealth = Mathf.Min(CurrentHealth + amount, _statBlock.MaxHealth.GetValue());
 
-        OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.Value());
+        OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
     }
 
     #endregion          //----------------------------------------  
@@ -103,5 +128,59 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         Debug.Log($"[{gameObject.name}] has died.");
         OnDeath?.Invoke();
     }
-    
+
+
+
+    // SHIELD API
+    public void AddShield(float amount, float duration)
+    {
+        if (amount <= 0) return;
+
+        var shield = new Sc_ShieldInstance(amount, duration);
+        _shields.Add(shield);
+
+        if (duration != float.PositiveInfinity)
+            StartCoroutine(HandleShieldDuration(shield));
+
+        OnShieldChanged?.Invoke(CurrentShield);
+    }
+    private IEnumerator HandleShieldDuration(Sc_ShieldInstance shield)
+    {
+        yield return new WaitForSeconds(shield.Duration);
+        _shields.Remove(shield);
+
+        OnShieldChanged?.Invoke(CurrentShield);
+    }
+    private float AbsorbWithShields(float damage)
+    {
+        float remainingDamage = damage;
+
+        // Consume shields in order (FIFO — or reverse if you want LIFO behavior)
+        for (int i = 0; i < _shields.Count && remainingDamage > 0; i++)
+        {
+            var shield = _shields[i];
+
+            float absorbed = Mathf.Min(shield.CurrentValue, remainingDamage);
+            shield.CurrentValue -= absorbed;
+            remainingDamage -= absorbed;
+
+            if (shield.CurrentValue <= 0)
+            {
+                _shields.RemoveAt(i);
+                i--;
+            }
+        }
+
+        OnShieldChanged?.Invoke(CurrentShield);
+
+        return remainingDamage;
+    }
+
+    private float GetMaxShield()
+    {
+        float total = 0;
+        foreach (var s in _shields)
+            total += s.MaxValue;
+        return total;
+    }
 }

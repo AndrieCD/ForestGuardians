@@ -21,7 +21,7 @@ public class Mb_StatBlock : MonoBehaviour
     public Sc_Stat AttackSpeed { get; private set; }
     public Sc_Stat AttackPower { get; private set; }
     public Sc_Stat AbilityPower { get; private set; }
-    public Sc_Stat CooldownReduction { get; private set; }
+    public Sc_Stat Haste { get; private set; }
     public Sc_Stat CriticalChance { get; private set; }
     public Sc_Stat CriticalDamage { get; private set; }
     public Sc_Stat Lifesteal { get; private set; }
@@ -43,40 +43,39 @@ public class Mb_StatBlock : MonoBehaviour
     // Event fired whenever any stat changes — UI or ability scripts can subscribe
     public event Action OnStatsChanged;
 
-
     #region Build From Template         //----------------------------------------
 
     public void BuildFromTemplate(SO_Guardian template)
     {
-        MaxHealth = new Sc_Stat(template.MaxHealth);
-        HealthRegen = new Sc_Stat(template.HealthRegen);
-        MoveSpeed = new Sc_Stat(template.MoveSpeed);
-        AttackSpeed = new Sc_Stat(template.AttackSpeed);
-        AttackPower = new Sc_Stat(template.AttackPower);
-        AbilityPower = new Sc_Stat(template.AbilityPower);
-        CooldownReduction = new Sc_Stat(template.CooldownReduction);
-        CriticalChance = new Sc_Stat(template.CriticalChance);
-        CriticalDamage = new Sc_Stat(template.CriticalDamage);
-        Lifesteal = new Sc_Stat(template.LifeSteal);
-        Shielding = new Sc_Stat(template.Shielding);
-        JumpPower = new Sc_Stat(8f); // TODO: move to SO
+        MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
+        HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
+        MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
+        AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
+        AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
+        AbilityPower = new Sc_Stat(template.AbilityPower, template.AbilityPowerScaling);
+        Haste = new Sc_Stat(template.Haste, template.HasteScaling);
+        CriticalChance = new Sc_Stat(template.CriticalChance, template.CriticalChanceScaling);
+        CriticalDamage = new Sc_Stat(template.CriticalDamage, template.CriticalDamageScaling);
+        Lifesteal = new Sc_Stat(template.LifeSteal, template.LifeStealScaling);
+        //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
+        JumpPower = new Sc_Stat(template.JumpPower, 0f); 
         BuildLookup();
     }
 
 
     public void BuildFromTemplate(SO_CuBots template)
     {
-        MaxHealth = new Sc_Stat(template.MaxHealth);
-        HealthRegen = new Sc_Stat(template.HealthRegen);
-        MoveSpeed = new Sc_Stat(template.MoveSpeed);
-        AttackSpeed = new Sc_Stat(template.AttackSpeed);
-        AttackPower = new Sc_Stat(template.AttackPower);
-        AbilityPower = new Sc_Stat(template.AbilityPower);
-        CooldownReduction = new Sc_Stat(template.CooldownReduction);
-        CriticalChance = new Sc_Stat(template.CriticalChance);
-        CriticalDamage = new Sc_Stat(template.CriticalDamage);
-        Lifesteal = new Sc_Stat(template.LifeSteal);
-        Shielding = new Sc_Stat(template.Shielding);
+        MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
+        HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
+        MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
+        AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
+        AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
+        AbilityPower = new Sc_Stat(template.AbilityPower, template.AbilityPowerScaling);
+        Haste = new Sc_Stat(template.Haste, template.HasteScaling);
+        CriticalChance = new Sc_Stat(template.CriticalChance, template.CriticalChanceScaling);
+        CriticalDamage = new Sc_Stat(template.CriticalDamage, template.CriticalDamageScaling);
+        Lifesteal = new Sc_Stat(template.LifeSteal, template.LifeStealScaling);
+        //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
         // JumpPower omitted — CuBots don't jump
         BuildLookup();
     }
@@ -94,7 +93,7 @@ public class Mb_StatBlock : MonoBehaviour
             { StatType.AttackSpeed,       AttackSpeed       },
             { StatType.AttackPower,       AttackPower       },
             { StatType.AbilityPower,      AbilityPower      },
-            { StatType.CooldownReduction, CooldownReduction },
+            { StatType.Haste, Haste },
             { StatType.CriticalChance,    CriticalChance    },
             { StatType.CriticalDamage,    CriticalDamage    },
             { StatType.Lifesteal,         Lifesteal         },
@@ -103,6 +102,24 @@ public class Mb_StatBlock : MonoBehaviour
     }
 
     #endregion                  //----------------------------------------
+
+
+    #region Scaling API       //----------------------------------------
+    public void LevelUpStats(int level)
+    {
+        // Access stat scaling arrays by level (minus 1 for 0-based indexing) from the SO and update each stat's BaseValue
+        MaxHealth.BaseValue *= 1 + MaxHealth._scalingPerLevel * (level - 1);
+        HealthRegen.BaseValue *= 1 + HealthRegen._scalingPerLevel * (level - 1);
+        MoveSpeed.BaseValue *= 1 + MoveSpeed._scalingPerLevel * (level - 1);
+        AttackSpeed.BaseValue *= 1 + AttackSpeed._scalingPerLevel * (level - 1);
+        AttackPower .BaseValue *= 1 + AttackPower._scalingPerLevel * (level - 1);
+        AbilityPower.BaseValue *= 1 + AbilityPower._scalingPerLevel * (level - 1);
+        Haste.BaseValue *= 1 + Haste._scalingPerLevel * (level - 1);
+        CriticalChance.BaseValue *= 1 + CriticalChance._scalingPerLevel * (level - 1);
+        CriticalDamage.BaseValue *= 1 + CriticalDamage._scalingPerLevel * (level - 1);
+        Lifesteal.BaseValue *= 1 + Lifesteal._scalingPerLevel * (level - 1);
+    }
+    #endregion
 
 
     #region Modifier API        //----------------------------------------
@@ -178,7 +195,7 @@ public class Mb_StatBlock : MonoBehaviour
         AttackSpeed?.Effects.Clear();
         AttackPower?.Effects.Clear();
         AbilityPower?.Effects.Clear();
-        CooldownReduction?.Effects.Clear();
+        Haste?.Effects.Clear();
         CriticalChance?.Effects.Clear();
         CriticalDamage?.Effects.Clear();
         Lifesteal?.Effects.Clear();

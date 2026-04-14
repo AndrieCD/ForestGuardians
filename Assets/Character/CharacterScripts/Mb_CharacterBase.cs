@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -14,13 +15,18 @@ public abstract class Mb_CharacterBase : MonoBehaviour
 
     [Header("Identity")]
     protected string _CharacterName;
-
+    protected int _CharacterLevel = 1;  // start level 1, reduce by 1 for array indexing
+    protected int _MaxLevel = 15;     // max level 15, reduce by 1 for array indexing
 
     // Component references — fetched once in Awake, used everywhere
     public Mb_StatBlock Stats { get; private set; }
     public Mb_HealthComponent Health { get; private set; }
     public Mb_AbilityController Abilities { get; private set; }
     public Mb_Movement Movement { get; private set; }
+
+    #region EVENTS
+    public event Action<int> OnLevelUp;
+    #endregion
 
 
     protected virtual void Awake()
@@ -45,5 +51,23 @@ public abstract class Mb_CharacterBase : MonoBehaviour
     /// Stats and Health from their ScriptableObject template.
     /// </summary>
     protected abstract void InitializeFromTemplate();
-    
+
+
+    public void LevelUp()
+    {
+        if (_CharacterLevel >= _MaxLevel)
+        {
+            Debug.LogWarning($"[{_CharacterName}] Already at max level {_MaxLevel}.");
+            return;
+        }
+        _CharacterLevel++;
+        Debug.Log($"[{_CharacterName}] Leveled up to {_CharacterLevel}!");
+
+
+        OnLevelUp?.Invoke(_CharacterLevel);
+        Stats.LevelUpStats(_CharacterLevel);
+    }
+
+
+
 }

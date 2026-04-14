@@ -13,6 +13,9 @@
 
 using System.Collections.Generic;
 
+/// <summary>
+/// Fight or Flight : When below 40% HP, gain 50 - 200 AP and ATK. Gain 50 HST, 50% AS and MS when below 20% HP.
+/// </summary>
 public class Augment_FightOrFlight : Sc_AugmentBase
 {
     // Which tier is currently active: 0 = none, 1 = below 40%, 2 = below 20%
@@ -87,20 +90,31 @@ public class Augment_FightOrFlight : Sc_AugmentBase
     // TODO: Scale these values with difficulty or guardian level when that system exists
     private Sc_Modifier BuildTier1Modifier()
     {
+        var APBonus = 50f;   // Base AP bonus at 40% HP
+        var ATKBonus = 50f;  // Base ATK bonus at 40% HP
+
+        var hpPercent = _Owner.Health.CurrentHealth / _Owner.Stats.MaxHealth.GetValue();
+
+        var minHpPercent = 0.20f; // Minimum HP percentage for scaling (20%)
+
+        // Scale the bonuses linearly between 50 flat at 40% HP and 200 flat at 20% HP
+        float scalingFactor = (0.40f - hpPercent) / (0.40f - minHpPercent);
+        float scaledAP = APBonus + (200f - APBonus) * scalingFactor;
+        float scaledATK = ATKBonus + (200f - ATKBonus) * scalingFactor;
+
         return new Sc_Modifier(
             "Fight or Flight — Tier 1",
             ModifierSource.Augment,
             new List<Sc_StatEffect>
             {
-                new Sc_StatEffect(StatType.AbilityPower,  50f, StatModType.Flat),
-                new Sc_StatEffect(StatType.AttackPower,   50f, StatModType.Flat),
+                new Sc_StatEffect(StatType.AbilityPower,  scaledAP, StatModType.Flat),
+                new Sc_StatEffect(StatType.AttackPower,   scaledATK, StatModType.Flat),
             }
         );
     }
 
 
     // Below 20% HP: +200 AP (flat), +200 ATK (flat), +50% AS, +50% MS
-    // TODO: Add HST (+50 flat) once StatType.Haste is added to the enum
     private Sc_Modifier BuildTier2Modifier()
     {
         return new Sc_Modifier(
@@ -108,11 +122,9 @@ public class Augment_FightOrFlight : Sc_AugmentBase
             ModifierSource.Augment,
             new List<Sc_StatEffect>
             {
-                new Sc_StatEffect(StatType.AbilityPower,  200f, StatModType.Flat),
-                new Sc_StatEffect(StatType.AttackPower,   200f, StatModType.Flat),
                 new Sc_StatEffect(StatType.AttackSpeed,   0.50f, StatModType.Percent),
                 new Sc_StatEffect(StatType.MoveSpeed,     0.50f, StatModType.Percent),
-                // TODO: new Sc_StatEffect(StatType.Haste, 50f, StatModType.Flat),
+                new Sc_StatEffect(StatType.Haste, 50f, StatModType.Flat),
             }
         );
     }

@@ -82,7 +82,7 @@ public class Mb_Movement : MonoBehaviour
         if (_isPaused) return;
         if (!_characterController.isGrounded) return;
 
-        float jumpPower = _statBlock.JumpPower.Value();
+        float jumpPower = _statBlock.JumpPower.GetValue();
         _verticalVelocity = jumpPower;
     }
 
@@ -96,7 +96,7 @@ public class Mb_Movement : MonoBehaviour
         }
 
         Vector2 moveInput = _playerController.GetMoveVector();
-        float moveSpeed = _statBlock.MoveSpeed.Value(); // Read fresh — catches augment changes mid-wave
+        float moveSpeed = _statBlock.MoveSpeed.GetValue(); // Read fresh — catches augment changes mid-wave
 
         Vector3 moveDir = transform.TransformDirection(
             new Vector3(moveInput.x, 0f, moveInput.y).normalized

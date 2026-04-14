@@ -1,151 +1,158 @@
-﻿using UnityEngine;
+﻿// Rajah_E_Ability.cs
+// [E] Feather Barrage — Rajah leaps backward, then fires a spread of feathers forward.
+// Leap direction is opposite the camera. Feathers fan out in a horizontal cone.
+// Scales with ATK and AP at current ability level.
 
-/// <summary>
-/// [E] Feather Barrage: Rajah leaps backward, then fires 5 feathers in a spread forward.
-/// </summary>
+using UnityEngine;
+
 public class Rajah_E_Ability : Sc_BaseAbility
 {
+    private const float LEAP_SPEED = 25f;
+    private const float LEAP_DURATION = 0.25f;
+    private const int FEATHER_COUNT = 5;
+    private const float SPREAD_ANGLE = 30f; // Total cone width — 15° left and right of center
+
     private Camera _cam;
 
-    private float _leapSpeed = 25f;
-    private float _leapDuration = 0.25f;
-    private int _featherCount = 5;
-    private float _spreadAngle = 30f; // Total cone width/angle, 15° left and right of center
+    // Cached once in OnEquip — avoids a scene search every activation
+    private Transform _projectileOrigin;
 
-    public Rajah_E_Ability(SO_Ability abilityObject, Mb_CharacterBase user)
-        : base(abilityObject, user)
+
+    public Rajah_E_Ability(SO_Ability abilityData, Mb_CharacterBase user)
+        : base(abilityData, user)
     {
         _cam = Camera.main;
-        _Cooldown = _AbilityData.Cooldown;
     }
+
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} equipped {_AbilityData.AbilityName}.");
-    }
+        // Cache the spawn point once — E fires multiple projectiles per use
+        // so avoiding repeated Find() calls matters more here than in Secondary
+        GameObject originObj = GameObject.Find("ProjectileOrigin");
+        if (originObj != null)
+            _projectileOrigin = originObj.transform;
+        else
+            Debug.LogError("[Rajah_E_Ability] 'ProjectileOrigin' GameObject not found in scene.");
 
-    public override void Activate(Mb_CharacterBase user)
-    {
-        if (!CheckCooldown()) return;
-
-        PlayAbilityAnimation(user);
-
-        LeapBackward(user);
-        FireFeatherSpread(user);
-        StartCooldown(user);
-    }
-
-    private static void PlayAbilityAnimation(Mb_CharacterBase user)
-    {
-        if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerSecondaryAttack();
+        Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} unequipped {_AbilityData.AbilityName}.");
+        Debug.Log($"[{user.name}] Unequipped {_AbilityData.AbilityName}.");
     }
 
-    // -------------------------------------------------------
 
-    /// <summary>
-    /// Calculates a leap direction opposite the camera's forward vector, applies a small upward kick, and tells the character's movement system to dash in that direction for a short duration.
-    /// </summary>
-    /// <param name="user"></param>
+    // Called when the player presses [E]
+    public override void Activate(Mb_CharacterBase user)
+    {
+        if (!CheckCooldown()) return;
+
+        LeapBackward(user);
+        FireFeatherSpread(user);
+        TriggerAbilityAnimation(user);
+
+        // E is an ability — cooldown is reduced by Haste, not AttackSpeed
+        StartCooldown(user, GetAbilityCooldown(user));
+    }
+
+
+    // Launches Rajah in the direction opposite the camera, with a small upward kick
     private void LeapBackward(Mb_CharacterBase user)
     {
-        // Get leap direction opposite the camera's forward vector, ignoring vertical component so we leap along the ground plane. 
-        Vector3 leapDirection = -_cam.transform.forward;
-        leapDirection.y = 0f;
-        leapDirection.Normalize( );
+        Vector3 leapDir = -_cam.transform.forward;
+        leapDir.y = 0f;
+        leapDir.Normalize();
 
-        // Safety fallback in case camera is pointing straight up/down
-        if (leapDirection == Vector3.zero)
-            leapDirection = -user.transform.forward;
+        // Fallback if camera is pointing straight up or down
+        if (leapDir == Vector3.zero)
+            leapDir = -user.transform.forward;
 
-        // Add a small upward kick so the leap feels like a jump, not a slide
-        leapDirection += Vector3.up * 0.4f;
-        leapDirection.Normalize( );
+        // Small upward kick so the leap feels like a jump rather than a ground slide
+        leapDir += Vector3.up * 0.4f;
+        leapDir.Normalize();
 
-        user.Movement.StartDash(leapDirection * _leapSpeed, _leapDuration);
+        user.Movement.StartDash(leapDir * LEAP_SPEED, LEAP_DURATION);
     }
 
-    /// <summary>
-    /// Spawns 5 feather projectiles in a fan shape, all flying toward where the player is aiming.
-    /// </summary>
-    /// <param name="user"></param>
+
+    // Spawns FEATHER_COUNT projectiles in a horizontal fan toward the aim target
     private void FireFeatherSpread(Mb_CharacterBase user)
     {
-        GameObject projectilePrefab = _AbilityData.ProjectileModel;
+        GameObject prefab = _AbilityData.ProjectileModel;
 
-        if (projectilePrefab == null)
+        if (prefab == null)
         {
-            Debug.LogWarning("Rajah_E_Ability: No ProjectileModel assigned on the SO_Ability.");
+            Debug.LogWarning("[Rajah_E_Ability] No ProjectileModel assigned on SO_Ability.");
             return;
         }
 
-        // Where the projectiles spawn from
-        Transform origin = GameObject.Find("ProjectileOrigin").transform;
-
-        // Figure out where the player is aiming by raycasting from screen center
-        Vector3 aimTarget = GetAimTarget(origin.position);
-
-        // The main direction all feathers radiate out from
-        Vector3 centerDirection = ( aimTarget - origin.position ).normalized;
-
-        // Calculate damage once — all feathers deal the same amount for simplicity
-        float damagePerFeather = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ), user.Stats.AbilityPower.Value( ));
-
-        // Spawn each feather and tell them to ignore each other so they don't self-collide
-        GameObject[] spawnedFeathers = new GameObject[_featherCount];
-
-        for (int i = 0; i < _featherCount; i++)
+        if (_projectileOrigin == null)
         {
-            // Calculate this feather's horizontal angle offset within the cone
-            float normalizedPosition;
-            if (_featherCount == 1)
-            {
-                normalizedPosition = 0f;
-            } else
-            {
-                // Convert the feather index (i) into a value between 0 and 1.
-                normalizedPosition = (float)i / ( _featherCount - 1 );  // index divided by max index gives us a normalized position along the spread (0 to 1)
-            }
+            Debug.LogError("[Rajah_E_Ability] ProjectileOrigin is not cached.");
+            return;
+        }
 
-            // Get the angle for left and right edges of the cone
-            float leftEdgeAngle = -_spreadAngle / 2f;
-            float rightEdgeAngle = _spreadAngle / 2f;
+        Vector3 aimTarget = GetAimTarget();
+        Vector3 centerDir = (aimTarget - _projectileOrigin.position).normalized;
+        float damagePerFeather = _AbilityData.GetStat(
+            "Damage", CurrentLevel,
+            user.Stats.AttackPower.GetValue(),
+            user.Stats.AbilityPower.GetValue()
+        );
 
-            // Interpolate between the left and right edge angles based on the normalized position to get this feather's angle offset
-            float angleOffset = Mathf.Lerp(leftEdgeAngle, rightEdgeAngle, normalizedPosition);
+        // Store spawned instances so we can tell them to ignore each other's colliders
+        GameObject[] spawnedFeathers = new GameObject[FEATHER_COUNT];
 
-            // Rotate the center direction left/right by the offset
-            Vector3 featherDirection = Quaternion.AngleAxis(angleOffset, Vector3.up) * centerDirection;
-            Quaternion featherRotation = Quaternion.LookRotation(featherDirection);
+        for (int i = 0; i < FEATHER_COUNT; i++)
+        {
+            // Map feather index to a normalized 0–1 position across the spread
+            float t = (FEATHER_COUNT == 1) ? 0f : (float)i / (FEATHER_COUNT - 1);
 
-            spawnedFeathers[i] = GameObject.Instantiate(projectilePrefab, origin.position, featherRotation);
+            // Interpolate the angle offset from left edge to right edge of the cone
+            float angleOffset = Mathf.Lerp(-SPREAD_ANGLE / 2f, SPREAD_ANGLE / 2f, t);
+            Vector3 featherDir = Quaternion.AngleAxis(angleOffset, Vector3.up) * centerDir;
 
-            Mb_Projectile projectile = spawnedFeathers[i].GetComponent<Mb_Projectile>( );
+            spawnedFeathers[i] = GameObject.Instantiate(
+                prefab,
+                _projectileOrigin.position,
+                Quaternion.LookRotation(featherDir)
+            );
+
+            Mb_Projectile projectile = spawnedFeathers[i].GetComponent<Mb_Projectile>();
             if (projectile != null)
                 projectile.SetDamageAmount(damagePerFeather);
         }
 
+        // Prevent sibling feathers from colliding with each other mid-flight
+        for (int i = 0; i < spawnedFeathers.Length; i++)
+        {
+            for (int j = i + 1; j < spawnedFeathers.Length; j++)
+            {
+                Collider a = spawnedFeathers[i]?.GetComponent<Collider>();
+                Collider b = spawnedFeathers[j]?.GetComponent<Collider>();
+                if (a != null && b != null)
+                    Physics.IgnoreCollision(a, b);
+            }
+        }
     }
 
-    /// <summary>
-    /// Casts a ray from the center of the screen to find where the player is aiming. If it hits something, return that point. If it hits nothing, return a point far away in the direction of the ray.
-    /// </summary>
-    /// <param name="fallbackOrigin"></param> The point from which to cast the ray if we need a fallback direction (e.g. if the camera is looking at the sky and hits nothing, we still want to shoot forward instead of crashing or doing nothing)
-    /// <returns></returns> The world point the player is aiming at
-    private Vector3 GetAimTarget(Vector3 fallbackOrigin)
+
+    // Raycasts from screen center to find where the player is aiming
+    private Vector3 GetAimTarget()
     {
         Ray ray = _cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
-            return hit.point;
-
-        // If the ray hits nothing, aim far into the distance along the ray
-        return ray.origin + ray.direction * 100f;
+        return Physics.Raycast(ray, out RaycastHit hit, 1000f)
+            ? hit.point
+            : ray.origin + ray.direction * 100f;
     }
 
+
+    protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
+    {
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerEAbility();
+    }
 }

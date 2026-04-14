@@ -120,17 +120,17 @@ public class Mb_PlayerController : Mb_GuardianBase
     {
         GuardianName = _CharacterName;
         CurrentHealthValue = Health.CurrentHealth;
-        MaxHPValue = Stats.MaxHealth.Value();
-        HealthRegenValue = Stats.HealthRegen.Value();
-        MoveSpeedValue = Stats.MoveSpeed.Value();
-        AttackSpeedValue = Stats.AttackSpeed.Value();
-        AttackPowerValue = Stats.AttackPower.Value();
-        AbilityPowerValue = Stats.AbilityPower.Value();
-        CooldownReductionValue = Stats.CooldownReduction.Value();
-        CriticalChanceValue = Stats.CriticalChance.Value();
-        CriticalDamageValue = Stats.CriticalDamage.Value();
-        LifestealValue = Stats.Lifesteal.Value();
-        CurrentShieldValue = Stats.Shielding.Value();
+        MaxHPValue = Stats.MaxHealth.GetValue();
+        HealthRegenValue = Stats.HealthRegen.GetValue();
+        MoveSpeedValue = Stats.MoveSpeed.GetValue();
+        AttackSpeedValue = Stats.AttackSpeed.GetValue();
+        AttackPowerValue = Stats.AttackPower.GetValue();
+        AbilityPowerValue = Stats.AbilityPower.GetValue();
+        CooldownReductionValue = Stats.Haste.GetValue();
+        CriticalChanceValue = Stats.CriticalChance.GetValue();
+        CriticalDamageValue = Stats.CriticalDamage.GetValue();
+        LifestealValue = Stats.Lifesteal.GetValue();
+        //CurrentShieldValue = Stats.Shielding.Value();
     }
     #endregion
 }

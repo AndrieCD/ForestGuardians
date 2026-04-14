@@ -25,6 +25,21 @@ public class Mb_AbilityController : MonoBehaviour
     private Sc_BaseAbility _primaryAttack;
     private Sc_BaseAbility _secondaryAttack;
 
+    // Method to retrieve an ability by slot name, for UI display and other cases where we don't want to expose the fields directly
+    public Sc_BaseAbility GetAbilityBySlot(string slot)
+    {
+        return slot switch
+        {
+            "Passive" => _passiveAbility,
+            "Q" => _qAbility,
+            "E" => _eAbility,
+            "R" => _rAbility,
+            "Primary" => _primaryAttack,
+            "Secondary" => _secondaryAttack,
+            _ => null
+        };
+    }
+
     #endregion                  //----------------------------------------
 
 

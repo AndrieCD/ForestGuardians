@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: Q_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Sky Rend
+  Icon: {fileID: 0}
   Cooldown: 1
   ProjectileModel: {fileID: 0}
+  MaxLevel: 6
   ScalingStats:
   - StatName: Damage
     BaseValuePerLevel:
-    - 50
+    - 100
     ATKScalingPerLevel:
     - 0.15
     - 0.35

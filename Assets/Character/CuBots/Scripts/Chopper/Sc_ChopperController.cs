@@ -16,7 +16,7 @@ public class Sc_ChopperController : MB_CuBotBase
         _attackRange = _CuBotTemplate.AttackRange;
 
         _Agent = GetComponent<NavMeshAgent>();
-        _Agent.speed = Stats.MoveSpeed.Value();
+        _Agent.speed = Stats.MoveSpeed.GetValue();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)

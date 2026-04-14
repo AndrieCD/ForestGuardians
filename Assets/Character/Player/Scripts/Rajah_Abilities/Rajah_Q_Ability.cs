@@ -1,156 +1,167 @@
+// Rajah_Q_Ability.cs
+// [Q] Sky Rend — Rajah dashes forward, damaging all enemies he passes through.
+// Each enemy hit adds additional shielding on top of the base shield.
+// Shield value and damage both scale with ability level via SO_Ability.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// [Q]: Rajah dashes forward, damaging enemies he passes through.
-/// Each enemy hit grants a stack of shield that decays after a duration.
-/// </summary>
 public class Rajah_Q_Ability : Sc_BaseAbility
 {
+    // Dash movement values — tuned here, not in the SO (not level-scaled)
+    private const float DASH_SPEED = 50f;
+    private const float DASH_DURATION = 0.25f;
+
+    // Overlap sphere radius while dashing — adjust to match Rajah's character width
+    private const float HIT_RADIUS = 1.2f;
+
+    // How long the shield lasts after being granted
+    private const float SHIELD_DURATION = 4f;
+
+    // Each additional enemy hit beyond the first adds this fraction of the base shield
+    private const float SHIELD_PER_ENEMY_FRACTION = 0.25f;
+
+    // Tracks enemies already hit this dash so we don't damage them twice
+    private readonly HashSet<Collider> _hitThisDash = new HashSet<Collider>();
+
     private Camera _cam;
 
-    // --- Dash tuning ---
-    public float dashSpeed = 50f;
-    public float dashDuration = 0.25f;
+    private Mb_HealthComponent _HealthComponent;
 
-    // --- Hit detection tuning ---
-    // The overlap sphere radius around Rajah while dashing — adjust to match his character width
-    private float _hitRadius = 1.2f;
-
-    // --- Shield tuning ---
-    // How long the shield lasts before it disappears (in seconds)
-    private float _shieldDuration = 4f;
-    // Each enemy hit contributes 25% of the base shield value
-    private float _shieldPerEnemyFraction = 0.25f;
-
-    // Chapter 3 Table 8 — Sky Rend shield values per ability level
-    // Index 0 = level 1, index 5 = level 6
-    // TODO: Tie this to actual ability level once the upgrade system is in
-    private float[] _baseShieldPerLevel = { 150f, 200f, 250f, 300f, 350f, 400f };
-
-    // Chapter 3 Table 8 — Sky Rend AP shield scaling per level
-    private float[] _apShieldScalingPerLevel = { 0.70f, 0.85f, 1.00f, 1.15f, 1.50f, 2.00f };
-
-    // Tracks enemies already hit during this dash so we don't damage them twice
-    private HashSet<Collider> _hitThisDash = new HashSet<Collider>( );
-
-    public Rajah_Q_Ability(SO_Ability abilityObject, Mb_CharacterBase user)
-        : base(abilityObject, user)
+    public Rajah_Q_Ability(SO_Ability abilityData, Mb_CharacterBase user)
+        : base(abilityData, user)
     {
         _cam = Camera.main;
-        _Cooldown = _AbilityData.Cooldown;
     }
+
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} equipped {_AbilityData.AbilityName}.");
+        Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
+
+        _HealthComponent = user.GetComponent<Mb_HealthComponent>();
     }
+
+    public override void OnUnequip(Mb_CharacterBase user)
+    {
+        Debug.Log($"[{user.name}] Unequipped {_AbilityData.AbilityName}.");
+    }
+
 
     // Called when the player presses [Q]
     public override void Activate(Mb_CharacterBase user)
     {
         if (!CheckCooldown()) return;
 
-        PlayAbilityAnimation(user);
+        TriggerAbilityAnimation(user);
 
-        // Flatten camera forward to XZ so we dash horizontally, not into the ground
-        Vector3 dashDirection = _cam.transform.forward;
-        dashDirection.y = 0f;
-        dashDirection.Normalize();
+        // Flatten camera forward to XZ plane so the dash is always horizontal
+        Vector3 dashDir = _cam.transform.forward;
+        dashDir.y = 0f;
+        dashDir.Normalize();
 
-        if (dashDirection == Vector3.zero)
-            dashDirection = user.transform.forward;
+        // Fallback to character's own forward if camera direction collapses
+        if (dashDir == Vector3.zero)
+            dashDir = user.transform.forward;
 
-        // Start the movement
-        user.Movement.StartDash(dashDirection * dashSpeed, dashDuration);
+        user.Movement.StartDash(dashDir * DASH_SPEED, DASH_DURATION);
 
-        // Start polling for hits during the dash — needs to run on a MonoBehaviour
-        user.StartCoroutine(DashHitRoutine(user, dashDuration));
+        // Hit detection runs in a coroutine because it needs to poll every frame
+        user.StartCoroutine(DashHitRoutine(user));
 
-        StartCooldown(user);
-
-        Debug.Log($"{user.name} activated {_AbilityData.AbilityName}.");
+        // Q is an ability, so cooldown is reduced by Haste
+        StartCooldown(user, GetAbilityCooldown(user));
     }
 
-    private static void PlayAbilityAnimation(Mb_CharacterBase user)
-    {
-        //// PLAY ANIMATION
-        if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerQAbility();
-    }
 
-    public override void OnUnequip(Mb_CharacterBase user)
+    // Polls for enemy hits every frame during the dash.
+    // After the dash ends, calculates and applies the earned shield.
+    private IEnumerator DashHitRoutine(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} unequipped {_AbilityData.AbilityName}.");
-    }
+        ApplyBaseDashShield(user);
 
-    // -------------------------------------------------------
-
-    // Runs every frame while the dash is active.
-    // Checks for enemies overlapping Rajah's position and damages each one once.
-    // After the dash ends, calculates and applies the shield based on total enemies hit.
-    private IEnumerator DashHitRoutine(Mb_CharacterBase user, float duration)
-    {
-        _hitThisDash.Clear( );
+        _hitThisDash.Clear();
 
         float elapsed = 0f;
 
-        while (elapsed < duration)
+        while (elapsed < DASH_DURATION)
         {
-            // Check for any CuBot colliders touching Rajah's current position
-            Collider[] nearbyColliders = Physics.OverlapSphere(user.transform.position, _hitRadius);
+            Collider[] nearby = Physics.OverlapSphere(user.transform.position, HIT_RADIUS);
 
-            foreach (Collider col in nearbyColliders)
+            foreach (Collider col in nearby)
             {
-                // Skip if we already hit this enemy this dash
                 if (_hitThisDash.Contains(col)) continue;
 
-                MB_CuBotBase cuBot = col.GetComponent<MB_CuBotBase>( );
+                MB_CuBotBase cuBot = col.GetComponent<MB_CuBotBase>();
                 if (cuBot == null) continue;
 
-                // Deal damage — Sky Rend uses ATK and AP scaling from the SO
-                float damage = _AbilityData.GetStat("Damage", _currentAbilityLevel, user.Stats.AttackPower.Value( ), user.Stats.AbilityPower.Value( ));
+                // Damage scales with ATK and AP at current ability level — all values from SO
+                float damage = _AbilityData.GetStat(
+                    "Damage",
+                    CurrentLevel,
+                    user.Stats.AttackPower.GetValue(),
+                    user.Stats.AbilityPower.GetValue()
+                );
 
                 cuBot.Health.TakeDamage(damage);
-                _hitThisDash.Add(col); // Mark as hit so we don't hit them again mid-dash
+                _hitThisDash.Add(col);
 
-                Debug.Log($"Sky Rend hit {col.name} for {damage} damage.");
+                Debug.Log($"[Sky Rend] Hit {col.name} for {damage} damage.");
             }
 
             elapsed += Time.deltaTime;
-            yield return null; // Wait one frame, then check again
+            yield return null;
         }
 
-        // Dash is over — now reward shield based on how many enemies were hit
-        ApplyShield(user, _hitThisDash.Count);
+        ApplyPostDashShield(user, _hitThisDash.Count);
     }
 
-    private void ApplyShield(Mb_CharacterBase user, int enemiesHit)
+
+    // Calculates and applies the shield earned from the dash.
+    // Shield scales with enemies hit, ability level, and AP — all from the SO.
+    private void ApplyPostDashShield(Mb_CharacterBase user, int enemiesHit)
     {
         if (enemiesHit == 0) return;
 
-        // TODO: Replace index 0 with the actual ability level once upgrade system exists
-        int levelIndex = 0;
+        var health = user.GetComponent<Mb_HealthComponent>();
 
-        float baseShield = _baseShieldPerLevel[levelIndex];
-        float apScaling = _apShieldScalingPerLevel[levelIndex];
+        float baseShield = _AbilityData.GetStat(
+            "Shield",
+            CurrentLevel,
+            0f,
+            user.Stats.AbilityPower.GetValue()
+        );
 
-        // Additional shielding based on enemies hit
-        float bonusShield = baseShield * (enemiesHit * _shieldPerEnemyFraction);
-        float shieldAmount = bonusShield + _AbilityData.GetStat("Shield", _currentAbilityLevel, 0f, user.Stats.AbilityPower.Value( ));
+        float bonusShield = baseShield * (enemiesHit * SHIELD_PER_ENEMY_FRACTION);
 
-        // Apply shield as a temporary additive effect on the Shielding stat
-        Sc_StatEffect shieldEffect = new Sc_StatEffect(StatType.Shielding, shieldAmount, StatModType.Flat, _shieldDuration);
+        health.AddShield(bonusShield, SHIELD_DURATION);
 
-        // Apply shield modifier to the user
-        Sc_Modifier shieldModifier = new Sc_Modifier("Sky Rend Shield", 
-            ModifierSource.Ability,
-            new List<Sc_StatEffect> { shieldEffect},
-            _shieldDuration);
+        Debug.Log($"[Sky Rend] Granted {bonusShield} shield from {enemiesHit} enemies hit.");
+    }
 
-        user.Stats.AddModifier(shieldModifier);
+    // Default base shield, granted upon pressing Q even if no enemies are hit. Scales with level and AP but is unaffected by enemy hits.
+    private void ApplyBaseDashShield(Mb_CharacterBase user)
+    {
+        var health = user.GetComponent<Mb_HealthComponent>();
 
-        Debug.Log($"Sky Rend granted {shieldAmount} shield from {enemiesHit} enemies hit.");
+        float baseShield = _AbilityData.GetStat(
+            "Shield",
+            CurrentLevel,
+            0f,
+            user.Stats.AbilityPower.GetValue()
+        );
+
+        health.AddShield(baseShield, SHIELD_DURATION);
+
+        Debug.Log($"[Sky Rend] Granted base shield of {baseShield}.");
+    }
+
+
+    // Fires the Q ability animation on the guardian's animator
+    protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
+    {
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerQAbility();
     }
 }

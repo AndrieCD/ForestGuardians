@@ -130,6 +130,12 @@ public class Mb_RewardsManager : MonoBehaviour
             return;
         }
 
+
+        // Level up after wave end for stat scaling
+        _PlayerObject.GetComponent<Mb_CharacterBase>().LevelUp();
+
+
+
         OpenRewardsPanel(rewardType);
     }
 

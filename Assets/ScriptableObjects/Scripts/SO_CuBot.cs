@@ -20,12 +20,12 @@ public class SO_CuBots : ScriptableObject
     public float AttackSpeed = 1.0f;        // Attacks per second
     public float AttackPower = 100f;        // "Physical" attack damage
     public float AbilityPower = 80f;        // "Magical" ability damage
-    public float CooldownReduction = 0f;    // Percentage reduction in ability cooldowns
+    public float Haste = 0f;    // Percentage reduction in ability cooldowns
     public float CriticalChance = 0.0f;     // Chance to deal critical damage (0.0 to 1.0)
     public float CriticalDamage = 1.5f;     // Multiplier for critical damage
     // additional stats
     public float LifeSteal = 0f;            // Percentage of damage dealt returned as health
-    public float Shielding = 0f;            // Current shield value
+    //public float Shielding = 0f;            // Current shield value
 
 
     // Stat Scaling
@@ -35,9 +35,10 @@ public class SO_CuBots : ScriptableObject
     public float AttackSpeedScaling;        
     public float AttackPowerScaling;        
     public float AbilityPowerScaling;        
-    public float CooldownReductionScaling;    
+    public float HasteScaling;    
     public float CriticalChanceScaling;     
     public float CriticalDamageScaling;     
+    public float LifeStealScaling;
 
 
     [Header("Ability SObjects")]
