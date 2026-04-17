@@ -13,9 +13,42 @@ MonoBehaviour:
   m_Name: Q_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Sky Rend
-  Cooldown: 0
-  BaseDamage: 0
-  ATKScaling: 0
-  APScaling: 0
-  BaseHealing: 0
-  BaseShield: 0
+  Icon: {fileID: 0}
+  Cooldown: 1
+  ProjectileModel: {fileID: 0}
+  MaxLevel: 6
+  ScalingStats:
+  - StatName: Damage
+    BaseValuePerLevel:
+    - 100
+    ATKScalingPerLevel:
+    - 0.15
+    - 0.35
+    - 0.4
+    - 0.5
+    - 0.65
+    - 0.8
+    APScalingPerLevel:
+    - 0.6
+    - 0.65
+    - 0.7
+    - 0.9
+    - 1.1
+    - 1.5
+  - StatName: Shield
+    BaseValuePerLevel:
+    - 150
+    - 200
+    - 250
+    - 300
+    - 350
+    - 500
+    ATKScalingPerLevel:
+    - 0
+    APScalingPerLevel:
+    - 0.7
+    - 0.85
+    - 1
+    - 1.15
+    - 1.5
+    - 2

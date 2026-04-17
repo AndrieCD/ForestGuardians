@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Feathery Slash
   Cooldown: 0
-  BaseDamage: 0
-  ATKScaling: 1
-  APScaling: 0
-  BaseHealing: 0
-  BaseShield: 0
+  ProjectileModel: {fileID: 0}
+  ScalingStats:
+  - StatName: Damage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 1
+    APScalingPerLevel:
+    - 0

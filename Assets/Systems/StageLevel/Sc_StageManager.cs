@@ -12,6 +12,11 @@ public class Mb_StageManager : MonoBehaviour
     public static event Action OnStageEnd;
     #endregion
 
+    private void Awake( )
+    {
+        Cursor.visible = false;
+    }
+
     private void Start( )
     {
         StartStage( );
@@ -27,6 +32,8 @@ public class Mb_StageManager : MonoBehaviour
     private void StartStage()
     {
         Debug.Log($"Start Stage");
+
+        GameManager.Instance.ChangeState(GameState.Playing);
         OnStageStart?.Invoke( );
     }
 

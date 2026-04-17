@@ -19,8 +19,8 @@ public class Mb_WaveManager : MonoBehaviour
     bool IsWaveActive = false; // Flag to indicate if a wave is currently active
 
     // EVENTS
-    public static event Action OnWaveStart; // Event triggered at the start of a wave
-    public static event Action OnWaveEnd;   // Event triggered at the end of a wave
+    public static event Action<int> OnWaveStart; // Event triggered at the start of a wave
+    public static event Action<int> OnWaveEnd;   // Event triggered at the end of a wave
 
 
     private void Awake( )
@@ -51,12 +51,9 @@ public class Mb_WaveManager : MonoBehaviour
             if (!enemy.activeInHierarchy)
             {
                 ActiveEnemies.Remove(enemy);
-                Debug.Log($"Removing enemy from active list... {ActiveEnemies.Count} left");
                 break;
             }
         }
-
-        Debug.Log($"CuBot died. Checking active enemies... {ActiveEnemies.Count} left");
 
         // If there are no more active enemies, end the wave
         if (ActiveEnemies.Count == 0 && IsWaveActive)
@@ -114,7 +111,7 @@ public class Mb_WaveManager : MonoBehaviour
         // Start the wave
         CurrentWaveIndex++; // Increment the wave index to move to the next wave
         IsWaveActive = true; // Set the wave active flag to true
-        OnWaveStart?.Invoke( ); // Trigger the wave start event
+        OnWaveStart?.Invoke(CurrentWaveIndex); // Trigger the wave start event
 
         // Spawn wave
         StartCoroutine(SpawnWaveRoutine( ));
@@ -166,7 +163,7 @@ public class Mb_WaveManager : MonoBehaviour
         Debug.Log($"Wave {CurrentWaveIndex} cleared! Ending wave.");
         // End the wave
         IsWaveActive = false; // Set the wave active flag to false
-        OnWaveEnd?.Invoke( ); // Trigger the wave end event
+        OnWaveEnd?.Invoke(CurrentWaveIndex); // Trigger the wave end event
 
         // Transition to the wave resolution phase
         StartWaveResolutionPhase( );

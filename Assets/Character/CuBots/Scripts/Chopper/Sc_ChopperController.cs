@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Sc_ChopperController : MB_CuBotBase
 {
     [Header("Targeting")]
@@ -10,29 +9,31 @@ public class Sc_ChopperController : MB_CuBotBase
     private NavMeshAgent _Agent;
     private Transform _Target;
 
-    protected override void Awake( )
+    protected override void Awake()
     {
-        base.Awake( );
+        base.Awake();
 
         _attackRange = _CuBotTemplate.AttackRange;
 
-        _Agent = GetComponent<NavMeshAgent>( );
-        _Agent.speed = MoveSpeed.Value( );
+        _Agent = GetComponent<NavMeshAgent>();
+        _Agent.speed = Stats.MoveSpeed.GetValue();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             _Target = player.transform;
+    }
 
-        // Initialize attack ability
-        _PrimaryAttack = new Sc_ChopperMeleeAttack(
+    protected override void AssignAbilities()
+    {
+        Abilities.SetPrimarySlot(new Sc_ChopperMeleeAttack(
             _CuBotTemplate.PrimaryAttack,
             this
-        );
+        ));
     }
 
     private void Update( )
     {
-        if (IsDead || _Target == null) return;
+        if (Health.IsDead || _Target == null) return;
 
         float distance = Vector3.Distance(
             transform.position,

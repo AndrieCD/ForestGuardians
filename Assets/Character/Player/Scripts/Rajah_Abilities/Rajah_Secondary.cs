@@ -1,81 +1,100 @@
+// Rajah_Secondary.cs
+// [RMB] Feather Shot — fires a single feather projectile toward the crosshair.
+// Uses AttackSpeed for cooldown (basic attack, not an ability cooldown).
+// Scales damage with ATK at current ability level.
+//
+// Fires Passive_Ability.OnBasicAttackHit on each shot so Royal Plumage can grant stacks.
+
 using UnityEngine;
 
 public class Rajah_Secondary : Sc_BaseAbility
 {
-    GameObject projectilePrefab;
+    private GameObject _projectilePrefab;
 
-    // Constructor for initialization
-    public Rajah_Secondary(SO_Ability abilityObject, Mb_CharacterBase user) : base(abilityObject, user)
+    // Cached once in OnEquip — avoids a scene search every time the ability fires
+    private Transform _projectileOrigin;
+
+
+    public Rajah_Secondary(SO_Ability abilityData, Mb_CharacterBase user)
+        : base(abilityData, user)
     {
-        //projectilePrefab = Resources.Load<GameObject>("FeatherPrototype");
-        projectilePrefab = abilityObject.ProjectileModel;
-        _Cooldown = 1 / user.AttackSpeed.Value( );
+        _projectilePrefab = _AbilityData.ProjectileModel;
     }
 
-    // Called when the Player spawns (Setup Passive)
+
     public override void OnEquip(Mb_CharacterBase user)
     {
-        // Debug
-        Debug.Log($"{user.name} has equipped {this._AbilityData.AbilityName}.");
+        GameObject originObj = GameObject.Find("ProjectileOrigin");
+        if (originObj != null)
+            _projectileOrigin = originObj.transform;
+        else
+            Debug.LogError("[Rajah_Secondary] 'ProjectileOrigin' GameObject not found in scene.");
+
+        Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
     }
 
-    // Called when the Player presses the button (Active)
-    public override void Activate(Mb_CharacterBase user)
-    {
-        // Debug
-        Debug.Log($"{user.name} has activated {this._AbilityData.AbilityName}.");
-        if (CheckCooldown( ))   
-            CreateProjectile(user);
-    }
-
-    private void CreateProjectile(Mb_CharacterBase user)
-    {
-        if (projectilePrefab != null)
-        {
-            // Get the projectile origin transform
-            Transform originTransform = GameObject.Find("ProjectileOrigin").transform;
-
-            // Get the main camera
-            Camera cam = Camera.main;
-
-            // Raycast from the center of the screen
-            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            Vector3 targetPoint;
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
-            {
-                targetPoint = hit.point;
-            } else
-            {
-                // If nothing is hit, shoot far into the distance
-                targetPoint = ray.origin + ray.direction * 100f;
-            }
-
-            // Calculate direction from origin to target
-            Vector3 direction = ( targetPoint - originTransform.position ).normalized;
-
-            // Set rotation to look at the target point
-            Quaternion rotation = Quaternion.LookRotation(direction);
-
-            // Instantiate the projectile at the origin, facing the target
-            GameObject projectileInstance = GameObject.Instantiate(projectilePrefab, originTransform.position, rotation);
-
-            Mb_Projectile mb_Projectile = projectileInstance.GetComponent<Mb_Projectile>( );
-            if (mb_Projectile != null)
-            {
-                mb_Projectile.SetDamageAmount(user.AttackPower.Value( ) * _AbilityData.ATKScaling);
-            }
-        }
-
-        // Start cooldown
-        _CooldownRemaining = _Cooldown;
-        user.StartCoroutine(RefreshCooldown( ));
-    }
-
-
-    // Called when Character dies (Cleanup)
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"{user.name} has unequipped {this._AbilityData.AbilityName}.");
+        Debug.Log($"[{user.name}] Unequipped {_AbilityData.AbilityName}.");
+    }
+
+
+    // Called when the player presses [RMB]
+    public override void Activate(Mb_CharacterBase user)
+    {
+        if (!CheckCooldown()) return;
+
+        FireProjectile(user);
+        TriggerAbilityAnimation(user);
+
+        // Secondary is a basic attack — cooldown driven by AttackSpeed, not Haste
+        StartCooldown(user, GetAttackCooldown(user));
+    }
+
+
+    private void FireProjectile(Mb_CharacterBase user)
+    {
+        if (_projectilePrefab == null)
+        {
+            Debug.LogError("[Rajah_Secondary] No projectile prefab assigned in SO_Ability.");
+            return;
+        }
+
+        if (_projectileOrigin == null)
+        {
+            Debug.LogError("[Rajah_Secondary] ProjectileOrigin transform is not cached.");
+            return;
+        }
+
+        Camera cam = Camera.main;
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        int layerMask = ~(1 << LayerMask.NameToLayer("Character"));
+
+        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, layerMask)
+            ? hit.point
+            : ray.origin + ray.direction * 100f;
+
+        Vector3 direction = (targetPoint - _projectileOrigin.position).normalized;
+        Quaternion rotation = Quaternion.LookRotation(direction);
+
+        GameObject instance = GameObject.Instantiate(_projectilePrefab, _projectileOrigin.position, rotation);
+
+        Mb_Projectile projectile = instance.GetComponent<Mb_Projectile>();
+        if (projectile != null)
+        {
+            float damage = _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue());
+            damage = ApplyCriticalStrike(damage, user);
+            projectile.SetDamageAmount(damage);
+
+            // Notify the passive that a basic attack was fired — stack logic lives there
+            Passive_Ability.RaiseBasicAttackHit();
+        }
+    }
+
+
+    protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
+    {
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerSecondaryAttack();
     }
 }

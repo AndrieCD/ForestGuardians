@@ -15,15 +15,24 @@ MonoBehaviour:
   CharacterName: Rajah Bagwis
   MaxHealth: 500
   HealthRegen: 10
-  MoveSpeed: 10
+  MoveSpeed: 7
   AttackSpeed: 1
   AttackPower: 100
-  AbilityPower: 80
+  AbilityPower: 10
   CooldownReduction: 0
-  CriticalChance: 0
+  CriticalChance: 0.1
   CriticalDamage: 1.5
   LifeSteal: 0
   Shielding: 0
+  MaxHealthScaling: 0.5
+  HealthRegenScaling: 0
+  MoveSpeedScaling: 0
+  AttackSpeedScaling: 0.005
+  AttackPowerScaling: 0.4
+  AbilityPowerScaling: 0.2
+  CooldownReductionScaling: 0
+  CriticalChanceScaling: 0
+  CriticalDamageScaling: 0
   PassiveAbility: {fileID: 11400000, guid: d937f7c92b0eebc49b1f3e64b6b2743f, type: 2}
   AbilityQ: {fileID: 11400000, guid: 78fd94f3a65641f4c84c11c5f45029f6, type: 2}
   AbilityE: {fileID: 11400000, guid: a16bacafbe4f67347b1cb70aa48f6a9a, type: 2}
