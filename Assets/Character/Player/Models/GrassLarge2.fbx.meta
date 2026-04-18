@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< Updated upstream:Assets/Character/Player/Models/RajahPrototypeModel.fbx.meta
-guid: e943e3929de97814c9c20bed284b3806
-========
-guid: 9b0f0ecedf424e74e89c9fbd5502352f
->>>>>>>> Stashed changes:Assets/Character/Player/Models/GrassLarge1.fbx.meta
+guid: fbbb66b4dd02eb74eac062ca13d9b301
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
