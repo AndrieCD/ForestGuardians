@@ -7,17 +7,20 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TerminaliaTreeMTL
-  m_Shader: {fileID: 4800000, guid: 9ece9d3e2b87e1640a4d9dde4b6551dd, type: 3}
+  m_Name: RafflesiaMTL
+  m_Shader: {fileID: 4800000, guid: 92c3b2837cc779a4f8fd860c4e90207b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _ALPHACLIP_ON
-  - _ALPHATEST_ON
   - _AOINSHADOWSONLY_ON
+  - _CROSSHATCH_ON
   - _DOUBLESIDED_ON
+  - _HATCHENABLED_ON
   - _OUTLINE_ON
+  - _SCREENSPACEHALFTONE_ON
+  - _USEBLACKCUTOUT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -29,7 +32,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 99c41ef8588fd1d428c1f10639fefa3d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8557b5c11a799804da0ad5c2413b62e7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -53,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 99c41ef8588fd1d428c1f10639fefa3d, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -70,45 +73,57 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AOChannel: 0.25
+    - _AOChannel: 1
     - _AOInShadowsOnly: 1
-    - _AOStrength: 1
+    - _AOStrength: 0.3
     - _AlphaClip: 1
-    - _AmbientBoost: 1
+    - _AmbientBoost: 0.7
     - _BandStrength: 1
+    - _BlackCutoutThreshold: 0.08
     - _BumpScale: 1
-    - _Cutoff: 1
+    - _CrossHatch: 1
+    - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DoubleSided: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _HalftoneScale: 200
+    - _HalftoneFadeEnd: 60
+    - _HalftoneFadeStart: 20
+    - _HalftoneScale: 150
     - _HalftoneSoftness: 0.001
-    - _HalftoneStrength: 0.9
-    - _HalftoneThreshold: 0.56
+    - _HalftoneStrength: 0.45
+    - _HalftoneThreshold: 0
+    - _HatchAngle: 35
+    - _HatchEnabled: 1
+    - _HatchLineWidth: 0.3
+    - _HatchScale: 200
+    - _HatchSoftness: 0.5
+    - _HatchStrength: 0.3
+    - _HatchThreshold: 0
     - _Metallic: 0
-    - _Mode: 1
+    - _Mode: 0
     - _OcclusionStrength: 1
     - _Outline: 1
-    - _OutlineDepthOffset: 0
-    - _OutlineEdgeSoftness: 0.05
-    - _OutlineWidth: 0.012
+    - _OutlineDepthOffset: 0.002
+    - _OutlineEdgeSoftness: 0.18
+    - _OutlineWidth: 0.006
     - _Parallax: 0.02
-    - _PosterizeSteps: 2
+    - _PosterizeSteps: 3
     - _PosterizeStrength: 0
-    - _RampSmoothness: 0.372
-    - _RampThreshold: 0.07
+    - _RampSmoothness: 0.2
+    - _RampThreshold: 0.6
     - _RimPower: 12
-    - _RimStrength: 0.2
-    - _ScreenSpaceHalftone: 0
-    - _ShadowBands: 3.07
-    - _ShadowStrength: 0.11
+    - _RimStrength: 0
+    - _ScreenSpaceHalftone: 1
+    - _ShadowBands: 6
+    - _ShadowStrength: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _UseBlackCutout: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
@@ -117,7 +132,7 @@ Material:
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightTint: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.8, g: 0.78, b: 0.95, a: 1}
-    - _ShadowTint: {r: 0.8, g: 0.78, b: 0.95, a: 1}
+    - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
+    - _ShadowTint: {r: 0.9, g: 0.86, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
