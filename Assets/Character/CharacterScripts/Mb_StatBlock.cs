@@ -104,22 +104,41 @@ public class Mb_StatBlock : MonoBehaviour
     #endregion                  //----------------------------------------
 
 
-    #region Scaling API       //----------------------------------------
-    public void LevelUpStats(int level)
+    #region Scaling API     //----------------------------------------
+
+    /// <summary>
+    /// Updates all stat BaseValues for the given character level.
+    /// Fires OnStatsChanged so anything listening (UI, abilities) refreshes automatically.
+    ///
+    /// Returns the MaxHealth delta so the caller (Mb_CharacterBase.LevelUp) can
+    /// heal the character by that amount — keeping current HP proportional on level-up.
+    /// </summary>
+    public float SetLevel(int level)
     {
-        // Access stat scaling arrays by level (minus 1 for 0-based indexing) from the SO and update each stat's BaseValue
-        MaxHealth.BaseValue *= 1 + MaxHealth._scalingPerLevel * (level - 1);
-        HealthRegen.BaseValue *= 1 + HealthRegen._scalingPerLevel * (level - 1);
-        MoveSpeed.BaseValue *= 1 + MoveSpeed._scalingPerLevel * (level - 1);
-        AttackSpeed.BaseValue *= 1 + AttackSpeed._scalingPerLevel * (level - 1);
-        AttackPower .BaseValue *= 1 + AttackPower._scalingPerLevel * (level - 1);
-        AbilityPower.BaseValue *= 1 + AbilityPower._scalingPerLevel * (level - 1);
-        Haste.BaseValue *= 1 + Haste._scalingPerLevel * (level - 1);
-        CriticalChance.BaseValue *= 1 + CriticalChance._scalingPerLevel * (level - 1);
-        CriticalDamage.BaseValue *= 1 + CriticalDamage._scalingPerLevel * (level - 1);
-        Lifesteal.BaseValue *= 1 + Lifesteal._scalingPerLevel * (level - 1);
+        float oldMaxHP = MaxHealth.GetValue();
+
+        // Each stat recalculates its BaseValue from its own original value + scaling.
+        // Because SetLevel always reads from _originalBaseValue inside Sc_Stat,
+        // calling this at level 5 gives the same result as calling it 4 times in a row.
+        MaxHealth.SetLevel(level);
+        HealthRegen.SetLevel(level);
+        MoveSpeed.SetLevel(level);
+        AttackSpeed.SetLevel(level);
+        AttackPower.SetLevel(level);
+        AbilityPower.SetLevel(level);
+        Haste.SetLevel(level);
+        CriticalChance.SetLevel(level);
+        CriticalDamage.SetLevel(level);
+        Lifesteal.SetLevel(level);
+        // JumpPower and Shielding intentionally excluded — they don't scale with level
+
+        OnStatsChanged?.Invoke();
+
+        // Return how much MaxHealth grew so the caller can top up HP by the same amount
+        return MaxHealth.GetValue() - oldMaxHP;
     }
-    #endregion
+
+    #endregion              //----------------------------------------
 
 
     #region Modifier API        //----------------------------------------

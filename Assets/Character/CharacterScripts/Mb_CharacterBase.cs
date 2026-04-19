@@ -60,12 +60,16 @@ public abstract class Mb_CharacterBase : MonoBehaviour
             Debug.LogWarning($"[{_CharacterName}] Already at max level {_MaxLevel}.");
             return;
         }
+
         _CharacterLevel++;
         Debug.Log($"[{_CharacterName}] Leveled up to {_CharacterLevel}!");
 
+        // SetLevel returns the MaxHealth increase so we can heal the character by
+        // that exact amount — their HP stays "full relative to the new max" on level-up.
+        float maxHPDelta = Stats.SetLevel(_CharacterLevel);
+        Health.Heal(maxHPDelta);
 
         OnLevelUp?.Invoke(_CharacterLevel);
-        Stats.LevelUpStats(_CharacterLevel);
     }
 
 
