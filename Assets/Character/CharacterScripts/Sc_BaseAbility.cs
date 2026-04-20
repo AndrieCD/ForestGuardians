@@ -53,6 +53,8 @@ public abstract class Sc_BaseAbility
     // Read directly from the SO so there's one source of truth
     public int MaxLevel => _AbilityData != null ? _AbilityData.MaxLevel : 1;
 
+    // lets RewardsManager read SO identity data without exposing the full protected field publicly.
+    public SO_Ability GetAbilityData() => _AbilityData;
 
     // EVENTS for UI
 

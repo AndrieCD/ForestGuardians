@@ -11,7 +11,6 @@ using UnityEngine;
 /// </summary>
 public class Mb_AbilityController : MonoBehaviour
 {
-
     // The character that owns these abilities — passed into every Activate() call
     private Mb_CharacterBase _owner;
 
@@ -25,7 +24,10 @@ public class Mb_AbilityController : MonoBehaviour
     private Sc_BaseAbility _primaryAttack;
     private Sc_BaseAbility _secondaryAttack;
 
-    // Method to retrieve an ability by slot name, for UI display and other cases where we don't want to expose the fields directly
+    /// <summary>
+    /// Retrieves an ability by slot name. Used by UI and RewardsManager
+    /// without exposing the private fields directly.
+    /// </summary>
     public Sc_BaseAbility GetAbilityBySlot(string slot)
     {
         return slot switch
@@ -96,7 +98,6 @@ public class Mb_AbilityController : MonoBehaviour
         _primaryAttack = primary;
         _secondaryAttack = secondary;
 
-        // Equip all assigned slots — this starts passives and any OnEquip setup
         _passiveAbility?.OnEquip(_owner);
         _qAbility?.OnEquip(_owner);
         _eAbility?.OnEquip(_owner);
@@ -116,8 +117,44 @@ public class Mb_AbilityController : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Assigns the R (ultimate) slot after initial setup — used by the Ultimate Branch
+    /// selection system. Equips the new ability immediately.
+    /// Only Mb_RewardsManager should call this, and only once per stage.
+    /// </summary>
+    public void SetRSlot(Sc_BaseAbility branch)
+    {
+        // If somehow an R ability was already set, unequip it cleanly first
+        _rAbility?.OnUnequip(_owner);
+
+        _rAbility = branch;
+        _rAbility?.OnEquip(_owner);
+
+        Debug.Log($"[Mb_AbilityController] R slot set to: {branch?.GetType().Name}");
+    }
+
+
+    /// <summary>
+    /// Increments the level of the ability in the named slot.
+    /// Called by Mb_RewardsManager when the player picks an ability upgrade reward.
+    /// Does nothing if the slot is empty or already at max level.
+    /// </summary>
+    public void LevelUpAbility(string slot)
+    {
+        Sc_BaseAbility ability = GetAbilityBySlot(slot);
+
+        if (ability == null)
+        {
+            Debug.LogWarning($"[Mb_AbilityController] LevelUpAbility: slot '{slot}' is empty.");
+            return;
+        }
+
+        // LevelUp() on the base class handles the max level guard and fires OnLevelUp()
+        ability.LevelUp();
+    }
+
+
     #region Activation Methods          //----------------------------------------
-    // These are called directly from Mb_PlayerController's input bindings
 
     public void ActivatePassive() => TryActivate(_passiveAbility);
     public void ActivateQ() => TryActivate(_qAbility);
@@ -126,14 +163,11 @@ public class Mb_AbilityController : MonoBehaviour
     public void ActivatePrimary() => TryActivate(_primaryAttack);
     public void ActivateSecondary() => TryActivate(_secondaryAttack);
 
-
     // CuBots call this from their AI logic
     public void ActivatePrimaryAsAI() => TryActivate(_primaryAttack);
 
-
     private void TryActivate(Sc_BaseAbility ability)
     {
-        // Single choke point — paused or dead means nothing fires
         if (IsBlocked) return;
         ability?.Activate(_owner);
     }
@@ -165,6 +199,4 @@ public class Mb_AbilityController : MonoBehaviour
     private void HandleResume() => _isPaused = false;
 
     #endregion                      //----------------------------------------
-
-
 }

@@ -68,6 +68,34 @@ public abstract class Mb_CharacterBase : MonoBehaviour
         Stats.LevelUpStats(_CharacterLevel);
     }
 
+    public void ResetLevel()
+    {
+        _CharacterLevel = 1;
+        Debug.Log($"[{_CharacterName}] Level reset to {_CharacterLevel}.");
+        //Stats.ResetStats();
+    }
 
+    public void SetLevel(int newLevel)
+    {
+        if (newLevel < 1 || newLevel > _MaxLevel)
+        {
+            Debug.LogWarning($"[{_CharacterName}] Invalid level {newLevel}. Must be between 1 and {_MaxLevel}.");
+            return;
+        }
+        _CharacterLevel = newLevel;
+        Debug.Log($"[{_CharacterName}] Level set to {_CharacterLevel}.");
+        OnLevelUp?.Invoke(_CharacterLevel);
+        Stats.LevelUpStats(_CharacterLevel);
+    }
+
+    public int GetLevel()
+    {
+        return _CharacterLevel;
+    }
+
+    public int GetMaxLevel()
+    {
+        return _MaxLevel;
+    }
 
 }
