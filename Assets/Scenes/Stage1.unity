@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: b1010d9865320bf458da0d1f7eb7069b
+  m_OcclusionCullingData: {fileID: 36300000, guid: b3fce545d8bc52a40acc87102bc3c6b2, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -640,7 +640,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &274523162
 Transform:
@@ -2050,7 +2050,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &670252438
 Transform:
@@ -3543,7 +3543,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1419507136
 Transform:
@@ -4099,7 +4099,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1811448864
 Transform:
@@ -5608,10 +5608,6 @@ PrefabInstance:
     - target: {fileID: 1373428381566015943, guid: dce7cf31e47a55b4d950fd804d9994f5, type: 3}
       propertyPath: m_Name
       value: Panoharra Base
-      objectReference: {fileID: 0}
-    - target: {fileID: 1748722093284836221, guid: dce7cf31e47a55b4d950fd804d9994f5, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5511
       objectReference: {fileID: 0}
     - target: {fileID: 1748722093284836221, guid: dce7cf31e47a55b4d950fd804d9994f5, type: 3}
       propertyPath: m_LocalPosition.x
