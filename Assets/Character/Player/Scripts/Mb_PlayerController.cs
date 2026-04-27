@@ -1,14 +1,12 @@
+// Mb_PlayerController.cs
+// The concrete Guardian class for Rajah Bagwis.
+// Handles input via Unity's Input System and routes it to
+// AbilityController and Movement.
+
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// The concrete Guardian class for the player.
-/// Handles input via Unity's Input System and routes it to
-/// AbilityController and Movement — it does not contain any game logic itself.
-///
-/// Inherits from Mb_GuardianBase which sets up stats, health, and abilities.
-/// </summary>
 public class Mb_PlayerController : Mb_GuardianBase
 {
     public static event Action OnJumpPressed;
@@ -49,7 +47,7 @@ public class Mb_PlayerController : Mb_GuardianBase
             passive: new Passive_Ability(_GuardianTemplate.PassiveAbility, this),
             q: new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this),
             e: new Rajah_E_Ability(_GuardianTemplate.AbilityE, this),
-            r: null,    // Assigned later via SetRSlot() when player picks a branch
+            r: null,    // Assigned at wave 5 when player picks a branch
             primary: new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this),
             secondary: new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this)
         );
@@ -57,11 +55,40 @@ public class Mb_PlayerController : Mb_GuardianBase
 
 
     /// <summary>
-    /// Exposes the R ability SO from the guardian template so Mb_RewardsManager
-    /// can pass it to UltimateBranchFactory when the player selects a branch.
-    /// The SO holds the cooldown and scaling data shared by both branches.
+    /// Defines Rajah Bagwis's two ultimate branch options.
+    /// Each option captures its own SO_Ability reference in the delegate so the
+    /// correct data is always passed to the ability constructor — no string matching,
+    /// no central factory.
+    ///
+    /// When a second guardian is added, they override this method in their own
+    /// controller class with their own branch types. Nothing here changes.
     /// </summary>
-    public SO_Ability GetRAbilityData() => _GuardianTemplate.AbilityR;
+    protected override (Sc_BranchOption branch1, Sc_BranchOption branch2) DefineBranches()
+    {
+        // Cache the SO references locally so the lambda captures them by value,
+        // not by reference to the template — safe even if the template were reassigned
+        SO_Ability branch1AbilityData = _GuardianTemplate.AbilityR_Branch1;
+        SO_Ability branch2AbilityData = _GuardianTemplate.AbilityR_Branch2;
+
+        Sc_BranchOption branch1 = new Sc_BranchOption
+        {
+            DisplayData = _GuardianTemplate.BranchDisplay1,
+            AbilityData = branch1AbilityData,
+
+            // Lambda captures branch1AbilityData — when the player picks this branch,
+            // the rewards manager calls CreateAbility(player) and gets a ready instance
+            CreateAbility = owner => new Rajah_R_Branch1(branch1AbilityData, owner)
+        };
+
+        Sc_BranchOption branch2 = new Sc_BranchOption
+        {
+            DisplayData = _GuardianTemplate.BranchDisplay2,
+            AbilityData = branch2AbilityData,
+            CreateAbility = owner => new Rajah_R_Branch2(branch2AbilityData, owner)
+        };
+
+        return (branch1, branch2);
+    }
 
 
     private void OnEnable()
