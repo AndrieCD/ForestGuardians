@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TreeQuercus_MTL_BaseColor
-  m_Shader: {fileID: 4800000, guid: 92c3b2837cc779a4f8fd860c4e90207b, type: 3}
+  m_Shader: {fileID: 4800000, guid: 759886232556cde4186055b9eed78cc0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -31,7 +31,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: b243fee0fa2b44b40929d62bd1f4c460, type: 3}
+        m_Texture: {fileID: 2800000, guid: a802d0c324bf60543acea1c4ae2b8f0c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:

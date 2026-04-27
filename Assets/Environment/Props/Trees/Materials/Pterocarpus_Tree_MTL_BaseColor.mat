@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Pterocarpus_Tree_MTL_BaseColor
-  m_Shader: {fileID: 4800000, guid: 92c3b2837cc779a4f8fd860c4e90207b, type: 3}
+  m_Shader: {fileID: 4800000, guid: 759886232556cde4186055b9eed78cc0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
