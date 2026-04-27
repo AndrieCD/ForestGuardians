@@ -43,6 +43,7 @@ public class Mb_StatBlock : MonoBehaviour
     // Event fired whenever any stat changes — UI or ability scripts can subscribe
     public event Action OnStatsChanged;
 
+
     #region Build From Template         //----------------------------------------
 
     public void BuildFromTemplate(SO_Guardian template)
@@ -261,4 +262,9 @@ public class Mb_StatBlock : MonoBehaviour
 
     #endregion          //----------------------------------------
 
+
+    public void NotifyStatsChanged()
+    {
+        OnStatsChanged?.Invoke();
+    }
 }

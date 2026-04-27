@@ -89,7 +89,7 @@ public abstract class Mb_CharacterBase : MonoBehaviour
         _CharacterLevel = newLevel;
         Debug.Log($"[{_CharacterName}] Level set to {_CharacterLevel}.");
         OnLevelUp?.Invoke(_CharacterLevel);
-        Stats.LevelUpStats(_CharacterLevel);
+        Stats.SetLevel(_CharacterLevel);
     }
 
     public int GetLevel()
