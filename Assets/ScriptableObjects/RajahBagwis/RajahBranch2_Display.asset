@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a686431b16deec4aa24b92791074c71, type: 3}
-  m_Name: R_SO
-  m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
-  AbilityName: R Ability
-  Cooldown: 0
-  BaseDamage: 0
-  ATKScaling: 0
-  APScaling: 0
-  BaseHealing: 0
-  BaseShield: 0
+  m_Script: {fileID: 11500000, guid: da785e69ee4b5e3489f2c599cc148dcd, type: 3}
+  m_Name: RajahBranch2_Display
+  m_EditorClassIdentifier: Assembly-CSharp::SO_UltimateBranch
+  BranchName: Eagle Eye
+  Description: Eagle Eye test
+  Icon: {fileID: 0}

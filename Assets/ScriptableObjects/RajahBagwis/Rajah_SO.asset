@@ -19,23 +19,27 @@ MonoBehaviour:
   AttackSpeed: 1
   AttackPower: 100
   AbilityPower: 10
-  CooldownReduction: 0
+  Haste: 0
   CriticalChance: 0.1
   CriticalDamage: 1.5
   LifeSteal: 0
-  Shielding: 0
+  JumpPower: 8
   MaxHealthScaling: 0.5
   HealthRegenScaling: 0
   MoveSpeedScaling: 0
   AttackSpeedScaling: 0.005
   AttackPowerScaling: 0.4
   AbilityPowerScaling: 0.2
-  CooldownReductionScaling: 0
+  HasteScaling: 0
   CriticalChanceScaling: 0
   CriticalDamageScaling: 0
+  LifeStealScaling: 0
   PassiveAbility: {fileID: 11400000, guid: d937f7c92b0eebc49b1f3e64b6b2743f, type: 2}
   AbilityQ: {fileID: 11400000, guid: 78fd94f3a65641f4c84c11c5f45029f6, type: 2}
   AbilityE: {fileID: 11400000, guid: a16bacafbe4f67347b1cb70aa48f6a9a, type: 2}
-  AbilityR: {fileID: 11400000, guid: 201715c94299c6844bea6fe4d9eb504d, type: 2}
+  AbilityR_Branch1: {fileID: 11400000, guid: 9c1f19fa0d0608f4497702a4f1d4969b, type: 2}
+  AbilityR_Branch2: {fileID: 11400000, guid: 12fa75cd44b0b944fbff33c29ad41ce3, type: 2}
+  BranchDisplay1: {fileID: 11400000, guid: 1fee7d8dc8a33ec4382f045aa3940b37, type: 2}
+  BranchDisplay2: {fileID: 11400000, guid: 0df179056d4ae37458a82007ace056e7, type: 2}
   PrimaryAttack: {fileID: 11400000, guid: d1ae8e1969e9c62408eaf4e7629d6db0, type: 2}
   SecondaryAttack: {fileID: 11400000, guid: f701f33fbebbc7e4dae8886acef3277e, type: 2}

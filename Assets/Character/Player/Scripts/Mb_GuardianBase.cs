@@ -1,25 +1,25 @@
+// Mb_GuardianBase.cs
+// Base class for all playable Guardian characters.
+// Reads from SO_Guardian to populate Stats and Health via the component system.
+//
+// Derived classes: Mb_PlayerController (Rajah Bagwis), and future guardian classes.
+
 using UnityEngine;
 
-/// <summary>
-/// Base class for all playable Guardian characters.
-/// Reads from SO_Guardian to populate Stats and Health via the component system.
-///
-/// Derived classes: Mb_PlayerController (and future guardian-specific classes)
-/// </summary>
 public abstract class Mb_GuardianBase : Mb_CharacterBase
 {
     [Header("Guardian Template")]
     [SerializeField] protected SO_Guardian _GuardianTemplate;
 
     public Mb_GuardianAnimator GuardianAnimator;
+
+
     protected override void Awake()
     {
-        // Base Awake fetches all components (Stats, Health, Abilities, Movement)
-        // then calls InitializeFromTemplate() below
         base.Awake();
-
         GuardianAnimator = GetComponent<Mb_GuardianAnimator>();
     }
+
 
     /// <summary>
     /// Populates stats and health from the Guardian SO, then wires up abilities.
@@ -35,30 +35,52 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
 
         _CharacterName = _GuardianTemplate.name;
 
-        // Populate all stats from the ScriptableObject
         Stats.BuildFromTemplate(_GuardianTemplate);
 
-        // Set health to full and clear the dead flag
         // Must happen AFTER Stats.BuildFromTemplate() so MaxHealth is ready
         Health.Initialize();
 
-        // Subscribe to death so we can respond (play animation, trigger game over, etc.)
         Health.OnDeath += HandleDeath;
 
-        // Wire up ability slots — derived classes override this to assign
-        // the correct ability implementations for their specific guardian
         AssignAbilities();
     }
 
+
     /// <summary>
     /// Override in each guardian subclass to assign ability slots.
-    /// Example: Abilities.SetSlots(new Passive_Ability(...), new Rajah_Q_Ability(...), ...)
     /// </summary>
     protected abstract void AssignAbilities();
 
+
+    /// <summary>
+    /// Override in each guardian subclass to define the two ultimate branch options.
+    /// Each option pairs display data (SO_UltimateBranch) with a factory delegate
+    /// that creates the correct ability instance when the player makes their choice.
+    ///
+    /// The base class returns (null, null) so guardians without an ultimate
+    /// (e.g. during early development) don't crash the rewards system.
+    /// Mb_RewardsManager checks for null before opening the branch panel.
+    /// </summary>
+    protected virtual (Sc_BranchOption branch1, Sc_BranchOption branch2) DefineBranches()
+    {
+        return (null, null);
+    }
+
+
+    /// <summary>
+    /// Called by Mb_RewardsManager to retrieve this guardian's branch options.
+    /// Returns the result of DefineBranches() — no casting or guardian-specific
+    /// logic needed in the rewards system.
+    /// </summary>
+    public (Sc_BranchOption branch1, Sc_BranchOption branch2) GetBranchOptions()
+    {
+        return DefineBranches();
+    }
+
+
     /// <summary>
     /// Called when Health.OnDeath fires.
-    /// Override in subclasses to add specific death behavior (animations, game over, etc.)
+    /// Override in subclasses to add specific death behavior.
     /// </summary>
     protected virtual void HandleDeath()
     {

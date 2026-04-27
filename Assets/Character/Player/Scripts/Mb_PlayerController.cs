@@ -1,22 +1,17 @@
+// Mb_PlayerController.cs
+// The concrete Guardian class for Rajah Bagwis.
+// Handles input via Unity's Input System and routes it to
+// AbilityController and Movement.
+
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// The concrete Guardian class for the player.
-/// Handles input via Unity's Input System and routes it to
-/// AbilityController and Movement — it does not contain any game logic itself.
-///
-/// Inherits from Mb_GuardianBase which sets up stats, health, and abilities.
-/// </summary>
 public class Mb_PlayerController : Mb_GuardianBase
 {
-
-    // Movement subscribes to this to trigger jumping without a direct reference back here
     public static event Action OnJumpPressed;
 
     [Header("Debug — Runtime Stat Viewer")]
-    // These are Inspector-only display fields for debugging — not used in logic
     public string GuardianName = "";
     public float CurrentHealthValue = 0;
     public float MaxHPValue = 0;
@@ -31,12 +26,9 @@ public class Mb_PlayerController : Mb_GuardianBase
     public float LifestealValue = 0;
     public float CurrentShieldValue = 0;
 
-
     [Header("Input")]
     [SerializeField] InputActionAsset InputActions;
 
-
-    // Input system references
     private InputActionMap _playerActionMap;
     private InputAction _moveAction, _lookAction;
     private InputAction _qAction, _eAction, _rAction;
@@ -45,30 +37,62 @@ public class Mb_PlayerController : Mb_GuardianBase
 
     protected override void Awake()
     {
-        // Base Awake fetches components and calls InitializeFromTemplate()
-        // which in turn calls AssignAbilities() defined below
         base.Awake();
     }
 
-    /// <summary>
-    /// Assigns Rajah Bagwis's ability set to the AbilityController slots.
-    /// Called automatically during InitializeFromTemplate() in Mb_GuardianBase.
-    /// </summary>
+
     protected override void AssignAbilities()
     {
         Abilities.SetSlots(
             passive: new Passive_Ability(_GuardianTemplate.PassiveAbility, this),
             q: new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this),
             e: new Rajah_E_Ability(_GuardianTemplate.AbilityE, this),
-            r: null,    // TODO: R ability pending design decision (two branches)
+            r: null,    // Assigned at wave 5 when player picks a branch
             primary: new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this),
             secondary: new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this)
         );
     }
 
+
+    /// <summary>
+    /// Defines Rajah Bagwis's two ultimate branch options.
+    /// Each option captures its own SO_Ability reference in the delegate so the
+    /// correct data is always passed to the ability constructor — no string matching,
+    /// no central factory.
+    ///
+    /// When a second guardian is added, they override this method in their own
+    /// controller class with their own branch types. Nothing here changes.
+    /// </summary>
+    protected override (Sc_BranchOption branch1, Sc_BranchOption branch2) DefineBranches()
+    {
+        // Cache the SO references locally so the lambda captures them by value,
+        // not by reference to the template — safe even if the template were reassigned
+        SO_Ability branch1AbilityData = _GuardianTemplate.AbilityR_Branch1;
+        SO_Ability branch2AbilityData = _GuardianTemplate.AbilityR_Branch2;
+
+        Sc_BranchOption branch1 = new Sc_BranchOption
+        {
+            DisplayData = _GuardianTemplate.BranchDisplay1,
+            AbilityData = branch1AbilityData,
+
+            // Lambda captures branch1AbilityData — when the player picks this branch,
+            // the rewards manager calls CreateAbility(player) and gets a ready instance
+            CreateAbility = owner => new Rajah_R_Branch1(branch1AbilityData, owner)
+        };
+
+        Sc_BranchOption branch2 = new Sc_BranchOption
+        {
+            DisplayData = _GuardianTemplate.BranchDisplay2,
+            AbilityData = branch2AbilityData,
+            CreateAbility = owner => new Rajah_R_Branch2(branch2AbilityData, owner)
+        };
+
+        return (branch1, branch2);
+    }
+
+
     private void OnEnable()
     {
-        // Find and cache all input actions from the asset
         _playerActionMap = InputActions.FindActionMap("Player");
         _moveAction = _playerActionMap.FindAction("Move");
         _lookAction = _playerActionMap.FindAction("Look");
@@ -80,22 +104,21 @@ public class Mb_PlayerController : Mb_GuardianBase
         _jumpAction = _playerActionMap.FindAction("Jump");
         _playerActionMap.Enable();
 
-        // Bind input to AbilityController — pause blocking is handled inside AbilityController,
-        // so we don't need any pause checks here
         _jumpAction.performed += ctx => OnJumpPressed?.Invoke();
         _qAction.performed += ctx => Abilities.ActivateQ();
         _eAction.performed += ctx => Abilities.ActivateE();
+        _rAction.performed += ctx => Abilities.ActivateR();
         _primaryAtkAction.performed += ctx => Abilities.ActivatePrimary();
         _secondaryAtkAction.performed += ctx => Abilities.ActivateSecondary();
-        // _rAction.performed         += ctx => Abilities.ActivateR(); // TODO: pending design decision
     }
+
 
     private void OnDisable()
     {
-        // Always unsubscribe when disabled to prevent ghost listeners
         _jumpAction.performed -= ctx => OnJumpPressed?.Invoke();
         _playerActionMap.Disable();
     }
+
 
     private void Update()
     {
@@ -103,17 +126,18 @@ public class Mb_PlayerController : Mb_GuardianBase
         UpdateDebugInspector();
     }
 
+
     private void OnDestroy()
     {
-        // Clean up all abilities when the scene ends
         Abilities.UnequipAll();
     }
 
+
     #region Input Getters
-    // Mb_Movement calls these to get the current frame's input vectors
     public Vector2 GetMoveVector() => _moveAction.ReadValue<Vector2>();
     public Vector2 GetLookVector() => _lookAction.ReadValue<Vector2>();
     #endregion
+
 
     #region Debug
     private void UpdateDebugInspector()
@@ -130,7 +154,6 @@ public class Mb_PlayerController : Mb_GuardianBase
         CriticalChanceValue = Stats.CriticalChance.GetValue();
         CriticalDamageValue = Stats.CriticalDamage.GetValue();
         LifestealValue = Stats.Lifesteal.GetValue();
-        //CurrentShieldValue = Stats.Shielding.Value();
     }
     #endregion
 }

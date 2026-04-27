@@ -44,7 +44,23 @@ public class SO_Guardian : ScriptableObject
     public SO_Ability PassiveAbility;       // Passive Ability
     public SO_Ability AbilityQ;             // Q Ability
     public SO_Ability AbilityE;             // E Ability
-    public SO_Ability AbilityR;             // R Ability
+                                            // REMOVE this:
+                                            // public SO_Ability AbilityR;
+
+    [Header("Ultimate Branch Abilities")]
+    [Tooltip("SO_Ability for Branch 1 — holds cooldown and scaling unique to that branch.")]
+    public SO_Ability AbilityR_Branch1;
+
+    [Tooltip("SO_Ability for Branch 2 — holds cooldown and scaling unique to that branch.")]
+    public SO_Ability AbilityR_Branch2;
+
+    [Tooltip("Display data (name, description, icon) shown on the Branch 1 reward card.")]
+    public SO_UltimateBranch BranchDisplay1;
+
+    [Tooltip("Display data (name, description, icon) shown on the Branch 2 reward card.")]
+    public SO_UltimateBranch BranchDisplay2;
+
+    [Header("Basic Attaks")]
     public SO_Ability PrimaryAttack;        // Primary Attack or Left Click
     public SO_Ability SecondaryAttack;      // Secondary Attack or Right Click
 
