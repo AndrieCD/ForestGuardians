@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbae909cfa88bfd448491ab325578358, type: 3}
-  m_Name: SO_HeartOfTheForest
+  m_Name: SO_FeralSurge
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
-  AugmentName: Heart of the Forest
-  Description: Heart of the Forest prototype
-  Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  AugmentName: Feral Surge
+  Description: 'Feral Surge prototype
+
+'
+  Icon: {fileID: 0}
   Effects: []

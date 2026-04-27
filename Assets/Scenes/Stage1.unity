@@ -1940,6 +1940,8 @@ MonoBehaviour:
   _AugmentPool:
   - {fileID: 11400000, guid: d9c0bdc4dcbd25b4ab515ecf05ba7e7f, type: 2}
   - {fileID: 11400000, guid: 7b803846efb882b4f9b6e41a03973364, type: 2}
+  - {fileID: 11400000, guid: 837028fac2daf0f49847d6d524074675, type: 2}
+  - {fileID: 11400000, guid: 286529b22bee3d24dbf33133c208305a, type: 2}
   _RewardsPanelUI: {fileID: 7519017129813855783}
   _PlayerObject: {fileID: 1594412821520456633}
 --- !u!114 &441286177

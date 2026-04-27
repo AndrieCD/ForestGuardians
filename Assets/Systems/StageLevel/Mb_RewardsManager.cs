@@ -416,7 +416,10 @@ public static class AugmentFactory
         {
             "Wings of Balance" => new Augment_WingsOfBalance(data, owner),
             "Fight or Flight" => new Augment_FightOrFlight(data, owner),
-            // TODO: remaining augments
+            "Heart of the Forest" => new Augment_HeartOfTheForest(data, owner),
+            "Feral Surge" => new Augment_FeralSurge(data, owner),
+            // Add new augments here following the same pattern:
+
             _ => throw new System.Exception(
                 $"[AugmentFactory] No class registered for augment: '{data.AugmentName}'")
         };
