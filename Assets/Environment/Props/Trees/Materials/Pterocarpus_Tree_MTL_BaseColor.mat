@@ -111,8 +111,8 @@ Material:
     - _Parallax: 0.02
     - _PosterizeSteps: 10
     - _PosterizeStrength: 0.3
-    - _RampSmoothness: 0.5
-    - _RampThreshold: 0.5
+    - _RampSmoothness: 0.2
+    - _RampThreshold: 0.6
     - _RimPower: 12
     - _RimStrength: 0
     - _ScreenSpaceHalftone: 1
