@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RajahMTL
-  m_Shader: {fileID: 4800000, guid: a2e2c5366cdcd20409a76a70f8172457, type: 3}
+  m_Shader: {fileID: 4800000, guid: 759886232556cde4186055b9eed78cc0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
