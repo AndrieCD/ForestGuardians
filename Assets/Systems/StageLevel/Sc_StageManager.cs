@@ -14,7 +14,6 @@ public class Mb_StageManager : MonoBehaviour
 
     private void Awake( )
     {
-        Cursor.visible = false;
     }
 
     private void Start( )
@@ -41,6 +40,25 @@ public class Mb_StageManager : MonoBehaviour
     public void EndStage()
     {
         OnStageEnd?.Invoke( );
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void HandleGameStateChanged(GameState newState)
+    {
+        // Show the cursor only on the rewards panel — hide it everywhere else during a stage
+        bool showCursor = newState == GameState.RewardsPanel;
+
+        Cursor.visible = showCursor;
+        Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
 }
