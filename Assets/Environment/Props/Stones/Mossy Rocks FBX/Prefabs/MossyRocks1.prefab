@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MossyRocks1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13c6f1e17b9465f488139bf3b19f0125, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 125
   m_IsActive: 1
 --- !u!4 &5932500311280444012
 Transform:
@@ -189,6 +189,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LPTreeQuercus
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 60d009770684a4f4fb7318865465fb1c, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 125
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -260,6 +264,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HPTreeQuercus
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1851f12df390c2c4d9ec4a6ef73e2dd8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 125
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -293,15 +301,15 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.5469403
+  - screenRelativeHeight: 0.75
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 4289481452682293357}
-  - screenRelativeHeight: 0.35077173
+  - screenRelativeHeight: 0.5
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 1155135132916620724}
-  - screenRelativeHeight: 0.1
+  - screenRelativeHeight: 0.25
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 7341022007307059917}
