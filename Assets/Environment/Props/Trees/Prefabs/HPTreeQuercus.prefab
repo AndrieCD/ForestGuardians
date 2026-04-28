@@ -293,11 +293,19 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
+<<<<<<< Updated upstream
   - screenRelativeHeight: 0.5469403
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 4289481452682293357}
   - screenRelativeHeight: 0.35077173
+=======
+  - screenRelativeHeight: 0.7010757
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 4289481452682293357}
+  - screenRelativeHeight: 0.44955358
+>>>>>>> Stashed changes
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 1155135132916620724}
