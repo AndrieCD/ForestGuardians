@@ -15,7 +15,7 @@ public class Rajah_E_Ability : Sc_BaseAbility
     private Camera _cam;
 
     // Cached once in OnEquip — avoids a scene search every activation
-    private Transform _projectileOrigin;
+    //private Transform user.ProjectileOrigin;
 
 
     public Rajah_E_Ability(SO_Ability abilityData, Mb_CharacterBase user)
@@ -29,11 +29,11 @@ public class Rajah_E_Ability : Sc_BaseAbility
     {
         // Cache the spawn point once — E fires multiple projectiles per use
         // so avoiding repeated Find() calls matters more here than in Secondary
-        GameObject originObj = GameObject.Find("ProjectileOrigin");
-        if (originObj != null)
-            _projectileOrigin = originObj.transform;
-        else
-            Debug.LogError("[Rajah_E_Ability] 'ProjectileOrigin' GameObject not found in scene.");
+        //GameObject originObj = GameObject.Find("ProjectileOrigin");
+        //if (originObj != null)
+        //    user.ProjectileOrigin = originObj.transform;
+        //else
+        //    Debug.LogError("[Rajah_E_Ability] 'ProjectileOrigin' GameObject not found in scene.");
 
         Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
     }
@@ -88,14 +88,14 @@ public class Rajah_E_Ability : Sc_BaseAbility
             return;
         }
 
-        if (_projectileOrigin == null)
+        if (_Guardian.ProjectileOrigin == null)
         {
             Debug.LogError("[Rajah_E_Ability] ProjectileOrigin is not cached.");
             return;
         }
 
         Vector3 aimTarget = GetAimTarget();
-        Vector3 centerDir = (aimTarget - _projectileOrigin.position).normalized;
+        Vector3 centerDir = (aimTarget - _Guardian.ProjectileOrigin.position).normalized;
         float damagePerFeather = _AbilityData.GetStat(
             "Damage", CurrentLevel,
             user.Stats.AttackPower.GetValue(),
@@ -116,7 +116,7 @@ public class Rajah_E_Ability : Sc_BaseAbility
 
             spawnedFeathers[i] = GameObject.Instantiate(
                 prefab,
-                _projectileOrigin.position,
+                _Guardian.ProjectileOrigin.position,
                 Quaternion.LookRotation(featherDir)
             );
 

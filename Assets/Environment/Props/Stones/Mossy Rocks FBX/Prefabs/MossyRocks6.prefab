@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 37.05967
+      value: 29.56088
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.474196
+      value: 11.997101
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 124.63892
+      value: 148.49629
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
       propertyPath: m_LocalRotation.w
@@ -63,5 +63,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8122749359112371931}
   m_SourcePrefab: {fileID: 100100000, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
+--- !u!1 &7036202080119833095 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}
+  m_PrefabInstance: {fileID: 7882694983921532758}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &8122749359112371931
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7036202080119833095}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8821433027111690726, guid: 24ff12b00cb2a954a97ed24c38bbf951, type: 3}

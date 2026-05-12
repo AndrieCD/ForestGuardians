@@ -1,3 +1,4 @@
+// MB_CuBotBase.cs
 using System;
 using UnityEngine;
 
@@ -18,36 +19,32 @@ public class MB_CuBotBase : Mb_CharacterBase
     // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
     private bool _isInitialized = false;
 
+    private Mb_CharacterBase _lastAttacker = null;
+
     #region Events
-    // Static events so WaveManager can listen without a direct reference to each CuBot
     public static event Action OnCuBotSpawn;
-    public static event Action OnCuBotDeath;
+    public static event Action<GameObject> OnCuBotDeath;
+    public static event Action<Mb_CharacterBase> OnCuBotKill;
     #endregion
+
 
     protected override void Awake()
     {
-        // Base Awake fetches Stats, Health, Abilities, Movement components
-        // then calls InitializeFromTemplate()
         base.Awake();
+
         _isInitialized = true;
     }
+
 
     private void OnEnable()
     {
         OnCuBotSpawn?.Invoke();
 
-        // Guard: skip Reset on the very first enable because Awake hasn't run yet.
-        // On first spawn, Awake handles initialization. On every pool reuse after
-        // that, Reset() re-runs so the CuBot starts clean.
         if (_isInitialized)
             Reset();
     }
 
-    /// <summary>
-    /// Populates stats and health from the CuBot SO.
-    /// Called automatically by Mb_CharacterBase.Awake() on first spawn.
-    /// Also called by Reset() on every subsequent pool reuse.
-    /// </summary>
+
     protected override void InitializeFromTemplate()
     {
         if (_CuBotTemplate == null)
@@ -58,49 +55,56 @@ public class MB_CuBotBase : Mb_CharacterBase
 
         _CharacterName = _CuBotTemplate.name;
 
-        // Clear any leftover stat effects from the previous wave before repopulating
         Stats.RemoveAllModifiers();
-
-        // Repopulate stats from the ScriptableObject base values
         Stats.BuildFromTemplate(_CuBotTemplate);
-
-        // Restore full health and clear the dead flag.
-        // Must happen AFTER Stats.BuildFromTemplate() so MaxHealth is ready.
         Health.Initialize();
 
-        // Unsubscribe before resubscribing to avoid stacking duplicate listeners
-        // across multiple pool reuses
+        _lastAttacker = null;
+
         Health.OnDeath -= HandleDeath;
         Health.OnDeath += HandleDeath;
 
-        // Let derived classes assign their specific ability
+        // ---
+        // Level up CuBot based on player level.
+        // --
+        int playerLevel = 1;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Mb_CharacterBase playerChar = player.GetComponent<Mb_CharacterBase>();
+            if (playerChar != null)
+                playerLevel = playerChar.GetLevel();
+        }
+        SetLevel(playerLevel);
+
+
         AssignAbilities();
     }
 
-    /// <summary>
-    /// Override in derived CuBot classes to assign their primary attack.
-    /// Called every time InitializeFromTemplate() runs, including pool reuses.
-    /// </summary>
-    protected virtual void AssignAbilities()
-    {
-        // Base has no ability — derived classes override this
-    }
 
-    /// <summary>
-    /// Resets the CuBot fully so it's clean for reuse from the pool.
-    /// </summary>
+    protected virtual void AssignAbilities() { }
+
+
     protected virtual void Reset()
     {
         InitializeFromTemplate();
     }
 
-    private void HandleDeath()
+
+    public void SetLastAttacker(Mb_CharacterBase attacker)
     {
-        gameObject.SetActive(false);
-        OnCuBotDeath?.Invoke();
+        _lastAttacker = attacker;
     }
 
-    // For prototyping: CuBot takes damage when a projectile collides with it
+
+    private void HandleDeath()
+    {
+        OnCuBotDeath?.Invoke(gameObject);
+        OnCuBotKill?.Invoke(_lastAttacker);
+        gameObject.SetActive(false);
+    }
+
+
     private void OnCollisionEnter(Collision collision)
     {
         Mb_Projectile projectile = collision.gameObject.GetComponent<Mb_Projectile>();
@@ -109,12 +113,23 @@ public class MB_CuBotBase : Mb_CharacterBase
         Health.TakeDamage(projectile.GetDamageAmount());
     }
 
-    /// <summary>
-    /// Called from derived CuBot AI logic to fire the primary attack.
-    /// Routed through AbilityController so pause blocking applies automatically.
-    /// </summary>
+
     protected void TryUsePrimaryAttack()
     {
         Abilities.ActivatePrimaryAsAI();
     }
+
+
+    // Add to Mb_PlayerController.cs
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (_CuBotTemplate == null) return;
+
+        // Primary slash hitbox
+        Gizmos.color = Color.red;
+        Vector3 slashCenter = transform.position + transform.forward * 1.8f;
+        Gizmos.DrawWireSphere(slashCenter, 1.0f);
+    }
+#endif
 }

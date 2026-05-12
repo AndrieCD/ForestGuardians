@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,12 @@ public class Sc_Stat
 
     public float CurrentValue => currentValue;
 
+
+    public event Action<Sc_Modifier> OnModifierAdded;
+    public event Action<Sc_Modifier> OnModifierRemoved;
+
+
+
     // Constructor to initialize the base value of the stat
     public Sc_Stat(float baseValue, float scalingPerLevel)
     {
@@ -40,7 +47,7 @@ public class Sc_Stat
     public void SetLevel(int level)
     {
         int levelsGained = level - 1; // level 1 = 0 bonus, level 2 = 1 bonus, etc.
-        BaseValue = Mathf.FloorToInt(_originalBaseValue * (1f + _scalingPerLevel * levelsGained));
+        BaseValue = _originalBaseValue * (1f + (_scalingPerLevel * levelsGained));
     }
 
     // Add a new effect to the stat and start a coroutine to remove it after its duration if it's not infinite

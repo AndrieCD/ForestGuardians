@@ -24,8 +24,14 @@ public abstract class Mb_CharacterBase : MonoBehaviour
     public Mb_AbilityController Abilities { get; private set; }
     public Mb_Movement Movement { get; private set; }
 
+
+    //public Collider MeleeHitbox;
+
+
     #region EVENTS
     public event Action<int> OnLevelUp;
+    public event Action OnLevelReset;
+
     #endregion
 
 
@@ -77,6 +83,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour
         _CharacterLevel = 1;
         Debug.Log($"[{_CharacterName}] Level reset to {_CharacterLevel}.");
         //Stats.ResetStats();
+        OnLevelReset?.Invoke();
+
     }
 
     public void SetLevel(int newLevel)
@@ -88,8 +96,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour
         }
         _CharacterLevel = newLevel;
         Debug.Log($"[{_CharacterName}] Level set to {_CharacterLevel}.");
-        OnLevelUp?.Invoke(_CharacterLevel);
         Stats.SetLevel(_CharacterLevel);
+        OnLevelUp?.Invoke(_CharacterLevel);
     }
 
     public int GetLevel()

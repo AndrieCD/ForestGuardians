@@ -1,80 +1,100 @@
-﻿// Rajah_R_Branch1.cs
-// [R] Sovereign's Wrath — Branch 1 of Rajah Bagwis's ultimate.
-//
-// PASSIVE (always active after branch is selected):
-//   - LMB attacks gain lifesteal — each Primary hit heals Rajah for a % of damage dealt
-//   - Increased base damage — adds a flat ATK bonus to Rajah's StatBlock permanently
-//
-// ACTIVE (triggered by pressing R):
-//   - Phase 1: Rajah becomes untargetable for a short window
-//   - Phase 2: Slash all enemies in a wide arc in front
-//   - Phase 3: Final high-damage single strike
-//
-// CURRENT STATE: Stubs only. Passive and active logic marked with TODO.
-// Passive hooks (OnEquip/OnUnequip) and active structure are scaffolded correctly.
-//
-// Inspector setup: Assign the RajahBranch1_SovereignsWrath SO_Ability asset
-// to SO_Guardian.AbilityR_Branch1 — this class reads cooldown and scaling from it.
-
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
 public class Rajah_R_Branch1 : Sc_BaseAbility
 {
-    // Passive modifier applied permanently on equip — removed on unequip.
-    // Holds the flat ATK bonus from "Increased base damage".
-    // Stored so we can remove exactly this modifier on OnUnequip.
-    private Sc_Modifier _passiveModifier;
+    // -------------------------------------------------------------------------
+    // CONFIG (non-SO timing values)
+    // -------------------------------------------------------------------------
 
+    private const int TICK_COUNT = 4;
+    private const float TICK_INTERVAL = 0.5f;
+    private const float FINAL_DELAY = 0.5f;
 
-    public Rajah_R_Branch1(SO_Ability abilityData, Mb_CharacterBase user)
-        : base(abilityData, user) { }
-
+    private const float HIT_RADIUS = 5f;
+    private const float HIT_OFFSET = 5f;
 
     // -------------------------------------------------------------------------
-    // Lifecycle
+    // PASSIVE STATE
+    // -------------------------------------------------------------------------
+
+    private Sc_Modifier _atkModifier;
+    private float _lifesteal; // decimal (0.5 = 50%)
+
+    // Cached components
+    private Mb_HealthComponent _health;
+    private Camera _cam;
+
+    // -------------------------------------------------------------------------
+    // CONSTRUCTOR
+    // -------------------------------------------------------------------------
+
+    public Rajah_R_Branch1(SO_Ability abilityData, Mb_CharacterBase user)
+        : base(abilityData, user)
+    {
+        _cam = Camera.main;
+    }
+
+    // -------------------------------------------------------------------------
+    // LIFECYCLE
     // -------------------------------------------------------------------------
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        // PASSIVE — applied once when the branch is selected, lasts the whole stage
+        _health = user.GetComponent<Mb_HealthComponent>();
 
-        // TODO: Apply flat ATK bonus ("Increased base damage") using BuildModifier()
-        // Example when values are ready:
-        //   float bonusATK = _AbilityData.GetStat("BonusBaseDamage", CurrentLevel, user.Stats.AttackPower.GetValue());
-        //   _passiveModifier = BuildModifier("Sovereign's Wrath — Passive ATK",
-        //       ModifierSource.Ability,
-        //       new Sc_StatEffect(StatType.AttackPower, bonusATK, StatModType.Flat));
-        //   ApplyToSelf(user, _passiveModifier);
+        // --- Passive: Attack Power Modifier ---
+        float bonusATK = _AbilityData.GetStat(
+            "BonusBaseDamage",
+            CurrentLevel,
+            user.Stats.AttackPower.GetValue()
+        );
 
-        // TODO: Subscribe to an OnPrimaryHit event to apply lifesteal per hit.
-        // Lifesteal on hit pattern:
-        //   1. Primary fires → event fires with damage dealt as payload
-        //   2. This handler heals user for (damage * lifestealPercent)
-        // Requires Rajah_Primary to expose: public static event Action<float> OnPrimaryHit
-        // (firing the actual damage dealt, after crit, as the payload)
+        _atkModifier = BuildModifier(
+            "Sovereign's Wrath — ATK Bonus",
+            ModifierSource.Ability,
+            new Sc_StatEffect(StatType.AttackPower, bonusATK, StatModType.Flat)
+        );
 
-        Debug.Log($"[{user.name}] Sovereign's Wrath equipped — passive active.");
+        ApplyToSelf(user, _atkModifier);
+
+        // --- Passive: Lifesteal ---
+        _lifesteal = _AbilityData.GetStat("Lifesteal", CurrentLevel);
+
+        Rajah_Primary.OnPrimaryDamageDealt += HandlePrimaryDamageDealt;
+
+        Debug.Log($"[{user.name}] Sovereign's Wrath equipped.");
     }
-
 
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        // Remove the passive ATK modifier cleanly
-        if (_passiveModifier != null)
+        if (_atkModifier != null)
         {
-            user.Stats.RemoveModifier(_passiveModifier);
-            _passiveModifier = null;
+            user.Stats.RemoveModifier(_atkModifier);
+            _atkModifier = null;
         }
 
-        // TODO: Unsubscribe from OnPrimaryHit when implemented
+        Rajah_Primary.OnPrimaryDamageDealt -= HandlePrimaryDamageDealt;
 
         Debug.Log($"[{user.name}] Sovereign's Wrath unequipped.");
     }
 
+    // -------------------------------------------------------------------------
+    // PASSIVE: LIFESTEAL
+    // -------------------------------------------------------------------------
+
+    private void HandlePrimaryDamageDealt(float damage, Mb_CharacterBase source)
+    {
+        if (source != _User) return;
+        if (_health == null) return;
+
+        float healAmount = damage * _lifesteal;
+        _health.Heal(healAmount);
+    }
 
     // -------------------------------------------------------------------------
-    // Active
+    // ACTIVE
     // -------------------------------------------------------------------------
 
     public override void Activate(Mb_CharacterBase user)
@@ -82,77 +102,108 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         if (!CheckCooldown()) return;
 
         TriggerAbilityAnimation(user);
+
         user.StartCoroutine(SovereignsWrathRoutine(user));
 
         StartCooldown(user, GetAbilityCooldown(user));
     }
 
-
-    // Sequences through the three phases of the active ability.
-    // Each phase is separated so timing, VFX, and hit detection
-    // can be added independently without restructuring the flow.
     private IEnumerator SovereignsWrathRoutine(Mb_CharacterBase user)
     {
-        // --- Phase 1: Become untargetable ---
-        // TODO: Disable the player's hitbox / collision layer so enemies
-        //       cannot deal damage during the slash window.
-        //       Suggested approach: toggle a dedicated "Untargetable" layer or
-        //       set a flag on Mb_HealthComponent that causes TakeDamage() to return early.
-        Debug.Log("[Sovereign's Wrath] Phase 1 — Untargetable.");
+        // --- Setup ---
+        Vector3 forward = GetLockedForwardDirection();
 
-        float untargetableDuration = 1.0f; // TODO: move to SO scaling
-        yield return new WaitForSeconds(untargetableDuration);
+        SetUntargetable(true);
+        var controller = user as Mb_PlayerController;
 
+        controller.AddDisable(ActionDisableFlags.Stun);
 
-        // --- Phase 2: Wide arc slash hitting all enemies in front ---
-        // TODO: OverlapSphere or OverlapBox in front of Rajah, damage all CuBots hit.
-        //       Use ApplyToEnemy() for any debuffs applied during the slash.
-        //       Damage formula: _AbilityData.GetStat("SlashDamage", CurrentLevel, user.Stats.AttackPower.GetValue())
-        Debug.Log("[Sovereign's Wrath] Phase 2 — Arc slash.");
+        // --- Tick Loop ---
+        for (int i = 0; i < TICK_COUNT; i++)
+        {
+            PerformAoEHit(user, forward, isFinal: false);
+            yield return new WaitForSeconds(TICK_INTERVAL);
+        }
 
-        PerformArcSlash(user);
-        yield return new WaitForSeconds(0.3f); // Brief pause between phases
+        // --- Final Delay ---
+        yield return new WaitForSeconds(FINAL_DELAY);
 
+        // --- Final Strike ---
+        PerformAoEHit(user, forward, isFinal: true);
 
-        // --- Phase 3: Final high-damage single strike ---
-        // TODO: Single target or small area high-damage hit.
-        //       Damage formula: _AbilityData.GetStat("FinalStrike", CurrentLevel, user.Stats.AttackPower.GetValue())
-        Debug.Log("[Sovereign's Wrath] Phase 3 — Final strike.");
-
-        PerformFinalStrike(user);
-
-
-        // --- End: Restore targetable state ---
-        // TODO: Re-enable hitbox / collision layer here
-        Debug.Log("[Sovereign's Wrath] Complete — targetable restored.");
+        // --- Cleanup ---
+        SetUntargetable(false);
+        controller.RemoveDisable(ActionDisableFlags.Stun);
     }
 
+    // -------------------------------------------------------------------------
+    // DAMAGE LOGIC
+    // -------------------------------------------------------------------------
 
-    private void PerformArcSlash(Mb_CharacterBase user)
+    private void PerformAoEHit(Mb_CharacterBase user, Vector3 forward, bool isFinal)
     {
-        // TODO: Implement wide arc hit detection
-        // Suggested: OverlapSphere centered slightly in front, large radius
-        // All CuBots hit receive SlashDamage scaled from the SO
+        Vector3 center = user.transform.position + forward * HIT_OFFSET;
 
-        // TODO: Remove this placeholder log when implemented
-        Debug.Log("[Sovereign's Wrath] Arc slash placeholder — no damage yet.");
+        Collider[] hits = Physics.OverlapSphere(center, HIT_RADIUS);
+
+        float damage = isFinal
+            ? _AbilityData.GetStat("FinalStrike", CurrentLevel, user.Stats.AttackPower.GetValue())
+            : _AbilityData.GetStat("TickDamage", CurrentLevel, user.Stats.AttackPower.GetValue());
+
+        foreach (Collider col in hits)
+        {
+            MB_CuBotBase enemy = col.GetComponent<MB_CuBotBase>();
+            if (enemy == null) continue;
+
+            enemy.Health.TakeDamage(damage);
+        }
     }
 
+    // -------------------------------------------------------------------------
+    // HELPERS
+    // -------------------------------------------------------------------------
 
-    private void PerformFinalStrike(Mb_CharacterBase user)
+    private Vector3 GetLockedForwardDirection()
     {
-        // TODO: Implement final strike hit detection
-        // Suggested: smaller OverlapSphere directly in front, high ATK scaling
+        Vector3 dir = _cam.transform.forward;
+        dir.y = 0f;
+        dir.Normalize();
 
-        // TODO: Remove this placeholder log when implemented
-        Debug.Log("[Sovereign's Wrath] Final strike placeholder — no damage yet.");
+        if (dir == Vector3.zero)
+            dir = _User.transform.forward;
+
+        return dir;
     }
 
+    // -------------------------------------------------------------------------
+    // SYSTEM STUBS (IMPLEMENT OR CONNECT)
+    // -------------------------------------------------------------------------
+
+    private void SetUntargetable(bool state)
+    {
+        if (_health == null) return;
+
+        // ✅ REQUIRED IMPLEMENTATION IN Mb_HealthComponent:
+        // public bool IsUntargetable;
+        _health.IsUntargetable = state;
+    }
+
+    //private void SetMovementEnabled(Mb_CharacterBase user, bool enabled)
+    //{
+    //    if (user.Movement != null)
+    //        user.Movement.SetMovementEnabled(enabled);
+
+    //    // OPTIONAL:
+    //    // user.AbilityController?.SetAbilitiesEnabled(enabled);
+    //}
+
+    // -------------------------------------------------------------------------
+    // ANIMATION
+    // -------------------------------------------------------------------------
 
     protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
     {
-        // TODO: Add TriggerRAbility() to Mb_GuardianAnimator when animation is ready
-        // if (user is Mb_GuardianBase guardian)
-        //     guardian.GuardianAnimator?.TriggerRAbility();
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerR1Ability(); // stub
     }
 }

@@ -11,6 +11,8 @@ public class Mb_PlayerController : Mb_GuardianBase
 {
     public static event Action OnJumpPressed;
 
+    private ActionDisableFlags _disableFlags = ActionDisableFlags.None;
+
     [Header("Debug — Runtime Stat Viewer")]
     public string GuardianName = "";
     public float CurrentHealthValue = 0;
@@ -47,7 +49,7 @@ public class Mb_PlayerController : Mb_GuardianBase
             passive: new Passive_Ability(_GuardianTemplate.PassiveAbility, this),
             q: new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this),
             e: new Rajah_E_Ability(_GuardianTemplate.AbilityE, this),
-            r: null,    // Assigned at wave 5 when player picks a branch
+            r: null, 
             primary: new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this),
             secondary: new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this)
         );
@@ -105,13 +107,34 @@ public class Mb_PlayerController : Mb_GuardianBase
         _playerActionMap.Enable();
 
         _jumpAction.performed += ctx => OnJumpPressed?.Invoke();
-        _qAction.performed += ctx => Abilities.ActivateQ();
-        _eAction.performed += ctx => Abilities.ActivateE();
-        _rAction.performed += ctx => Abilities.ActivateR();
-        _primaryAtkAction.performed += ctx => Abilities.ActivatePrimary();
-        _secondaryAtkAction.performed += ctx => Abilities.ActivateSecondary();
-    }
+        _qAction.performed += ctx =>
+        {
+            if (!IsDisabled(ActionDisableFlags.AbilityQ))
+                Abilities.ActivateQ();
+        };
+        _eAction.performed += ctx =>
+        {
+            if (!IsDisabled(ActionDisableFlags.AbilityE))
+                Abilities.ActivateE();
+        };
+        _rAction.performed += ctx =>
+        {
+            if (!IsDisabled(ActionDisableFlags.AbilityR))
+                Abilities.ActivateR();
+        };
+        _rAction.performed += ctx => Debug.Log("[DEBUG] R key pressed — input received.");
 
+        _primaryAtkAction.performed += ctx =>
+        {
+            if (!IsDisabled(ActionDisableFlags.PrimaryAttack))
+                Abilities.ActivatePrimary();
+        };
+        _secondaryAtkAction.performed += ctx =>
+        {
+            if (!IsDisabled(ActionDisableFlags.SecondaryAttack))
+                Abilities.ActivateSecondary();
+        };
+    }
 
     private void OnDisable()
     {
@@ -156,4 +179,20 @@ public class Mb_PlayerController : Mb_GuardianBase
         LifestealValue = Stats.Lifesteal.GetValue();
     }
     #endregion
+
+
+    public void AddDisable(ActionDisableFlags flags)
+    {
+        _disableFlags |= flags;
+    }
+
+    public void RemoveDisable(ActionDisableFlags flags)
+    {
+        _disableFlags &= ~flags;
+    }
+
+    public bool IsDisabled(ActionDisableFlags flag)
+    {
+        return (_disableFlags & flag) != 0;
+    }
 }

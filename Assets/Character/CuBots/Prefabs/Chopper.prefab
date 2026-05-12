@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 7922363256464047793}
   - component: {fileID: -1564925470065923901}
   - component: {fileID: -755259738969307294}
+  - component: {fileID: 4346307997029670551}
   m_Layer: 6
   m_Name: Chopper
   m_TagString: CuBot
@@ -426,7 +427,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4105497819398190046}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
@@ -453,6 +454,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc_ChopperController
   _CuBotTemplate: {fileID: 11400000, guid: f89a80ebf3b37ef46aa9946281a77d64, type: 2}
+  AggroRange: 20
+  DeAggroRange: 30
 --- !u!114 &4605224199310148109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,6 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e7fc9a88e17174fa1e0ef2fca3d549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_HealthComponent
+  IsUntargetable: 0
 --- !u!114 &7922363256464047793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,6 +530,27 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.64, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &4346307997029670551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105497819398190046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aba4a07b4b76a9489ccd4d9a61a7105, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_FloatingTextSpawner
+  _MinFontSize: 3
+  _MaxFontSize: 5
+  _DamageSizeCap: 1500
+  _NormalHitColor: {r: 1, g: 0.44877094, b: 0, a: 1}
+  _CritHitColor: {r: 1, g: 0, b: 0.010885239, a: 1}
+  _HealFontSize: 3
+  _HealColor: {r: 0.4, g: 1, b: 0.4, a: 1}
+  _StatusFontSize: 3.5
+  _SpawnHeightOffset: 0.5
 --- !u!1 &6813430728635059545
 GameObject:
   m_ObjectHideFlags: 0

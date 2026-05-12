@@ -47,11 +47,11 @@ public class Sc_TestingUI : MonoBehaviour
         Mb_AbilityController abilityController = FindFirstObjectByType<Mb_AbilityController>();
         if (abilityController != null)
         {
-            abilityController.GetAbilityBySlot("Q").OnCooldownChanged += ToggleQ;
-            abilityController.GetAbilityBySlot("E").OnCooldownChanged += ToggleE;
-            //abilityController.GetAbilityBySlot("R").OnCooldownChanged += ToggleR;
-            abilityController.GetAbilityBySlot("Primary").OnCooldownChanged += ToggleLMB;
-            abilityController.GetAbilityBySlot("Secondary").OnCooldownChanged += ToggleRMB;
+            abilityController.GetAbilityBySlot(AbilitySlot.Q).OnCooldownChanged += ToggleQ;
+            abilityController.GetAbilityBySlot(AbilitySlot.E).OnCooldownChanged += ToggleE;
+            //abilityController.GetAbilityBySlot(AbilitySlot.R).OnCooldownChanged += ToggleR;
+            abilityController.GetAbilityBySlot(AbilitySlot.Primary).OnCooldownChanged += ToggleLMB;
+            abilityController.GetAbilityBySlot(AbilitySlot.Secondary).OnCooldownChanged += ToggleRMB;
         }
     }
 
@@ -60,13 +60,16 @@ public class Sc_TestingUI : MonoBehaviour
         Mb_StatBlock playerStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Mb_StatBlock>();
         if (playerStats != null)
         {
-            float ATK, AP, HST;
+            float ATK, AP, HST, MS, AS, CRIT, CRIT_ch;
             ATK = playerStats.AttackPower.GetValue();
             AP = playerStats.AbilityPower.GetValue();
             HST = playerStats.Haste.GetValue();
+            MS = playerStats.MoveSpeed.GetValue();
+            AS = playerStats.AttackSpeed.GetValue();
+            CRIT_ch = playerStats.CriticalChance.GetValue();
+            CRIT = playerStats.CriticalDamage.GetValue();
 
-            Stats.text = $"ATK: {ATK}\nAP: {AP}\nHASTE: {HST}";
-            Debug.Log($"STATS: ATK: {ATK}, AP: {AP}, HASTE: {HST}");
+            Stats.text = $"ATK: {ATK}\nAP: {AP}\nHASTE: {HST}\nMS: {MS}\nAS: {AS}\nCRIT: {CRIT}\nCRIT_ch: {CRIT_ch}";
         }
 
     }

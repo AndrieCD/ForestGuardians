@@ -12,7 +12,8 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     [SerializeField] protected SO_Guardian _GuardianTemplate;
 
     public Mb_GuardianAnimator GuardianAnimator;
-
+    // On Mb_GuardianBase or Mb_PlayerController:
+    [SerializeField] public Transform ProjectileOrigin;
 
     protected override void Awake()
     {
@@ -87,4 +88,24 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         Debug.Log($"[{_CharacterName}] Guardian has died.");
         // TODO: Trigger death animation, fire game over event, etc.
     }
+
+
+    // Add to Mb_PlayerController.cs
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (_GuardianTemplate == null) return;
+
+        Vector3 center = transform.position + Vector3.up * 1.0f; // adjust this value
+
+        // Primary slash hitbox
+        Gizmos.color = Color.red;
+        Vector3 slashCenter = center + transform.forward * 2.0f;
+        Gizmos.DrawWireSphere(slashCenter, 1.5f);
+
+        // Q dash hit radius
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(center, 1.2f);
+    }
+#endif
 }

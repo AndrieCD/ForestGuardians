@@ -1,11 +1,20 @@
 // Mb_RewardsManager.cs
 // Lives on the Stage GameObject alongside Mb_WaveManager and Mb_AugmentManager.
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Mb_RewardsManager : MonoBehaviour
 {
+    #region EVENTS
+    public static event Action<RewardType> OnRewardsPanelOpened;
+    public static event Action<RewardOption> OnRewardChosen;
+    public static event Action OnRewardsPanelClosed;
+
+    #endregion
+
+
     // -------------------------------------------------------------------------
     // Inspector References
     // -------------------------------------------------------------------------
@@ -47,7 +56,7 @@ public class Mb_RewardsManager : MonoBehaviour
         { 0,  RewardType.AbilityUpgrade   },
         { 1,  RewardType.AbilityUpgrade   },
         { 3,  RewardType.AugmentSelection },
-        { 4,  RewardType.UltimateBranch   },
+        { 4,  RewardType.UltimateBranch   }, // 4
         { 5,  RewardType.AbilityUpgrade   },
         { 6,  RewardType.AbilityUpgrade   },
         { 8,  RewardType.AugmentSelection },
@@ -117,6 +126,7 @@ public class Mb_RewardsManager : MonoBehaviour
 
     private void OpenRewardsPanel(RewardType rewardType)
     {
+        OnRewardsPanelOpened?.Invoke(rewardType);
         bool optionsReady = TryBuildOptions(rewardType, out _leftOption, out _rightOption);
 
         if (!optionsReady)
@@ -165,10 +175,10 @@ public class Mb_RewardsManager : MonoBehaviour
             return false;
         }
 
-        int leftIndex = Random.Range(0, available.Count);
+        int leftIndex = UnityEngine.Random.Range(0, available.Count);
         SO_Augment leftData = available[leftIndex];
         available.RemoveAt(leftIndex);
-        SO_Augment rightData = available[Random.Range(0, available.Count)];
+        SO_Augment rightData = available[UnityEngine.Random.Range(0, available.Count)];
 
         _offeredAugments.Add(leftData);
         _offeredAugments.Add(rightData);
@@ -184,8 +194,8 @@ public class Mb_RewardsManager : MonoBehaviour
         left = default;
         right = default;
 
-        Sc_BaseAbility qAbility = _abilityController.GetAbilityBySlot("Q");
-        Sc_BaseAbility eAbility = _abilityController.GetAbilityBySlot("E");
+        Sc_BaseAbility qAbility = _abilityController.GetAbilityBySlot(AbilitySlot.Q);
+        Sc_BaseAbility eAbility = _abilityController.GetAbilityBySlot(AbilitySlot.E);
 
         bool qUpgradeable = qAbility != null && qAbility.CurrentLevel < qAbility.MaxLevel;
         bool eUpgradeable = eAbility != null && eAbility.CurrentLevel < eAbility.MaxLevel;
@@ -198,20 +208,20 @@ public class Mb_RewardsManager : MonoBehaviour
 
         if (qUpgradeable && eUpgradeable)
         {
-            left = RewardOption.FromAbilityUpgrade(qAbility, "Q");
-            right = RewardOption.FromAbilityUpgrade(eAbility, "E");
+            left = RewardOption.FromAbilityUpgrade(qAbility, AbilitySlot.Q);
+            right = RewardOption.FromAbilityUpgrade(eAbility, AbilitySlot.E);
             return true;
         }
 
         if (qUpgradeable)
         {
-            left = RewardOption.FromAbilityUpgrade(qAbility, "Q");
+            left = RewardOption.FromAbilityUpgrade(qAbility, AbilitySlot.Q);
             right = RewardOption.MaxedPlaceholder(eAbility);
         }
         else
         {
             left = RewardOption.MaxedPlaceholder(qAbility);
-            right = RewardOption.FromAbilityUpgrade(eAbility, "E");
+            right = RewardOption.FromAbilityUpgrade(eAbility, AbilitySlot.E);
         }
 
         return true;
@@ -266,6 +276,7 @@ public class Mb_RewardsManager : MonoBehaviour
 
     private void ApplyReward(RewardOption option)
     {
+        OnRewardChosen?.Invoke(option);
         switch (option.Type)
         {
             case RewardType.AugmentSelection:
@@ -300,6 +311,7 @@ public class Mb_RewardsManager : MonoBehaviour
 
     private void CloseRewardsPanel()
     {
+        OnRewardsPanelClosed?.Invoke();
         _RewardsPanelUI.Hide();
         GameManager.Instance.ChangeState(GameState.Playing);
     }
@@ -335,7 +347,7 @@ public struct RewardOption
     public SO_Augment AugmentData;
 
     // AbilityUpgrade
-    public string AbilitySlot;
+    public AbilitySlot AbilitySlot;
     public bool IsMaxedPlaceholder;
 
     // UltimateBranch — holds the full branch option including its factory delegate
@@ -356,7 +368,7 @@ public struct RewardOption
     }
 
 
-    public static RewardOption FromAbilityUpgrade(Sc_BaseAbility ability, string slot)
+    public static RewardOption FromAbilityUpgrade(Sc_BaseAbility ability, AbilitySlot abilitySlot)
     {
         SO_Ability abilityData = ability.GetAbilityData();
         int nextLevel = ability.CurrentLevel + 1;
@@ -368,7 +380,7 @@ public struct RewardOption
             Description = $"Upgrade {abilityData.AbilityName} from " +
                                  $"Level {ability.CurrentLevel} to Level {nextLevel}.",
             Icon = abilityData.Icon,
-            AbilitySlot = slot,
+            AbilitySlot = abilitySlot,
             IsMaxedPlaceholder = false,
         };
     }
@@ -415,10 +427,15 @@ public static class AugmentFactory
         return data.AugmentName switch
         {
             "Wings of Balance" => new Augment_WingsOfBalance(data, owner),
-            "Fight or Flight" => new Augment_FightOrFlight(data, owner),
-            "Heart of the Forest" => new Augment_HeartOfTheForest(data, owner),
+            "Harmony's Tempo" => new Mb_HarmonysTempo(data, owner),
             "Feral Surge" => new Augment_FeralSurge(data, owner),
-            // Add new augments here following the same pattern:
+            "Heart of the Forest" => new Augment_HeartOfTheForest(data, owner),
+            "Fight or Flight" => new Augment_FightOrFlight(data, owner),
+            "Diya's Blessing" => new Mb_DiyasBlessing(data, owner),
+            "Cycle of Life" => new Mb_CycleOfLife(data, owner),
+            "Primal Resonance" => new Mb_PrimalResonance(data, owner),
+            "Natural Selection" => new Mb_NaturalSelection(data, owner),
+            "Hunter's Instinct" => new Mb_HuntersInstinct(data, owner),
 
             _ => throw new System.Exception(
                 $"[AugmentFactory] No class registered for augment: '{data.AugmentName}'")

@@ -159,7 +159,7 @@ public class Passive_Ability : Sc_BaseAbility
     // Takedown Handler
     // -------------------------------------------------------------------------
 
-    private void HandleTakedown()
+    private void HandleTakedown(GameObject killedCuBot)
     {
         _takedownCount++;
 

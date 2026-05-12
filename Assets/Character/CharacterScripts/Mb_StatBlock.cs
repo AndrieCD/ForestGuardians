@@ -12,6 +12,9 @@ using UnityEngine;
 /// </summary>
 public class Mb_StatBlock : MonoBehaviour
 {
+    public event Action<Sc_Modifier> OnModifierAdded;
+    public event Action<Sc_Modifier> OnModifierRemoved;
+
 
     #region Stats               //----------------------------------------
 
@@ -157,6 +160,7 @@ public class Mb_StatBlock : MonoBehaviour
         if (modifier.Duration != float.PositiveInfinity)
             StartCoroutine(RemoveAfterDuration(modifier));
 
+        OnModifierAdded?.Invoke(modifier);
         OnStatsChanged?.Invoke();
     }
 
@@ -168,6 +172,7 @@ public class Mb_StatBlock : MonoBehaviour
     {
         if (!_activeModifiers.Remove(modifier)) return; // If it wasn't in the list, do nothing
         RemoveEffects(modifier);
+        OnModifierRemoved?.Invoke(modifier);
         OnStatsChanged?.Invoke();
     }
 

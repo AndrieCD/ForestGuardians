@@ -21,7 +21,8 @@ public class Mb_WaveManager : MonoBehaviour
     // EVENTS
     public static event Action<int> OnWaveStart; // Event triggered at the start of a wave
     public static event Action<int> OnWaveEnd;   // Event triggered at the end of a wave
-
+    public static event Action<GameObject> OnEnemySpawned;   // the activated CuBot
+    public static event Action<int> OnWaveSpawnComplete;     // waveIndex, all enemies placed
 
     private void Awake( )
     {
@@ -43,23 +44,13 @@ public class Mb_WaveManager : MonoBehaviour
     #endregion
 
 
-    private void HandleCuBotDeath()
+    private void HandleCuBotDeath(GameObject deadEnemy)
     {
-        // When a CuBot dies, remove it from the active enemies list
-        foreach (GameObject enemy in ActiveEnemies)
-        {
-            if (!enemy.activeInHierarchy)
-            {
-                ActiveEnemies.Remove(enemy);
-                break;
-            }
-        }
+        ActiveEnemies.Remove(deadEnemy); // Direct removal, no scanning needed
+        Debug.Log($"CuBot died. Remaining active enemies: {ActiveEnemies.Count}");
 
-        // If there are no more active enemies, end the wave
         if (ActiveEnemies.Count == 0 && IsWaveActive)
-        {
-            EndWave( );
-        }
+            EndWave();
     }
 
 
@@ -136,6 +127,7 @@ public class Mb_WaveManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f); // Delay between types
         }
+        OnWaveSpawnComplete?.Invoke(CurrentWaveIndex); // Trigger the wave spawn complete event
         Debug.Log($"Finished spawning wave {CurrentWaveIndex}. Total enemies spawned: {ActiveEnemies.Count}");
     }
 
@@ -151,6 +143,7 @@ public class Mb_WaveManager : MonoBehaviour
                 child.position = spawnPoint.position;
                 child.rotation = spawnPoint.rotation;
                 child.gameObject.SetActive(true);
+                OnEnemySpawned?.Invoke(child.gameObject); // Trigger the enemy spawned event
                 ActiveEnemies.Add(child.gameObject);
                 break;
             }

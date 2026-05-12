@@ -5,8 +5,10 @@
 // Also fires Passive_Ability.OnBasicAttackHit for each enemy hit so Royal Plumage
 // can grant stacks — Primary doesn't know about the passive directly.
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Rajah_Primary : Sc_BaseAbility
 {
@@ -16,6 +18,8 @@ public class Rajah_Primary : Sc_BaseAbility
     // Radius of the overlap sphere around the slash center
     // TODO: Swap to OverlapBox or a cone check if a precise frontal cone is needed later
     private const float SLASH_RADIUS = 1.5f;
+
+    public static event Action<float, Mb_CharacterBase> OnPrimaryDamageDealt;
 
 
     public Rajah_Primary(SO_Ability abilityData, Mb_CharacterBase user)
@@ -49,7 +53,7 @@ public class Rajah_Primary : Sc_BaseAbility
     private void PerformSlash(Mb_CharacterBase user)
     {
         // Place the hitbox in front of Rajah, not at his feet
-        Vector3 slashCenter = user.transform.position + user.transform.forward * SLASH_RANGE;
+        Vector3 slashCenter = user.transform.position + (Vector3.up * 1.0f) + (user.transform.forward * SLASH_RANGE);
         Collider[] hitColliders = Physics.OverlapSphere(slashCenter, SLASH_RADIUS);
 
         // Track already-hit enemies in case one has multiple colliders
@@ -71,6 +75,7 @@ public class Rajah_Primary : Sc_BaseAbility
             alreadyHit.Add(cuBot);
             hitAnyEnemy = true;
 
+            OnPrimaryDamageDealt?.Invoke(damage, user);
             Debug.Log($"[Feathery Slash] Hit {cuBot.name} for {damage} damage.");
         }
 

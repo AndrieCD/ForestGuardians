@@ -6,7 +6,7 @@ NavMeshProjectSettings:
   serializedVersion: 2
   areas:
   - name: Walkable
-    cost: 10
+    cost: 20
   - name: Not Walkable
     cost: 1
   - name: Jump
@@ -24,7 +24,7 @@ NavMeshProjectSettings:
   - name: 
     cost: 1
   - name: Water
-    cost: 5
+    cost: 10
   - name: Path
     cost: 1
   - name: 
@@ -94,7 +94,7 @@ NavMeshProjectSettings:
     agentRadius: 0.5
     agentHeight: 2
     agentSlope: 45
-    agentClimb: 0.4
+    agentClimb: 0.75
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     minRegionArea: 2

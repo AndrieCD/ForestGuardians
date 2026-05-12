@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -22,9 +23,13 @@ public class Mb_Movement : MonoBehaviour
     private float _gravity = -20f;
     private float _mouseSensitivity = 0.1f;
 
+    private bool _wasGrounded = true; // Used to detect landing events in Update()
+
     private Vector3 _dashVelocity = Vector3.zero;
-    private bool _isDashing = false;
+    //private bool _isDashing = false;
     private bool _isPaused = false;
+    private MovementState _movementState = MovementState.Normal;
+
 
     [Header("Cinemachine")]
     public Transform CinemachineCameraTarget;
@@ -36,6 +41,15 @@ public class Mb_Movement : MonoBehaviour
     private const float _threshold = 0.01f;
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
+
+
+    #region EVENTS
+    public event Action OnDashStarted;
+    public event Action OnDashEnded;
+    public event Action OnLanded;           // fires once when isGrounded transitions false → true
+    public event Action<bool> OnGroundedChanged; // true = just landed, false = just left ground
+    #endregion
+
 
     private void Awake()
     {
@@ -68,6 +82,24 @@ public class Mb_Movement : MonoBehaviour
     private void Update()
     {
         if (_isPaused) return;
+
+        // Track a _wasGrounded bool in Update() to detect landing and fire OnLanded / OnGroundedChanged.
+        bool isGrounded = _characterController != null && _characterController.isGrounded;
+
+        // Detect landing (false -> true)
+        if (isGrounded && !_wasGrounded)
+        {
+            OnLanded?.Invoke();
+            OnGroundedChanged?.Invoke(true);
+        }
+        // Detect leaving ground (true -> false)
+        else if (!isGrounded && _wasGrounded)
+        {
+            OnGroundedChanged?.Invoke(false);
+        }
+
+        _wasGrounded = isGrounded;
+
         HandleMovement();
     }
 
@@ -80,6 +112,8 @@ public class Mb_Movement : MonoBehaviour
     private void Jump()
     {
         if (_isPaused) return;
+        if (_playerController.IsDisabled(ActionDisableFlags.Jump))
+            return;
         if (!_characterController.isGrounded) return;
 
         float jumpPower = _statBlock.JumpPower.GetValue();
@@ -88,9 +122,14 @@ public class Mb_Movement : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (_playerController.IsDisabled(ActionDisableFlags.Movement))
+            return;
+
         // While dashing, bypass all normal movement logic entirely
-        if (_isDashing)
+        if (_movementState == MovementState.Dashing)
         {
+            if (_playerController.IsDisabled(ActionDisableFlags.Dash))
+                return;
             _characterController.Move(_dashVelocity * Time.deltaTime);
             return;
         }
@@ -124,6 +163,9 @@ public class Mb_Movement : MonoBehaviour
 
     private void CameraRotation()
     {
+        if (_playerController.IsDisabled(ActionDisableFlags.Rotation))
+            return;
+
         Vector2 lookInput = _playerController.GetLookVector() * _mouseSensitivity;
 
         if (lookInput.sqrMagnitude >= _threshold && !LockCameraPosition)
@@ -145,17 +187,27 @@ public class Mb_Movement : MonoBehaviour
     public void StartDash(Vector3 dashVelocity, float duration)
     {
         _dashVelocity = dashVelocity;
-        _isDashing = true;
+        _movementState = MovementState.Dashing;
+        StartCoroutine(DashRoutine(duration));
+    }
+
+    // Add alongside StartDash():
+    public void ApplyDisplacement(Vector3 velocity, float duration)  // external, no flag check
+    {
+        _dashVelocity = velocity;
+        _movementState = MovementState.Knockback;
         StartCoroutine(DashRoutine(duration));
     }
 
     private System.Collections.IEnumerator DashRoutine(float duration)
     {
+        OnDashStarted?.Invoke();
         yield return new WaitForSeconds(duration);
-        _isDashing = false;
+        _movementState = MovementState.Normal;
         _dashVelocity = Vector3.zero;
         // Bleed off vertical momentum so the player doesn't float after dashing
         _verticalVelocity = 0f;
+        OnDashEnded?.Invoke();
     }
 
     private static float ClampAngle(float angle, float min, float max)

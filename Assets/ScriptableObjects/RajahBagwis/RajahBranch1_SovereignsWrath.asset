@@ -17,4 +17,17 @@ MonoBehaviour:
   Cooldown: 5
   ProjectileModel: {fileID: 0}
   MaxLevel: 6
-  ScalingStats: []
+  ScalingStats:
+  - StatName: Damage
+    BaseValuePerLevel:
+    - 100
+    ATKScalingPerLevel:
+    - 0.25
+    APScalingPerLevel: []
+  - StatName: Lifesteal
+    BaseValuePerLevel:
+    - 0.5
+    ATKScalingPerLevel:
+    - 0.25
+    APScalingPerLevel:
+    - 0.2

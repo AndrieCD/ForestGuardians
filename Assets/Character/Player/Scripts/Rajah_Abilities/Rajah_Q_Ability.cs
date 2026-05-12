@@ -87,7 +87,8 @@ public class Rajah_Q_Ability : Sc_BaseAbility
 
         while (elapsed < DASH_DURATION)
         {
-            Collider[] nearby = Physics.OverlapSphere(user.transform.position, HIT_RADIUS);
+            Vector3 dashCenter = user.transform.position + Vector3.up * 1.0f;
+            Collider[] nearby = Physics.OverlapSphere(dashCenter, HIT_RADIUS);
 
             foreach (Collider col in nearby)
             {

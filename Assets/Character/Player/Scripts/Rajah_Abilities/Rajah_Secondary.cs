@@ -5,14 +5,17 @@
 //
 // Fires Passive_Ability.OnBasicAttackHit on each shot so Royal Plumage can grant stacks.
 
+using System;
 using UnityEngine;
 
 public class Rajah_Secondary : Sc_BaseAbility
 {
     private GameObject _projectilePrefab;
 
+    public static event Action<Mb_CharacterBase, Vector3, Vector3> OnSecondaryFired;
+
     // Cached once in OnEquip — avoids a scene search every time the ability fires
-    private Transform _projectileOrigin;
+    //private Transform _Guardian.ProjectileOrigin;
 
 
     public Rajah_Secondary(SO_Ability abilityData, Mb_CharacterBase user)
@@ -24,11 +27,11 @@ public class Rajah_Secondary : Sc_BaseAbility
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        GameObject originObj = GameObject.Find("ProjectileOrigin");
-        if (originObj != null)
-            _projectileOrigin = originObj.transform;
-        else
-            Debug.LogError("[Rajah_Secondary] 'ProjectileOrigin' GameObject not found in scene.");
+        //GameObject originObj = GameObject.Find("ProjectileOrigin");
+        //if (originObj != null)
+        //    _Guardian.ProjectileOrigin = originObj.transform;
+        //else
+        //    Debug.LogError("[Rajah_Secondary] 'ProjectileOrigin' GameObject not found in scene.");
 
         Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
     }
@@ -60,7 +63,7 @@ public class Rajah_Secondary : Sc_BaseAbility
             return;
         }
 
-        if (_projectileOrigin == null)
+        if (_Guardian.ProjectileOrigin == null)
         {
             Debug.LogError("[Rajah_Secondary] ProjectileOrigin transform is not cached.");
             return;
@@ -74,21 +77,27 @@ public class Rajah_Secondary : Sc_BaseAbility
             ? hit.point
             : ray.origin + ray.direction * 100f;
 
-        Vector3 direction = (targetPoint - _projectileOrigin.position).normalized;
+        Vector3 direction = (targetPoint - _Guardian.ProjectileOrigin.position).normalized;
         Quaternion rotation = Quaternion.LookRotation(direction);
 
-        GameObject instance = GameObject.Instantiate(_projectilePrefab, _projectileOrigin.position, rotation);
+        GameObject instance = GameObject.Instantiate(_projectilePrefab, _Guardian.ProjectileOrigin.position, rotation);
 
         Mb_Projectile projectile = instance.GetComponent<Mb_Projectile>();
         if (projectile != null)
         {
             float damage = _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue());
             damage = ApplyCriticalStrike(damage, user);
+
+            // After getting the Mb_Projectile component and before any damage call:
+            projectile.SetOwner(user);         // for kill-credit
+            projectile.SetOwnerTag("Player");  // for friendly-fire skip
             projectile.SetDamageAmount(damage);
 
             // Notify the passive that a basic attack was fired — stack logic lives there
             Passive_Ability.RaiseBasicAttackHit();
         }
+
+        OnSecondaryFired?.Invoke(user, _Guardian.ProjectileOrigin.position, targetPoint);
     }
 
 

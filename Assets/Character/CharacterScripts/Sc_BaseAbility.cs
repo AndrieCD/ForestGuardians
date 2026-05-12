@@ -56,11 +56,23 @@ public abstract class Sc_BaseAbility
     // lets RewardsManager read SO identity data without exposing the full protected field publicly.
     public SO_Ability GetAbilityData() => _AbilityData;
 
+    protected Mb_GuardianBase _Guardian => _User as Mb_GuardianBase; // cached cast for convenience in derived classes
+
+
+    #region EVENTS
+    // Fired whenever any ability lands a critical strike.
+    // Passes the final crit damage dealt and the character who landed the crit.
+    // Static so any listener (e.g. Hunter's Instinct augment) can subscribe once
+    // and catch crits from every ability slot without needing individual references.
+    public static event Action<float, Mb_CharacterBase> OnCriticalHit;
+
+    public event Action<int> OnAbilityLevelChanged;  // newLevel
+
     // EVENTS for UI
 
     // event fired when cooldown changes, so UI can update timers
     public event Action<float> OnCooldownChanged;
-
+    #endregion
 
 
     // constructor
@@ -114,7 +126,7 @@ public abstract class Sc_BaseAbility
 
         CurrentLevel++;
         OnLevelUp();
-
+        OnAbilityLevelChanged?.Invoke(CurrentLevel);
         Debug.Log($"[{_AbilityData.AbilityName}] Leveled up to {CurrentLevel}/{MaxLevel}.");
     }
 
@@ -204,9 +216,13 @@ public abstract class Sc_BaseAbility
     // Damage Helpers
     // -------------------------------------------------------------------------
 
+    // Replace the existing ApplyCriticalStrike() method with this:
+
     /// <summary>
     /// Rolls against the user's CriticalChance and applies CriticalDamage if it hits.
     /// Returns the final damage value — either normal or crit-multiplied.
+    /// Fires the static OnCriticalHit event when a crit lands so augments like
+    /// Hunter's Instinct can react without needing a direct reference to each ability.
     /// CriticalChance is stored as a percentage (e.g. 15 = 15%).
     /// CriticalDamage is stored as a percentage multiplier (e.g. 150 = 150% = 1.5x).
     /// </summary>
@@ -218,8 +234,15 @@ public abstract class Sc_BaseAbility
         if (roll <= critChance)
         {
             float critMultiplier = user.Stats.CriticalDamage.GetValue() / 100f;
-            Debug.Log($"[{_AbilityData.AbilityName}] Critical Strike! {critMultiplier}x damage.");
-            return baseDamage * critMultiplier;
+            float critDamage = baseDamage * critMultiplier;
+
+            Debug.Log($"[{_AbilityData.AbilityName}] Critical Strike! {critMultiplier}x damage = {critDamage}.");
+
+            // Notify any listeners (e.g. Hunter's Instinct) that a crit just landed.
+            // We pass critDamage (not baseDamage) so the heal is based on actual damage dealt.
+            OnCriticalHit?.Invoke(critDamage, user);
+
+            return critDamage;
         }
 
         return baseDamage;

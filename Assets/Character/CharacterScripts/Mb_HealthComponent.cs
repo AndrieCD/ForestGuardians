@@ -23,7 +23,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     public float CurrentHealth { get; private set; }
     private List<Sc_ShieldInstance> _shields = new List<Sc_ShieldInstance>();
-
+    public bool IsUntargetable = false;
     public float CurrentShield
     {
         get
@@ -46,6 +46,10 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     public event Action<float, float> OnHealthChanged;  // (currentHealth, maxHealth)
     public event Action<float> OnShieldChanged;  // (currentShield
     public event Action OnDeath;
+    public event Action<float> OnDamageTaken; // (damageAmount)
+    public event Action<float> OnHealReceived; // (healAmount)
+    public event Action<float> OnShieldAdded;       // amount added
+    public event Action OnShieldBroken;             // fires when a shield instance hits 0
 
     #endregion              //----------------------------------------
 
@@ -81,9 +85,11 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     /// Applies damage to this character. Ignored if already dead.
     /// Triggers OnDeath if health reaches zero.
     /// </summary>
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, DamageType type = DamageType.Physical)
     {
         if (IsDead) return;
+        if (IsUntargetable) return;
+
 
         float remainingDamage = AbsorbWithShields(amount);
 
@@ -95,7 +101,9 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
         }
 
-        Debug.Log($"[{gameObject.name}] took {amount} damage. Remaining HP: {CurrentHealth}");
+        // Debug.Log($"[{gameObject.name}] took {amount} damage. Remaining HP: {CurrentHealth}");
+        OnDamageTaken?.Invoke(amount);
+
 
         if (CurrentHealth <= 0f)
             Die();
@@ -111,6 +119,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
         CurrentHealth = Mathf.Min(CurrentHealth + amount, _statBlock.MaxHealth.GetValue());
 
+        OnHealReceived?.Invoke(amount);
         OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
     }
 
@@ -135,13 +144,13 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     public void AddShield(float amount, float duration)
     {
         if (amount <= 0) return;
-
         var shield = new Sc_ShieldInstance(amount, duration);
         _shields.Add(shield);
 
         if (duration != float.PositiveInfinity)
             StartCoroutine(HandleShieldDuration(shield));
 
+        OnShieldAdded?.Invoke(amount);
         OnShieldChanged?.Invoke(CurrentShield);
     }
     private IEnumerator HandleShieldDuration(Sc_ShieldInstance shield)
@@ -168,6 +177,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             {
                 _shields.RemoveAt(i);
                 i--;
+                OnShieldBroken?.Invoke();
             }
         }
 
