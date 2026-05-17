@@ -17,7 +17,7 @@ public abstract class Mb_CharacterBase : MonoBehaviour
     protected string _CharacterName;
     protected int _CharacterLevel = 1;  // start level 1, reduce by 1 for array indexing
     protected int _MaxLevel = 15;     // max level 15, reduce by 1 for array indexing
-
+    public string CharacterName => _CharacterName;
     // Component references — fetched once in Awake, used everywhere
     public Mb_StatBlock Stats { get; private set; }
     public Mb_HealthComponent Health { get; private set; }

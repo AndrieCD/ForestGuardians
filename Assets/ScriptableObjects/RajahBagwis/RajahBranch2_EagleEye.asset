@@ -23,4 +23,5 @@ MonoBehaviour:
     - 0
     ATKScalingPerLevel:
     - 0.85
-    APScalingPerLevel: []
+    APScalingPerLevel:
+    - 0

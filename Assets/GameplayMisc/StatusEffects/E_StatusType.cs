@@ -11,7 +11,10 @@ public enum StatusType
 {
     // Reduces the target's Move Speed for a duration.
     // Applied by abilities that impede enemy pathing (e.g. Mindspikes).
-    Slow,
+    MoveSlow,
+
+    // Reduces the target's Attack Speed for a duration.
+    AttackSlow,
 
     // Completely prevents the target from moving or using abilities.
     // Implemented via ActionDisableFlags.Stun on Guardians;

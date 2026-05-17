@@ -100,7 +100,7 @@ public class Sc_StatusEffect
     /// </summary>
     /// <param name="duration">How long the slow lasts.</param>
     /// <param name="moveSpeedReduction">Fraction to reduce MS by (0.30 = 30% slower).</param>
-    public static Sc_StatusEffect Slow(float duration, float moveSpeedReduction)
+    public static Sc_StatusEffect MoveSlow(float duration, float moveSpeedReduction)
     {
         // Percent modifier with a negative value reduces the stat.
         // Infinite duration on the modifier — the controller removes it when the effect expires.
@@ -114,7 +114,35 @@ public class Sc_StatusEffect
         );
 
         return new Sc_StatusEffect(
-            StatusType.Slow,
+            StatusType.MoveSlow,
+            duration,
+            tickInterval: 0f,
+            tickDamage: 0f,
+            statModifier: modifier
+        );
+    }
+
+    /// <summary>
+    /// A flat Move Speed reduction with no damage component.
+    /// The modifier is built here so the caller only needs to pass gameplay values.
+    /// </summary>
+    /// <param name="duration">How long the slow lasts.</param>
+    /// <param name="attackSpeedReduction">Fraction to reduce AS by (0.30 = 30% slower).</param>
+    public static Sc_StatusEffect AttackSlow(float duration, float attackSpeedReduction)
+    {
+        // Percent modifier with a negative value reduces the stat.
+        // Infinite duration on the modifier — the controller removes it when the effect expires.
+        var modifier = new Sc_Modifier(
+            "Slow",
+            ModifierSource.StatusEffect,
+            new List<Sc_StatEffect>
+            {
+                new Sc_StatEffect(StatType.AttackSpeed, -attackSpeedReduction, StatModType.Percent)
+            }
+        );
+
+        return new Sc_StatusEffect(
+            StatusType.AttackSlow,
             duration,
             tickInterval: 0f,
             tickDamage: 0f,

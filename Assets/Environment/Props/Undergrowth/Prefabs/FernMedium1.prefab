@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.118456
+      value: 16.783161
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.251236
+      value: 13.083111
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 163.12114
+      value: 157.72972
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
       propertyPath: m_LocalRotation.w
@@ -56,8 +56,38 @@ PrefabInstance:
       propertyPath: m_Name
       value: FernMedium1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2712753271934268369}
   m_SourcePrefab: {fileID: 100100000, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
+--- !u!1 &4914496102319878898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d0553dd52d2634741bbf6f42dbc1e3ed, type: 3}
+  m_PrefabInstance: {fileID: 5256446214040997795}
+  m_PrefabAsset: {fileID: 0}
+--- !u!205 &2712753271934268369
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4914496102319878898}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1

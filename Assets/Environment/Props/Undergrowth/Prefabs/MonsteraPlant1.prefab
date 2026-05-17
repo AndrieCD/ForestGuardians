@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 95.85
+      value: 19.998875
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.658807
+      value: 12.869349
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 137.50848
+      value: 159.11194
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
       propertyPath: m_LocalRotation.w
@@ -56,8 +56,38 @@ PrefabInstance:
       propertyPath: m_Name
       value: MonsteraPlant1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2018074338569159718}
   m_SourcePrefab: {fileID: 100100000, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
+--- !u!1 &4656952579935038050 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 84a23a238a22b164e910b84d9a0863be, type: 3}
+  m_PrefabInstance: {fileID: 5503882956085712691}
+  m_PrefabAsset: {fileID: 0}
+--- !u!205 &2018074338569159718
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4656952579935038050}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1

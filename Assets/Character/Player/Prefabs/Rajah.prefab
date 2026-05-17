@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 8748818683795034859}
   - component: {fileID: 2411467176442064774}
   - component: {fileID: 951839605038414060}
+  - component: {fileID: 3334191983904632004}
   m_Layer: 6
   m_Name: Rajah
   m_TagString: Player
@@ -308,6 +309,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.92, z: 0}
+--- !u!114 &3334191983904632004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b202113ef7499cb44a20a6707fc24df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusEffectController
 --- !u!1 &6950224793813158514
 GameObject:
   m_ObjectHideFlags: 0
