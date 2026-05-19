@@ -87,6 +87,7 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     {
         Debug.Log($"[{_CharacterName}] Guardian has died.");
         // TODO: Trigger death animation, fire game over event, etc.
+        GuardianAnimator?.TriggerDefeat();
     }
 
 

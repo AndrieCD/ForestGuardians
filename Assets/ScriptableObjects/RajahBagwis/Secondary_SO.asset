@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Secondary_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Deadly Plumage
+  Icon: {fileID: 0}
   Cooldown: 0
-  ProjectileModel: {fileID: 531380711534864579, guid: b35db28fadd4fcc44a3c895bec68a0a5, type: 3}
+  ProjectileModel: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  MaxLevel: 6
   ScalingStats:
   - StatName: Damage
     BaseValuePerLevel:

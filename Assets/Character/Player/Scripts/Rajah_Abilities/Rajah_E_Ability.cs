@@ -122,7 +122,10 @@ public class Rajah_E_Ability : Sc_BaseAbility
 
             Mb_Projectile projectile = spawnedFeathers[i].GetComponent<Mb_Projectile>();
             if (projectile != null)
+            {
                 projectile.SetDamageAmount(damagePerFeather);
+                projectile.SetOwnerTag(user.gameObject.tag);
+            }
         }
 
         // Prevent sibling feathers from colliding with each other mid-flight

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_NaturalSelection
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Natural Selection
-  Description: NaturalSelection
+  Description: Your highest bonus stat is converted into the other at 200% efficiency.
   Icon: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
   Effects: []

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SO_HeartOfTheForest
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Heart of the Forest
-  Description: Heart of the Forest prototype
+  Description: Gain +1000 Max HP and regenerate 5% Max HP every second, but reduce
+    your Attack Power and Ability Power by 15%.
   Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   Effects: []

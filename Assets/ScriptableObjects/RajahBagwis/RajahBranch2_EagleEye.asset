@@ -15,7 +15,7 @@ MonoBehaviour:
   AbilityName: Eagle Eye
   Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   Cooldown: 5
-  ProjectileModel: {fileID: 531380711534864579, guid: b35db28fadd4fcc44a3c895bec68a0a5, type: 3}
+  ProjectileModel: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
   MaxLevel: 6
   ScalingStats:
   - StatName: Damage

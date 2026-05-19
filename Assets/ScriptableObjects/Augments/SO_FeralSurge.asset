@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: SO_FeralSurge
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Feral Surge
-  Description: 'Feral Surge prototype
-
-'
+  Description: "Gain massive scaling Attack Power, but lose 35% Max HP.\n\n+50\u2013200%
+    Attack Power\n\u221235% Max HP"
   Icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   Effects: []

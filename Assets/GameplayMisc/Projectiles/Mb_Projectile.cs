@@ -92,24 +92,42 @@ public class Mb_Projectile : MonoBehaviour
     // Hit Detection
     // -------------------------------------------------------------------------
 
-    private void OnCollisionEnter(Collision collision)
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    // Skip if the hit object belongs to the same faction as the firer
+    //    if (!string.IsNullOrEmpty(_ownerTag) && collision.gameObject.CompareTag(_ownerTag))
+    //        return;
+
+    //    // If we hit a CuBot, register the attacker BEFORE calling TakeDamage().
+    //    // This ensures that if this hit kills the CuBot, OnCuBotKill fires with
+    //    // the correct attacker reference — Cycle of Life depends on this.
+    //    MB_CuBotBase cuBot = collision.gameObject.GetComponent<MB_CuBotBase>();
+    //    if (cuBot != null && _owner != null)
+    //        cuBot.SetLastAttacker(_owner);
+
+    //    // Deal damage through the interface — works for both Guardians and CuBots
+    //    I_Damageable damageable = collision.gameObject.GetComponent<I_Damageable>();
+    //    if (damageable != null)
+    //        damageable.TakeDamage(_damageAmount);
+
+    //    Destroy(gameObject); // TODO: return to pool once projectile pooling is added
+    //}
+
+    private void OnTriggerEnter(Collider other)
     {
         // Skip if the hit object belongs to the same faction as the firer
-        if (!string.IsNullOrEmpty(_ownerTag) && collision.gameObject.CompareTag(_ownerTag))
+        if (!string.IsNullOrEmpty(_ownerTag) && other.gameObject.CompareTag(_ownerTag))
             return;
-
         // If we hit a CuBot, register the attacker BEFORE calling TakeDamage().
         // This ensures that if this hit kills the CuBot, OnCuBotKill fires with
         // the correct attacker reference — Cycle of Life depends on this.
-        MB_CuBotBase cuBot = collision.gameObject.GetComponent<MB_CuBotBase>();
+        MB_CuBotBase cuBot = other.gameObject.GetComponent<MB_CuBotBase>();
         if (cuBot != null && _owner != null)
             cuBot.SetLastAttacker(_owner);
-
         // Deal damage through the interface — works for both Guardians and CuBots
-        I_Damageable damageable = collision.gameObject.GetComponent<I_Damageable>();
+        I_Damageable damageable = other.gameObject.GetComponent<I_Damageable>();
         if (damageable != null)
             damageable.TakeDamage(_damageAmount);
-
         Destroy(gameObject); // TODO: return to pool once projectile pooling is added
     }
 }

@@ -37,6 +37,9 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     public bool IsDead { get; private set; }
 
+    // Handle to the regen coroutine so we can stop it cleanly on death or pool reset
+    private Coroutine _regenCoroutine;
+
     #endregion              //----------------------------------------
 
 
@@ -72,6 +75,12 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
         IsDead = false;
         CurrentHealth = _statBlock.MaxHealth.GetValue();
+
+        // Stop any leftover regen coroutine before starting a fresh one.
+        // This matters for CuBots returning to the pool and being reactivated.
+        StopRegenCoroutine();
+        _regenCoroutine = StartCoroutine(RegenLoop());
+
 
         // Invoke OnChanged events to initialize UI and other listeners with the correct starting values
         OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
@@ -140,19 +149,66 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
 
 
-    // SHIELD API
+    #region Health Regeneration     //----------------------------------------
+
+    /// <summary>
+    /// Ticks once per second and heals the character by their current HealthRegen value.
+    /// Reads GetValue() each tick so augments that modify HealthRegen (e.g. Heart of
+    /// the Forest) are automatically reflected without any extra wiring.
+    /// Skips the Heal() call if HealthRegen is zero or negative — CuBots with
+    /// zero regen incur no cost beyond one yield per second.
+    /// </summary>
+    private IEnumerator RegenLoop()
+    {
+        // Use WaitForSeconds(1f) — regen is defined as HP per second in the GDD,
+        // and a 1s tick is cheap and predictable. Time.timeScale = 0 (pause) freezes
+        // this coroutine automatically, so no pause handling is needed here.
+        var wait = new WaitForSeconds(1f);
+
+        while (!IsDead)
+        {
+            yield return wait;
+
+            float regenAmount = _statBlock.HealthRegen.GetValue();
+
+            // Skip the Heal() call entirely if regen is zero — avoids a
+            // pointless Mathf.Min and an OnHealthChanged event fire with no change
+            if (regenAmount <= 0f) continue;
+
+            // Skip Heal() if we're already at max health — avoids OnHealthChanged events with no change
+            if (CurrentHealth >= _statBlock.MaxHealth.GetValue()) continue;
+
+            Heal(regenAmount);
+        }
+    }
+
+    private void StopRegenCoroutine()
+    {
+        if (_regenCoroutine != null)
+        {
+            StopCoroutine(_regenCoroutine);
+            _regenCoroutine = null;
+        }
+    }
+
+    #endregion                      //----------------------------------------
+
+
+    #region Shield API              //----------------------------------------
+
     public void AddShield(float amount, float duration)
     {
         if (amount <= 0) return;
+
         var shield = new Sc_ShieldInstance(amount, duration);
         _shields.Add(shield);
 
         if (duration != float.PositiveInfinity)
             StartCoroutine(HandleShieldDuration(shield));
 
-        OnShieldAdded?.Invoke(amount);
         OnShieldChanged?.Invoke(CurrentShield);
     }
+
     private IEnumerator HandleShieldDuration(Sc_ShieldInstance shield)
     {
         yield return new WaitForSeconds(shield.Duration);
@@ -160,6 +216,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
         OnShieldChanged?.Invoke(CurrentShield);
     }
+
     private float AbsorbWithShields(float damage)
     {
         float remainingDamage = damage;
@@ -177,7 +234,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             {
                 _shields.RemoveAt(i);
                 i--;
-                OnShieldBroken?.Invoke();
             }
         }
 
@@ -193,4 +249,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             total += s.MaxValue;
         return total;
     }
+
+    #endregion                      //----------------------------------------
 }

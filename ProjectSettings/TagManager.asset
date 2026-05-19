@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Panoharra
   - CuBot
+  - Guardian
   layers:
   - Default
   - TransparentFX

@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: SO_PrimalResonance
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Primal Resonance
-  Description: Primal Resonance
+  Description: 'Each ability cast during a wave grants +5% Attack Power and Ability
+    Power.
+
+    Stacks up to 20 times and resets at the end of the wave.'
   Icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   Effects: []

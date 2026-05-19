@@ -50,6 +50,9 @@ public class Rajah_Secondary : Sc_BaseAbility
         FireProjectile(user);
         TriggerAbilityAnimation(user);
 
+        // Play sound
+        Mb_AudioManager.PlaySFX(CombatSFX.Ability_Secondary);
+
         // Secondary is a basic attack — cooldown driven by AttackSpeed, not Haste
         StartCooldown(user, GetAttackCooldown(user));
     }

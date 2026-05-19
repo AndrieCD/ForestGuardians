@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4343016919791677240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7809491634764266839}
+  - component: {fileID: 8766234792375567482}
+  - component: {fileID: 5379199990829757794}
+  m_Layer: 0
+  m_Name: Rafflesia1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7809491634764266839
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343016919791677240}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.32650557, y: 0.6272114, z: 0.32650557, w: 0.6272114}
+  m_LocalPosition: {x: 4.71, y: 11.2, z: 71.23}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6736158114019525050}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -55, y: 90, z: 0}
+--- !u!65 &8766234792375567482
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343016919791677240}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 4, z: 2}
+  m_Center: {x: 0, y: 0, z: 1}
+--- !u!114 &5379199990829757794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343016919791677240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f65f09aa1357f934ea7558f9b083b0e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_RafflesiaPortal
+  PairedPortal: {fileID: 0}
+  EjectionSpeed: 20
+  EjectionAngle: 0
+  DestinationCooldown: 1.5
+--- !u!1001 &24645905572386663
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7809491634764266839}
+    m_Modifications:
+    - target: {fileID: 6226221966072794215, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_Name
+      value: Rafflesia
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.000000029802322
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.31860963
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0001527369
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.82482135
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.56539357
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.000000029802322
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.000000029802322
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 68.859
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7615235015084819532, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+      propertyPath: PairedPortal
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5586752028747490011, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+--- !u!4 &6736158114019525050 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6713788764922091229, guid: 27d72cebb3b8dae449d91d741d4c9e42, type: 3}
+  m_PrefabInstance: {fileID: 24645905572386663}
+  m_PrefabAsset: {fileID: 0}

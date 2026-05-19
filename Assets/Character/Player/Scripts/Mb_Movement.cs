@@ -118,6 +118,9 @@ public class Mb_Movement : MonoBehaviour
 
         float jumpPower = _statBlock.JumpPower.GetValue();
         _verticalVelocity = jumpPower;
+
+        // For animator
+        _playerController.GuardianAnimator.SetGrounded(false);
     }
 
     private void HandleMovement()
@@ -157,8 +160,10 @@ public class Mb_Movement : MonoBehaviour
 
         // For animator
         _playerController.GuardianAnimator.SetVerticalVelocity(velocity.y);
-        // (XZ velocity)
-        _playerController.GuardianAnimator.SetSpeed(new Vector3(velocity.x, 0f, velocity.z).magnitude / moveSpeed);
+
+
+        // (XZ velocity) Animation
+        _playerController.GuardianAnimator.SetSpeed(moveInput.magnitude);
     }
 
     private void CameraRotation()

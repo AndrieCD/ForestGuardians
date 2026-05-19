@@ -129,7 +129,8 @@ public class Mb_AudioManager : MonoBehaviour
     {
         // Subscribe to game events that drive automatic audio changes.
         // All subscriptions live here so unsubscribing in OnDisable is symmetric.
-        GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+        if (GameManager.Instance != null)   
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         Mb_StageManager.OnStageStart += HandleStageStart;
         Mb_WaveManager.OnWaveStart += HandleWaveStart;
         Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
