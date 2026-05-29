@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Q_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Sky Rend
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300090, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
   Cooldown: 1
   ProjectileModel: {fileID: 0}
   MaxLevel: 6

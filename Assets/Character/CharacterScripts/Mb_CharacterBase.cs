@@ -37,6 +37,8 @@ public abstract class Mb_CharacterBase : MonoBehaviour
 
     protected virtual void Awake()
     {
+        Sc_BuildLogger.Trace($"[{gameObject.name}] Awake: Fetching components and initializing character.");
+
         // Grab all sibling components that were added to this GameObject in the Inspector
         Stats = GetComponent<Mb_StatBlock>();
         Health = GetComponent<Mb_HealthComponent>();
@@ -48,7 +50,10 @@ public abstract class Mb_CharacterBase : MonoBehaviour
         if (Health == null) Debug.LogError($"[Mb_CharacterBase] Missing Mb_HealthComponent on {gameObject.name}");
         if (Abilities == null) Debug.LogError($"[Mb_CharacterBase] Missing Mb_AbilityController on {gameObject.name}");
 
+        Abilities.Initialize(this);
         InitializeFromTemplate();
+
+        Sc_BuildLogger.Trace($"[{gameObject.name}] Awake complete: Character initialized with name '{_CharacterName}' at level {_CharacterLevel}.");
     }
 
 

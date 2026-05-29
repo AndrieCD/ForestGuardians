@@ -62,7 +62,7 @@ public class Mb_PauseManager : MonoBehaviour
         Debug.Log($"GameState: {GameManager.Instance.CurrentState}");
 
         // Guard: don't allow pausing outside of active gameplay and don't allow resuming if not currently paused
-        if (pause == true && GameManager.Instance.CurrentState != GameState.Playing ) return;
+        if (pause == true && GameManager.Instance.CurrentState != GameState.Playing) return;
         if (pause == false && GameManager.Instance.CurrentState != GameState.Paused) return;
 
         // Prevent firing the same state twice (e.g. pausing when already paused)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: E_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Feather Barrage
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300068, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   Cooldown: 1
   ProjectileModel: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
   MaxLevel: 6

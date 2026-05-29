@@ -1,76 +1,78 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Holds a single stat's base value, level scaling, and active effects list.
+/// Does NOT own a "current" value — resource tracking (e.g. current HP) belongs
+/// on Mb_HealthComponent, not here.
+///
+/// External systems never write to Effects directly — always go through Mb_StatBlock,
+/// which calls NotifyChanged() after applying or removing effects.
+/// </summary>
 [System.Serializable]
 public class Sc_Stat
 {
-    // The stat's value as defined in the ScriptableObject — never changes after construction.
-    // All level scaling is computed from this so growth is always linear off the original number.
+    // ─── Fields ────────────────────────────────────────────────────────────
+
+    // Set once from the ScriptableObject template. Never changes after construction.
+    // SetLevel() always scales off this so growth is always linear.
     private float _originalBaseValue;
 
-    // The "live" base used by GetValue(). SetLevel() rewrites this each level-up.
+    // Live base value. Rewritten by SetLevel() on level-up.
     public float BaseValue;
 
-    public float _scalingPerLevel; // e.g. 0.40 means +40% of original base per level gained
+    // e.g. 0.40 = +40% of original base per level gained
+    public float _scalingPerLevel;
 
-    // A simple list of effects (effects are stat-specific buff/debuff instances)
-    public List<Sc_StatEffect> Effects = new List<Sc_StatEffect>( );
-
-    private float currentValue;
-
-    public float CurrentValue => currentValue;
+    // Effects currently applied to this stat. Written exclusively by Mb_StatBlock.
+    // Do not write to this list from anywhere else.
+    public List<Sc_StatEffect> Effects = new List<Sc_StatEffect>();
 
 
-    public event Action<Sc_Modifier> OnModifierAdded;
-    public event Action<Sc_Modifier> OnModifierRemoved;
+    // ─── Events ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Fired by Mb_StatBlock whenever this stat's effects or base value change.
+    /// UI elements should subscribe here rather than polling GetValue() in Update().
+    ///
+    /// Passes the new computed value so subscribers don't need to call GetValue() themselves.
+    ///   e.g. healthBar.OnMaxHealthChanged(float newMax)
+    /// </summary>
+    public event Action<float> OnStatChanged;
 
 
+    // ─── Constructor ───────────────────────────────────────────────────────
 
-    // Constructor to initialize the base value of the stat
     public Sc_Stat(float baseValue, float scalingPerLevel)
     {
         _originalBaseValue = baseValue;
         BaseValue = baseValue;
         _scalingPerLevel = scalingPerLevel;
-        Recalculate(); // initialize currentValue
     }
 
+
+    // ─── Level Scaling ─────────────────────────────────────────────────────
+
     /// <summary>
-    /// Recomputes BaseValue for the given character level using the Python formula:
-    ///   stat = originalBase * (1 + scalingPerLevel * levelsGained)
-    /// "levelsGained" is (level - 1) because at level 1 there is no bonus yet.
-    /// This always reads from _originalBaseValue, so calling it multiple times
-    /// never compounds — it's safe to call on every level-up.
+    /// Recomputes BaseValue for the given character level.
+    /// Formula: base * (1 + scalingPerLevel * levelsGained)
+    /// Safe to call multiple times — always reads from _originalBaseValue, never compounds.
     /// </summary>
     public void SetLevel(int level)
     {
-        int levelsGained = level - 1; // level 1 = 0 bonus, level 2 = 1 bonus, etc.
+        int levelsGained = level - 1;
         BaseValue = _originalBaseValue * (1f + (_scalingPerLevel * levelsGained));
+        NotifyChanged();
     }
 
-    // Add a new effect to the stat and start a coroutine to remove it after its duration if it's not infinite
-    public void AddEffect(Sc_StatEffect effect, MonoBehaviour runner)
-    {
-        Effects.Add(effect);
 
-        if (effect.Duration == float.PositiveInfinity) return;
-        runner.StartCoroutine(RemoveAfterDuration(effect));
-    }
+    // ─── Value Computation ─────────────────────────────────────────────────
 
-    IEnumerator RemoveAfterDuration(Sc_StatEffect effect)
-    {
-        yield return new WaitForSeconds(effect.Duration);
-        RemoveEffect(effect);
-    }
-
-    public void RemoveEffect(Sc_StatEffect effect)
-    {
-        Effects.Remove(effect);
-    }
-
-    // Returns the final value of this stat after applying all active modifiers.
+    /// <summary>
+    /// Returns the final computed value: base + flat effects, scaled by percent effects.
+    /// This is the value UI and gameplay systems should read.
+    /// </summary>
     public float GetValue()
     {
         float finalValue = BaseValue;
@@ -87,10 +89,14 @@ public class Sc_Stat
         return finalValue * (1f + percentBonus);
     }
 
-    // Returns only the bonus granted by modifiers, not the base value itself.
+    /// <summary>
+    /// Returns only the bonus from active effects, not the base value.
+    /// Useful for UI tooltips that show "base + bonus" breakdowns,
+    /// or augment screens showing how much a modifier contributes.
+    /// </summary>
     public float BonusValue()
     {
-        float bonusValue = 0f;
+        float flatBonus = 0f;
         float percentBonus = 0f;
 
         foreach (Sc_StatEffect effect in Effects)
@@ -98,37 +104,24 @@ public class Sc_Stat
             if (effect.Type == StatModType.Percent)
                 percentBonus += effect.Value;
             else
-                bonusValue += effect.Value;
+                flatBonus += effect.Value;
         }
 
-        return bonusValue + (BaseValue * percentBonus);
+        return flatBonus + (BaseValue * percentBonus);
     }
 
-    public void Recalculate(bool resetCurrent = false)
-    {
-        float newMax = GetValue();
 
-        if (resetCurrent)
-        {
-            currentValue = newMax;
-        }
-        else
-        {
-            // Preserve ratio when max changes
-            float ratio = currentValue / Mathf.Max(1f, newMax);
-            currentValue = newMax * ratio;
-        }
-    }
+    // ─── Internal Notification ─────────────────────────────────────────────
 
-    public float Reduce(float amount)
+    /// <summary>
+    /// Called by Mb_StatBlock after it writes to Effects, and by SetLevel().
+    /// Fires OnStatChanged with the freshly computed value so subscribers
+    /// receive the new number without needing to call GetValue() themselves.
+    ///
+    /// Do not call this from outside Mb_StatBlock or Sc_Stat itself.
+    /// </summary>
+    public void NotifyChanged()
     {
-        float absorbed = Mathf.Min(currentValue, amount);
-        currentValue -= absorbed;
-        return absorbed; // how much was actually consumed
-    }
-
-    public void Restore(float amount)
-    {
-        currentValue = Mathf.Min(currentValue + amount, GetValue());
+        OnStatChanged?.Invoke(GetValue());
     }
 }

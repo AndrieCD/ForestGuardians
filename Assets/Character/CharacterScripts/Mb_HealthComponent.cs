@@ -47,12 +47,15 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     // UI, sound, and VFX should subscribe to these instead of polling CurrentHealth
     public event Action<float, float> OnHealthChanged;  // (currentHealth, maxHealth)
-    public event Action<float> OnShieldChanged;  // (currentShield
-    public event Action OnDeath;
+    public event Action<float> OnMaxHealthChanged; // (newMaxHealth) — fired by StatBlock when MaxHealth changes, e.g. from Heart of the Forest
+
     public event Action<float> OnDamageTaken; // (damageAmount)
     public event Action<float> OnHealReceived; // (healAmount)
+    
+    public event Action<float> OnShieldChanged;  // (currentShield
     public event Action<float> OnShieldAdded;       // amount added
     public event Action OnShieldBroken;             // fires when a shield instance hits 0
+    public event Action OnDeath;
 
     #endregion              //----------------------------------------
 
@@ -168,7 +171,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         while (!IsDead)
         {
             yield return wait;
-
+            if (_statBlock == null || _statBlock.HealthRegen == null) continue;
             float regenAmount = _statBlock.HealthRegen.GetValue();
 
             // Skip the Heal() call entirely if regen is zero — avoids a
@@ -251,4 +254,10 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     }
 
     #endregion                      //----------------------------------------
+
+
+    public float GetMaxHealth()
+    {
+        return _statBlock.MaxHealth.GetValue();
+    }
 }

@@ -64,7 +64,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
 
         Rajah_Primary.OnPrimaryDamageDealt += HandlePrimaryDamageDealt;
 
-        Debug.Log($"[{user.name}] Sovereign's Wrath equipped.");
+        Debug.Log($"Sovereign's Wrath equipped.");
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
@@ -77,7 +77,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
 
         Rajah_Primary.OnPrimaryDamageDealt -= HandlePrimaryDamageDealt;
 
-        Debug.Log($"[{user.name}] Sovereign's Wrath unequipped.");
+        Debug.Log($"Sovereign's Wrath unequipped.");
     }
 
     // -------------------------------------------------------------------------

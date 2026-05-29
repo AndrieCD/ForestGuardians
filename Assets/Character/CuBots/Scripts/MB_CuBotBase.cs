@@ -64,19 +64,30 @@ public class MB_CuBotBase : Mb_CharacterBase
         Health.OnDeath -= HandleDeath;
         Health.OnDeath += HandleDeath;
 
-        // ---
-        // Level up CuBot based on player level.
-        // --
+        // Level CuBot to match player level.
+        // Default to 1 if player can't be found — log a warning so it's visible in the console.
         int playerLevel = 1;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
         {
-            Mb_CharacterBase playerChar = player.GetComponent<Mb_CharacterBase>();
+            Mb_CharacterBase playerChar = playerObj.GetComponent<Mb_CharacterBase>();
             if (playerChar != null)
+            {
                 playerLevel = playerChar.GetLevel();
+            }
+            else
+            {
+                Debug.LogWarning($"[MB_CuBotBase] Player GameObject found but has no Mb_CharacterBase on {gameObject.name}. Defaulting to level 1.");
+            }
         }
-        SetLevel(playerLevel);
+        else
+        {
+            Debug.LogWarning($"[MB_CuBotBase] No GameObject tagged 'Player' found when spawning {gameObject.name}. Defaulting to level 1.");
+        }
 
+        // SetLevel calls Stats.SetLevel() which scales all stats from the freshly built
+        // SO base values — safe to call immediately after BuildFromTemplate().
+        SetLevel(playerLevel);
 
         AssignAbilities();
     }

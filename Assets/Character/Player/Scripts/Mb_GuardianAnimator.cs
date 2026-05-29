@@ -142,7 +142,7 @@ public class Mb_GuardianAnimator : MonoBehaviour
     public void SetSpeed(float speed)
     {
         _currentSpeed = Mathf.Lerp(_currentSpeed, speed, Time.deltaTime / _SpeedDampTime);
-        Debug.Log($"[Mb_GuardianAnimator] SetSpeed({speed:F2}) → _currentSpeed = {_currentSpeed:F2}");
+        //Debug.Log($"[Mb_GuardianAnimator] SetSpeed({speed:F2}) → _currentSpeed = {_currentSpeed:F2}");
         _Animator.SetFloat(_SpeedHash, _currentSpeed);
     }
 

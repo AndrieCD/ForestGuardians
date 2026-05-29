@@ -28,9 +28,6 @@ public class Mb_PlayerController : Mb_GuardianBase
     public float LifestealValue = 0;
     public float CurrentShieldValue = 0;
 
-    [Header("Input")]
-    [SerializeField] InputActionAsset InputActions;
-
     private InputActionMap _playerActionMap;
     private InputAction _moveAction, _lookAction;
     private InputAction _qAction, _eAction, _rAction;
@@ -39,36 +36,78 @@ public class Mb_PlayerController : Mb_GuardianBase
 
     protected override void Awake()
     {
+        Sc_BuildLogger.Trace("PlayerController Awake START");
+
         base.Awake();
+
+        Sc_BuildLogger.Trace("PlayerController Awake END");
     }
 
 
+    private void OnEnable()
+    {
+        Sc_BuildLogger.Trace("PlayerController OnEnable START");
+
+
+        _playerActionMap = InputSystem.actions.FindActionMap("Player");
+
+        if (_playerActionMap == null)
+        {
+            Debug.LogError("[Mb_PlayerController] Could not find Action Map 'Player'.");
+            return;
+        }
+
+        _moveAction = _playerActionMap.FindAction("Move");
+        _lookAction = _playerActionMap.FindAction("Look");
+        _qAction = _playerActionMap.FindAction("Q");
+        _eAction = _playerActionMap.FindAction("E");
+        _rAction = _playerActionMap.FindAction("R");
+        _primaryAtkAction = _playerActionMap.FindAction("PrimaryAttack");
+        _secondaryAtkAction = _playerActionMap.FindAction("SecondaryAttack");
+        _jumpAction = _playerActionMap.FindAction("Jump");
+
+        _jumpAction.performed += HandleJump;
+        _qAction.performed += HandleQ;
+        _eAction.performed += HandleE;
+        _rAction.performed += HandleR;
+        _primaryAtkAction.performed += HandlePrimary;
+        _secondaryAtkAction.performed += HandleSecondary;
+
+        _playerActionMap.Enable();
+
+        Sc_BuildLogger.Trace("PlayerController OnEnable START");
+
+    }
+
     protected override void AssignAbilities()
     {
+        // Guard every SO reference — a missing assignment in the Inspector
+        // causes a NullReferenceException in the ability constructor in builds,
+        // even if the Editor appears to handle it gracefully.
+        if (_GuardianTemplate.PassiveAbility == null)
+            Debug.LogError("[Mb_PlayerController] PassiveAbility SO is not assigned on the Guardian template.");
+        if (_GuardianTemplate.AbilityQ == null)
+            Debug.LogError("[Mb_PlayerController] AbilityQ SO is not assigned on the Guardian template.");
+        if (_GuardianTemplate.AbilityE == null)
+            Debug.LogError("[Mb_PlayerController] AbilityE SO is not assigned on the Guardian template.");
+        if (_GuardianTemplate.PrimaryAttack == null)
+            Debug.LogError("[Mb_PlayerController] PrimaryAttack SO is not assigned on the Guardian template.");
+        if (_GuardianTemplate.SecondaryAttack == null)
+            Debug.LogError("[Mb_PlayerController] SecondaryAttack SO is not assigned on the Guardian template.");
+
         Abilities.SetSlots(
-            passive: new Passive_Ability(_GuardianTemplate.PassiveAbility, this),
-            q: new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this),
-            e: new Rajah_E_Ability(_GuardianTemplate.AbilityE, this),
-            r: null, 
-            primary: new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this),
-            secondary: new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this)
+            passive: _GuardianTemplate.PassiveAbility != null ? new Passive_Ability(_GuardianTemplate.PassiveAbility, this) : null,
+            q: _GuardianTemplate.AbilityQ != null ? new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this) : null,
+            e: _GuardianTemplate.AbilityE != null ? new Rajah_E_Ability(_GuardianTemplate.AbilityE, this) : null,
+            r: null,
+            primary: _GuardianTemplate.PrimaryAttack != null ? new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this) : null,
+            secondary: _GuardianTemplate.SecondaryAttack != null ? new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this) : null
         );
     }
 
 
-    /// <summary>
-    /// Defines Rajah Bagwis's two ultimate branch options.
-    /// Each option captures its own SO_Ability reference in the delegate so the
-    /// correct data is always passed to the ability constructor — no string matching,
-    /// no central factory.
-    ///
-    /// When a second guardian is added, they override this method in their own
-    /// controller class with their own branch types. Nothing here changes.
-    /// </summary>
     protected override (Sc_BranchOption branch1, Sc_BranchOption branch2) DefineBranches()
     {
-        // Cache the SO references locally so the lambda captures them by value,
-        // not by reference to the template — safe even if the template were reassigned
         SO_Ability branch1AbilityData = _GuardianTemplate.AbilityR_Branch1;
         SO_Ability branch2AbilityData = _GuardianTemplate.AbilityR_Branch2;
 
@@ -76,9 +115,6 @@ public class Mb_PlayerController : Mb_GuardianBase
         {
             DisplayData = _GuardianTemplate.BranchDisplay1,
             AbilityData = branch1AbilityData,
-
-            // Lambda captures branch1AbilityData — when the player picks this branch,
-            // the rewards manager calls CreateAbility(player) and gets a ready instance
             CreateAbility = owner => new Rajah_R_Branch1(branch1AbilityData, owner)
         };
 
@@ -93,53 +129,24 @@ public class Mb_PlayerController : Mb_GuardianBase
     }
 
 
-    private void OnEnable()
-    {
-        _playerActionMap = InputActions.FindActionMap("Player");
-        _moveAction = _playerActionMap.FindAction("Move");
-        _lookAction = _playerActionMap.FindAction("Look");
-        _qAction = _playerActionMap.FindAction("Q");
-        _eAction = _playerActionMap.FindAction("E");
-        _rAction = _playerActionMap.FindAction("R");
-        _primaryAtkAction = _playerActionMap.FindAction("PrimaryAttack");
-        _secondaryAtkAction = _playerActionMap.FindAction("SecondaryAttack");
-        _jumpAction = _playerActionMap.FindAction("Jump");
-        _playerActionMap.Enable();
-
-        _jumpAction.performed += ctx => OnJumpPressed?.Invoke();
-        _qAction.performed += ctx =>
-        {
-            if (!IsDisabled(ActionDisableFlags.AbilityQ))
-                Abilities.ActivateQ();
-        };
-        _eAction.performed += ctx =>
-        {
-            if (!IsDisabled(ActionDisableFlags.AbilityE))
-                Abilities.ActivateE();
-        };
-        _rAction.performed += ctx =>
-        {
-            if (!IsDisabled(ActionDisableFlags.AbilityR))
-                Abilities.ActivateR();
-        };
-        _rAction.performed += ctx => Debug.Log("[DEBUG] R key pressed — input received.");
-
-        _primaryAtkAction.performed += ctx =>
-        {
-            if (!IsDisabled(ActionDisableFlags.PrimaryAttack))
-                Abilities.ActivatePrimary();
-        };
-        _secondaryAtkAction.performed += ctx =>
-        {
-            if (!IsDisabled(ActionDisableFlags.SecondaryAttack))
-                Abilities.ActivateSecondary();
-        };
-    }
 
     private void OnDisable()
     {
-        _jumpAction.performed -= ctx => OnJumpPressed?.Invoke();
+        // Named method references match exactly — these actually unsubscribe correctly.
+        _jumpAction.performed -= HandleJump;
+        _qAction.performed -= HandleQ;
+        _eAction.performed -= HandleE;
+        _rAction.performed -= HandleR;
+        _primaryAtkAction.performed -= HandlePrimary;
+        _secondaryAtkAction.performed -= HandleSecondary;
+
         _playerActionMap.Disable();
+    }
+
+
+    private void OnDestroy()
+    {
+        Abilities.UnequipAll();
     }
 
 
@@ -150,19 +157,97 @@ public class Mb_PlayerController : Mb_GuardianBase
     }
 
 
-    private void OnDestroy()
+    #region Input Handlers          //----------------------------------------
+    // Named methods so OnDisable can unsubscribe them correctly.
+    // Never use lambdas for input subscriptions that need to be removed.
+
+    private void HandleJump(InputAction.CallbackContext ctx)
+        => OnJumpPressed?.Invoke();
+
+    private void HandleQ(InputAction.CallbackContext ctx)
     {
-        Abilities.UnequipAll();
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return;
+
+        if (!IsDisabled(ActionDisableFlags.AbilityQ))
+            Abilities.ActivateQ();
     }
 
+    private void HandleE(InputAction.CallbackContext ctx)
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return;
 
-    #region Input Getters
-    public Vector2 GetMoveVector() => _moveAction.ReadValue<Vector2>();
-    public Vector2 GetLookVector() => _lookAction.ReadValue<Vector2>();
-    #endregion
+        if (!IsDisabled(ActionDisableFlags.AbilityE))
+            Abilities.ActivateE();
+    }
+
+    private void HandleR(InputAction.CallbackContext ctx)
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return;
+
+        Debug.Log("[DEBUG] R key pressed — input received.");
+        if (!IsDisabled(ActionDisableFlags.AbilityR))
+            Abilities.ActivateR();
+    }
+
+    private void HandlePrimary(InputAction.CallbackContext ctx)
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return;
+
+        if (!IsDisabled(ActionDisableFlags.PrimaryAttack))
+            Abilities.ActivatePrimary();
+    }
+
+    private void HandleSecondary(InputAction.CallbackContext ctx)
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return;
+
+        if (!IsDisabled(ActionDisableFlags.SecondaryAttack))
+            Abilities.ActivateSecondary();
+    }
+
+    #endregion                      //----------------------------------------
 
 
-    #region Debug
+    #region Input Getters           //----------------------------------------
+
+    public Vector2 GetMoveVector()
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return Vector2.zero;
+
+        return _moveAction != null
+        ? _moveAction.ReadValue<Vector2>()
+        : Vector2.zero;
+    }
+    public Vector2 GetLookVector()
+    {
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+            return Vector2.zero;
+
+        return _lookAction != null
+        ? _lookAction.ReadValue<Vector2>()
+        : Vector2.zero;
+    }
+
+    #endregion                      //----------------------------------------
+
+
+    #region Disable Flags           //----------------------------------------
+
+    public void AddDisable(ActionDisableFlags flags) => _disableFlags |= flags;
+    public void RemoveDisable(ActionDisableFlags flags) => _disableFlags &= ~flags;
+    public bool IsDisabled(ActionDisableFlags flag) => (_disableFlags & flag) != 0;
+
+    #endregion                      //----------------------------------------
+
+
+    #region Debug                   //----------------------------------------
+
     private void UpdateDebugInspector()
     {
         GuardianName = _CharacterName;
@@ -178,21 +263,6 @@ public class Mb_PlayerController : Mb_GuardianBase
         CriticalDamageValue = Stats.CriticalDamage.GetValue();
         LifestealValue = Stats.Lifesteal.GetValue();
     }
-    #endregion
 
-
-    public void AddDisable(ActionDisableFlags flags)
-    {
-        _disableFlags |= flags;
-    }
-
-    public void RemoveDisable(ActionDisableFlags flags)
-    {
-        _disableFlags &= ~flags;
-    }
-
-    public bool IsDisabled(ActionDisableFlags flag)
-    {
-        return (_disableFlags & flag) != 0;
-    }
+    #endregion                      //----------------------------------------
 }

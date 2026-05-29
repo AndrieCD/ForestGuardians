@@ -1,28 +1,40 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
-// This class is responsible for managing the overall current stage, including controlling the flow of waves via WaveManager,
-// tracking player stage progress, handling player and enemy stat scaling, and such.
 public class Mb_StageManager : MonoBehaviour
 {
-    [SerializeField] SO_StageData _CurrentStageData; // This should be assigned in the Inspector with the appropriate StageData SO.
+    [SerializeField] SO_StageData _CurrentStageData;
 
     #region EVENTS
     public static event Action OnStageStart;
     public static event Action OnStageEnd;
     #endregion
 
-    private void Awake( )
+
+    private void Start()
     {
+        // Yield one frame before starting the stage.
+        // This guarantees all other Start() methods in the scene have completed —
+        // Sc_SceneUIBinder has registered the HUD, Mb_HealthComponent has initialized,
+        // and all event subscriptions are in place before we fire OnStageStart.
+        // Without this, Start() execution order between objects is not guaranteed,
+        // causing the HUD to miss the Playing state change in builds.
+        StartCoroutine(InitializeAfterSceneReady());
     }
 
-    private void Start( )
+
+    private IEnumerator InitializeAfterSceneReady()
     {
-        StartStage( );
+        // One frame is enough — Unity guarantees all Start() calls complete
+        // within the first frame of a scene being active.
+        yield return null;
+
+        StartStage();
     }
 
 
-    public SO_StageData GetStageData( )
+    public SO_StageData GetStageData()
     {
         return _CurrentStageData;
     }
@@ -30,17 +42,17 @@ public class Mb_StageManager : MonoBehaviour
 
     private void StartStage()
     {
-        Debug.Log($"Start Stage");
-
+        Debug.Log("Start Stage");
         GameManager.Instance.ChangeState(GameState.Playing);
-        OnStageStart?.Invoke( );
+        OnStageStart?.Invoke();
     }
 
 
     public void EndStage()
     {
-        OnStageEnd?.Invoke( );
+        OnStageEnd?.Invoke();
     }
+
 
     private void OnEnable()
     {
@@ -54,11 +66,8 @@ public class Mb_StageManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
-        // Show the cursor only on the rewards panel — hide it everywhere else during a stage
         bool showCursor = newState == GameState.RewardsPanel;
-
         Cursor.visible = showCursor;
         Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
-
 }

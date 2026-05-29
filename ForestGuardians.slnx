@@ -8,7 +8,13 @@
   <Project Path="UnityEditor.UI.csproj" />
   <Project Path="UnityEditor.UI.EditorTests.csproj" />
   <Project Path="UnityEditor.UI.Analytics.csproj" />
+  <Project Path="CFXREditor.csproj" />
+  <Project Path="CFXRRuntime.csproj" />
+  <Project Path="CFXRDemo.csproj" />
   <Project Path="Unity.TextMeshPro.Editor.Tests.csproj" />
+  <Project Path="ToonyColorsPro.Demo.Editor.csproj" />
   <Project Path="Unity.TextMeshPro.Tests.csproj" />
   <Project Path="Unity.InternalAPIEngineBridge.004.csproj" />
+  <Project Path="KinoBloom.Runtime.csproj" />
+  <Project Path="CFXR.WelcomeScreen.csproj" />
 </Solution>

@@ -28,7 +28,7 @@ public class Mb_StatBlock : MonoBehaviour
     public Sc_Stat CriticalChance { get; private set; }
     public Sc_Stat CriticalDamage { get; private set; }
     public Sc_Stat Lifesteal { get; private set; }
-    public Sc_Stat Shielding { get; private set; }
+    //public Sc_Stat Shielding { get; private set; }
     public Sc_Stat JumpPower { get; private set; }
 
     #endregion                  //----------------------------------------
@@ -62,7 +62,20 @@ public class Mb_StatBlock : MonoBehaviour
         CriticalDamage = new Sc_Stat(template.CriticalDamage, template.CriticalDamageScaling);
         Lifesteal = new Sc_Stat(template.LifeSteal, template.LifeStealScaling);
         //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
-        JumpPower = new Sc_Stat(template.JumpPower, 0f); 
+        JumpPower = new Sc_Stat(template.JumpPower, 0f);
+
+        MaxHealth.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        HealthRegen.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        MoveSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AttackSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AttackPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AbilityPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        Haste.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        CriticalChance.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        CriticalDamage.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        Lifesteal.OnStatChanged += _ => OnStatsChanged?.Invoke();
+
+
         BuildLookup();
     }
 
@@ -84,6 +97,11 @@ public class Mb_StatBlock : MonoBehaviour
         BuildLookup();
     }
 
+    public void BuildFromTemplate(SO_Panoharra template)
+    {
+        MaxHealth = new Sc_Stat(template.MaxHealth, 0);
+        BuildLookup();
+    }
 
     // Builds the StatType → Sc_Stat dictionary after stats are created
     // so modifiers can look up any stat by enum value
@@ -97,11 +115,11 @@ public class Mb_StatBlock : MonoBehaviour
             { StatType.AttackSpeed,       AttackSpeed       },
             { StatType.AttackPower,       AttackPower       },
             { StatType.AbilityPower,      AbilityPower      },
-            { StatType.Haste, Haste },
+            { StatType.Haste,             Haste             },
             { StatType.CriticalChance,    CriticalChance    },
             { StatType.CriticalDamage,    CriticalDamage    },
             { StatType.Lifesteal,         Lifesteal         },
-            { StatType.Shielding,         Shielding         },
+            //{ StatType.Shielding,         Shielding         },
         };
     }
 
@@ -153,12 +171,20 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void AddModifier(Sc_Modifier modifier)
     {
-        _activeModifiers.Add(modifier);     // Add the modifier to the active list
-        ApplyEffects(modifier);             // Apply the effects within the modifier to the target stats
+        _activeModifiers.Add(modifier);
+        ApplyEffects(modifier);
 
-        // If timed, start the removal coroutine here — StatBlock is always active
         if (modifier.Duration != float.PositiveInfinity)
-            StartCoroutine(RemoveAfterDuration(modifier));
+        {
+            // Guard: modifiers from StatusEffect source must always be infinite-duration.
+            // The StatusEffectController owns their timer.
+            if (modifier.Source == ModifierSource.StatusEffect)
+                Debug.LogWarning($"[Mb_StatBlock] Modifier '{modifier.ModifierName}' from StatusEffect " +
+                                 $"source has a finite duration — this will race with Mb_StatusEffectController. " +
+                                 $"Set duration to float.PositiveInfinity.");
+            else
+                StartCoroutine(RemoveAfterDuration(modifier));
+        }
 
         OnModifierAdded?.Invoke(modifier);
         OnStatsChanged?.Invoke();
@@ -224,7 +250,7 @@ public class Mb_StatBlock : MonoBehaviour
         CriticalChance?.Effects.Clear();
         CriticalDamage?.Effects.Clear();
         Lifesteal?.Effects.Clear();
-        Shielding?.Effects.Clear();
+        //Shielding?.Effects.Clear();
         JumpPower?.Effects.Clear();
 
         OnStatsChanged?.Invoke();
@@ -245,6 +271,8 @@ public class Mb_StatBlock : MonoBehaviour
         {
             if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
                 stat.Effects.Add(effect);
+            stat.NotifyChanged(); // ← stat-level event fires here
+
         }
     }
 
@@ -255,6 +283,7 @@ public class Mb_StatBlock : MonoBehaviour
         {
             if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
                 stat.Effects.Remove(effect);
+            stat.NotifyChanged(); // ← stat-level event fires here
         }
     }
 

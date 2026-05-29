@@ -38,14 +38,14 @@ public class Rajah_Q_Ability : Sc_BaseAbility
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
+        Debug.Log($"Equipped {_AbilityData.AbilityName}.");
 
         _HealthComponent = user.GetComponent<Mb_HealthComponent>();
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"[{user.name}] Unequipped {_AbilityData.AbilityName}.");
+        Debug.Log($"Unequipped {_AbilityData.AbilityName}.");
     }
 
 

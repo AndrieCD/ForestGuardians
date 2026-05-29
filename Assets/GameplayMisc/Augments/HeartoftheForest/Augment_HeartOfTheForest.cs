@@ -3,6 +3,7 @@
 // Gain HP Regen equal to 5% of current Max HP (dynamic, mutation-based)
 
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Augment_HeartOfTheForest : Sc_AugmentBase
 {
@@ -69,9 +70,15 @@ public class Augment_HeartOfTheForest : Sc_AugmentBase
         float maxHP = _Owner.Stats.MaxHealth.GetValue();
         float regenAmount = maxHP * 0.05f;
 
-        _regenEffect.Value = regenAmount;
+        if (Mathf.Approximately(_regenEffect.Value, regenAmount)) return; // no change, skip
 
-        // Notify the stat block that the effect value has changed so it can recalculate the final regen stat
+        // Unsubscribe BEFORE notifying to break the cycle
+        _Owner.Stats.OnStatsChanged -= HandleStatsChanged;
+
+        _regenEffect.Value = regenAmount;
         _Owner.Stats.NotifyStatsChanged();
+
+        // Resubscribe after the notification is done
+        _Owner.Stats.OnStatsChanged += HandleStatsChanged;
     }
 }

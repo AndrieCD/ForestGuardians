@@ -7,7 +7,6 @@
 //
 // This is the single place where pause blocks ability use — nothing else needs to change.
 
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System;
 using UnityEngine;
 
@@ -34,8 +33,11 @@ public class Mb_AbilityController : MonoBehaviour
     private bool _isPaused = false;
 
     // If true, all ability activation is blocked (e.g. during cutscenes, stun, death)
-    public bool IsBlocked => _isPaused || _owner.Health.IsDead;
-
+    public bool IsBlocked =>
+        _owner == null ||
+        _owner.Health == null ||
+        _isPaused ||
+        _owner.Health.IsDead;
     #endregion                  //----------------------------------------
 
 
@@ -50,13 +52,13 @@ public class Mb_AbilityController : MonoBehaviour
     #endregion                  //----------------------------------------
 
 
-    private void Awake()
-    {
-        _owner = GetComponent<Mb_CharacterBase>();
+    //private void Awake()
+    //{
+    //    _owner = GetComponent<Mb_CharacterBase>();
 
-        if (_owner == null)
-            Debug.LogError($"[Mb_AbilityController] No Mb_CharacterBase found on {gameObject.name}.");
-    }
+    //    if (_owner == null)
+    //        Debug.LogError($"[Mb_AbilityController] No Mb_CharacterBase found on {gameObject.name}.");
+    //}
 
 
     private void OnEnable()
@@ -70,6 +72,14 @@ public class Mb_AbilityController : MonoBehaviour
     {
         Mb_PauseManager.OnPaused -= HandlePause;
         Mb_PauseManager.OnResumed -= HandleResume;
+    }
+
+    public void Initialize(Mb_CharacterBase owner)
+    {
+        _owner = owner;
+
+        if (_owner == null)
+            Debug.LogError("[Mb_AbilityController] Initialize received null owner.");
     }
 
 
@@ -86,6 +96,12 @@ public class Mb_AbilityController : MonoBehaviour
         Sc_BaseAbility primary,
         Sc_BaseAbility secondary)
     {
+        if (_owner == null)
+        {
+            Debug.LogError("[Mb_AbilityController] SetSlots called before owner initialization.");
+            return;
+        }
+
         _passiveAbility = passive;
         _qAbility = q;
         _eAbility = e;

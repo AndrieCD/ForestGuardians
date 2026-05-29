@@ -40,7 +40,13 @@ public class UIManager : MonoBehaviour
 
         // HUD
         if (HUDCanvas != null)
-            HUDCanvas.SetActive(state == GameState.Playing || state == GameState.Paused);
+        {
+            bool shouldBeActive = state == GameState.Playing || state == GameState.Paused || state == GameState.RewardsPanel;
+            bool wasActive = HUDCanvas.activeSelf;
+            HUDCanvas.SetActive(shouldBeActive);
+            Debug.Log($"[UIManager] UpdateUI: HUD '{GetGameObjectPath(HUDCanvas)}' wasActive={wasActive} -> nowActive={HUDCanvas.activeSelf} for state {state}");
+        }
+            //HUDCanvas.SetActive(state == GameState.Playing || state == GameState.Paused);
 
         // Pause menu
         if (PauseMenuCanvas != null)
@@ -56,6 +62,7 @@ public class UIManager : MonoBehaviour
     public void RegisterHUD(GameObject hud)
     {
         HUDCanvas = hud;
+        Debug.Log($"[UIManager] RegisterHUD called with: '{GetGameObjectPath(hud)}'");
         UpdateUI(GameManager.Instance.CurrentState);
     }
 
@@ -74,5 +81,19 @@ public class UIManager : MonoBehaviour
     public void UnregisterHUD(GameObject hud)
     {
         if (HUDCanvas == hud) HUDCanvas = null;
+    }
+
+    // Helper: returns the hierarchy path for a GameObject for clearer logging
+    private string GetGameObjectPath(GameObject go)
+    {
+        if (go == null) return "<null>";
+        string path = go.name;
+        Transform t = go.transform.parent;
+        while (t != null)
+        {
+            path = t.name + "/" + path;
+            t = t.parent;
+        }
+        return path;
     }
 }

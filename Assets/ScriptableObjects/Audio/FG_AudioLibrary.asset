@@ -17,4 +17,7 @@ MonoBehaviour:
   - Key: 6
     Clip: {fileID: 8300000, guid: bd8b8bd050fc6c54fa3466000184bda7, type: 3}
     DefaultVolume: 0.75
-  UISounds: []
+  UISounds:
+  - Key: 0
+    Clip: {fileID: 8300000, guid: 80721227073f0cf4497b42ead9687c56, type: 3}
+    DefaultVolume: 0.5

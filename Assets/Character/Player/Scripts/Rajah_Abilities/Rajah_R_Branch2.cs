@@ -87,8 +87,10 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
 
     public override void Activate(Mb_CharacterBase user)
     {
-        Debug.Log($"[{user.name}] Activated {_AbilityData.name}.");
+        Debug.Log($"Activated {_AbilityData.name}.");
         if (!CheckCooldown()) return;
+
+        TriggerAbilityAnimation(user);
 
         var controller = user as Mb_PlayerController;
 
@@ -222,4 +224,13 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
     // HELPERS
     // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
+    // ANIMATION
+    // -------------------------------------------------------------------------
+
+    protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
+    {
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.TriggerR1Ability(); // stub
+    }
 }

@@ -4,46 +4,55 @@ using UnityEngine.AI;
 
 /// <summary>
 /// Abstract base controller for all CuBot enemies.
-/// Extends MB_CuBotBase to add targeting logic, NavMesh movement, and aggro switching.
+/// Handles:
+/// - Aggro switching
+/// - NavMesh movement
+/// - Collider-aware targeting
 ///
 /// TARGETING RULES:
-///   - Default target is the Panoharra Tree (tag "Panoharra")
-///   - If the Player enters AggroRange, switch target to Player
-///   - If the Player exits DeAggroRange, switch back to Panoharra
+///   - Default target is Panoharra
+///   - Player enters AggroRange -> chase player
+///   - Player exits DeAggroRange -> return to Panoharra
 ///
-/// DERIVED CLASSES must implement:
-///   - OnInAttackRange()  — called every Update when within attack range of current target
-///   - UpdateAnimator()   — called every Update, drive your Animator parameters here
-///
-/// DERIVED CLASSES may override:
-///   - OnTargetChanged()  — react when the target switches
-///   - OnControllerReset() — clean up derived-class state on pool reuse
+/// MOVEMENT RULES:
+///   - Uses NavMeshAgent.stoppingDistance
+///   - Targets closest point on collider instead of transform center
+///   - Uses remainingDistance for robust arrival detection
 /// </summary>
 public abstract class Mb_CuBotController : MB_CuBotBase
 {
     [Header("Aggro Settings")]
-    [SerializeField] float AggroRange = 20f;     // Player enters this range → switch target to player
-    [SerializeField] float DeAggroRange = 40f;  // Player exits this range → switch back to Panoharra
+    [SerializeField] private float AggroRange = 20f;
+    [SerializeField] private float DeAggroRange = 40f;
 
-
-    // Component references
+    // Components
     protected NavMeshAgent _Agent;
     protected Animator _Animator;
 
-
-    // Targeting
+    // Targets
     protected Transform _CurrentTarget;
+
     private Transform _PanoharraTarget;
     private Transform _PlayerTarget;
-    //private bool _IsAggroed = false;    // True when currently chasing the player
+
+    // Add this field at the top with the other private fields
+    private Vector3 _lastDestination;
+    private const float DESTINATION_UPDATE_THRESHOLD = 0.5f; // Only re-path if target moved this far
+
+    // Cached target collider
+    private Collider _CurrentTargetCollider;
+
     private CuBotAIState _aiState = CuBotAIState.ChasingPanoharra;
 
+    #region Events
 
-    #region
-    public static event Action<MB_CuBotBase, Transform> OnAggroChanged; // cubot, newTarget
+    public static event Action<MB_CuBotBase, Transform> OnAggroChanged;
 
     #endregion
 
+    // -------------------------------------------------------------------------
+    // Unity Lifecycle
+    // -------------------------------------------------------------------------
 
     protected override void Awake()
     {
@@ -53,13 +62,37 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         _Animator = GetComponent<Animator>();
 
         if (_Agent == null)
+        {
             Debug.LogError($"[Mb_CuBotController] No NavMeshAgent found on {gameObject.name}.");
+        }
     }
 
     private void Start()
     {
-        FindTargets();
+
+        if (_Agent != null)
+        {
+            _Agent.speed = Stats.MoveSpeed.GetValue();
+        }
     }
+
+    private void Update()
+    {
+        if (Health.IsDead)
+            return;
+
+        UpdateAggroState();
+        UpdateMovement();
+        UpdateAnimator();
+    }
+
+    // -------------------------------------------------------------------------
+    // Target Setup
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // Target Setup
+    // -------------------------------------------------------------------------
 
     private void FindTargets()
     {
@@ -67,33 +100,15 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         if (panoharra != null)
             _PanoharraTarget = panoharra.transform;
         else
-            Debug.LogWarning($"[Mb_CuBotController] No GameObject with tag 'Panoharra' found.");
+            Debug.LogWarning("[Mb_CuBotController] No GameObject with tag 'Panoharra' found.");
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             _PlayerTarget = player.transform;
         else
-            Debug.LogWarning($"[Mb_CuBotController] No GameObject with tag 'Player' found.");
+            Debug.LogWarning("[Mb_CuBotController] No GameObject with tag 'Player' found.");
 
-        _CurrentTarget = _PanoharraTarget;
-
-        // Sync NavMeshAgent speed from StatBlock — must happen here since Start() runs
-        // after Awake(), guaranteeing Stats are built from the template before this line
-        if (_Agent != null)
-            _Agent.speed = Stats.MoveSpeed.GetValue();
-    }
-
-    private void Update()
-    {
-        if (Health.IsDead) return;
-
-#if UNITY_EDITOR
-        Debug.Log($"Current Target: {_CurrentTarget}");
-#endif
-
-        UpdateAggroState();
-        UpdateMovement();
-        UpdateAnimator();
+        SetTarget(_PanoharraTarget);
     }
 
     // -------------------------------------------------------------------------
@@ -102,19 +117,20 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     private void UpdateAggroState()
     {
-        if (_PlayerTarget == null) return;
+        if (_PlayerTarget == null)
+            return;
 
         float distToPlayer = Vector3.Distance(transform.position, _PlayerTarget.position);
 
-        if (_aiState != CuBotAIState.ChasingPlayer && distToPlayer <= AggroRange)
+        if (_aiState != CuBotAIState.ChasingPlayer &&
+            distToPlayer <= AggroRange)
         {
-            // Player just entered aggro range — switch to chasing player
             _aiState = CuBotAIState.ChasingPlayer;
             SetTarget(_PlayerTarget);
         }
-        else if (_aiState == CuBotAIState.ChasingPlayer && distToPlayer > DeAggroRange)
+        else if (_aiState == CuBotAIState.ChasingPlayer &&
+                 distToPlayer > DeAggroRange)
         {
-            // Player ran far enough away — go back to Panoharra
             _aiState = CuBotAIState.ChasingPanoharra;
             SetTarget(_PanoharraTarget);
         }
@@ -122,8 +138,23 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     private void SetTarget(Transform newTarget)
     {
-        if (newTarget == _CurrentTarget) return;
+        if (newTarget == null)
+            return;
+
+        if (_CurrentTarget == newTarget)
+            return;
+
         _CurrentTarget = newTarget;
+
+        // Cache collider for closest-point targeting
+        _CurrentTargetCollider = _CurrentTarget.GetComponent<Collider>();
+
+        // Fallback: search children if root collider missing
+        if (_CurrentTargetCollider == null)
+        {
+            _CurrentTargetCollider = _CurrentTarget.GetComponentInChildren<Collider>();
+        }
+
         OnTargetChanged(_CurrentTarget);
         OnAggroChanged?.Invoke(this, _CurrentTarget);
     }
@@ -134,53 +165,78 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     private void UpdateMovement()
     {
-        if (_CurrentTarget == null || _Agent == null) return;
+        if (_CurrentTarget == null || _Agent == null)
+            return;
 
-        float distToTarget = Vector3.Distance(transform.position, _CurrentTarget.position);
-        float attackRange = _CuBotTemplate != null ? _CuBotTemplate.AttackRange : 2f;
+        float attackRange = _CuBotTemplate != null
+            ? _CuBotTemplate.AttackRange
+            : 2f;
+
+        // Measure to the closest surface point — handles large colliders correctly
+        Vector3 targetPoint = GetTargetPoint();
+        float distToTarget = Vector3.Distance(transform.position, targetPoint);
 
         if (distToTarget <= attackRange)
         {
-            // In range — stop moving and let the derived class decide what to do
+            // In range — stop and let derived class handle attacking
             _Agent.isStopped = true;
             OnInAttackRange();
         }
         else
         {
-#if UNITY_EDITOR
-            Debug.Log($"Updating movement towards target: {_CurrentTarget.name}");
-            Debug.Log($"Speed: {_Agent.speed}, IsStopped: {_Agent.isStopped}");
-#endif
-            // Out of range — keep chasing
-            _Agent.isStopped = false;
-            _Agent.SetDestination(_CurrentTarget.position);
+            // Only re-path if the destination has shifted significantly —
+            // calling SetDestination every frame on a large object causes stutter
+            if (Vector3.Distance(targetPoint, _lastDestination) > DESTINATION_UPDATE_THRESHOLD)
+            {
+                _lastDestination = targetPoint;
+                _Agent.isStopped = false;
+                _Agent.stoppingDistance = 0f;
+
+                // Align target point Y with agent to prevent looking up/down when target has significant height difference
+                targetPoint.y = transform.position.y;
+
+                _Agent.SetDestination(targetPoint);
+            }
         }
     }
 
+    /// <summary>
+    /// Gets the closest valid point on the target collider.
+    /// Falls back to transform position if no collider exists.
+    /// </summary>
+    private Vector3 GetTargetPoint()
+    {
+        if (_CurrentTargetCollider != null)
+        {
+            return _CurrentTargetCollider.ClosestPoint(transform.position);
+        }
+
+        return _CurrentTarget.position;
+    }
+
     // -------------------------------------------------------------------------
-    // Abstract & Virtual Hooks
+    // Abstract / Virtual Hooks
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Called every Update frame when the CuBot is within attack range of its target.
-    /// Derived classes use this to trigger attacks.
+    /// Called every frame while inside attack range.
+    /// Derived classes should handle attacks here.
     /// </summary>
     protected abstract void OnInAttackRange();
 
     /// <summary>
-    /// Called every Update. Drive Animator parameters here in derived classes.
+    /// Called every Update frame.
+    /// Derived classes should update Animator parameters here.
     /// </summary>
     protected abstract void UpdateAnimator();
 
     /// <summary>
-    /// Called when the current target changes between Player and Panoharra.
-    /// Optional — override if your CuBot needs to react to the switch.
+    /// Called whenever the current target changes.
     /// </summary>
     protected virtual void OnTargetChanged(Transform newTarget) { }
 
     /// <summary>
-    /// Called at the end of Reset() so derived classes can clean up their own state.
-    /// Override to reset flags, cancel coroutines, etc.
+    /// Called after Reset() for derived cleanup logic.
     /// </summary>
     protected virtual void OnControllerReset() { }
 
@@ -190,22 +246,32 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     protected override void Reset()
     {
-        base.Reset(); // Calls InitializeFromTemplate() — restores stats and health
+        base.Reset(); // calls MB_CuBotBase.Reset() → InitializeFromTemplate()
 
         _aiState = CuBotAIState.ChasingPanoharra;
+        _lastDestination = Vector3.zero;
 
-        // Re-sync NavMeshAgent speed in case stats were changed by wave scaling
+        // Re-find targets every reactivation — Start() only runs once on first spawn,
+        // so pooled CuBots would have stale or null target references without this.
+        FindTargets();
+
+        // Sync NavMesh speed to the freshly recalculated stats (level scaling may have changed it)
         if (_Agent != null && _CuBotTemplate != null)
         {
             _Agent.isStopped = false;
             _Agent.speed = Stats.MoveSpeed.GetValue();
+            _Agent.ResetPath(); // Clear any leftover path from the previous activation
         }
-
-        // Reset target back to Panoharra on pool reuse
-        SetTarget(_PanoharraTarget);
 
         OnControllerReset();
     }
 }
 
-public enum CuBotAIState { Patrolling, Idle, ChasingPlayer, ChasingPanoharra, Attacking }
+public enum CuBotAIState
+{
+    Patrolling,
+    Idle,
+    ChasingPlayer,
+    ChasingPanoharra,
+    Attacking
+}

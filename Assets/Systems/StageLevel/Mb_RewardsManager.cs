@@ -1,23 +1,48 @@
 // Mb_RewardsManager.cs
 // Lives on the Stage GameObject alongside Mb_WaveManager and Mb_AugmentManager.
+//
+// REWARD SCHEDULE:
+//   Reward types are configured per-wave on each SO_WaveData asset in the Inspector.
+//   Set WaveReward on each wave to control what the player receives after that wave
+//   clears. Set it to None to skip the panel entirely.
+//
+// REWARDS TIMER:
+//   When the panel opens, a countdown coroutine starts. If the player does not choose
+//   before RewardsTimeLimit seconds, the best available option is auto-selected:
+//   left card if not maxed, right card otherwise. The timer is surfaced to
+//   Mb_RewardsPanelUI via OnRewardsTimerTick so the panel can display a countdown.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Mb_RewardsManager : MonoBehaviour
 {
-    #region EVENTS
+    #region Events                  //----------------------------------------
+
     public static event Action<RewardType> OnRewardsPanelOpened;
     public static event Action<RewardOption> OnRewardChosen;
     public static event Action OnRewardsPanelClosed;
 
-    #endregion
+    // Fired every second while the rewards panel is open.
+    // Mb_RewardsPanelUI subscribes to this to update its countdown label.
+    public static event Action<float> OnRewardsTimerTick;
+
+    #endregion                      //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Inspector References
-    // -------------------------------------------------------------------------
+    #region Inspector References    //----------------------------------------
+
+    [Header("Stage Data")]
+    [Tooltip("Assign the same SO_StageData asset used by Mb_WaveManager. " +
+             "WaveReward on each SO_WaveData entry controls the reward schedule.")]
+    [SerializeField] private SO_StageData _StageData;
+
+    [Header("Rewards Timer")]
+    [Tooltip("Seconds the player has to choose a reward before the best available " +
+             "option is auto-selected. Left card is preferred unless it is a maxed placeholder.")]
+    [SerializeField] private float RewardsTimeLimit = 10f;
 
     [Header("Augment Pool")]
     [SerializeField] private List<SO_Augment> _AugmentPool;
@@ -28,16 +53,13 @@ public class Mb_RewardsManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject _PlayerObject;
 
+    #endregion                      //----------------------------------------
 
-    // -------------------------------------------------------------------------
-    // Runtime State
-    // -------------------------------------------------------------------------
+
+    #region Runtime State           //----------------------------------------
 
     private Mb_AugmentManager _augmentManager;
     private Mb_AbilityController _abilityController;
-
-    // Typed as Mb_GuardianBase — works for any guardian, not just Rajah.
-    // GetBranchOptions() is defined on the base class so no cast is needed.
     private Mb_GuardianBase _guardian;
 
     private HashSet<SO_Augment> _offeredAugments = new HashSet<SO_Augment>();
@@ -46,30 +68,17 @@ public class Mb_RewardsManager : MonoBehaviour
     private RewardOption _leftOption;
     private RewardOption _rightOption;
 
+    // Tracked so we can stop the timer early when the player chooses manually
+    private Coroutine _rewardsTimerCoroutine;
 
-    // -------------------------------------------------------------------------
-    // Wave Reward Schedule
-    // -------------------------------------------------------------------------
+    // Flipped to true when the player (or auto-select) makes a choice —
+    // stops the timer coroutine from applying a reward a second time
+    private bool _choiceMade = false;
 
-    private static readonly Dictionary<int, RewardType> REWARD_SCHEDULE = new Dictionary<int, RewardType>
-    {
-        { 0,  RewardType.AbilityUpgrade   },
-        { 1,  RewardType.AbilityUpgrade   },
-        { 3,  RewardType.AugmentSelection },
-        { 4,  RewardType.UltimateBranch   }, // 4
-        { 5,  RewardType.AbilityUpgrade   },
-        { 6,  RewardType.AbilityUpgrade   },
-        { 8,  RewardType.AugmentSelection },
-        { 9,  RewardType.AbilityUpgrade   },
-        { 10, RewardType.AbilityUpgrade   },
-        { 11, RewardType.AbilityUpgrade   },
-        { 12, RewardType.AugmentSelection },
-    };
+    #endregion                      //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Unity Lifecycle
-    // -------------------------------------------------------------------------
+    #region Unity Lifecycle         //----------------------------------------
 
     private void Start()
     {
@@ -77,11 +86,12 @@ public class Mb_RewardsManager : MonoBehaviour
         if (_augmentManager == null)
             Debug.LogError("[Mb_RewardsManager] Missing Mb_AugmentManager on this GameObject.");
 
+        if (_StageData == null)
+            Debug.LogError("[Mb_RewardsManager] No SO_StageData assigned. Rewards will not fire.");
+
         if (_PlayerObject != null)
         {
             _abilityController = _PlayerObject.GetComponent<Mb_AbilityController>();
-
-            // Fetch as Mb_GuardianBase — any guardian subclass satisfies this
             _guardian = _PlayerObject.GetComponent<Mb_GuardianBase>();
         }
 
@@ -92,19 +102,28 @@ public class Mb_RewardsManager : MonoBehaviour
             Debug.LogError("[Mb_RewardsManager] Could not find Mb_GuardianBase on Player.");
     }
 
-
     private void OnEnable() => Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
     private void OnDisable() => Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
 
+    #endregion                      //----------------------------------------
 
-    // -------------------------------------------------------------------------
-    // Wave End Handler
-    // -------------------------------------------------------------------------
+
+    #region Wave End Handler        //----------------------------------------
 
     private void HandleWaveEnd(int completedWaveIndex)
     {
-        if (!REWARD_SCHEDULE.TryGetValue(completedWaveIndex, out RewardType rewardType))
+        if (_StageData == null) return;
+
+        if (completedWaveIndex < 0 || completedWaveIndex >= _StageData.WaveDataList.Count)
+        {
+            Debug.LogWarning($"[Mb_RewardsManager] completedWaveIndex {completedWaveIndex} is " +
+                             $"out of range for WaveDataList (count: {_StageData.WaveDataList.Count}). Skipping.");
             return;
+        }
+
+        RewardType rewardType = _StageData.WaveDataList[completedWaveIndex].WaveReward;
+
+        if (rewardType == RewardType.None) return;
 
         if (rewardType == RewardType.AugmentSelection && !_augmentManager.CanEquipMore)
         {
@@ -123,26 +142,111 @@ public class Mb_RewardsManager : MonoBehaviour
         OpenRewardsPanel(rewardType);
     }
 
+    #endregion                      //----------------------------------------
+
+    #region Panel Control           //----------------------------------------
 
     private void OpenRewardsPanel(RewardType rewardType)
     {
         OnRewardsPanelOpened?.Invoke(rewardType);
+
         bool optionsReady = TryBuildOptions(rewardType, out _leftOption, out _rightOption);
 
         if (!optionsReady)
         {
             Debug.LogWarning($"[Mb_RewardsManager] Could not build options for {rewardType}. Skipping.");
+            // Fire closed immediately so WaveManager doesn't wait forever
+            OnRewardsPanelClosed?.Invoke();
             return;
         }
 
+        _choiceMade = false;
+
+        // Subscribe to the panel's fade-complete event before showing —
+        // this is how we know when to clean up game state
+        _RewardsPanelUI.OnPanelFadeComplete += HandlePanelFadeComplete;
+
         GameManager.Instance.ChangeState(GameState.RewardsPanel);
         _RewardsPanelUI.Show(_leftOption, _rightOption);
+
+        if (_rewardsTimerCoroutine != null)
+            StopCoroutine(_rewardsTimerCoroutine);
+
+        _rewardsTimerCoroutine = StartCoroutine(RewardsTimerRoutine());
     }
 
 
-    // -------------------------------------------------------------------------
-    // Option Building
-    // -------------------------------------------------------------------------
+    // Cleans up game state after the panel animation finishes.
+    // Fired by Mb_RewardsPanelUI.OnPanelFadeComplete for both
+    // manual and auto-select paths.
+    private void HandlePanelFadeComplete()
+    {
+        _RewardsPanelUI.OnPanelFadeComplete -= HandlePanelFadeComplete;
+
+        OnRewardsPanelClosed?.Invoke();
+        GameManager.Instance.ChangeState(GameState.Playing);
+    }
+
+
+    // Force-closes with no animation — scene teardown only
+    private void CloseRewardsPanelImmediate()
+    {
+        if (_rewardsTimerCoroutine != null)
+        {
+            StopCoroutine(_rewardsTimerCoroutine);
+            _rewardsTimerCoroutine = null;
+        }
+
+        _RewardsPanelUI.OnPanelFadeComplete -= HandlePanelFadeComplete;
+        _RewardsPanelUI.Hide();
+
+        OnRewardsPanelClosed?.Invoke();
+        GameManager.Instance.ChangeState(GameState.Playing);
+    }
+
+    #endregion                      //----------------------------------------
+    #region Rewards Timer           //----------------------------------------
+
+    private IEnumerator RewardsTimerRoutine()
+    {
+        float remaining = RewardsTimeLimit;
+
+        while (remaining > 0f)
+        {
+            OnRewardsTimerTick?.Invoke(remaining);
+            yield return new WaitForSeconds(1f);
+            remaining -= 1f;
+        }
+
+        OnRewardsTimerTick?.Invoke(0f);
+
+        if (_choiceMade) yield break;
+
+        Debug.Log("[Mb_RewardsManager] Rewards timer expired — auto-selecting.");
+        AutoSelectReward();
+    }
+
+
+    private void AutoSelectReward()
+    {
+        if (!_leftOption.IsMaxedPlaceholder)
+        {
+            Debug.Log("[Mb_RewardsManager] Auto-selected: Left.");
+            ApplyReward(_leftOption);
+            _RewardsPanelUI.ShowSelectionFeedback(RewardPanelSide.Left);
+        }
+        else
+        {
+            Debug.Log("[Mb_RewardsManager] Left is maxed — auto-selected: Right.");
+            ApplyReward(_rightOption);
+            _RewardsPanelUI.ShowSelectionFeedback(RewardPanelSide.Right);
+        }
+    }
+
+    #endregion                      //----------------------------------------
+
+
+    #region Option Building         //----------------------------------------
 
     private bool TryBuildOptions(RewardType rewardType, out RewardOption left, out RewardOption right)
     {
@@ -233,8 +337,6 @@ public class Mb_RewardsManager : MonoBehaviour
         left = default;
         right = default;
 
-        // Ask the guardian for its own branch definitions —
-        // no factory, no string matching, no guardian-specific code here
         var (branch1, branch2) = _guardian.GetBranchOptions();
 
         if (branch1 == null || branch2 == null)
@@ -256,27 +358,46 @@ public class Mb_RewardsManager : MonoBehaviour
         return true;
     }
 
+    #endregion                      //----------------------------------------
 
-    // -------------------------------------------------------------------------
-    // Player Choice
-    // -------------------------------------------------------------------------
+
+    #region Player Choice           //----------------------------------------
 
     public void OnLeftChosen()
     {
+        if (_choiceMade) return;
+        _choiceMade = true;
+
+        if (_rewardsTimerCoroutine != null)
+        {
+            StopCoroutine(_rewardsTimerCoroutine);
+            _rewardsTimerCoroutine = null;
+        }
+
         ApplyReward(_leftOption);
-        CloseRewardsPanel();
+        _RewardsPanelUI.ShowSelectionFeedback(RewardPanelSide.Left);
     }
 
     public void OnRightChosen()
     {
+        if (_choiceMade) return;
+        _choiceMade = true;
+
+        if (_rewardsTimerCoroutine != null)
+        {
+            StopCoroutine(_rewardsTimerCoroutine);
+            _rewardsTimerCoroutine = null;
+        }
+
         ApplyReward(_rightOption);
-        CloseRewardsPanel();
+        _RewardsPanelUI.ShowSelectionFeedback(RewardPanelSide.Right);
     }
 
 
     private void ApplyReward(RewardOption option)
     {
         OnRewardChosen?.Invoke(option);
+
         switch (option.Type)
         {
             case RewardType.AugmentSelection:
@@ -290,7 +411,7 @@ public class Mb_RewardsManager : MonoBehaviour
             case RewardType.AbilityUpgrade:
                 if (option.IsMaxedPlaceholder)
                 {
-                    Debug.LogWarning("[Mb_RewardsManager] Player clicked a maxed ability card — ignoring.");
+                    Debug.LogWarning("[Mb_RewardsManager] Tried to apply a maxed placeholder — ignoring.");
                     return;
                 }
                 _abilityController.LevelUpAbility(option.AbilitySlot);
@@ -298,8 +419,6 @@ public class Mb_RewardsManager : MonoBehaviour
                 break;
 
             case RewardType.UltimateBranch:
-                // The branch option already knows how to create its ability —
-                // call the delegate with the player as the owner
                 Sc_BaseAbility branch = option.BranchOption.CreateAbility(GetPlayerCharacter());
                 _abilityController.SetRSlot(branch);
                 _branchSelected = true;
@@ -308,19 +427,17 @@ public class Mb_RewardsManager : MonoBehaviour
         }
     }
 
+    #endregion                      //----------------------------------------
 
-    private void CloseRewardsPanel()
-    {
-        OnRewardsPanelClosed?.Invoke();
-        _RewardsPanelUI.Hide();
-        GameManager.Instance.ChangeState(GameState.Playing);
-    }
 
+    #region Helpers                 //----------------------------------------
 
     private Mb_CharacterBase GetPlayerCharacter()
     {
         return _PlayerObject.GetComponent<Mb_CharacterBase>();
     }
+
+    #endregion                      //----------------------------------------
 }
 
 
@@ -330,6 +447,7 @@ public class Mb_RewardsManager : MonoBehaviour
 
 public enum RewardType
 {
+    None,
     AugmentSelection,
     AbilityUpgrade,
     UltimateBranch
@@ -350,8 +468,7 @@ public struct RewardOption
     public AbilitySlot AbilitySlot;
     public bool IsMaxedPlaceholder;
 
-    // UltimateBranch — holds the full branch option including its factory delegate
-    // RewardsManager calls BranchOption.CreateAbility(owner) directly on selection
+    // UltimateBranch
     public Sc_BranchOption BranchOption;
 
 
@@ -367,8 +484,7 @@ public struct RewardOption
         };
     }
 
-
-    public static RewardOption FromAbilityUpgrade(Sc_BaseAbility ability, AbilitySlot abilitySlot)
+    public static RewardOption FromAbilityUpgrade(Sc_BaseAbility ability, AbilitySlot slot)
     {
         SO_Ability abilityData = ability.GetAbilityData();
         int nextLevel = ability.CurrentLevel + 1;
@@ -380,11 +496,10 @@ public struct RewardOption
             Description = $"Upgrade {abilityData.AbilityName} from " +
                                  $"Level {ability.CurrentLevel} to Level {nextLevel}.",
             Icon = abilityData.Icon,
-            AbilitySlot = abilitySlot,
+            AbilitySlot = slot,
             IsMaxedPlaceholder = false,
         };
     }
-
 
     public static RewardOption MaxedPlaceholder(Sc_BaseAbility ability)
     {
@@ -400,12 +515,6 @@ public struct RewardOption
         };
     }
 
-
-    /// <summary>
-    /// Builds a reward card from a Sc_BranchOption.
-    /// Display data (name, description, icon) comes from the branch's SO_UltimateBranch.
-    /// The full BranchOption is stored so ApplyReward can call CreateAbility() directly.
-    /// </summary>
     public static RewardOption FromBranchOption(Sc_BranchOption branch)
     {
         return new RewardOption

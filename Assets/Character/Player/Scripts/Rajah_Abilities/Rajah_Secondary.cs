@@ -33,12 +33,12 @@ public class Rajah_Secondary : Sc_BaseAbility
         //else
         //    Debug.LogError("[Rajah_Secondary] 'ProjectileOrigin' GameObject not found in scene.");
 
-        Debug.Log($"[{user.name}] Equipped {_AbilityData.AbilityName}.");
+        Debug.Log($"Equipped {_AbilityData.AbilityName}.");
     }
 
     public override void OnUnequip(Mb_CharacterBase user)
     {
-        Debug.Log($"[{user.name}] Unequipped {_AbilityData.AbilityName}.");
+        Debug.Log($"Unequipped {_AbilityData.AbilityName}.");
     }
 
 

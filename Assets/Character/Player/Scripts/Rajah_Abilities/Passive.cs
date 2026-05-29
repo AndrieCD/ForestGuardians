@@ -98,12 +98,21 @@ public class Passive_Ability : Sc_BaseAbility
 
     public override void OnEquip(Mb_CharacterBase user)
     {
+        Sc_BuildLogger.Trace("Passive OnEquip START");
+
+        Sc_BuildLogger.Trace($"User = {user}");
+
+        Sc_BuildLogger.Trace($"User Stats = {user?.Stats}");
+
         _runner = user;
 
         OnBasicAttackHit += HandleBasicAttackHit;
+
+        Sc_BuildLogger.Trace("Subscribing CuBotDeath");
+
         MB_CuBotBase.OnCuBotDeath += HandleTakedown;
 
-        Debug.Log($"[{user.name}] Royal Plumage equipped.");
+        Sc_BuildLogger.Trace("Passive OnEquip END");
     }
 
 
@@ -121,7 +130,7 @@ public class Passive_Ability : Sc_BaseAbility
         _currentTier = 0;
         _stackState = StackState.Idle;
 
-        Debug.Log($"[{user.name}] Royal Plumage unequipped.");
+        Debug.Log($"Royal Plumage unequipped.");
     }
 
 

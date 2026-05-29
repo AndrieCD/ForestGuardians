@@ -17,8 +17,11 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
 
     protected override void Awake()
     {
+        Sc_BuildLogger.Trace($"Awake called on {gameObject.name} ({GetType().Name}).");
         base.Awake();
         GuardianAnimator = GetComponent<Mb_GuardianAnimator>();
+
+
     }
 
 
@@ -28,6 +31,8 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     /// </summary>
     protected override void InitializeFromTemplate()
     {
+        Sc_BuildLogger.Trace($"[{gameObject.name}] Initializing from template.");
+
         if (_GuardianTemplate == null)
         {
             Debug.LogError($"[Mb_GuardianBase] No SO_Guardian template assigned on {gameObject.name}.");
