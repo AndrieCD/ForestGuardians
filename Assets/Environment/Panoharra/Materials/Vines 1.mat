@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Terminalia
+  m_Name: Vines 1
   m_Shader: {fileID: 4800000, guid: edb73fdd67aefe949abae90ba298f852, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -27,7 +27,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: e5b627bad804c7d4fa4a532393e5a106, type: 3}
+        m_Texture: {fileID: 2800000, guid: efb16f016d0730647974e3a67962eeb0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:

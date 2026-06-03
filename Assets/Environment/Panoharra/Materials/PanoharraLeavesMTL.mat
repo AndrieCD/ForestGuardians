@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Terminalia
+  m_Name: PanoharraLeavesMTL
   m_Shader: {fileID: 4800000, guid: edb73fdd67aefe949abae90ba298f852, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -27,7 +27,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: e5b627bad804c7d4fa4a532393e5a106, type: 3}
+        m_Texture: {fileID: 2800000, guid: 12f67b3fff9d71b4eb79adeaf7d62be1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -70,7 +70,7 @@ Material:
     m_Floats:
     - _AOInShadowsOnly: 1
     - _AOStrength: 0
-    - _AlphaClipThreshold: 0.35
+    - _AlphaClipThreshold: 0.941
     - _AmbientStrength: 0.2
     - _BandStrength: 1
     - _BumpScale: 1
