@@ -109,7 +109,7 @@ Material:
     - _Outline: 1
     - _OutlineDepthOffset: 0
     - _OutlineEdgeSoftness: 0.05
-    - _OutlineWidth: 0.01
+    - _OutlineWidth: 0
     - _Parallax: 0.02
     - _PosterizeSteps: 2
     - _PosterizeStrength: 0

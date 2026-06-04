@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RajahBagwis_MTL_BaseColor
-  m_Shader: {fileID: 4800000, guid: 0e82be748fe94a248b2ec72ce0ee2be4, type: 3}
+  m_Shader: {fileID: 4800000, guid: edb73fdd67aefe949abae90ba298f852, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -20,6 +20,7 @@ Material:
   - _HATCHENABLED_ON
   - _OUTLINE_ON
   - _SCREENSPACEHALFTONE_ON
+  - _USEALPHACLIP_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 1
@@ -76,11 +77,14 @@ Material:
     - _AOInShadowsOnly: 1
     - _AOStrength: 0
     - _AlphaClip: 1
+    - _AlphaClipThreshold: 0
     - _AmbientBoost: 0.7
+    - _AmbientStrength: 1
     - _BandStrength: 1
     - _BumpScale: 1
     - _CrossHatch: 1
     - _Cutoff: 0.5
+    - _DarkLineStrength: 1
     - _DetailNormalMapScale: 1
     - _DoubleSided: 1
     - _DstBlend: 0
@@ -100,18 +104,24 @@ Material:
     - _HatchSoftness: 0.12
     - _HatchStrength: 0.28
     - _HatchThreshold: 0.68
+    - _LineScale: 211
+    - _LineSoftness: 0.2
+    - _LineStrength: 0.6
+    - _LineThickness: 0.01
+    - _MediumLineDensity: 0.55
+    - _MediumLineStrength: 0.35
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Outline: 1
     - _OutlineDepthOffset: 0
     - _OutlineEdgeSoftness: 0.18
-    - _OutlineWidth: 0.0057
+    - _OutlineWidth: 0.008
     - _Parallax: 0.02
     - _PosterizeSteps: 6
     - _PosterizeStrength: 0.12
     - _RampSmoothness: 0.5
-    - _RampThreshold: 0.16
+    - _RampThreshold: 1
     - _RimPower: 0.5
     - _RimStrength: 0
     - _ScreenSpaceHalftone: 1
@@ -121,15 +131,18 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _UseAlphaClip: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
-    - _LightTint: {r: 0.6792453, g: 0.6792453, b: 0.6792453, a: 1}
+    - _LightTint: {r: 1, g: 1, b: 1, a: 1}
+    - _LineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _LineDirection: {r: 1, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
-    - _ShadowTint: {r: 0.9, g: 0.86, b: 1, a: 1}
+    - _ShadowTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
