@@ -17,5 +17,5 @@ MonoBehaviour:
 
     Below
     20% HP, also gain Haste, Attack Speed, and Movement Speed.'
-  Icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 21300000, guid: 16ddee13d60b873469bd88148f12f3d5, type: 3}
   Effects: []

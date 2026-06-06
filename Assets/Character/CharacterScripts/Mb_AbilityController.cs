@@ -216,7 +216,10 @@ public class Mb_AbilityController : MonoBehaviour
 
         // Notify listeners that an ability was used.
         // Primal Resonance uses this to add a stack.
-        OnAbilityActivated?.Invoke(slotName);
+        if (ability == _qAbility || ability == _eAbility || ability == _rAbility)   
+        {
+            OnAbilityActivated?.Invoke(slotName);
+        }
     }
 
     #endregion                      //----------------------------------------

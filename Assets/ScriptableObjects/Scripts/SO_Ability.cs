@@ -13,8 +13,9 @@ public class SO_Ability : ScriptableObject
     public Sprite Icon;
 
     [Header("General Settings")]
-    public float Cooldown;
-    public GameObject ProjectileModel;
+    public List<float> Cooldown;
+    //public GameObject ProjectileModel;
+    public SO_ProjectileData ProjectileData;
 
     [Header("Progression")]
     [Tooltip("How many times this ability can be upgraded. " +

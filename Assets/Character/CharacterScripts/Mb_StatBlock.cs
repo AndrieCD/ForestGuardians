@@ -156,6 +156,8 @@ public class Mb_StatBlock : MonoBehaviour
 
         OnStatsChanged?.Invoke();
 
+        Debug.Log($"Level set to {level}. MaxHealth changed from {oldMaxHP} to {MaxHealth.GetValue()}.");
+
         // Return how much MaxHealth grew so the caller can top up HP by the same amount
         return MaxHealth.GetValue() - oldMaxHP;
     }

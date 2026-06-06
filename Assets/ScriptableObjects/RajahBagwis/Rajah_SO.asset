@@ -23,7 +23,7 @@ MonoBehaviour:
   CriticalChance: 0.1
   CriticalDamage: 1.5
   LifeSteal: 0
-  JumpPower: 9
+  JumpPower: 10
   MaxHealthScaling: 0.5
   HealthRegenScaling: 0
   MoveSpeedScaling: 0

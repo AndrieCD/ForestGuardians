@@ -105,11 +105,7 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
 
     private void Start()
     {
-        if (GuardianObject != null)
-        {
-            _healthComponent = GuardianObject.GetComponent<Mb_HealthComponent>();
-            _statBlock = GuardianObject.GetComponent<Mb_StatBlock>();
-        }
+        
 
         if (_healthComponent == null)
             Debug.LogError("[Mb_GuardianHealthbarUI] Could not find Mb_HealthComponent on GuardianObject.");
@@ -128,6 +124,12 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
 
     private void OnEnable()
     {
+        if (GuardianObject != null)
+        {
+            _healthComponent = GuardianObject.GetComponent<Mb_HealthComponent>();
+            _statBlock = GuardianObject.GetComponent<Mb_StatBlock>();
+        }
+
         // Subscribe via OnEnable so the bar is always wired when visible
         if (_healthComponent != null)
         {

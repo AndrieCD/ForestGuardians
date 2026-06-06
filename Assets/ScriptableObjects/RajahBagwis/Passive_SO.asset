@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Royal Plumage
   Icon: {fileID: 21300090, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  Cooldown: 0
-  ProjectileModel: {fileID: 0}
+  Cooldown:
+  - 0
+  ProjectileData: {fileID: 0}
   MaxLevel: 6
   ScalingStats:
   - StatName: 

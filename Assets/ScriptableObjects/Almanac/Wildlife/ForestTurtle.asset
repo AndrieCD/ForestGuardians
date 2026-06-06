@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b744cb2caabfa74f8d8a76a39ff3de1, type: 3}
+  m_Name: ForestTurtle
+  m_EditorClassIdentifier: Assembly-CSharp::SO_WildlifeEntry
+  CommonName: Forest Turtle
+  ScientificName: Siebenrockiella leytensis
+  Status: 0
+  Description: Found only in Palawan, this rare freshwater turtle spends much of
+    its time near forest streams. It is threatened by illegal wildlife trade and
+    habitat destruction. The species is considered one of the most endangered turtles
+    in the world.
+  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  StatBonus:
+    TargetStat: 0
+    Value: 200
+    Type: 0
+    Duration: Infinity
+  RequiredCount: 1
+  GazeDuration: 2
+  ActiveStages: 0100000003000000
+  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  AcceptedHabitats: 8
+  Population: 
+  Habitat: 

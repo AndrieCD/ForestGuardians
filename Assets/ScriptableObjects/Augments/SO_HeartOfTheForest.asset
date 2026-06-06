@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: SO_HeartOfTheForest
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Heart of the Forest
-  Description: Gain +1000 MaxHP and 5% MaxHP Regen every second, but reduce your
+  Description: Gain +1000 MaxHP and 2% MaxHP Regen every second, but reduce your
     Attack Power and Ability Power by 15%.
-  Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 21300000, guid: 7b88674c74899444d88979968fd80e4b, type: 3}
   Effects:
   - TargetStat: 0
     Value: 1000

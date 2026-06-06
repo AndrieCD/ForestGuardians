@@ -365,6 +365,13 @@ public class Mb_RewardsManager : MonoBehaviour
 
     public void OnLeftChosen()
     {
+        // Prevent choosing a maxed placeholder — button should be disabled, but guard here as well
+        if (_leftOption.IsMaxedPlaceholder)
+        {
+            Debug.LogWarning("[Mb_RewardsManager] Left option is maxed placeholder — ignoring click.");
+            return;
+        }
+
         if (_choiceMade) return;
         _choiceMade = true;
 
@@ -380,6 +387,13 @@ public class Mb_RewardsManager : MonoBehaviour
 
     public void OnRightChosen()
     {
+        // Prevent choosing a maxed placeholder — button should be disabled, but guard here as well
+        if (_rightOption.IsMaxedPlaceholder)
+        {
+            Debug.LogWarning("[Mb_RewardsManager] Right option is maxed placeholder — ignoring click.");
+            return;
+        }
+
         if (_choiceMade) return;
         _choiceMade = true;
 
@@ -492,7 +506,7 @@ public struct RewardOption
         return new RewardOption
         {
             Type = RewardType.AbilityUpgrade,
-            Name = $"{abilityData.AbilityName} — Level {nextLevel}",
+            Name = $"{abilityData.AbilityName}",
             Description = $"Upgrade {abilityData.AbilityName} from " +
                                  $"Level {ability.CurrentLevel} to Level {nextLevel}.",
             Icon = abilityData.Icon,
@@ -508,7 +522,7 @@ public struct RewardOption
         return new RewardOption
         {
             Type = RewardType.AbilityUpgrade,
-            Name = $"{abilityData.AbilityName} — MAX",
+            Name = $"{abilityData.AbilityName}",
             Description = "Already at maximum level.",
             Icon = abilityData.Icon,
             IsMaxedPlaceholder = true,

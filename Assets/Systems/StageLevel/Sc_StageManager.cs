@@ -43,6 +43,15 @@ public class Mb_StageManager : MonoBehaviour
     private void StartStage()
     {
         Debug.Log("Start Stage");
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Mb_StatBlock guardianStats = player.GetComponent<Mb_StatBlock>();
+            if (guardianStats != null && Mb_AlmanacManager.Instance != null)
+                Mb_AlmanacManager.Instance.ReapplyAllBonuses(guardianStats);
+        }
+
         GameManager.Instance.ChangeState(GameState.Playing);
         OnStageStart?.Invoke();
     }
@@ -66,8 +75,8 @@ public class Mb_StageManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
-        bool showCursor = newState == GameState.RewardsPanel;
-        Cursor.visible = showCursor;
-        Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
+        //bool showCursor = newState == GameState.RewardsPanel || newState == GameState.Paused || newState == GameState.Defeat || newState == GameState.Victory;
+        //Cursor.visible = showCursor;
+        //Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
 }

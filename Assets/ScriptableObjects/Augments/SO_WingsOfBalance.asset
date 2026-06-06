@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Augment
   AugmentName: Wings of Balance
   Description: Gain +60% Attack Speed and +40% Movement Speed.
-  Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 21300000, guid: ff716433cba2bba44947c47850362f35, type: 3}
   Effects:
   - TargetStat: 3
     Value: 0.6

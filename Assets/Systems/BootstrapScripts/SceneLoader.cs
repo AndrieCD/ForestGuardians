@@ -27,6 +27,8 @@ public class SceneLoader : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("SceneLoader Awake - ready to manage scene transitions.");
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);

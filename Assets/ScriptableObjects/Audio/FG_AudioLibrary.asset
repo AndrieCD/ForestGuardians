@@ -12,12 +12,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b698d6db1404ff43b32649da944ca88, type: 3}
   m_Name: FG_AudioLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SO_AudioLibrary
-  MusicTracks: []
+  MusicTracks:
+  - Track: 2
+    Clip: {fileID: 8300000, guid: d0556c80254380b43ac63059bc8efd27, type: 3}
+    DefaultVolume: 1
+  - Track: 1
+    Clip: {fileID: 8300000, guid: a5c07d674e7368b4ea1d1a7ec71105be, type: 3}
+    DefaultVolume: 1
   CombatSounds:
-  - Key: 6
-    Clip: {fileID: 8300000, guid: bd8b8bd050fc6c54fa3466000184bda7, type: 3}
+  - Key: 0
+    Clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
     DefaultVolume: 0.75
+  - Key: 4
+    Clip: {fileID: 8300000, guid: 24d25793e7e276a47b1379c2f911eba5, type: 3}
+    DefaultVolume: 0.25
+  - Key: 7
+    Clip: {fileID: 8300000, guid: bfb49da4acab01644b9e2f8dcf512b70, type: 3}
+    DefaultVolume: 0.75
+  - Key: 9
+    Clip: {fileID: 8300000, guid: d1c08ef72d611f24584c4fded0966dd3, type: 3}
+    DefaultVolume: 0.75
+  - Key: 11
+    Clip: {fileID: 8300000, guid: f617d1dc8eece2c4786c334921f769bc, type: 3}
+    DefaultVolume: 0.75
+  - Key: 5
+    Clip: {fileID: 8300000, guid: 9efbe6b90d59c874c9fd04d70fe6e38c, type: 3}
+    DefaultVolume: 0.25
+  - Key: 1
+    Clip: {fileID: 8300000, guid: 8d66b2f22d643d245b0f5f19737fe982, type: 3}
+    DefaultVolume: 0.25
+  - Key: 2
+    Clip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
+    DefaultVolume: 0.5
+  EnvironmentSounds:
+  - Key: 0
+    Clip: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
+    DefaultVolume: 1
+  - Key: 1
+    Clip: {fileID: 8300000, guid: 0cc575b6bc9aa3d409e3ab895c025376, type: 3}
+    DefaultVolume: 1
   UISounds:
   - Key: 0
+    Clip: {fileID: 8300000, guid: b0a135c19dbc2cc49909a2a583d55719, type: 3}
+    DefaultVolume: 0.5
+  - Key: 3
     Clip: {fileID: 8300000, guid: 80721227073f0cf4497b42ead9687c56, type: 3}
+    DefaultVolume: 0.25
+  - Key: 7
+    Clip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
+    DefaultVolume: 0.5
+  - Key: 9
+    Clip: {fileID: 8300000, guid: acbd01cdf53506541ae5c30df72606a1, type: 3}
+    DefaultVolume: 0.5
+  - Key: 10
+    Clip: {fileID: 8300000, guid: df60351d9c281ba4aaa683bb517d7bbb, type: 3}
     DefaultVolume: 0.5

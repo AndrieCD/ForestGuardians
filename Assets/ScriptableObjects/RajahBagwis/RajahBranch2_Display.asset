@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: RajahBranch2_Display
   m_EditorClassIdentifier: Assembly-CSharp::SO_UltimateBranch
   BranchName: Eagle Eye
-  Description: Eagle Eye test
+  Description: 'Passive: Secondary attacks release additional feathers.
+
+
+    Active:
+    Enter a frenzy for 4 seconds, firing a storm of feathers at your target.'
   Icon: {fileID: 0}

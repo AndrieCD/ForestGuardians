@@ -152,7 +152,7 @@ public abstract class Sc_BaseAbility
     {
         // TODO: Replace 0f with user.Stats.Haste.Value() once Haste is added to Mb_StatBlock
         float haste = user.Stats.Haste.GetValue();
-        return _AbilityData.Cooldown / (1f + haste / 100f);
+        return _AbilityData.Cooldown[CurrentLevel - 1] / (1f + haste / 100f);
     }
 
     /// <summary>
@@ -228,12 +228,12 @@ public abstract class Sc_BaseAbility
     /// </summary>
     protected float ApplyCriticalStrike(float baseDamage, Mb_CharacterBase user)
     {
-        float critChance = user.Stats.CriticalChance.GetValue() / 100f;
+        float critChance = user.Stats.CriticalChance.GetValue();
         float roll = UnityEngine.Random.value; // 0.0 to 1.0
 
         if (roll <= critChance)
         {
-            float critMultiplier = user.Stats.CriticalDamage.GetValue() / 100f;
+            float critMultiplier = user.Stats.CriticalDamage.GetValue();
             float critDamage = baseDamage * critMultiplier;
 
             Debug.Log($"[{_AbilityData.AbilityName}] Critical Strike! {critMultiplier}x damage = {critDamage}.");

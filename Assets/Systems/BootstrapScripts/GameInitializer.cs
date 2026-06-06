@@ -7,6 +7,8 @@ public class GameInitializer : MonoBehaviour
     public static GameInitializer Instance { get; private set; }
     void Awake( )
     {
+        Debug.Log("GameInitializer Awake - setting up logging and initializing core systems.");
+
         Application.logMessageReceived += (condition, stackTrace, type) =>
         {
             if (type == LogType.Error || type == LogType.Exception)

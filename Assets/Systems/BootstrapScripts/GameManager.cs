@@ -42,5 +42,26 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = newState;
         OnGameStateChanged?.Invoke(newState);
+
+        HandleMouseVisibilityAndLock(newState);
+    }
+
+    private void HandleMouseVisibilityAndLock(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.MainMenu:
+            case GameState.RewardsPanel:
+            case GameState.Victory:
+            case GameState.Defeat:
+            case GameState.Paused:
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+                break;
+            case GameState.Playing:
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                break;
+        }
     }
 }

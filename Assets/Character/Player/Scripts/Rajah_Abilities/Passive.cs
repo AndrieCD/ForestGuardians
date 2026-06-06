@@ -49,14 +49,14 @@ public class Passive_Ability : Sc_BaseAbility
     private const float INACTIVITY_WINDOW = 2f;    // Seconds before decay begins
     private const float DECAY_INTERVAL = 0.5f;  // Seconds between each stack falling off
 
-    private const int TIER_1_THRESHOLD = 25;
-    private const int TIER_2_THRESHOLD = 50;
-    private const int TIER_3_THRESHOLD = 100;
+    private const int TIER_1_THRESHOLD = 50;
+    private const int TIER_2_THRESHOLD = 100;
+    private const int TIER_3_THRESHOLD = 200;
 
     // Base bonus per stack — TODO: move to SO_Ability scaling table when tuning frequently
     private const float AS_PER_STACK = 0.04f; // +4% AttackSpeed per stack (Percent)
     private const float ATK_PER_STACK = 5f;    // +5 flat AttackPower per stack (Flat)
-    private const float CRIT_CHANCE_PER_STACK = 1f;    // +1% CritChance per stack (Flat)
+    private const float CRIT_CHANCE_PER_STACK = 0.03f;    // +3% CritChance per stack (Flat)
     private const float TIER_3_MULTIPLIER = 1.5f;  // Tier 3 makes all bonuses 50% stronger
 
 

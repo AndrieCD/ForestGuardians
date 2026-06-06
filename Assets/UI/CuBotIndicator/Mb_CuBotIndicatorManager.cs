@@ -141,7 +141,7 @@ public class Mb_CuBotIndicatorManager : MonoBehaviour
 
     #region Event Handlers      //----------------------------------------
 
-    private void HandleCuBotSpawn()
+    private void HandleCuBotSpawn(GameObject obj)
     {
         // OnCuBotSpawn fires in MB_CuBotBase.OnEnable() but passes no reference.
         // We defer by one frame so the CuBot's Transform is fully repositioned

@@ -33,27 +33,90 @@ public enum MusicTrack
 
 public enum CombatSFX
 {
-    Hit_Generic,
-    Hit_Critical,
-    Ability_Q,
-    Ability_E,
-    Ability_R,
-    Ability_Primary,
-    Ability_Secondary,
+    // ── SHARED / GENERIC ──────────────────────────────────────────────────
+    // Used as fallbacks or for characters without a unique sound yet
+
+    Hit_Guardian,           // any guardian takes damage (fallback)
+    Hit_CuBot,              // any cubot takes damage (fallback)
     CuBot_Death,
     CuBot_Spawn,
-    Guardian_Death,
-    Panoharra_Hit
+
+    // ── RAJAH BAGWIS ──────────────────────────────────────────────────────
+    Rajah_Feather_Launch, // Feather Shot fired
+    Rajah_Primary,          // Feathery Slash swing
+    Rajah_Primary_Hit,      // Feathery Slash lands on enemy
+    Rajah_Secondary_Swing,  // Feather Shot wind-up
+    Rajah_Secondary_Hit,    // Feather Shot hits enemy
+    Rajah_Q_Cast,           // Sky Rend dash starts
+    Rajah_Q_Hit,            // Sky Rend hits enemies during dash
+    Rajah_E_Launch,         // Feather Barrage leap + fire
+    Rajah_E_Hit,            // Feather Barrage feather hits enemy
+    Rajah_R_Branch1_Cast,   // Sovereign's Wrath activation
+    Rajah_R_Branch1_Hit,
+    Rajah_R_Branch2_Cast,   // Eagle Eye activation
+    Rajah_R_Branch2_Hit,
+
+    // ── MARI (TARSIER) ────────────────────────────────────────────────────
+    Mari_Primary,
+    Mari_Primary_Hit,
+    Mari_Secondary_Launch,
+    Mari_Secondary_Hit,
+    Mari_Q_Cast,
+    Mari_Q_Hit,
+    Mari_E_Cast,
+    Mari_E_Hit,
+    Mari_R_Branch1_Cast,
+    Mari_R_Branch1_Hit,
+    Mari_R_Branch2_Cast,
+    Mari_R_Branch2_Hit,
+
+    // ── CUBOTS — SHARED ───────────────────────────────────────────────────
+    CuBot_Hit_Generic,      // fallback for any cubot hit
+    CuBot_Chopper_Attack,
+    CuBot_Chopper_Hit,
+    CuBot_Hunter_Attack,
+    CuBot_Hunter_Hit,
+    CuBot_Minny_Attack,
+    CuBot_Minny_Hit,
+    // Add Sawyer, Trapper, Drilly, Shovy, Bernie, Toxion, Luxion as needed
+
+    // ── ENVIRONMENT ───────────────────────────────────────────────────────
+    Panoharra_Hit,
+    Panoharra_Death,
+}
+
+public enum EnvironmentSFX
+{
+    Guardian_Footstep_Generic,
+    Guardian_Footstep_Water,
 }
 
 public enum UISFX
 {
-    UI_Click,
-    UI_Hover,
-    UI_RewardOpen,
-    UI_RewardSelect,
+    // Navigation
+    UI_Click_Generic,       // fallback for any unspecified button
+    UI_Click_Confirm,       // confirm / proceed (e.g. "Play", "Select")
+    UI_Click_Back,          // back / cancel buttons
+    UI_Hover,               // mouse-over any interactable
+
+    // Main Menu specific
+    UI_MainMenu_Start,      // Play button specifically
+    UI_MainMenu_Open,       // opening the menu (scene load lands)
+
+    // Rewards Panel
+    UI_RewardPanel_Open,    // panel slides in
+    UI_RewardSelect,        // player picks a card
+    UI_RewardHover,         // hovering a reward card (optional, distinct feel)
+
+    // Pause Menu
+    UI_Pause_Open,
+    UI_Pause_Resume,
+
+    // Wave Announcements
     UI_WaveStart,
-    UI_WaveComplete
+    UI_WaveComplete,
+    UI_StageClear,          // all waves done
+    UI_StageDefeat          // Panoharra destroyed
 }
 
 
@@ -81,6 +144,14 @@ public struct CombatSFXEntry
 }
 
 [System.Serializable]
+public struct EnvironmentSFXEntry
+{
+    public EnvironmentSFX Key;
+    public AudioClip Clip;
+    [Range(0f, 1f)] public float DefaultVolume;
+}
+
+[System.Serializable]
 public struct UISFXEntry
 {
     public UISFX Key;
@@ -101,6 +172,9 @@ public class SO_AudioLibrary : ScriptableObject
 
     [Header("Combat SFX")]
     public List<CombatSFXEntry> CombatSounds = new List<CombatSFXEntry>();
+
+    [Header("Environment SFX")]
+    public List<EnvironmentSFXEntry> EnvironmentSounds = new List<EnvironmentSFXEntry>();
 
     [Header("UI SFX")]
     public List<UISFXEntry> UISounds = new List<UISFXEntry>();
@@ -150,6 +224,26 @@ public class SO_AudioLibrary : ScriptableObject
         result = default;
         return false;
     }
+
+    /// <summary>
+    /// Finds the combat SFX entry for the given key.
+    /// Returns false if no matching entry exists.
+    /// </summary>
+    public bool TryGetEnvironmentSFX(EnvironmentSFX key, out EnvironmentSFXEntry result)
+    {
+        foreach (var entry in EnvironmentSounds )
+        {
+            if (entry.Key == key)
+            {
+                result = entry;
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
+    }
+
 
     /// <summary>
     /// Finds the UI SFX entry for the given key.

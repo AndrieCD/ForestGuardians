@@ -13,7 +13,7 @@ using UnityEngine.UIElements;
 public class Rajah_Primary : Sc_BaseAbility
 {
     // How far in front of Rajah the slash center is placed
-    private const float SLASH_RANGE = 2.0f;
+    private const float SLASH_RANGE = 1.5f;
 
     // Radius of the overlap sphere around the slash center
     // TODO: Swap to OverlapBox or a cone check if a precise frontal cone is needed later
@@ -41,6 +41,9 @@ public class Rajah_Primary : Sc_BaseAbility
     public override void Activate(Mb_CharacterBase user)
     {
         if (!CheckCooldown()) return;
+
+        // Play sound
+        Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Primary, user.gameObject.transform.position);
 
         PerformSlash(user);
         TriggerAbilityAnimation(user);
@@ -74,6 +77,8 @@ public class Rajah_Primary : Sc_BaseAbility
             cuBot.Health.TakeDamage(damage);
             alreadyHit.Add(cuBot);
             hitAnyEnemy = true;
+
+            Mb_VFXManager.PlayAtImpact(VFXType.Hit_CuBot_Generic, cuBot.transform.position, Vector3.up);
 
             OnPrimaryDamageDealt?.Invoke(damage, user);
             Debug.Log($"[Feathery Slash] Hit {cuBot.name} for {damage} damage.");

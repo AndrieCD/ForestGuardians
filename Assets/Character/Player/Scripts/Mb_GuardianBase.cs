@@ -102,16 +102,25 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     {
         if (_GuardianTemplate == null) return;
 
-        Vector3 center = transform.position + Vector3.up * 1.0f; // adjust this value
+        Vector3 center = transform.position + Vector3.up * .8f; // adjust this value
 
         // Primary slash hitbox
         Gizmos.color = Color.red;
-        Vector3 slashCenter = center + transform.forward * 2.0f;
+        Vector3 slashCenter = center + transform.forward * 1.5f;
         Gizmos.DrawWireSphere(slashCenter, 1.5f);
 
         // Q dash hit radius
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(center, 1.2f);
+        Gizmos.DrawWireSphere(center, 1.4f);
+
+
+
+        // Feet
+        Vector3 feet = transform.position + Vector3.up * 0.0f; // adjust this value
+
+        // FEET radius
+        Gizmos.color = Color.pink;
+        Gizmos.DrawWireSphere(feet, 0.2f);
     }
 #endif
 }

@@ -14,7 +14,7 @@ public class Rajah_Q_Ability : Sc_BaseAbility
     private const float DASH_DURATION = 0.25f;
 
     // Overlap sphere radius while dashing — adjust to match Rajah's character width
-    private const float HIT_RADIUS = 1.2f;
+    private const float HIT_RADIUS = 1.5f;
 
     // How long the shield lasts after being granted
     private const float SHIELD_DURATION = 4f;
@@ -54,7 +54,12 @@ public class Rajah_Q_Ability : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+
+        // Play sound
+        Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Q_Cast, user.gameObject.transform.position);
+
         TriggerAbilityAnimation(user);
+
 
         // Flatten camera forward to XZ plane so the dash is always horizontal
         Vector3 dashDir = _cam.transform.forward;
@@ -87,7 +92,7 @@ public class Rajah_Q_Ability : Sc_BaseAbility
 
         while (elapsed < DASH_DURATION)
         {
-            Vector3 dashCenter = user.transform.position + Vector3.up * 1.0f;
+            Vector3 dashCenter = user.transform.position + Vector3.up * 0.8f;
             Collider[] nearby = Physics.OverlapSphere(dashCenter, HIT_RADIUS);
 
             foreach (Collider col in nearby)

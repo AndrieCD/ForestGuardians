@@ -17,5 +17,5 @@ MonoBehaviour:
     Power.
 
     Stacks up to 20 times and resets at the end of the wave.'
-  Icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 21300000, guid: dc6ec12a3b9aba94b8555c8cfe434570, type: 3}
   Effects: []

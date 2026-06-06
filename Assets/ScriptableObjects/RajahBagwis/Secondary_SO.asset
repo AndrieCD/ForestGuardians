@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Deadly Plumage
   Icon: {fileID: 21300000, guid: 27ac72a49d8b3e042bc3595e013ec94f, type: 3}
-  Cooldown: 0
-  ProjectileModel: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  Cooldown:
+  - 1
+  ProjectileData: {fileID: 11400000, guid: 02c67bfca3356134ea3567387f61217e, type: 2}
   MaxLevel: 6
   ScalingStats:
   - StatName: Damage

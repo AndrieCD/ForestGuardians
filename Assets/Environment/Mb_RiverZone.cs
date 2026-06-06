@@ -62,6 +62,14 @@ public class Mb_RiverZone : MonoBehaviour
         if (character.Health.IsDead) return;
 
         ApplySlow(character);
+
+        // if character is burning, remove burn when touching this river
+        Mb_StatusEffectController statusController =
+            character.GetComponent<Mb_StatusEffectController>();
+        if (statusController != null && statusController.HasStatus(StatusType.Burn))
+        {
+            RemoveBurn(character);
+        }
     }
 
 
@@ -129,6 +137,26 @@ public class Mb_RiverZone : MonoBehaviour
         RemoveSlow(character);
     }
 
+
+    private void RemoveBurn(Mb_CharacterBase character)
+    {
+        // Character may not be in our set if ApplyBurn was skipped
+        // (e.g. missing StatusEffectController) — exit silently.
+        if (!_activeSlows.ContainsKey(character)) return;
+
+        _activeSlows.Remove(character);
+
+        Mb_StatusEffectController statusController =
+            character.GetComponent<Mb_StatusEffectController>();
+
+        // Guard: controller may have been destroyed between enter and exit
+        // (unlikely but possible during scene teardown).
+        if (statusController == null) return;
+
+        statusController.Remove(StatusType.Burn);
+
+        Debug.Log($"[Mb_ScorchedEarthZone] Burn removed from {character.name}.");
+    }
 
     // -------------------------------------------------------------------------
     // Scene Cleanup

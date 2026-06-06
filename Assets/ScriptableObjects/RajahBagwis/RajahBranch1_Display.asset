@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: RajahBranch1_Display
   m_EditorClassIdentifier: Assembly-CSharp::SO_UltimateBranch
   BranchName: Sovereign's Wrath
-  Description: Sovereign's Wrath test
+  Description: 'Passive: Primary attacks restore Health based on damage dealt.
+
+
+    Active:
+    Unleash a rapid flurry of strikes before finishing with a powerful final blow.'
   Icon: {fileID: 0}

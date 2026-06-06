@@ -110,6 +110,8 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("Mb_AudioManager Awake - initializing audio system and building sources.");
+
         // Standard singleton guard — only one AudioManager should ever exist
         if (Instance != null && Instance != this)
         {
@@ -129,18 +131,17 @@ public class Mb_AudioManager : MonoBehaviour
     {
         // Subscribe to game events that drive automatic audio changes.
         // All subscriptions live here so unsubscribing in OnDisable is symmetric.
-        if (GameManager.Instance != null)   
+        if (GameManager.Instance != null)
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         Mb_StageManager.OnStageStart += HandleStageStart;
         Mb_WaveManager.OnWaveStart += HandleWaveStart;
         Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
         MB_CuBotBase.OnCuBotDeath += HandleCuBotDeath;
         MB_CuBotBase.OnCuBotSpawn += HandleCuBotSpawn;
-        Sc_BaseAbility.OnCriticalHit += HandleCriticalHit;
+        //Sc_BaseAbility.OnCriticalHit += HandleCriticalHit;
         Mb_PauseManager.OnPaused += HandlePaused;
         Mb_PauseManager.OnResumed += HandleResumed;
     }
-
 
     private void OnDisable()
     {
@@ -150,7 +151,7 @@ public class Mb_AudioManager : MonoBehaviour
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
         MB_CuBotBase.OnCuBotDeath -= HandleCuBotDeath;
         MB_CuBotBase.OnCuBotSpawn -= HandleCuBotSpawn;
-        Sc_BaseAbility.OnCriticalHit -= HandleCriticalHit;
+        //Sc_BaseAbility.OnCriticalHit -= HandleCriticalHit;
         Mb_PauseManager.OnPaused -= HandlePaused;
         Mb_PauseManager.OnResumed -= HandleResumed;
     }
@@ -189,6 +190,18 @@ public class Mb_AudioManager : MonoBehaviour
             _sfxPool[i].outputAudioMixerGroup = _SFXMixerGroup;
             _sfxPool[i].loop = false;
             _sfxPool[i].playOnAwake = false;
+
+            // Switch to 3D — spatialBlend 0 = fully 2D, 1 = fully 3D
+            _sfxPool[i].spatialBlend = 1f;
+
+            // How quickly the sound fades with distance.
+            // Logarithmic roll-off matches how sound behaves in real space.
+            // Min distance = full volume within this radius.
+            // Max distance = silence beyond this radius.
+            // TODO: Tune these to match your scene scale.
+            _sfxPool[i].rolloffMode = AudioRolloffMode.Logarithmic;
+            _sfxPool[i].minDistance = 5f;
+            _sfxPool[i].maxDistance = 40f;
         }
     }
 
@@ -226,14 +239,20 @@ public class Mb_AudioManager : MonoBehaviour
     }
 
     /// <summary>Plays a combat SFX clip from the pool. Safe to call every frame.</summary>
-    public static void PlaySFX(CombatSFX sfx)
+    public static void PlaySFX(CombatSFX sfx, Vector3? worldPosition = null)
     {
         if (Instance == null) return;
-        Instance.PlaySFXInternal(sfx);
+        Instance.PlaySFXInternal(sfx, worldPosition ?? Instance.transform.position);
+    }
+
+    public static void PlayEnvironmentSFX(EnvironmentSFX sfx, Vector3? worldPosition = null)
+    {
+        if (Instance == null) return;
+        Instance.PlaySFXInternal(sfx, worldPosition ?? Instance.transform.position);
     }
 
     /// <summary>Plays a UI SFX clip. Uses a dedicated source — never cut off by combat SFX.</summary>
-    public static void PlayUI(UISFX sfx)
+    public static void PlayUI(UISFX sfx, Vector3? worldPosition = null)
     {
         if (Instance == null) return;
         Instance.PlayUIInternal(sfx);
@@ -322,21 +341,46 @@ public class Mb_AudioManager : MonoBehaviour
     }
 
 
-    private void PlaySFXInternal(CombatSFX sfx)
+    private void PlaySFXInternal(CombatSFX sfx, Vector3 worldPosition)
     {
         if (_AudioLibrary == null) return;
 
         if (!_AudioLibrary.TryGetCombatSFX(sfx, out CombatSFXEntry entry) || entry.Clip == null)
         {
-            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip assigned for CombatSFX.{sfx}. Skipping.");
+            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for CombatSFX.{sfx}. Skipping.");
             return;
         }
 
-        // Grab the next source in the round-robin pool.
-        // If it's still playing, we intentionally interrupt it — the oldest sound
-        // is the least important. For prototype this is fine; tune pool size if needed.
         AudioSource source = _sfxPool[_sfxPoolIndex];
         _sfxPoolIndex = (_sfxPoolIndex + 1) % _SFXPoolSize;
+
+        // Move the AudioSource to the sound's origin before playing.
+        // Since the AudioManager GameObject is persistent and never moves,
+        // we reposition the source component's transform each time.
+        source.transform.position = worldPosition;
+
+        source.clip = entry.Clip;
+        source.volume = entry.DefaultVolume;
+        source.Play();
+    }
+
+    private void PlaySFXInternal(EnvironmentSFX sfx, Vector3 worldPosition)
+    {
+        if (_AudioLibrary == null) return;
+
+        if (!_AudioLibrary.TryGetEnvironmentSFX(sfx, out EnvironmentSFXEntry entry) || entry.Clip == null)
+        {
+            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for CombatSFX.{sfx}. Skipping.");
+            return;
+        }
+
+        AudioSource source = _sfxPool[_sfxPoolIndex];
+        _sfxPoolIndex = (_sfxPoolIndex + 1) % _SFXPoolSize;
+
+        // Move the AudioSource to the sound's origin before playing.
+        // Since the AudioManager GameObject is persistent and never moves,
+        // we reposition the source component's transform each time.
+        source.transform.position = worldPosition;
 
         source.clip = entry.Clip;
         source.volume = entry.DefaultVolume;
@@ -449,9 +493,11 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
+        Debug.Log("[Mb_AudioManager] Game state changed to " + newState);
         switch (newState)
         {
             case GameState.MainMenu:
+                Debug.Log("[Mb_AudioManager] Handling MainMenu state: crossfading to menu music.");
                 // Player returned to the main menu — play the menu track with a crossfade
                 PlayMusicInternal(MusicTrack.MainMenu, crossfade: true);
                 break;
@@ -509,20 +555,22 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleCuBotDeath(GameObject deadCuBot)
     {
-        PlaySFXInternal(CombatSFX.CuBot_Death);
+        Vector3 pos = deadCuBot.transform.position;
+        PlaySFXInternal(CombatSFX.CuBot_Death, pos);
     }
 
 
-    private void HandleCuBotSpawn()
+    private void HandleCuBotSpawn(GameObject cuBot)
     {
-        PlaySFXInternal(CombatSFX.CuBot_Spawn);
+        Vector3 pos = cuBot.transform.position;
+        PlaySFXInternal(CombatSFX.CuBot_Spawn, pos);
     }
 
 
-    private void HandleCriticalHit(float critDamage, Mb_CharacterBase attacker)
-    {
-        PlaySFXInternal(CombatSFX.Hit_Critical);
-    }
+    //private void HandleCriticalHit(float critDamage, Mb_CharacterBase attacker)
+    //{
+    //    PlaySFXInternal(CombatSFX.);
+    //}
 
 
     private void HandlePaused()

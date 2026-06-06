@@ -8,6 +8,7 @@ TagManager:
   - CuBot
   - Guardian
   - FxTemporaire
+  - Water
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - UI
   - Character
   - Minimap
-  - 
-  - 
+  - Wildlife
+  - ModelViewer
   - 
   - 
   - 

@@ -170,6 +170,33 @@ public class Mb_StatusEffectController : MonoBehaviour
         Coroutine routine = StartCoroutine(EffectRoutine(effect));
         _activeCoroutines[effect.Type] = routine;
 
+
+        //// VFX
+        //// Map StatusType to VFX enums
+        //switch(effect.Type)
+        //{
+        //    //case StatusType.MoveSlow:
+        //    //case StatusType.AttackSlow:
+        //    //    VFXType = VFXType.Status_Slow;
+        //    //    break;
+        //    //case StatusType.Poison:
+        //    //    VFXType = VFXType.Status_Poison;
+        //    //    break;
+        //    case StatusType.Burn:
+
+        //        // Character VFX
+        //        Mb_VFXManager.Play(VFXType.Status_Burn, transform.position, transform);
+
+        //        // Camera VFX
+        //        GameObject cam = GameObject.FindGameObjectWithTag("MainCamera");
+        //        Mb_VFXManager.Play(VFXType.Burn_Vignette, cam.transform.position, cam.transform);
+
+        //        break;
+        //    //case StatusType.Stun:
+        //    //    VFXType = VFXType.Status_Stun;
+        //    //    break;
+        //}
+
         OnStatusApplied?.Invoke(effect.Type);
 
         Debug.Log($"[Mb_StatusEffectController] {effect.Type} applied to {gameObject.name} " +

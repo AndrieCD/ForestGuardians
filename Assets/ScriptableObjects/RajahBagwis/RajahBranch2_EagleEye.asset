@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Eagle Eye
   Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  Cooldown: 5
-  ProjectileModel: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  Cooldown:
+  - 32
+  ProjectileData: {fileID: 11400000, guid: 02c67bfca3356134ea3567387f61217e, type: 2}
   MaxLevel: 6
   ScalingStats:
   - StatName: Damage

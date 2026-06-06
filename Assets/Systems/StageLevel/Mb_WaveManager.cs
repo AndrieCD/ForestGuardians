@@ -213,9 +213,11 @@ public class Mb_WaveManager : MonoBehaviour
 
         foreach (var entry in currentWaveData.enemyDataList)
         {
+            Transform assignedLane = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
+
             for (int i = 0; i < entry.count; i++)
             {
-                SpawnSingleEnemy(entry.enemyType);
+                SpawnSingleEnemy(entry.enemyType, assignedLane);
                 yield return new WaitForSeconds(SpawnInterval);
             }
 
@@ -228,16 +230,16 @@ public class Mb_WaveManager : MonoBehaviour
     }
 
 
-    private void SpawnSingleEnemy(GameObject enemyType)
+    private void SpawnSingleEnemy(GameObject enemyType, Transform spawnPoint)
     {
-        Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
-
+        // remove the random pick line — use the passed-in spawnPoint directly
         foreach (Transform child in CuBotPool.transform)
         {
             if (!child.gameObject.activeInHierarchy &&
                 child.gameObject.name == enemyType.name)
             {
-                child.position = spawnPoint.position;
+                Vector3 offset = new Vector3(UnityEngine.Random.Range(-3f, 3f), 0f, 0f);
+                child.position = spawnPoint.position + offset;
                 child.rotation = spawnPoint.rotation;
                 child.gameObject.SetActive(true);
 

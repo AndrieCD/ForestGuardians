@@ -255,7 +255,7 @@ public class Mb_ReticleUI : MonoBehaviour
 
     private void HandlePrimaryCooldownChanged(float remaining)
     {
-        Debug.Log("[Mb_ReticleUI] Primary cooldown changed: " + remaining);
+        //Debug.Log("[Mb_ReticleUI] Primary cooldown changed: " + remaining);
         _lmbCooldownRemaining = remaining;
 
         // Detect cooldown start: remaining jumped UP compared to last frame.
@@ -291,7 +291,7 @@ public class Mb_ReticleUI : MonoBehaviour
 
     private void HandleSecondaryCooldownChanged(float remaining)
     {
-        Debug.Log("[Mb_ReticleUI] Secondary cooldown changed: " + remaining);
+        //Debug.Log("[Mb_ReticleUI] Secondary cooldown changed: " + remaining);
 
         _rmbCooldownRemaining = remaining;
 

@@ -132,6 +132,8 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     /// </summary>
     public void Show(RewardOption left, RewardOption right)
     {
+
+
         // Ensure both cards are visible — a previous selection may have hidden one
         _LeftCard.gameObject.SetActive(true);
         _RightCard.gameObject.SetActive(true);
@@ -139,13 +141,23 @@ public class Mb_RewardsPanelUI : MonoBehaviour
         PopulateCard(_LeftIcon, _LeftName, _LeftDescription, left);
         PopulateCard(_RightIcon, _RightName, _RightDescription, right);
 
-        _LeftCard.interactable = !left.IsMaxedPlaceholder;
-        _RightCard.interactable = !right.IsMaxedPlaceholder;
 
         if (_TimerText != null)
             _TimerText.gameObject.SetActive(true);
 
         gameObject.SetActive(true);
+
+        StartCoroutine(EnableInteractionAfterDelay(left, right));
+
+    }
+
+    IEnumerator EnableInteractionAfterDelay(RewardOption left, RewardOption right)
+    {
+        // 0.5s delay before allowing interaction to avoid accidental clicks during panel open animation
+        yield return new WaitForSeconds(0.5f);
+
+        _LeftCard.interactable = !left.IsMaxedPlaceholder;
+        _RightCard.interactable = !right.IsMaxedPlaceholder;
     }
 
 
@@ -221,6 +233,37 @@ public class Mb_RewardsPanelUI : MonoBehaviour
 
         if (_TimerText != null)
             _TimerText.gameObject.SetActive(false);
+
+
+        // Scale up then scale down the selected card
+        if (chosenCard != null)
+        {
+            Vector3 originalScale = chosenCard.transform.localScale;
+            Vector3 targetScale = originalScale * 1.1f; // Scale up by 10%
+            float elapsed = 0f;
+            float scaleDuration = 0.2f; // Total time for the scale animation
+            // Scale up
+            while (elapsed < scaleDuration / 2f)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                chosenCard.transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsed / (scaleDuration / 2f));
+                yield return null;
+            }
+            // Ensure it reaches the exact target scale
+            chosenCard.transform.localScale = targetScale;
+            // Reset elapsed for scale down
+            elapsed = 0f;
+            // Scale down
+            while (elapsed < scaleDuration / 2f)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                chosenCard.transform.localScale = Vector3.Lerp(targetScale, originalScale, elapsed / (scaleDuration / 2f));
+                yield return null;
+            }
+            // Ensure it resets to the original scale
+            chosenCard.transform.localScale = originalScale;
+        }
+
 
         // Step 2: Hold — only the chosen card is visible
         yield return new WaitForSeconds(CardHoldDuration);

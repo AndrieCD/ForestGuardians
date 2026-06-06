@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d0b74a0038cc649a8d884c298cd71f, type: 3}
+  m_Name: VFXLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SO_VFXLibrary
+  Entries:
+  - Type: 1
+    Prefab: {fileID: 8926355762202132010, guid: 3c8f9def557565e4d8624230d50768cb, type: 3}
+    Lifetime: 1.1
+    PoolSize: 20
+  - Type: 2
+    Prefab: {fileID: 8926355762202132010, guid: 3c8f9def557565e4d8624230d50768cb, type: 3}
+    Lifetime: 1.1
+    PoolSize: 20
+  - Type: 39
+    Prefab: {fileID: 994081385684806583, guid: 512a923e680f3ce47ac69a5545405039, type: 3}
+    Lifetime: 2.5
+    PoolSize: 5
+  - Type: 58
+    Prefab: {fileID: 3344008844848411623, guid: ed2a1351b5452774ca4b9cc9d1087236, type: 3}
+    Lifetime: 999
+    PoolSize: 5
+  - Type: 3
+    Prefab: {fileID: 4273060829039023248, guid: 93d383ba07188e743b6f70b67f587c96, type: 3}
+    Lifetime: 2
+    PoolSize: 10

@@ -22,7 +22,7 @@ public class MB_CuBotBase : Mb_CharacterBase
     private Mb_CharacterBase _lastAttacker = null;
 
     #region Events
-    public static event Action OnCuBotSpawn;
+    public static event Action<GameObject> OnCuBotSpawn;
     public static event Action<GameObject> OnCuBotDeath;
     public static event Action<Mb_CharacterBase> OnCuBotKill;
     #endregion
@@ -38,7 +38,7 @@ public class MB_CuBotBase : Mb_CharacterBase
 
     private void OnEnable()
     {
-        OnCuBotSpawn?.Invoke();
+        OnCuBotSpawn?.Invoke(gameObject);
 
         if (_isInitialized)
             Reset();
@@ -53,41 +53,40 @@ public class MB_CuBotBase : Mb_CharacterBase
             return;
         }
 
-        _CharacterName = _CuBotTemplate.name;
+        _CharacterName = _CuBotTemplate.CharacterName;
 
         Stats.RemoveAllModifiers();
         Stats.BuildFromTemplate(_CuBotTemplate);
-        Health.Initialize();
 
-        _lastAttacker = null;
-
-        Health.OnDeath -= HandleDeath;
-        Health.OnDeath += HandleDeath;
-
-        // Level CuBot to match player level.
-        // Default to 1 if player can't be found — log a warning so it's visible in the console.
+        // Resolve player level before initializing health —
+        // SetLevel() must run first so MaxHealth is at the correct scaled value
+        // before Health.Initialize() snapshots it as CurrentHealth.
         int playerLevel = 1;
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             Mb_CharacterBase playerChar = playerObj.GetComponent<Mb_CharacterBase>();
             if (playerChar != null)
-            {
                 playerLevel = playerChar.GetLevel();
-            }
             else
-            {
-                Debug.LogWarning($"[MB_CuBotBase] Player GameObject found but has no Mb_CharacterBase on {gameObject.name}. Defaulting to level 1.");
-            }
+                Debug.LogWarning($"[MB_CuBotBase] Player found but has no Mb_CharacterBase on {gameObject.name}. Defaulting to level 1.");
         }
         else
         {
             Debug.LogWarning($"[MB_CuBotBase] No GameObject tagged 'Player' found when spawning {gameObject.name}. Defaulting to level 1.");
         }
 
-        // SetLevel calls Stats.SetLevel() which scales all stats from the freshly built
-        // SO base values — safe to call immediately after BuildFromTemplate().
+        // Scale stats to player level BEFORE initializing health —
+        // Health.Initialize() reads MaxHealth.GetValue(), so stats must be final first.
         SetLevel(playerLevel);
+
+        // Now MaxHealth reflects the correct level, so CurrentHealth starts at the right value.
+        Health.Initialize();
+
+        _lastAttacker = null;
+
+        Health.OnDeath -= HandleDeath;
+        Health.OnDeath += HandleDeath;
 
         AssignAbilities();
     }

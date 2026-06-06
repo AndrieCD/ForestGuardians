@@ -3,38 +3,64 @@
 // Uses AttackSpeed for cooldown (basic attack, not an ability cooldown).
 // Scales damage with ATK at current ability level.
 //
-// Fires Passive_Ability.OnBasicAttackHit on each shot so Royal Plumage can grant stacks.
+// PASSIVE TRIGGER CHANGE:
+//   Previously, Passive_Ability.RaiseBasicAttackHit() was called at fire time —
+//   meaning the passive stacked even if the projectile missed.
+//   It is now subscribed to Mb_Projectile.OnHit so it only fires on a confirmed hit.
+//
+// PROJECTILE SYSTEM CHANGE:
+//   Previously used Instantiate() + three setup calls (SetDamageAmount, SetOwnerTag, SetOwner).
+//   Now delegates all spawning to Mb_ProjectileLauncher.Fire() — one call, no setup boilerplate.
+//
+// OnSecondaryFired EVENT CHANGE:
+//   The third parameter was previously Vector3 targetPoint (a world position).
+//   It is now Vector3 direction (a normalized vector) so Rajah_R_Branch2 can pass it
+//   directly to _launcher.FireToward() without recalculating a direction from a position.
 
 using System;
 using UnityEngine;
 
 public class Rajah_Secondary : Sc_BaseAbility
 {
-    private GameObject _projectilePrefab;
+    // SO_ProjectileData asset for the basic feather shot.
+    // Assigned in the constructor from SO_Guardian — ability scripts never
+    // reference a specific prefab directly; the data asset owns that reference.
+    private SO_ProjectileData _projectileData;
 
+    // Cached launcher reference — fetched once in OnEquip from the owner GameObject.
+    // Mb_ProjectileLauncher handles all spawn, position, orient, and initialize logic.
+    private Mb_ProjectileLauncher _launcher;
+
+    // Fired after every shot so Rajah_R_Branch2 (Eagle Eye passive) can react.
+    // Parameters: (source character, launch origin, normalized fire direction)
+    // Direction is normalized so FireToward() in R_Branch2 can use it directly.
     public static event Action<Mb_CharacterBase, Vector3, Vector3> OnSecondaryFired;
-
-    // Cached once in OnEquip — avoids a scene search every time the ability fires
-    //private Transform _Guardian.ProjectileOrigin;
 
 
     public Rajah_Secondary(SO_Ability abilityData, Mb_CharacterBase user)
         : base(abilityData, user)
     {
-        _projectilePrefab = _AbilityData.ProjectileModel;
+        // ProjectileData is read from the SO so the prefab reference lives in one place.
+        // TODO: Add a ProjectileData field to SO_Ability and assign Rajah_Feather_Basic here:
+        //   _projectileData = abilityData.ProjectileData;
+        // For now, this is left null and guarded in FireProjectile() until the SO is updated.
+        _projectileData = abilityData.ProjectileData;
     }
 
 
     public override void OnEquip(Mb_CharacterBase user)
     {
-        //GameObject originObj = GameObject.Find("ProjectileOrigin");
-        //if (originObj != null)
-        //    _Guardian.ProjectileOrigin = originObj.transform;
-        //else
-        //    Debug.LogError("[Rajah_Secondary] 'ProjectileOrigin' GameObject not found in scene.");
+        // Cache the launcher from the owner's GameObject.
+        // Mb_ProjectileLauncher must be attached to the same GameObject as the Guardian.
+        _launcher = user.GetComponent<Mb_ProjectileLauncher>();
+
+        if (_launcher == null)
+            Debug.LogError("[Rajah_Secondary] No Mb_ProjectileLauncher found on " +
+                           $"{user.gameObject.name}. Add the component to the Guardian prefab.");
 
         Debug.Log($"Equipped {_AbilityData.AbilityName}.");
     }
+
 
     public override void OnUnequip(Mb_CharacterBase user)
     {
@@ -47,11 +73,11 @@ public class Rajah_Secondary : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+        Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Secondary_Swing,
+                                user.gameObject.transform.position);
+
         FireProjectile(user);
         TriggerAbilityAnimation(user);
-
-        // Play sound
-        Mb_AudioManager.PlaySFX(CombatSFX.Ability_Secondary);
 
         // Secondary is a basic attack — cooldown driven by AttackSpeed, not Haste
         StartCooldown(user, GetAttackCooldown(user));
@@ -60,47 +86,51 @@ public class Rajah_Secondary : Sc_BaseAbility
 
     private void FireProjectile(Mb_CharacterBase user)
     {
-        if (_projectilePrefab == null)
+        if (_launcher == null)
         {
-            Debug.LogError("[Rajah_Secondary] No projectile prefab assigned in SO_Ability.");
+            Debug.LogError("[Rajah_Secondary] Cannot fire — Mb_ProjectileLauncher is null.");
             return;
         }
 
-        if (_Guardian.ProjectileOrigin == null)
+        if (_projectileData == null)
         {
-            Debug.LogError("[Rajah_Secondary] ProjectileOrigin transform is not cached.");
+            Debug.LogError("[Rajah_Secondary] Cannot fire — SO_ProjectileData is null. " +
+                           "Assign Rajah_Feather_Basic to SO_Ability.ProjectileData.");
             return;
         }
 
-        Camera cam = Camera.main;
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        int layerMask = ~(1 << LayerMask.NameToLayer("Character"));
+        // Calculate damage at fire time using current stats.
+        // Crit is rolled here — the rolled value is passed into Fire() as baseDamage
+        // so the projectile carries the final damage number without needing stat access.
+        float damage = _AbilityData.GetStat(
+            "Damage", CurrentLevel,
+            user.Stats.AttackPower.GetValue()
+        );
+        damage = ApplyCriticalStrike(damage, user);
 
-        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, layerMask)
-            ? hit.point
-            : ray.origin + ray.direction * 100f;
+        // Fire() resolves aim via camera raycast (Guardian path) and returns the
+        // Mb_Projectile instance so we can subscribe to OnHit immediately after.
+        Mb_Projectile projectile = _launcher.Fire(_projectileData, user, damage);
 
-        Vector3 direction = (targetPoint - _Guardian.ProjectileOrigin.position).normalized;
-        Quaternion rotation = Quaternion.LookRotation(direction);
+        if (projectile == null) return;
 
-        GameObject instance = GameObject.Instantiate(_projectilePrefab, _Guardian.ProjectileOrigin.position, rotation);
+        // Store the fire direction for OnSecondaryFired — read from the projectile's
+        // forward direction immediately after Fire() sets it, before any physics runs.
+        Vector3 fireDirection = projectile.transform.forward;
+        Vector3 launchOrigin = projectile.transform.position;
 
-        Mb_Projectile projectile = instance.GetComponent<Mb_Projectile>();
-        if (projectile != null)
+        // Subscribe to OnHit so the passive only stacks on a confirmed hit.
+        // Previously, RaiseBasicAttackHit() was called unconditionally at fire time —
+        // this means missed shots no longer grant stacks.
+        projectile.OnHit += (target, hitPoint, hitNormal) =>
         {
-            float damage = _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue());
-            damage = ApplyCriticalStrike(damage, user);
-
-            // After getting the Mb_Projectile component and before any damage call:
-            projectile.SetOwner(user);         // for kill-credit
-            projectile.SetOwnerTag("Player");  // for friendly-fire skip
-            projectile.SetDamageAmount(damage);
-
-            // Notify the passive that a basic attack was fired — stack logic lives there
             Passive_Ability.RaiseBasicAttackHit();
-        }
+        };
 
-        OnSecondaryFired?.Invoke(user, _Guardian.ProjectileOrigin.position, targetPoint);
+        // Notify Eagle Eye (Rajah_R_Branch2) that a secondary was fired.
+        // Passes normalized direction so the passive can call FireToward() directly
+        // without needing to reconstruct a direction from a world position.
+        OnSecondaryFired?.Invoke(user, launchOrigin, fireDirection);
     }
 
 

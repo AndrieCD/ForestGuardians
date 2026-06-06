@@ -88,6 +88,18 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         // Invoke OnChanged events to initialize UI and other listeners with the correct starting values
         OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
         OnShieldChanged?.Invoke(CurrentShield);
+
+        _statBlock.MaxHealth.OnStatChanged += HandleMaxHealthChanged;
+    }
+
+    private void HandleMaxHealthChanged(float obj)
+    {
+        // When MaxHealth changes (e.g. from Heart of the Forest), we may need to adjust CurrentHealth if it exceeds the new MaxHealth.
+        if (CurrentHealth > obj)
+        {
+            CurrentHealth = obj;
+            OnHealthChanged?.Invoke(CurrentHealth, obj);
+        }
     }
 
 
@@ -102,6 +114,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         if (IsDead) return;
         if (IsUntargetable) return;
 
+        Debug.Log($"[{gameObject.name}] is taking {amount} damage. Current HP: {CurrentHealth}, Max Health: {GetMaxHealth()}");
 
         float remainingDamage = AbsorbWithShields(amount);
 
@@ -115,6 +128,23 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
         // Debug.Log($"[{gameObject.name}] took {amount} damage. Remaining HP: {CurrentHealth}");
         OnDamageTaken?.Invoke(amount);
+
+
+        // Play Sound
+        // different if guardian or cubot
+        if (gameObject.CompareTag("Player"))
+        {
+            // Play sound
+            Mb_AudioManager.PlaySFX(CombatSFX.Hit_Guardian);
+        }
+        else if (gameObject.CompareTag("CuBot"))
+        {
+            // Play sound
+            Mb_AudioManager.PlaySFX(CombatSFX.Hit_CuBot, gameObject.transform.position);
+        }
+
+
+        Debug.Log($"[{gameObject.name}] took {amount} damage out of {GetMaxHealth()}");
 
 
         if (CurrentHealth <= 0f)
@@ -145,6 +175,19 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     /// </summary>
     private void Die()
     {
+        // Play Sound
+        // different if guardian or cubot
+        if (gameObject.CompareTag("Player"))
+        {
+            // Play sound
+            //Mb_AudioManager.PlaySFX(CombatSFX.);
+        }
+        else if (gameObject.CompareTag("CuBot"))
+        {
+            // Play sound
+            Mb_AudioManager.PlaySFX(CombatSFX.CuBot_Death, gameObject.transform.position);
+        }
+
         IsDead = true;
         Debug.Log($"[{gameObject.name}] has died.");
         OnDeath?.Invoke();

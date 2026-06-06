@@ -106,6 +106,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         user.StartCoroutine(SovereignsWrathRoutine(user));
 
         StartCooldown(user, GetAbilityCooldown(user));
+
     }
 
     private IEnumerator SovereignsWrathRoutine(Mb_CharacterBase user)
@@ -115,8 +116,10 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
 
         SetUntargetable(true);
         var controller = user as Mb_PlayerController;
-
-        controller.AddDisable(ActionDisableFlags.Stun);
+        controller?.AddDisable(
+            ActionDisableFlags.AllAbilities |
+            ActionDisableFlags.AllAttacks
+        );
 
         // --- Tick Loop ---
         for (int i = 0; i < TICK_COUNT; i++)
@@ -133,7 +136,10 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
 
         // --- Cleanup ---
         SetUntargetable(false);
-        controller.RemoveDisable(ActionDisableFlags.Stun);
+        controller.RemoveDisable(ActionDisableFlags.AllAbilities | ActionDisableFlags.AllAttacks);
+
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.EndR1Ability();
     }
 
     // -------------------------------------------------------------------------
@@ -147,8 +153,8 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         Collider[] hits = Physics.OverlapSphere(center, HIT_RADIUS);
 
         float damage = isFinal
-            ? _AbilityData.GetStat("FinalStrike", CurrentLevel, user.Stats.AttackPower.GetValue())
-            : _AbilityData.GetStat("TickDamage", CurrentLevel, user.Stats.AttackPower.GetValue());
+            ? _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue()) * 3f
+            : _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue());
 
         foreach (Collider col in hits)
         {

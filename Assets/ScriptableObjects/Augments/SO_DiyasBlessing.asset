@@ -15,5 +15,5 @@ MonoBehaviour:
   AugmentName: Diya's Blessing
   Description: Every 1.5 seconds, drain 5% Max HP from nearby enemies and heal for
     the same amount.
-  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 21300000, guid: 29e3ee47ff3d2bf4c87854cf0107279f, type: 3}
   Effects: []

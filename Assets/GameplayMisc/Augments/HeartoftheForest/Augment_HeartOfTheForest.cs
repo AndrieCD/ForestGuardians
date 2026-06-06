@@ -1,6 +1,6 @@
 // Augment_HeartOfTheForest.cs
 // -15% ATK/AP, +1000 Max HP
-// Gain HP Regen equal to 5% of current Max HP (dynamic, mutation-based)
+// Gain HP Regen equal to 2% of current Max HP (dynamic, mutation-based)
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,7 +68,7 @@ public class Augment_HeartOfTheForest : Sc_AugmentBase
     private void UpdateRegen()
     {
         float maxHP = _Owner.Stats.MaxHealth.GetValue();
-        float regenAmount = maxHP * 0.05f;
+        float regenAmount = maxHP * 0.02f;
 
         if (Mathf.Approximately(_regenEffect.Value, regenAmount)) return; // no change, skip
 

@@ -19,6 +19,8 @@ public class Sc_Stat
     // SetLevel() always scales off this so growth is always linear.
     private float _originalBaseValue;
 
+    public float OriginalBaseValue => _originalBaseValue; // Expose original base as read-only for UI tooltips, etc.    
+
     // Live base value. Rewritten by SetLevel() on level-up.
     public float BaseValue;
 

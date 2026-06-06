@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -12,6 +13,13 @@ public class UIManager : MonoBehaviour
 
     [Header("Pause Menu")]
     public GameObject PauseMenuCanvas;
+
+
+    // EVENTS
+    public static event Action OnMainMenuLoaded;
+
+
+
 
     public void Initialize( )
     {

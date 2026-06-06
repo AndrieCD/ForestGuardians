@@ -89,12 +89,14 @@ public class Mb_NaturalSelection : Sc_AugmentBase
         // pollute the bonus values we're basing the new conversion on.
         RemoveConversionPair();
 
-        float atkBonus = _Owner.Stats.AttackPower.BonusValue();
-        float apBonus = _Owner.Stats.AbilityPower.BonusValue();
+        //float atkBonus = _Owner.Stats.AttackPower.BonusValue();
+        float atkBase = _Owner.Stats.AttackPower.BaseValue - _Owner.Stats.AttackPower.OriginalBaseValue;
+        //float apBonus = _Owner.Stats.AbilityPower.BonusValue();
+        float apBase = _Owner.Stats.AbilityPower.BaseValue - _Owner.Stats.AbilityPower.OriginalBaseValue;
 
         // Step 2: If neither stat has any bonus, there's nothing to convert.
         // Skip to avoid applying zeroed or negative modifiers with no purpose.
-        if (atkBonus <= 0f && apBonus <= 0f)
+        if (atkBase <= 0f && apBase <= 0f)
         {
             Debug.Log("[Natural Selection] No bonus stats to convert. Waiting.");
             _isEvaluating = false;
@@ -103,23 +105,23 @@ public class Mb_NaturalSelection : Sc_AugmentBase
 
         // Step 3: Determine which stat is greater and build the conversion pair.
         // Equal bonus defaults to treating AP as the greater (arbitrary tie-break).
-        if (atkBonus > apBonus)
+        if (atkBase > apBase)
         {
             // ATK is greater — zero it out, pour 200% of it into AP
             _negativeModifier = BuildModifier(
                 "Natural Selection — ATK Zeroed",
                 StatType.AttackPower,
-                -atkBonus   // exactly cancels the ATK bonus
+                -atkBase   // exactly cancels the ATK base value
             );
 
             _positiveModifier = BuildModifier(
                 "Natural Selection — AP Boosted",
                 StatType.AbilityPower,
-                atkBonus * 2f   // 200% of ATK bonus added to AP
+                atkBase * 2f   // 200% of ATK base added to AP
             );
 
-            Debug.Log($"[Natural Selection] ATK ({atkBonus}) > AP ({apBonus}). " +
-                      $"Zeroing ATK, adding {atkBonus * 2f} to AP.");
+            Debug.Log($"[Natural Selection] ATK ({atkBase}) > AP ({apBase}). " +
+                      $"Zeroing ATK, adding {atkBase * 2f} to AP.");
         }
         else
         {
@@ -127,17 +129,17 @@ public class Mb_NaturalSelection : Sc_AugmentBase
             _negativeModifier = BuildModifier(
                 "Natural Selection — AP Zeroed",
                 StatType.AbilityPower,
-                -apBonus    // exactly cancels the AP bonus
+                -apBase    // exactly cancels the AP base value
             );
 
             _positiveModifier = BuildModifier(
                 "Natural Selection — ATK Boosted",
                 StatType.AttackPower,
-                apBonus * 2f    // 200% of AP bonus added to ATK
+                apBase * 2f    // 200% of AP base added to ATK
             );
 
-            Debug.Log($"[Natural Selection] AP ({apBonus}) >= ATK ({atkBonus}). " +
-                      $"Zeroing AP, adding {apBonus * 2f} to ATK.");
+            Debug.Log($"[Natural Selection] AP ({apBase}) >= ATK ({atkBase}). " +
+                      $"Zeroing AP, adding {apBase * 2f} to ATK.");
         }
 
         // Step 4: Apply both modifiers.
