@@ -7,21 +7,18 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TreeQuercus_MTL_BaseColor
-  m_Shader: {fileID: 4800000, guid: 759886232556cde4186055b9eed78cc0, type: 3}
+  m_Name: Vines
+  m_Shader: {fileID: 4800000, guid: edb73fdd67aefe949abae90ba298f852, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
-  - _ALPHACLIP_ON
   - _AOINSHADOWSONLY_ON
-  - _CROSSHATCH_ON
   - _OUTLINE_ON
-  - _SCREENSPACEHALFTONE_ON
-  - _USEBLACKCUTOUT_ON
+  - _USEALPHACLIP_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
+  m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
@@ -30,7 +27,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: a802d0c324bf60543acea1c4ae2b8f0c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 22df10f20a68093409a37cb6377b2a62, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -71,66 +68,48 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AOChannel: 1
     - _AOInShadowsOnly: 1
-    - _AOStrength: 0.3
-    - _AlphaClip: 1
-    - _AmbientBoost: 0.7
+    - _AOStrength: 0
+    - _AlphaClipThreshold: 0.836
+    - _AmbientStrength: 0.2
     - _BandStrength: 1
-    - _BlackCutoutThreshold: 0.01
     - _BumpScale: 1
-    - _CrossHatch: 1
     - _Cutoff: 0.5
+    - _DarkLineStrength: 1
     - _DetailNormalMapScale: 1
-    - _DoubleSided: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _HalftoneFadeEnd: 60
-    - _HalftoneFadeStart: 20
-    - _HalftoneScale: 250
-    - _HalftoneSoftness: 0.001
-    - _HalftoneStrength: 0.45
-    - _HalftoneThreshold: 0
-    - _HatchAngle: 35
-    - _HatchEnabled: 0
-    - _HatchLineWidth: 0.3
-    - _HatchScale: 200
-    - _HatchSoftness: 0.5
-    - _HatchStrength: 0.3
-    - _HatchThreshold: 0
+    - _LineScale: 130
+    - _LineSoftness: 0.02
+    - _LineStrength: 0.75
+    - _LineThickness: 0.08
+    - _MediumLineDensity: 0.55
+    - _MediumLineStrength: 0.35
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Outline: 1
-    - _OutlineDepthOffset: 0.002
-    - _OutlineEdgeSoftness: 0.18
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.006
     - _Parallax: 0.02
-    - _PosterizeSteps: 10
-    - _PosterizeStrength: 0.3
-    - _RampSmoothness: 0.2
-    - _RampThreshold: 0.6
-    - _RimPower: 12
-    - _RimStrength: 0
-    - _ScreenSpaceHalftone: 1
-    - _ShadowBands: 6
+    - _RampSmoothness: 0.04
+    - _RampThreshold: 0
     - _ShadowStrength: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _UseBlackCutout: 1
+    - _UseAlphaClip: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightTint: {r: 1, g: 1, b: 1, a: 1}
+    - _LineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _LineDirection: {r: 1, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
-    - _ShadowTint: {r: 0.9, g: 0.86, b: 1, a: 1}
+    - _ShadowTint: {r: 0.47999996, g: 0.45, b: 0.65, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
