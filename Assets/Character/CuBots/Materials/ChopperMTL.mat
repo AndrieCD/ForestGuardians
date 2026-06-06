@@ -75,12 +75,12 @@ Material:
     m_Floats:
     - _AOChannel: 1
     - _AOInShadowsOnly: 1
-    - _AOStrength: 0
+    - _AOStrength: 0.35
     - _AlphaClip: 1
-    - _AlphaClipThreshold: 0.35
+    - _AlphaClipThreshold: 1
     - _AmbientBoost: 0.7
-    - _AmbientStrength: 0.2
-    - _BandStrength: 0.85
+    - _AmbientStrength: 0
+    - _BandStrength: 1
     - _BumpScale: 1
     - _CrossHatch: 1
     - _Cutoff: 0.5
@@ -116,12 +116,12 @@ Material:
     - _Outline: 1
     - _OutlineDepthOffset: 0.002
     - _OutlineEdgeSoftness: 0.18
-    - _OutlineWidth: 0.0001
+    - _OutlineWidth: 0.001
     - _Parallax: 0.02
     - _PosterizeSteps: 6
     - _PosterizeStrength: 0.12
-    - _RampSmoothness: 0.06
-    - _RampThreshold: 0.45
+    - _RampSmoothness: 0.001
+    - _RampThreshold: 0.06
     - _RimPower: 0.5
     - _RimStrength: 0
     - _ScreenSpaceHalftone: 1
@@ -143,6 +143,6 @@ Material:
     - _LineDirection: {r: 1, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
-    - _ShadowTint: {r: 0.9, g: 0.86, b: 1, a: 1}
+    - _ShadowTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
