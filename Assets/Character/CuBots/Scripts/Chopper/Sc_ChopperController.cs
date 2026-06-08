@@ -40,12 +40,11 @@ public class Mb_ChopperController : Mb_CuBotController
 
     protected override void UpdateAnimator()
     {
-        if (_Animator == null) return;
+        if (_BasicCuBotAnimator == null) return;
 
-        // TODO: Drive locomotion blend tree parameter (e.g. "Speed") once rig is ready
-        // TODO: Trigger windup/attack animation from within Sc_ChopperMeleeAttack
-        // Example: _Animator.SetFloat("Speed", _Agent.velocity.magnitude);
+        _BasicCuBotAnimator.SetSpeed(_Agent.velocity.magnitude);
     }
+
 
     protected override void OnControllerReset()
     {

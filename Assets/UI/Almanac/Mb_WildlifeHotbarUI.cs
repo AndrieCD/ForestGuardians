@@ -73,8 +73,8 @@ public class Mb_WildlifeHotbarUI : MonoBehaviour
 
     private void Start()
     {
-        // Hotbar starts hidden — only shown during an active stage
-        gameObject.SetActive(false);
+        //// Hotbar starts hidden — only shown during an active stage
+        //gameObject.SetActive(false);
     }
 
     #endregion                          //----------------------------------------

@@ -43,6 +43,10 @@ public class Sc_ChopperMeleeAttack : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+
+        user.GetComponent<Mb_CuBotAnimator>().TriggerAttack();
+
+
         // Start cooldown immediately — Chopper can't chain attacks during windup
         StartCooldown(user, GetAttackCooldown(user));
 

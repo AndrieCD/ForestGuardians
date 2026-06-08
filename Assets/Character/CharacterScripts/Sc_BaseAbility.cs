@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Sc_BaseAbility
 {
@@ -199,7 +200,17 @@ public abstract class Sc_BaseAbility
             _CooldownRemaining -= 0.1f;
             OnCooldownChanged?.Invoke(_CooldownRemaining);
         }
+
         _CooldownRemaining = 0f;
+
+        if (_CooldownRemaining <= 0f)
+        {
+            var controller = _User as Mb_PlayerController;
+            controller?.RemoveDisable(
+                ActionDisableFlags.AllAttacks
+            );
+        }
+
         OnCooldownChanged?.Invoke(_CooldownRemaining);
     }
 

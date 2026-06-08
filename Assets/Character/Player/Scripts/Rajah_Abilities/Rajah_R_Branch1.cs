@@ -8,8 +8,8 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     // CONFIG (non-SO timing values)
     // -------------------------------------------------------------------------
 
-    private const int TICK_COUNT = 4;
-    private const float TICK_INTERVAL = 0.5f;
+    private const int TICK_COUNT = 8;
+    private const float TICK_INTERVAL = 0.25f;
     private const float FINAL_DELAY = 0.5f;
 
     private const float HIT_RADIUS = 5f;
@@ -172,10 +172,10 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     private Vector3 GetLockedForwardDirection()
     {
         Vector3 dir = _cam.transform.forward;
-        dir.y = 0f;
-        dir.Normalize();
+        //dir.y = 0f;
+        //dir.Normalize();
 
-        if (dir == Vector3.zero)
+        //if (dir == Vector3.zero)
             dir = _User.transform.forward;
 
         return dir;

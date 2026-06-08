@@ -16,6 +16,7 @@ public class MB_CuBotBase : Mb_CharacterBase
     [Header("CuBot Template")]
     [SerializeField] protected SO_CuBots _CuBotTemplate;
 
+
     // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
     private bool _isInitialized = false;
 

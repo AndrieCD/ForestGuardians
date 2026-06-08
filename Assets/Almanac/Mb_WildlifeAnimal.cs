@@ -100,7 +100,8 @@ public class Mb_WildlifeAnimal : MonoBehaviour
     public void Initialize(
         SO_WildlifeEntry entry,
         Mb_WildlifeDiscoveryManager manager,
-        Mb_WildlifeSpawnPoint spawnPoint = null)
+        Mb_WildlifeSpawnPoint spawnPoint = null,
+        bool isQuestSpecies = false)
     {
         Entry = entry;
         _discoveryManager = manager;
@@ -125,6 +126,9 @@ public class Mb_WildlifeAnimal : MonoBehaviour
 
         // Ensure VFX starts active so the animal is visible on spawn
         _vfxChild?.SetActive(true);
+
+        if (_vfxChild != null)
+            _vfxChild.SetActive(isQuestSpecies);
 
         // Reset gaze state in case the component is reused
         _gazeTimer = 0f;

@@ -42,6 +42,11 @@ public class Rajah_Primary : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+        var controller = _User as Mb_PlayerController;
+        controller?.AddDisable(
+            ActionDisableFlags.AllAttacks
+        );
+
         // Play sound
         Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Primary, user.gameObject.transform.position);
 

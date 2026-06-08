@@ -5,6 +5,7 @@
 // Derived classes: Mb_PlayerController (Rajah Bagwis), and future guardian classes.
 
 using UnityEngine;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Mb_GuardianBase : Mb_CharacterBase
 {
@@ -113,6 +114,12 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(center, 1.4f);
 
+        // R1 slashes hitbox
+        float HIT_RADIUS = 5f;
+        float HIT_OFFSET = 5f;
+        Gizmos.color = Color.yellow;
+        center = transform.position + transform.forward * HIT_OFFSET;
+        Gizmos.DrawWireSphere(center, HIT_RADIUS);
 
 
         // Feet

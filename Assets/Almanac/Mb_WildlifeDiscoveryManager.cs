@@ -315,7 +315,10 @@ public class Mb_WildlifeDiscoveryManager : MonoBehaviour
             // Wire the entry reference into the animal component
             Mb_WildlifeAnimal animalComponent = animal.GetComponent<Mb_WildlifeAnimal>();
             if (animalComponent != null)
-                animalComponent.Initialize(entry, this, point);
+            {
+                bool isQuest = _questSpecies.Contains(entry);
+                animalComponent.Initialize(entry, this, point, isQuest);
+            }
             else
                 Debug.LogWarning($"[Mb_WildlifeDiscoveryManager] Spawned '{entry.CommonName}' " +
                                  $"prefab has no Mb_WildlifeAnimal component.");

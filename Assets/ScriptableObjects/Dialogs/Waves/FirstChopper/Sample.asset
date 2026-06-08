@@ -15,6 +15,6 @@ MonoBehaviour:
   Portrait: {fileID: 21300000, guid: 29e3ee47ff3d2bf4c87854cf0107279f, type: 3}
   SpeakerName: Diya
   DialogText: Omg is that chopper?!
-  VoiceClip: {fileID: 0}
+  VoiceClip: {fileID: 8300000, guid: 28311560b16d92e4cad6d11c6e1110ec, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

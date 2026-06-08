@@ -61,8 +61,6 @@ public class Mb_RiverZone : MonoBehaviour
         // Dead characters don't need slowing
         if (character.Health.IsDead) return;
 
-        ApplySlow(character);
-
         // if character is burning, remove burn when touching this river
         Mb_StatusEffectController statusController =
             character.GetComponent<Mb_StatusEffectController>();
@@ -70,6 +68,9 @@ public class Mb_RiverZone : MonoBehaviour
         {
             RemoveBurn(character);
         }
+
+        ApplySlow(character);
+
     }
 
 

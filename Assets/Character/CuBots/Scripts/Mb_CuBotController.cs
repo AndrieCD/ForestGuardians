@@ -44,6 +44,10 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     private CuBotAIState _aiState = CuBotAIState.ChasingPanoharra;
 
+
+    protected Mb_CuBotAnimator _BasicCuBotAnimator = null;
+
+
     #region Events
 
     public static event Action<MB_CuBotBase, Transform> OnAggroChanged;
@@ -65,6 +69,8 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         {
             Debug.LogError($"[Mb_CuBotController] No NavMeshAgent found on {gameObject.name}.");
         }
+
+        _BasicCuBotAnimator = GetComponent<Mb_CuBotAnimator>();
     }
 
     private void Start()
@@ -233,7 +239,9 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     /// <summary>
     /// Called whenever the current target changes.
     /// </summary>
-    protected virtual void OnTargetChanged(Transform newTarget) { }
+    protected virtual void OnTargetChanged(Transform newTarget) {
+        if (newTarget == _PlayerTarget) _BasicCuBotAnimator.TriggerAggro(); 
+    }
 
     /// <summary>
     /// Called after Reset() for derived cleanup logic.

@@ -15,6 +15,6 @@ MonoBehaviour:
   Portrait: {fileID: 21300000, guid: 7b88674c74899444d88979968fd80e4b, type: 3}
   SpeakerName: Dudong
   DialogText: Welcome to Mobile Legends!
-  VoiceClip: {fileID: 0}
+  VoiceClip: {fileID: 8300000, guid: fe122e9d362f1c649a4ed6e0f8590ce2, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

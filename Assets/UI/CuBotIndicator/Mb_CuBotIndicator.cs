@@ -167,6 +167,12 @@ public class Mb_CuBotIndicator : MonoBehaviour
         {
             viewportPos.x = 1f - viewportPos.x;
             viewportPos.y = 1f - viewportPos.y;
+
+            // When the target is behind the camera, the vertical viewport value
+            // will move as the player looks up/down which causes the indicator
+            // to slide away from the screen edge. Instead, pin the indicator
+            // to the nearest vertical screen edge so it stays stuck to top/bottom.
+            viewportPos.y = (viewportPos.y < 0.5f) ? 0f : 1f;
         }
 
         // Convert viewport (0-1) to screen pixels, then clamp to screen edges

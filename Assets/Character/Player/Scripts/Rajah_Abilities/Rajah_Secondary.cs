@@ -73,6 +73,11 @@ public class Rajah_Secondary : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+        var controller = _User as Mb_PlayerController;
+        controller?.AddDisable(
+            ActionDisableFlags.AllAttacks
+        );
+
         Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Secondary_Swing,
                                 user.gameObject.transform.position);
 
