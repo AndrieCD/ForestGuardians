@@ -21,7 +21,7 @@ MonoBehaviour:
     its greatest threat.
   SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  ModelPrefab: {fileID: 146975328364204255, guid: 9c6039cdb2834de42ad3c5f48570d870, type: 3}
   StatBonus:
     TargetStat: 8
     Value: 0.2

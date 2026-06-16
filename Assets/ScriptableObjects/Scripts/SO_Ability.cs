@@ -11,6 +11,8 @@ public class SO_Ability : ScriptableObject
     [Header("Ability Info")]
     public string AbilityName;
     public Sprite Icon;
+    [TextArea(3, 10)]
+    public string AbilityDescription; 
 
     [Header("General Settings")]
     public List<float> Cooldown;

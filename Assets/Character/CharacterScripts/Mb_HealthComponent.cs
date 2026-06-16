@@ -216,6 +216,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             yield return wait;
             if (_statBlock == null || _statBlock.HealthRegen == null) continue;
             float regenAmount = _statBlock.HealthRegen.GetValue();
+            Debug.Log($"Regen Amount: {regenAmount}");
 
             // Skip the Heal() call entirely if regen is zero — avoids a
             // pointless Mathf.Min and an OnHealthChanged event fire with no change

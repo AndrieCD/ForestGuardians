@@ -53,6 +53,8 @@ public class Mb_StatBlock : MonoBehaviour
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
         HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
+        Debug.Log($"Health Regen: {template.HealthRegen}");
+
         MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
         AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
         AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
@@ -173,6 +175,8 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void AddModifier(Sc_Modifier modifier)
     {
+        Debug.Log($"Adding modifier '{modifier.ModifierName}' from source {modifier.Source} with duration {modifier.Duration} seconds.");
+
         _activeModifiers.Add(modifier);
         ApplyEffects(modifier);
 

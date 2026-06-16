@@ -47,10 +47,6 @@ using UnityEngine;
 
 public class Mb_ProjectileLauncher : MonoBehaviour
 {
-    // -------------------------------------------------------------------------
-    // Inspector Fields
-    // -------------------------------------------------------------------------
-
     #region Inspector Fields    //----------------------------------------
 
     [Header("Spawn Point")]
@@ -58,45 +54,26 @@ public class Mb_ProjectileLauncher : MonoBehaviour
              "Falls back to this component's own transform if left unassigned.")]
     [SerializeField] private Transform LaunchOrigin;
 
-    [Header("Projectile Prefab")]
-    [Tooltip("Prefab with Mb_Projectile, Rigidbody (isKinematic = false, gravity = false), " +
-             "and a trigger Collider. All behavior is driven by SO_ProjectileData at runtime — " +
-             "one prefab can serve every projectile type.")]
-    [SerializeField] private GameObject ProjectilePrefab;
-
     [Header("Aim Raycast")]
     [Tooltip("Layer mask for the aim raycast used by Fire(). " +
              "Include terrain, environment, and enemy layers. " +
-             "Exclude the Player layer so the ray doesn't hit the Guardian herself.")]
-    [SerializeField] private LayerMask AimLayerMask = Physics.DefaultRaycastLayers;
+             "Exclude the Player layer so the ray doesn't hit the Guardian.")]
+    [SerializeField] private LayerMask AimLayerMask = Physics.DefaultRaycastLayers; // Exclude Transparent as well
 
-    [Tooltip("How far the aim raycast travels before using the ray endpoint as the aim point. " +
-             "Set this to match or exceed the projectile's MaxRange.")]
+    [Tooltip("How far the aim raycast travels before using the ray endpoint as the aim point.")]
     [SerializeField] private float AimRaycastDistance = 100f;
 
     #endregion                  //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Private State
-    // -------------------------------------------------------------------------
-
     #region Private State       //----------------------------------------
 
-    // Cached owner reference — used to determine aim mode (Guardian vs CuBot)
-    // and passed to projectile Initialize() calls.
     private Mb_CharacterBase _owner;
-
-    // Cached component references — fetched once in Awake
-    private Mb_GuardianBase _guardianBase;      // non-null if owner is a Guardian
-    private UnityEngine.AI.NavMeshAgent _agent; // non-null if owner is a CuBot
+    private Mb_GuardianBase _guardianBase;
+    private UnityEngine.AI.NavMeshAgent _agent;
 
     #endregion                  //----------------------------------------
 
-
-    // -------------------------------------------------------------------------
-    // Unity Lifecycle
-    // -------------------------------------------------------------------------
 
     #region Unity Lifecycle     //----------------------------------------
 
@@ -106,115 +83,99 @@ public class Mb_ProjectileLauncher : MonoBehaviour
 
         if (_owner == null)
             Debug.LogError($"[Mb_ProjectileLauncher] No Mb_CharacterBase found on " +
-                           $"{gameObject.name}. Launcher must be on the same GameObject " +
-                           $"as the character component.");
+                           $"{gameObject.name}.");
 
-        // Determine firing mode by checking which character type owns this launcher.
-        // Guardians aim via camera raycast; CuBots aim via NavMeshAgent facing direction.
         _guardianBase = GetComponent<Mb_GuardianBase>();
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-        if (ProjectilePrefab == null)
-            Debug.LogError($"[Mb_ProjectileLauncher] No ProjectilePrefab assigned on " +
-                           $"{gameObject.name}. Assign a prefab with Mb_Projectile attached.");
-
-        // Fall back to this transform if no LaunchOrigin was assigned in the Inspector.
-        // This keeps the launcher functional during early prototyping before a proper
-        // hand bone or weapon tip transform has been set up.
         if (LaunchOrigin == null)
         {
             LaunchOrigin = transform;
             Debug.LogWarning($"[Mb_ProjectileLauncher] No LaunchOrigin assigned on " +
-                             $"{gameObject.name}. Falling back to root transform. " +
-                             $"Assign a child transform for accurate spawn positioning.");
+                             $"{gameObject.name}. Falling back to root transform.");
         }
     }
 
     #endregion                  //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Public API
-    // -------------------------------------------------------------------------
-
     #region Public API          //----------------------------------------
 
     /// <summary>
-    /// Fires a projectile from LaunchOrigin toward the resolved aim point.
-    /// For Guardians: raycasts from screen center to find the world-space target.
-    /// For CuBots: uses the NavMeshAgent's current facing direction.
-    ///
-    /// Returns the Mb_Projectile instance so the calling ability can subscribe
-    /// to OnHit for passive triggers. Always subscribe AFTER calling Fire():
-    ///
-    ///   Mb_Projectile p = _launcher.Fire(data, user, damage);
-    ///   p.OnHit += (target, hitPoint, hitNormal) => { YourPassiveTrigger(); };
+    /// Fires a projectile using the given prefab, aimed via camera center raycast
+    /// (Guardian) or NavMeshAgent facing direction (CuBot).
+    /// Returns the Mb_Projectile instance — subscribe to OnHit after calling this.
     /// </summary>
-    /// <param name="data">ProjectileData asset defining speed, range, piercing, effects.</param>
-    /// <param name="owner">The character firing — used for damage credit and faction check.</param>
+    /// <param name="prefab">The projectile prefab to instantiate. Must have Mb_Projectile.</param>
+    /// <param name="data">SO_ProjectileData defining speed, range, piercing, effects.</param>
+    /// <param name="owner">The character firing.</param>
     /// <param name="baseDamage">Damage calculated by the ability at fire time.</param>
-    /// <returns>The fired Mb_Projectile, or null if spawning failed.</returns>
-    public Mb_Projectile Fire(SO_ProjectileData data, Mb_CharacterBase owner, float baseDamage)
+    public Mb_Projectile Fire(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage)
     {
-        if (!ValidateBeforeFire(data)) return null;
+        if (!ValidateBeforeFire(prefab, data)) return null;
 
         Vector3 aimDirection = ResolveAimDirection();
-        return SpawnAndLaunch(data, owner, baseDamage, aimDirection);
+        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection);
     }
 
 
     /// <summary>
     /// Fires a projectile in an explicit direction, bypassing aim resolution.
-    /// Use this for:
-    ///   - Spread shots (Rajah E) where each projectile has a pre-calculated direction
-    ///   - Arc patterns (multiple projectiles fanned around a center direction)
-    ///   - CuBot abilities that aim at a specific target rather than straight ahead
-    ///
-    /// Returns the Mb_Projectile instance — subscribe to OnHit for passive triggers.
-    ///
-    ///   Mb_Projectile p = _launcher.FireToward(data, user, damage, spreadDir);
-    ///   p.OnHit += (target, hitPoint, hitNormal) => { YourPassiveTrigger(); };
+    /// Use for spread shots, arc patterns, and AI abilities.
+    /// Returns the Mb_Projectile instance — subscribe to OnHit after calling this.
     /// </summary>
-    /// <param name="direction">World-space direction the projectile will travel.
-    /// Does not need to be normalized — this method normalizes it internally.</param>
-    public Mb_Projectile FireToward(SO_ProjectileData data, Mb_CharacterBase owner,
-                                    float baseDamage, Vector3 direction)
+    public Mb_Projectile FireToward(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage,
+        Vector3 direction)
     {
-        if (!ValidateBeforeFire(data)) return null;
+        if (!ValidateBeforeFire(prefab, data)) return null;
 
-        // Normalize so LaunchSpeed from SO_ProjectileData is always the true speed
-        // regardless of what magnitude the caller passed in.
         Vector3 aimDirection = direction.normalized;
         if (aimDirection == Vector3.zero)
         {
-            Debug.LogWarning($"[Mb_ProjectileLauncher] FireToward called with zero direction " +
-                             $"on {gameObject.name}. Falling back to forward.");
+            Debug.LogWarning($"[Mb_ProjectileLauncher] FireToward called with zero direction. " +
+                             $"Falling back to forward.");
             aimDirection = transform.forward;
         }
 
-        return SpawnAndLaunch(data, owner, baseDamage, aimDirection);
+        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection);
+    }
+
+    public Mb_Projectile FireToward(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage,
+        Vector3 spawnPosition,
+        Vector3 direction)
+    {
+        if (!ValidateBeforeFire(prefab, data)) return null;
+
+        Vector3 aimDirection = direction.normalized;
+        if (aimDirection == Vector3.zero)
+        {
+            Debug.LogWarning($"[Mb_ProjectileLauncher] FireToward called with zero direction. " +
+                             $"Falling back to forward.");
+            aimDirection = transform.forward;
+        }
+
+        return SpawnAndLaunch(prefab, data, owner, baseDamage, spawnPosition, aimDirection);
     }
 
     #endregion                  //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Aim Resolution
-    // -------------------------------------------------------------------------
-
     #region Aim Resolution      //----------------------------------------
 
-    // Determines the fire direction based on owner type.
-    // Guardian: camera-center raycast for crosshair accuracy.
-    // CuBot: NavMeshAgent facing direction for straight-ahead AI shots.
-    // Fallback: this transform's forward direction.
     private Vector3 ResolveAimDirection()
     {
-        // --- Guardian aim: camera raycast ---
-        // Cast a ray from the center of the screen into the scene.
-        // If it hits something, aim the projectile at that exact world point.
-        // If it misses (open sky, etc.), use the far end of the ray as the target.
-        // This is the standard crosshair aim model for third-person shooters.
         if (_guardianBase != null)
         {
             Camera mainCamera = Camera.main;
@@ -229,104 +190,121 @@ public class Mb_ProjectileLauncher : MonoBehaviour
                     ? hit.point
                     : aimRay.GetPoint(AimRaycastDistance);
 
-                // Direction from the launch origin toward the resolved aim point.
-                // Using LaunchOrigin (not camera) as the start of this direction vector
-                // ensures the projectile travels toward where the player is aiming,
-                // not where the camera is positioned (which can differ significantly
-                // in third-person view).
-                return (aimTarget - LaunchOrigin.position).normalized;
+                return SafeDirectionToTarget(LaunchOrigin.position, aimTarget);
             }
 
-            Debug.LogWarning($"[Mb_ProjectileLauncher] Camera.main is null on " +
-                             $"{gameObject.name}. Falling back to transform.forward.");
+            Debug.LogWarning($"[Mb_ProjectileLauncher] Camera.main is null. " +
+                             $"Falling back to transform.forward.");
         }
 
-        // --- CuBot aim: NavMeshAgent facing direction ---
-        // The agent's velocity direction is the direction the CuBot is currently
-        // moving and facing. When the CuBot stops to attack (agent.isStopped = true),
-        // velocity is zero — fall through to transform.forward in that case.
         if (_agent != null && _agent.velocity.sqrMagnitude > 0.01f)
             return _agent.velocity.normalized;
 
-        // Fallback: fire straight ahead along the character's facing direction.
-        // This covers CuBots that have stopped moving and any unexpected edge cases.
         return transform.forward;
     }
 
     #endregion                  //----------------------------------------
 
 
-    // -------------------------------------------------------------------------
-    // Spawn Internals
-    // -------------------------------------------------------------------------
-
     #region Spawn Internals     //----------------------------------------
 
-    // Core spawn method — instantiates the projectile, positions and orients it,
-    // then calls Initialize() so it launches itself.
-    private Mb_Projectile SpawnAndLaunch(SO_ProjectileData data, Mb_CharacterBase owner,
-                                         float baseDamage, Vector3 direction)
+    private Mb_Projectile SpawnAndLaunch(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage,
+        Vector3 direction)
     {
-        Mb_Projectile projectile = SpawnProjectile();
+        Mb_Projectile projectile = SpawnProjectile(prefab);
         if (projectile == null) return null;
 
-        // Position at the launch origin and rotate to face the aim direction.
-        // We set rotation before Initialize() so that when Launch() reads
-        // transform.forward to set Rigidbody velocity, it gets the correct direction.
         projectile.transform.SetPositionAndRotation(
             LaunchOrigin.position,
             Quaternion.LookRotation(direction)
         );
 
-        // Initialize configures all runtime behavior from the data asset and
-        // launches the Rigidbody. Order: position/rotate → then Initialize().
         projectile.Initialize(data, owner, baseDamage);
 
         return projectile;
     }
 
-
-    // Instantiates or fetches from pool.
-    // TODO: Replace Instantiate() with a pool fetch when projectile pooling is added.
-    //       The rest of SpawnAndLaunch() does not need to change — only this method.
-    private Mb_Projectile SpawnProjectile()
+    private Mb_Projectile SpawnAndLaunch(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage,
+        Vector3 spawnPosition,
+        Vector3 direction)
     {
-        GameObject go = Instantiate(ProjectilePrefab);
+        Mb_Projectile projectile = SpawnProjectile(prefab);
+        if (projectile == null) return null;
+
+        projectile.transform.SetPositionAndRotation(
+            spawnPosition,
+            Quaternion.LookRotation(direction)
+        );
+
+        projectile.Initialize(data, owner, baseDamage);
+
+        return projectile;
+    }
+
+    private Mb_Projectile SpawnProjectile(GameObject prefab)
+    {
+        // TODO: Replace Instantiate() with a pool fetch when projectile pooling is added.
+        GameObject go = Instantiate(prefab);
 
         Mb_Projectile projectile = go.GetComponent<Mb_Projectile>();
 
         if (projectile == null)
         {
-            Debug.LogError($"[Mb_ProjectileLauncher] ProjectilePrefab on {gameObject.name} " +
-                           $"is missing the Mb_Projectile component. Destroying spawned object.");
+            Debug.LogError($"[Mb_ProjectileLauncher] Prefab '{prefab.name}' is missing " +
+                           $"the Mb_Projectile component. Destroying spawned object.");
             Destroy(go);
             return null;
         }
-
 
         return projectile;
     }
 
 
-    // Guards against misconfigured calls — returns false if something critical is missing.
-    private bool ValidateBeforeFire(SO_ProjectileData data)
+    private bool ValidateBeforeFire(GameObject prefab, SO_ProjectileData data)
     {
-        if (ProjectilePrefab == null)
+        if (prefab == null)
         {
-            Debug.LogError($"[Mb_ProjectileLauncher] Cannot fire — ProjectilePrefab is null " +
-                           $"on {gameObject.name}.");
+            Debug.LogError($"[Mb_ProjectileLauncher] Cannot fire — prefab is null on " +
+                           $"{gameObject.name}. Fetch it from Mb_AbilityPrefabRegistry.");
             return false;
         }
 
         if (data == null)
         {
-            Debug.LogError($"[Mb_ProjectileLauncher] Cannot fire — SO_ProjectileData is null. " +
-                           $"Assign a data asset before calling Fire() or FireToward().");
+            Debug.LogError($"[Mb_ProjectileLauncher] Cannot fire — SO_ProjectileData is null.");
             return false;
         }
 
         return true;
     }
 
+
+    // Converts a world-space aim target into a safe fire direction from a given origin.
+    // Guards against the case where LaunchOrigin is ahead of the aim target (e.g. the
+    // origin is inside an obstacle directly in front of the player) — in that case the
+    // raw direction vector would point backward, so we fall back to the Guardian's
+    // body forward direction instead.
+    private Vector3 SafeDirectionToTarget(Vector3 fromOrigin, Vector3 toTarget)
+    {
+        Vector3 direction = toTarget - fromOrigin;
+
+        // Dot product check: if the aim target is behind or exactly at the origin,
+        // the direction is invalid. Fall back to Guardian body forward.
+        // Using _guardianBase.transform.forward rather than LaunchOrigin.forward
+        // because the Guardian's body always faces the intended fire direction —
+        // LaunchOrigin may be a child Transform with a different local rotation.
+        if (Vector3.Dot(_guardianBase.transform.forward, direction) <= 0f)
+            return _guardianBase.transform.forward;
+
+        return direction.normalized;
+    }
     #endregion                  //----------------------------------------
 }

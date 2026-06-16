@@ -16,7 +16,7 @@ MonoBehaviour:
   AttackRange: 2
   MaxHealth: 350
   HealthRegen: 0
-  MoveSpeed: 5
+  MoveSpeed: 4
   AttackSpeed: 0.8
   AttackPower: 45
   AbilityPower: 0

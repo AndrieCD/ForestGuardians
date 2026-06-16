@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Wave1
   m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
   enemyDataList:
-  - enemyType: {fileID: 4105497819398190046, guid: d8936ec8db4e35e458166d614725d1e0, type: 3}
+  - enemyType: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
     count: 1
+  - enemyType: {fileID: 1513359888028754751, guid: 72bf7665af43ec64eabd89e6aca317bb, type: 3}
+    count: 5
   WaveReward: 3

@@ -91,6 +91,7 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
     {
         if (GuardianObject == null)
             Debug.LogError("[Mb_AbilitiesPanelUI] GuardianObject is not assigned.");
+
     }
 
 
@@ -121,6 +122,8 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
 
     private void FetchAndSubscribe()
     {
+        GuardianObject = GameObject.FindGameObjectWithTag("Player");
+
         if (GuardianObject == null) return;
 
         if (_abilityController == null)

@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Sky Rend
   Icon: {fileID: 21300090, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
+  AbilityDescription: 'Dash forward, dealing damage to all enemies in your path.
+
+    Gain
+    a shield for each enemy hit.'
   Cooldown:
   - 10
   - 8

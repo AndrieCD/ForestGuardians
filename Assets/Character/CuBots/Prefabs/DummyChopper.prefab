@@ -91,6 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _CuBotTemplate: {fileID: 11400000, guid: 1db1b5aecc910ab419bd71b143a9b3fd, type: 2}
   ReviveDelay: 0.5
+  OneLifeOnly: 0
 --- !u!114 &3549519085013194102
 MonoBehaviour:
   m_ObjectHideFlags: 0

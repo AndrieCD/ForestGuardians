@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db261c29d3f65ce409ed17f4862ae975, type: 3}
   m_Name: Rajah_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Guardian
+  GuardianID: 0
   CharacterName: Rajah Bagwis
+  icon: {fileID: 0}
+  ModelPrefab: {fileID: 0}
+  GuardianArchetype1: Melee Duelist
+  GuardianArchetype2: Ranged Sharpshooter
   MaxHealth: 500
   HealthRegen: 5
   MoveSpeed: 7
@@ -34,12 +39,12 @@ MonoBehaviour:
   CriticalChanceScaling: 0
   CriticalDamageScaling: 0
   LifeStealScaling: 0
-  PassiveAbility: {fileID: 11400000, guid: d937f7c92b0eebc49b1f3e64b6b2743f, type: 2}
-  AbilityQ: {fileID: 11400000, guid: 78fd94f3a65641f4c84c11c5f45029f6, type: 2}
-  AbilityE: {fileID: 11400000, guid: a16bacafbe4f67347b1cb70aa48f6a9a, type: 2}
-  AbilityR_Branch1: {fileID: 11400000, guid: 9c1f19fa0d0608f4497702a4f1d4969b, type: 2}
-  AbilityR_Branch2: {fileID: 11400000, guid: 12fa75cd44b0b944fbff33c29ad41ce3, type: 2}
-  BranchDisplay1: {fileID: 11400000, guid: 1fee7d8dc8a33ec4382f045aa3940b37, type: 2}
-  BranchDisplay2: {fileID: 11400000, guid: 0df179056d4ae37458a82007ace056e7, type: 2}
-  PrimaryAttack: {fileID: 11400000, guid: d1ae8e1969e9c62408eaf4e7629d6db0, type: 2}
-  SecondaryAttack: {fileID: 11400000, guid: f701f33fbebbc7e4dae8886acef3277e, type: 2}
+  PassiveAbility: {fileID: 11400000, guid: 4823dabf519122d48920ff9cdc8e65ac, type: 2}
+  AbilityQ: {fileID: 11400000, guid: 1d701aa4604bb094db8c1eda36f6254a, type: 2}
+  AbilityE: {fileID: 11400000, guid: 85077fa27bcafae4298bdd939e6c71be, type: 2}
+  AbilityR_Branch1: {fileID: 11400000, guid: 7357e5dbe6fd26b438d568d0c0ec35dd, type: 2}
+  AbilityR_Branch2: {fileID: 11400000, guid: 3791696188f25084d9c28c57ba00c94f, type: 2}
+  BranchDisplay1: {fileID: 11400000, guid: 45e9562b4a00f2242a81833265630073, type: 2}
+  BranchDisplay2: {fileID: 11400000, guid: ba0ef26ae968c654bbbd1c2c80daa146, type: 2}
+  PrimaryAttack: {fileID: 11400000, guid: 5f5f8765040b6b646bd06b0aab0bd172, type: 2}
+  SecondaryAttack: {fileID: 11400000, guid: 300019f8bfdbfb14b8de5fb0d2020b76, type: 2}

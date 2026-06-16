@@ -154,7 +154,7 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     IEnumerator EnableInteractionAfterDelay(RewardOption left, RewardOption right)
     {
         // 0.5s delay before allowing interaction to avoid accidental clicks during panel open animation
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
 
         _LeftCard.interactable = !left.IsMaxedPlaceholder;
         _RightCard.interactable = !right.IsMaxedPlaceholder;

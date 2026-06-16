@@ -46,7 +46,7 @@ public class Mb_Movement : MonoBehaviour
     #region EVENTS
     public event Action OnDashStarted;
     public event Action OnDashEnded;
-    public event Action OnLanded;           // fires once when isGrounded transitions false → true
+    public static event Action OnLanded;           // fires once when isGrounded transitions false → true
     public event Action<bool> OnGroundedChanged; // true = just landed, false = just left ground
     #endregion
 
@@ -89,7 +89,7 @@ public class Mb_Movement : MonoBehaviour
         // Detect landing (false -> true)
         if (isGrounded && !_wasGrounded)
         {
-            OnLanded?.Invoke();
+            Mb_Movement.OnLanded?.Invoke();
             OnGroundedChanged?.Invoke(true);
         }
         // Detect leaving ground (true -> false)

@@ -1,5 +1,5 @@
-// MB_CuBotBase.cs
 using System;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -9,13 +9,12 @@ using UnityEngine;
 /// Uses object pooling — instead of being destroyed on death, CuBots are
 /// deactivated and Reset() when reactivated from the pool.
 ///
-/// Derived classes: Mb_Chopper, Mb_Hunter, Mb_Minny, etc.
+/// Derived classes: Mb_ChopperController, Mb_HunterController, Mb_MinnyController, etc.
 /// </summary>
 public class MB_CuBotBase : Mb_CharacterBase
 {
     [Header("CuBot Template")]
     [SerializeField] protected SO_CuBots _CuBotTemplate;
-
 
     // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
     private bool _isInitialized = false;
@@ -23,16 +22,17 @@ public class MB_CuBotBase : Mb_CharacterBase
     private Mb_CharacterBase _lastAttacker = null;
 
     #region Events
+
     public static event Action<GameObject> OnCuBotSpawn;
     public static event Action<GameObject> OnCuBotDeath;
     public static event Action<Mb_CharacterBase> OnCuBotKill;
+
     #endregion
 
 
     protected override void Awake()
     {
         base.Awake();
-
         _isInitialized = true;
     }
 
@@ -59,9 +59,8 @@ public class MB_CuBotBase : Mb_CharacterBase
         Stats.RemoveAllModifiers();
         Stats.BuildFromTemplate(_CuBotTemplate);
 
-        // Resolve player level before initializing health —
-        // SetLevel() must run first so MaxHealth is at the correct scaled value
-        // before Health.Initialize() snapshots it as CurrentHealth.
+        // Resolve player level before initializing health so MaxHealth is
+        // fully scaled before Health.Initialize() snapshots it as CurrentHealth.
         int playerLevel = 1;
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -77,17 +76,17 @@ public class MB_CuBotBase : Mb_CharacterBase
             Debug.LogWarning($"[MB_CuBotBase] No GameObject tagged 'Player' found when spawning {gameObject.name}. Defaulting to level 1.");
         }
 
-        // Scale stats to player level BEFORE initializing health —
-        // Health.Initialize() reads MaxHealth.GetValue(), so stats must be final first.
         SetLevel(playerLevel);
-
-        // Now MaxHealth reflects the correct level, so CurrentHealth starts at the right value.
         Health.Initialize();
 
         _lastAttacker = null;
 
         Health.OnDeath -= HandleDeath;
         Health.OnDeath += HandleDeath;
+
+        // Wire up hit-triggered aggro — unsubscribe first to avoid stacking on pool reuse
+        Health.OnDamageTaken -= HandleDamageTaken;
+        Health.OnDamageTaken += HandleDamageTaken;
 
         AssignAbilities();
     }
@@ -108,6 +107,33 @@ public class MB_CuBotBase : Mb_CharacterBase
     }
 
 
+    // -------------------------------------------------------------------------
+    // Hit-Triggered Aggro Hook
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Fired by Health.OnDamageTaken whenever this CuBot takes damage.
+    /// Calls OnHitReceived() so the controller can switch aggro to the player
+    /// — unless the CuBot is already locked onto the Panoharra.
+    /// </summary>
+    private void HandleDamageTaken(float amount)
+    {
+        OnHitReceived();
+    }
+
+    /// <summary>
+    /// Override in derived classes to react when this CuBot takes damage.
+    /// Mb_CuBotController uses this to switch aggro to the player when hit,
+    /// unless already in AttackingPanoharra state.
+    /// Base implementation does nothing.
+    /// </summary>
+    protected virtual void OnHitReceived() { }
+
+
+    // -------------------------------------------------------------------------
+    // Death
+    // -------------------------------------------------------------------------
+
     private void HandleDeath()
     {
         OnCuBotDeath?.Invoke(gameObject);
@@ -121,9 +147,20 @@ public class MB_CuBotBase : Mb_CharacterBase
         Mb_Projectile projectile = collision.gameObject.GetComponent<Mb_Projectile>();
         if (projectile == null) return;
 
+        if (_lastAttacker == null && projectile.GetOwner() != null)
+            SetLastAttacker(projectile.GetOwner());
+
         Health.TakeDamage(projectile.GetDamageAmount());
     }
 
+
+    protected IEnumerator MeleeAttackCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        TryUsePrimaryAttack();
+
+    }
 
     protected void TryUsePrimaryAttack()
     {
@@ -131,13 +168,11 @@ public class MB_CuBotBase : Mb_CharacterBase
     }
 
 
-    // Add to Mb_PlayerController.cs
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (_CuBotTemplate == null) return;
 
-        // Primary slash hitbox
         Gizmos.color = Color.red;
         Vector3 slashCenter = transform.position + transform.forward * 1.8f;
         Gizmos.DrawWireSphere(slashCenter, 1.0f);

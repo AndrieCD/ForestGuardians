@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Feather Barrage
   Icon: {fileID: 21300068, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  AbilityDescription: Leap backward and fire a spread of piercing feathers in front
+    of you, dealing damage to all enemies hit.
   Cooldown:
   - 10
   - 8

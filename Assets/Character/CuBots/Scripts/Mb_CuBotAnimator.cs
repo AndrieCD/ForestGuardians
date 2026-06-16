@@ -151,7 +151,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
         _currentSpeed = 0f;
 
         if (_Animator != null)
-            _Animator.SetFloat(_SpeedHash, 0f);
+            _Animator?.SetFloat(_SpeedHash, 0f);
     }
 
 
@@ -187,7 +187,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
     {
         // Lerp toward the target speed — avoids a jarring snap between Idle and Run
         _currentSpeed = Mathf.Lerp(_currentSpeed, speed, Time.deltaTime / _SpeedDampTime);
-        _Animator.SetFloat(_SpeedHash, _currentSpeed);
+        _Animator?.SetFloat(_SpeedHash, _currentSpeed);
     }
 
     #endregion                      //----------------------------------------
@@ -208,7 +208,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
     public void TriggerAttack()
     {
         if (_Animator == null) return;
-        _Animator.SetTrigger(_AttackHash);
+        _Animator?.SetTrigger(_AttackHash);
     }
 
     #endregion                      //----------------------------------------
@@ -229,7 +229,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
     public void TriggerAggro()
     {
         if (_Animator == null) return;
-        _Animator.SetTrigger(_AggroHash);
+        _Animator?.SetTrigger(_AggroHash);
     }
 
     #endregion                      //----------------------------------------
@@ -261,7 +261,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
         // small chip-damage hits should not interrupt the run animation
         if (damagePercent < _HitDamageThreshold) return;
 
-        _Animator.SetTrigger(_HitHash);
+        _Animator?.SetTrigger(_HitHash);
     }
 
     #endregion                      //----------------------------------------
@@ -279,7 +279,7 @@ public class Mb_CuBotAnimator : MonoBehaviour
 
         // Fire the death trigger — the Death state should have no exit transition
         // so the CuBot freezes on its last death frame until the GameObject is deactivated.
-        _Animator.SetTrigger(_OnDeathHash);
+        _Animator?.SetTrigger(_OnDeathHash);
 
         // Unsubscribe immediately after death fires.
         // The CuBot GameObject will be deactivated shortly after by MB_CuBotBase.HandleDeath(),
@@ -312,9 +312,9 @@ public class Mb_CuBotAnimator : MonoBehaviour
     {
         if (_Animator == null) return;
 
-        _Animator.ResetTrigger(_AttackHash);
-        _Animator.ResetTrigger(_AggroHash);
-        _Animator.ResetTrigger(_HitHash);
+        _Animator?.ResetTrigger(_AttackHash);
+        _Animator?.ResetTrigger(_AggroHash);
+        _Animator?.ResetTrigger(_HitHash);
         // OnDeath is deliberately NOT reset here — death must never be cancelled
     }
 

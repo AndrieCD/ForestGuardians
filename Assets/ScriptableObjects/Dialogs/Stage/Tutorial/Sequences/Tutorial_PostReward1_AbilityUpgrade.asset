@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c287966c8d1683448d07b73c239f8b0, type: 3}
+  m_Name: Tutorial_PostReward1_AbilityUpgrade
+  m_EditorClassIdentifier: Assembly-CSharp::SO_DialogSequence
+  Dialogs:
+  - {fileID: 11400000, guid: a647129f01b59f34a85a2abdd1bd153e, type: 2}
+  - {fileID: 11400000, guid: 38c236a05d6685f47862533ff925d834, type: 2}

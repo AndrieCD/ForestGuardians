@@ -28,7 +28,7 @@ MonoBehaviour:
   HealthRegenScaling: 0
   MoveSpeedScaling: 0
   AttackSpeedScaling: 0
-  AttackPowerScaling: 0.4
+  AttackPowerScaling: 0.5
   AbilityPowerScaling: 0
   HasteScaling: 0
   CriticalChanceScaling: 0

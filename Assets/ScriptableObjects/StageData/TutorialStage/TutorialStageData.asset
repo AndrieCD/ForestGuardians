@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b10f739b356569438d6a8f319aab7e7, type: 3}
+  m_Name: TutorialStageData
+  m_EditorClassIdentifier: Assembly-CSharp::SO_StageData
+  WaveDataList:
+  - {fileID: 11400000, guid: a3256ae2b91355c438280626c0fe2ca6, type: 2}
+  - {fileID: 11400000, guid: 52fdfe1fbeb479d4aa1866406b788ed1, type: 2}
+  - {fileID: 11400000, guid: e1bc8386dfae84b48aee76595ce624e1, type: 2}
+  - {fileID: 11400000, guid: 4b0498828d58ee24aadadde6ee4be55c, type: 2}

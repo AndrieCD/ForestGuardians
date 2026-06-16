@@ -460,8 +460,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc_ChopperController
   _CuBotTemplate: {fileID: 11400000, guid: f89a80ebf3b37ef46aa9946281a77d64, type: 2}
-  AggroRange: 20
-  DeAggroRange: 30
+  AggroRange: 30
+  DeAggroRange: 35
+  AggroRetryCooldown: 2
 --- !u!114 &4605224199310148109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,13 +779,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8058724382492741239}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.49999994, y: 0.5000001, z: -0.5000001, w: -0.49999994}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5565989384772844910}
-  m_LocalEulerAnglesHint: {x: 90, y: 225, z: -45}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &3757290693887148799
 SpriteRenderer:
   serializedVersion: 2
@@ -834,8 +835,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b0394665e16ef504bb922274dd606020, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3eb133c6343577d469ed693e8642f5e1, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -857,7 +858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_MinimapIcon
   IconType: 1
-  IsDirectional: 0
+  IsDirectional: 1
   OwnerTransform: {fileID: 5565989384772844910}
 --- !u!1001 &4867485838641357488
 PrefabInstance:

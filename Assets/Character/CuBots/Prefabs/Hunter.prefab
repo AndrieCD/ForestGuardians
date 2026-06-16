@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 7912640893769290303}
   - component: {fileID: 8623771945360821832}
   - component: {fileID: -5099223452303057995}
+  - component: {fileID: -640623321627676626}
   m_Layer: 6
   m_Name: Hunter
   m_TagString: CuBot
@@ -210,9 +211,7 @@ MonoBehaviour:
   _CuBotTemplate: {fileID: 11400000, guid: ca4823057b5fcca47b643d9e30ca9360, type: 2}
   AggroRange: 30
   DeAggroRange: 40
-  _LineOfSightMask:
-    serializedVersion: 2
-    m_Bits: 0
+  AggroRetryCooldown: 2
   _FirePoint: {fileID: 497956707888985312}
 --- !u!114 &8623771945360821832
 MonoBehaviour:
@@ -227,7 +226,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
   LaunchOrigin: {fileID: 497956707888985312}
-  ProjectilePrefab: {fileID: 531380711534864579, guid: 3b9d98612919391408afd6e7f94914b5, type: 3}
   AimLayerMask:
     serializedVersion: 2
     m_Bits: 65
@@ -245,6 +243,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusVFXHandler
   _EnableCameraVFX: 0
+--- !u!114 &-640623321627676626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513359888028754751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3ebd43c4f9eef45851cb2469c50b87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
+  _GenericProjectile: {fileID: 0}
+  _MariPsychicLeafProjectile: {fileID: 0}
+  _MariPsyshockBoltProjectile: {fileID: 0}
+  _MariMindspikesZone: {fileID: 0}
+  _MariPsychicSlamShockwave: {fileID: 0}
+  _MariBloomZone: {fileID: 0}
+  _MariLaserBeam: {fileID: 0}
+  _MariDotHitVFX: {fileID: 0}
+  _RajahFeatherProjectile: {fileID: 0}
+  _HunterBulletProjectile: {fileID: 531380711534864579, guid: 3b9d98612919391408afd6e7f94914b5, type: 3}
+  _TrapperTrapProjectile: {fileID: 0}
+  _ToxionSludgeProjectile: {fileID: 0}
+  _LuxionBulletProjectile: {fileID: 0}
 --- !u!1 &2975238022844232155
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,13 +462,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4691022641320196067}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.49999994, y: 0.5000001, z: -0.5000001, w: -0.49999994}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8302499489538260724}
-  m_LocalEulerAnglesHint: {x: 90, y: 225, z: -45}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &532693722869360254
 SpriteRenderer:
   serializedVersion: 2
@@ -495,8 +518,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b0394665e16ef504bb922274dd606020, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3eb133c6343577d469ed693e8642f5e1, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -518,7 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_MinimapIcon
   IconType: 1
-  IsDirectional: 0
+  IsDirectional: 1
   OwnerTransform: {fileID: 8302499489538260724}
 --- !u!1 &4913215190293037736
 GameObject:

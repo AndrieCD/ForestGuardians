@@ -206,8 +206,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_MinnyController
   _CuBotTemplate: {fileID: 11400000, guid: 93ff168aa5b4931479085cd57f85472b, type: 2}
-  AggroRange: 20
-  DeAggroRange: 30
+  AggroRange: 30
+  DeAggroRange: 35
+  AggroRetryCooldown: 2
 --- !u!114 &-7812671766110808287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,13 +248,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1190940697236583597}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.49999994, y: 0.5000001, z: -0.5000001, w: -0.49999994}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 398177231451683535}
-  m_LocalEulerAnglesHint: {x: 90, y: 225, z: -45}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &6972432714676514037
 SpriteRenderer:
   serializedVersion: 2
@@ -303,8 +304,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b0394665e16ef504bb922274dd606020, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3eb133c6343577d469ed693e8642f5e1, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -326,7 +327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_MinimapIcon
   IconType: 1
-  IsDirectional: 0
+  IsDirectional: 1
   OwnerTransform: {fileID: 398177231451683535}
 --- !u!1 &3610104851942274902
 GameObject:

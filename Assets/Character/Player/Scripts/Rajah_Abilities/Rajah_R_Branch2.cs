@@ -53,6 +53,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
     // TODO: Add a ProjectileData field to SO_Ability and assign Rajah_Feather_Basic here:
     //   _projectileData = abilityData.ProjectileData;
     private SO_ProjectileData _projectileData;
+    private GameObject _projectilePrefab;
 
     // Cached launcher — fetched once in OnEquip from the owner's GameObject
     private Mb_ProjectileLauncher _launcher;
@@ -77,6 +78,10 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
     {
         _launcher = user.GetComponent<Mb_ProjectileLauncher>();
         _health = user.GetComponent<Mb_HealthComponent>();
+
+        // Fetch the generic projectile prefab from the registry
+        Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
+        _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Rajah_FeatherProjectile);
 
         if (_launcher == null)
             Debug.LogError("[Rajah_R_Branch2] No Mb_ProjectileLauncher found on " +
@@ -221,17 +226,19 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         Camera cam = Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        // Exclude the Character layer so the ray doesn't hit Rajah herself
-        int layerMask = ~(1 << LayerMask.NameToLayer("Character"));
+        int aimMask = (1 << LayerMask.NameToLayer("Default")) |
+                      (1 << LayerMask.NameToLayer("Character"));
 
-        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, layerMask)
+        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, aimMask)
             ? hit.point
             : ray.origin + ray.direction * 100f;
 
-        // Convert aim point to a direction from ProjectileOrigin.
-        // SpawnProjectile applies the spread offset to the origin before
-        // recalculating the final direction, so we pass the pre-offset direction here.
-        Vector3 direction = (targetPoint - _Guardian.ProjectileOrigin.position).normalized;
+        // Guard: if the aim target is behind the ProjectileOrigin, fall back to
+        // Guardian body forward so the burst doesn't fire backward into the player.
+        Vector3 toTarget = targetPoint - _Guardian.ProjectileOrigin.position;
+        Vector3 direction = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
+            ? toTarget.normalized
+            : _Guardian.transform.forward;
 
         SpawnProjectile(_Guardian.ProjectileOrigin.position, direction, isPassive: false);
     }
@@ -288,7 +295,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         // TODO: If per-shot spawn position override becomes necessary, add an overload:
         //   FireToward(data, owner, damage, direction, Vector3 overrideOrigin)
         //   For now, the spread offset is small enough that LaunchOrigin is close enough.
-        Mb_Projectile projectile = _launcher.FireToward(
+        Mb_Projectile projectile = _launcher.FireToward(_projectilePrefab,
             _projectileData,
             _User,
             damage,

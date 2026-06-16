@@ -66,9 +66,10 @@ public class Mb_Projectile : MonoBehaviour
     /// Static version of OnHit — fired for every projectile hit in the scene.
     /// Use this for systems that need to react to all hits without per-instance
     /// subscriptions, such as a VFX manager or audio manager.
-    /// Parameters: (the projectile that hit, the character that was hit)
+    /// Parameters: (the projectile that hit, the character that hit, the character that was hit)
     /// </summary>
-    public static event Action<Mb_Projectile, Mb_CharacterBase> OnAnyProjectileHit;
+    public static event Action<Mb_Projectile, Mb_CharacterBase, Mb_CharacterBase> OnAnyProjectileHit;
+
 
     /// <summary>
     /// Fired when this projectile deactivates — either from hitting MaxPierceTargets,
@@ -225,49 +226,42 @@ public class Mb_Projectile : MonoBehaviour
         if (!_isInitialized) return;
         if (_isPaused) return;
 
-        // Skip if this collider was already hit this flight — prevents hitting the
-        // same enemy twice if the projectile is moving slowly through a large collider.
         if (_hitColliders.Contains(other)) return;
 
-        // Skip friendly-fire — projectiles should not hit the character who fired them
-        // or other characters on the same team. We use tag comparison here because
-        // layer-based filtering is handled by the Physics collision matrix in Project Settings.
-        // Owner tag: "Player" for Guardians, "CuBot" for CuBot projectiles.
+        // Skip friendly-fire — owner tag: "Player" for Guardians, "CuBot" for CuBot projectiles.
         if (_owner != null && other.gameObject.CompareTag(_owner.tag)) return;
 
-        // Check if the hit object is a valid character target.
-        // We require Mb_CharacterBase so we can pass the target to hit effects
-        // and to the OnHit event. Pure environment colliders (walls, floor) are ignored.
-        Mb_CharacterBase target = other.GetComponent<Mb_CharacterBase>();
-        if (target == null)
-        {
-            Deactivate() ; return;
-        }
+        // Must be damageable — environment colliders (walls, floor) have no I_Damageable.
+        I_Damageable damageable = other.GetComponent<I_Damageable>();
+        if (damageable == null) return;
 
         // Register the hit so this collider cannot be hit again this flight.
         _hitColliders.Add(other);
         _hitCount++;
 
-        // Calculate hit geometry — used by knockback effects to determine push direction.
-        // ClosestPoint gives us the surface point nearest to the projectile's center,
-        // which is close enough to the true impact point for directional calculations.
         Vector3 hitPoint = other.ClosestPoint(transform.position);
         Vector3 hitNormal = (transform.position - hitPoint).normalized;
 
+        // Try to get a full character — used for hit effects, kill credit, and OnHit event.
+        // Panoharra has no Mb_CharacterBase so target will be null for it — that is fine,
+        // the damage path below runs regardless.
+        Mb_CharacterBase target = other.GetComponent<Mb_CharacterBase>();
+
         // Credit the kill to the correct attacker BEFORE calling TakeDamage().
-        // If this hit kills the target, OnCuBotKill fires inside TakeDamage() —
-        // SetLastAttacker() must be called first so the event carries the right reference.
-        MB_CuBotBase cuBot = target as MB_CuBotBase;
-        if (cuBot != null && _owner != null)
-            cuBot.SetLastAttacker(_owner);
+        // Only relevant for CuBots — Panoharra does not use the kill-credit system.
+        if (target != null)
+        {
+            MB_CuBotBase cuBot = target as MB_CuBotBase;
+            if (cuBot != null && _owner != null)
+                cuBot.SetLastAttacker(_owner);
+        }
 
-        // Apply base damage — calculated by the ability at fire time.
-        I_Damageable damageable = target.GetComponent<I_Damageable>();
-        damageable?.TakeDamage(_baseDamage);
+        // Apply base damage — works for any I_Damageable including Panoharra.
+        damageable.TakeDamage(_baseDamage);
 
-        // Apply all pluggable hit effects defined on the data asset.
-        // Each effect is self-contained — damage bonus, knockback, slow, stun, etc.
-        if (_data.HitEffects != null)
+        // Apply hit effects only when a full character was hit.
+        // Panoharra intentionally receives no knockback, slow, or stun.
+        if (target != null && _data.HitEffects != null)
         {
             foreach (Sc_HitEffect effect in _data.HitEffects)
             {
@@ -276,17 +270,14 @@ public class Mb_Projectile : MonoBehaviour
             }
         }
 
-        // Fire instance event — ability scripts subscribe to this after calling Fire()
-        // so passive triggers only fire on confirmed hits, not at fire time.
-        OnHit?.Invoke(target, hitPoint, hitNormal);
+        // Fire instance and static events only for full character hits.
+        // Panoharra hits do not trigger Guardian passives or VFX subscriptions.
+        if (target != null)
+        {
+            OnHit?.Invoke(target, hitPoint, hitNormal);
+            OnAnyProjectileHit?.Invoke(this, _owner,target);
+        }
 
-        // Fire static event — VFX manager, audio manager, and other global systems
-        // subscribe once here and react to every projectile hit in the scene.
-        OnAnyProjectileHit?.Invoke(this, target);
-
-        // Decide whether to deactivate based on piercing rules.
-        // Non-piercing: deactivate on the first hit.
-        // Piercing: keep flying until MaxPierceTargets is reached.
         bool shouldDeactivate = !_data.IsPiercing ||
                                 _hitCount >= _data.MaxPierceTargets;
 

@@ -80,4 +80,9 @@ public class SO_WildlifeEntry : ScriptableObject
     [Tooltip("Real-world habitat description. " +
              "e.g. 'Dense montane forests and river valleys of Mindanao.'")]
     public string Habitat;
+
+    [Header("Discovery Dialog")]
+    [Tooltip("Dialog sequence played when this species is unlocked for the first time. " +
+         "Leave null for species that have no narration yet.")]
+    public SO_DialogSequence DiscoverySequence;
 }

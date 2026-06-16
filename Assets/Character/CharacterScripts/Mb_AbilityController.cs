@@ -48,6 +48,8 @@ public class Mb_AbilityController : MonoBehaviour
     // The string argument is the slot name ("Q", "E", "R", "Primary", "Secondary", "Passive")
     // in case a listener only cares about specific slots.
     public event Action<string> OnAbilityActivated;
+    public static event Action<string> OnAnyAbilityActivated;
+
 
     #endregion                  //----------------------------------------
 
@@ -219,7 +221,9 @@ public class Mb_AbilityController : MonoBehaviour
         if (ability == _qAbility || ability == _eAbility || ability == _rAbility)   
         {
             OnAbilityActivated?.Invoke(slotName);
+
         }
+        OnAnyAbilityActivated?.Invoke(slotName);
     }
 
     #endregion                      //----------------------------------------

@@ -16,54 +16,22 @@ public class Sc_MinnyMeleeAttack : Sc_BaseAbility
 {
     private const float _AttackRange = 1.8f;
 
-    // How long Chopper pauses before the hit lands — tweak to match animation
-    private const float WINDUP_DURATION = 0.5f;
-
     // Radius of the overlap sphere used to find hit targets
     private const float ATTACK_RADIUS = 1.0f;
 
-    // Called when windup starts so the controller can freeze movement
-    private System.Action _onWindupStart;
 
-    // Called when the hit lands so the controller can resume movement
-    private System.Action _onWindupEnd;
-
-    public Sc_MinnyMeleeAttack(
-        SO_Ability abilityData,
-        Mb_CharacterBase user,
-        System.Action onWindupStart,
-        System.Action onWindupEnd)
-        : base(abilityData, user)
-    {
-        _onWindupStart = onWindupStart;
-        _onWindupEnd = onWindupEnd;
-    }
+    public Sc_MinnyMeleeAttack(SO_Ability abilityData, Mb_CharacterBase user)
+        : base(abilityData, user) { }
 
     public override void Activate(Mb_CharacterBase user)
     {
         if (!CheckCooldown()) return;
 
-        // Start cooldown immediately — Chopper can't chain attacks during windup
-        StartCooldown(user, GetAttackCooldown(user));
+        user.GetComponent<Mb_CuBotAnimator>()?.TriggerAttack();
 
-        // Run the windup → hit → resume sequence as a coroutine on the user MonoBehaviour
-        user.StartCoroutine(WindupAndStrike(user));
-    }
-
-    private IEnumerator WindupAndStrike(Mb_CharacterBase user)
-    {
-        // Tell the controller to stop moving — windup begins
-        _onWindupStart?.Invoke();
-
-        // TODO: Trigger attack windup animation here via user's Animator
-
-        yield return new WaitForSeconds(WINDUP_DURATION);
-
-        // Apply the hit
         ApplyHit(user);
 
-        // Tell the controller movement can resume
-        _onWindupEnd?.Invoke();
+        StartCooldown(user, GetAttackCooldown(user));
     }
 
     private void ApplyHit(Mb_CharacterBase user)

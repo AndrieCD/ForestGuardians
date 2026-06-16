@@ -51,6 +51,10 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #region Inspector Fields            //----------------------------------------
 
+    [Header("References")]
+    [Tooltip("The main menu controller — used for canvas switching.")]
+    [SerializeField] private Mb_MainMenuController MainMenuController;
+
     [Header("Left Page")]
     [Tooltip("Image at the top of the left page — title art or logo.")]
     [SerializeField] private Image HeaderImage;
@@ -472,10 +476,11 @@ public class Mb_AlmanacUI : MonoBehaviour
     /// </summary>
     public void OnCloseClicked()
     {
-        gameObject.SetActive(false);
+        MainMenuController?.ShowMainMenu();
 
-        // TODO: Fire GameManager.Instance.ChangeState(GameState.MainMenu) here
-        //       once the main menu state fully drives canvas visibility via UIManager
+        //gameObject.SetActive(false);
+
+
     }
 
     #endregion                          //----------------------------------------

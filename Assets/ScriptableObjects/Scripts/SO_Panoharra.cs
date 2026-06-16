@@ -14,6 +14,6 @@ public class SO_Panoharra : ScriptableObject
 
     [Header("Base Stats")]
     public float MaxHealth = 500f;          // Maximum health points
-  
+    public float HealthRegen = 5f;            // Health regeneration per second
 
 }

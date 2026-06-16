@@ -95,14 +95,32 @@ public class Mb_PlayerController : Mb_GuardianBase
         if (_GuardianTemplate.SecondaryAttack == null)
             Debug.LogError("[Mb_PlayerController] SecondaryAttack SO is not assigned on the Guardian template.");
 
-        Abilities.SetSlots(
-            passive: _GuardianTemplate.PassiveAbility != null ? new Passive_Ability(_GuardianTemplate.PassiveAbility, this) : null,
-            q: _GuardianTemplate.AbilityQ != null ? new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this) : null,
-            e: _GuardianTemplate.AbilityE != null ? new Rajah_E_Ability(_GuardianTemplate.AbilityE, this) : null,
-            r: null,
-            primary: _GuardianTemplate.PrimaryAttack != null ? new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this) : null,
-            secondary: _GuardianTemplate.SecondaryAttack != null ? new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this) : null
-        );
+
+        if (_GuardianTemplate.GuardianID == GuardiansEnum.RajahBagwis)
+        {
+            Abilities.SetSlots(
+                passive: _GuardianTemplate.PassiveAbility != null ? new Passive_Ability(_GuardianTemplate.PassiveAbility, this) : null,
+                q: _GuardianTemplate.AbilityQ != null ? new Rajah_Q_Ability(_GuardianTemplate.AbilityQ, this) : null,
+                e: _GuardianTemplate.AbilityE != null ? new Rajah_E_Ability(_GuardianTemplate.AbilityE, this) : null,
+                r: null,
+                primary: _GuardianTemplate.PrimaryAttack != null ? new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this) : null,
+                secondary: _GuardianTemplate.SecondaryAttack != null ? new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this) : null
+            );
+        } else if (_GuardianTemplate.GuardianID == GuardiansEnum.Mari)
+        {
+            Abilities.SetSlots(
+                passive: _GuardianTemplate.PassiveAbility != null ? new Mari_Passive(_GuardianTemplate.PassiveAbility, this) : null,
+                q: _GuardianTemplate.AbilityQ != null ? new Mari_Q(_GuardianTemplate.AbilityQ, this) : null,
+                e: _GuardianTemplate.AbilityE != null ? new Mari_E(_GuardianTemplate.AbilityE, this) : null,
+                r: null,
+                primary: _GuardianTemplate.PrimaryAttack != null ? new Mari_Primary(_GuardianTemplate.PrimaryAttack, this) : null,
+                secondary: _GuardianTemplate.SecondaryAttack != null ? new Mari_Secondary(_GuardianTemplate.SecondaryAttack, this) : null
+            );
+        }
+        else
+        {
+            Debug.LogError($"[Mb_PlayerController] Unrecognized GuardianID '{_GuardianTemplate.GuardianID}' in template.");
+        }
     }
 
 

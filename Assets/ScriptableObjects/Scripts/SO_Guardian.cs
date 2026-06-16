@@ -8,9 +8,12 @@ using UnityEngine;
 public class SO_Guardian : ScriptableObject
 {
     [Header("General")]
+    public GuardiansEnum GuardianID;             // Unique identifier for the guardian
     public string CharacterName;
-    //public Sprite icon;
-    //public GameObject ModelPrefab;          // The 3D model specific to this guardian
+    public Sprite icon;
+    public GameObject ModelPrefab;          // The 3D model specific to this guardian
+    public string GuardianArchetype1;
+    public string GuardianArchetype2;
 
     [Header("Base Stats")]
     public float MaxHealth = 500f;          // Maximum health points
@@ -64,4 +67,12 @@ public class SO_Guardian : ScriptableObject
     public SO_Ability PrimaryAttack;        // Primary Attack or Left Click
     public SO_Ability SecondaryAttack;      // Secondary Attack or Right Click
 
+}
+
+
+public enum GuardiansEnum
+{
+    RajahBagwis,
+    Mari,
+    // Future Guardians here
 }

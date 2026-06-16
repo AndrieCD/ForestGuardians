@@ -26,6 +26,8 @@ public class Rajah_Secondary : Sc_BaseAbility
     // Assigned in the constructor from SO_Guardian — ability scripts never
     // reference a specific prefab directly; the data asset owns that reference.
     private SO_ProjectileData _projectileData;
+    private GameObject _projectilePrefab;
+
 
     // Cached launcher reference — fetched once in OnEquip from the owner GameObject.
     // Mb_ProjectileLauncher handles all spawn, position, orient, and initialize logic.
@@ -53,6 +55,11 @@ public class Rajah_Secondary : Sc_BaseAbility
         // Cache the launcher from the owner's GameObject.
         // Mb_ProjectileLauncher must be attached to the same GameObject as the Guardian.
         _launcher = user.GetComponent<Mb_ProjectileLauncher>();
+
+        // Fetch the generic projectile prefab from the registry
+        Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
+        _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Rajah_FeatherProjectile);
+
 
         if (_launcher == null)
             Debug.LogError("[Rajah_Secondary] No Mb_ProjectileLauncher found on " +
@@ -115,7 +122,7 @@ public class Rajah_Secondary : Sc_BaseAbility
 
         // Fire() resolves aim via camera raycast (Guardian path) and returns the
         // Mb_Projectile instance so we can subscribe to OnHit immediately after.
-        Mb_Projectile projectile = _launcher.Fire(_projectileData, user, damage);
+        Mb_Projectile projectile = _launcher.Fire(_projectilePrefab, _projectileData, user, damage);
 
         if (projectile == null) return;
 

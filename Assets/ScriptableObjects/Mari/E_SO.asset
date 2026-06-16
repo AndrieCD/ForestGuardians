@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a686431b16deec4aa24b92791074c71, type: 3}
+  m_Name: E_SO
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
+  AbilityName: Psychic Slam
+  Icon: {fileID: 21300068, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  Cooldown:
+  - 10
+  - 8
+  - 8
+  - 8
+  - 6
+  - 4
+  ProjectileData: {fileID: 11400000, guid: be4f53b5c21d71a4a977bda9d14cd0ca, type: 2}
+  MaxLevel: 6
+  ScalingStats:
+  - StatName: Damage
+    BaseValuePerLevel:
+    - 75
+    ATKScalingPerLevel:
+    - 0.2
+    - 0.2
+    - 0.25
+    - 0.3
+    - 0.4
+    - 0.55
+    APScalingPerLevel:
+    - 0.8
+    - 0.9
+    - 1.1
+    - 1.3
+    - 1.5
+    - 1.9

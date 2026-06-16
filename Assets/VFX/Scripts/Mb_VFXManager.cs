@@ -468,7 +468,7 @@ public class Mb_VFXManager : MonoBehaviour
         Play(VFXType.Hit_Critical, attacker.transform.position);
     }
 
-    private void HandleProjectileHit(Mb_Projectile projectile, Mb_CharacterBase characterHit)
+    private void HandleProjectileHit(Mb_Projectile projectile, Mb_CharacterBase attacker, Mb_CharacterBase characterHit)
     {
         Transform projectileTrans = projectile.transform;
         Transform hitTransform = projectile.transform;

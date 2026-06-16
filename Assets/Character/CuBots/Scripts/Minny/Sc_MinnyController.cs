@@ -13,43 +13,28 @@
 /// </summary>
 public class Mb_MinnyController : Mb_CuBotController
 {
-    // When true, Chopper is in the middle of its attack windup — movement is frozen
-    private bool _isWindingUp = false;
 
     protected override void AssignAbilities()
     {
         Abilities.SetPrimarySlot(new Sc_MinnyMeleeAttack(
             _CuBotTemplate.PrimaryAttack,
-            this,
-            onWindupStart: () => _isWindingUp = true,   // Freeze movement
-            onWindupEnd: () => _isWindingUp = false   // Unfreeze movement
+            this
         ));
     }
 
     protected override void OnInAttackRange()
     {
-        // Don't queue another attack if already winding up
-        if (_isWindingUp) return;
-
-        // Face the target before swinging
         if (_CurrentTarget != null)
             transform.LookAt(_CurrentTarget);
 
-        TryUsePrimaryAttack();
+        StartCoroutine(MeleeAttackCoroutine());
+
     }
 
     protected override void UpdateAnimator()
     {
-        if (_Animator == null) return;
+        if (_BasicCuBotAnimator == null) return;
 
-        // TODO: Drive locomotion blend tree parameter (e.g. "Speed") once rig is ready
-        // TODO: Trigger windup/attack animation from within Sc_ChopperMeleeAttack
-        // Example: _Animator.SetFloat("Speed", _Agent.velocity.magnitude);
-    }
-
-    protected override void OnControllerReset()
-    {
-        // Clear the windup flag so pool-reused Choppers don't start frozen
-        _isWindingUp = false;
+        _BasicCuBotAnimator.SetSpeed(_Agent.velocity.magnitude);
     }
 }

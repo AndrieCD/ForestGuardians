@@ -32,6 +32,7 @@ public class Rajah_E_Ability : Sc_BaseAbility
     // TODO: Add a ProjectileData field to SO_Ability and assign Rajah_Feather_Spread here:
     //   _projectileData = abilityData.ProjectileData;
     private SO_ProjectileData _projectileData;
+    private GameObject _projectilePrefab;
 
     // Cached launcher — fetched once in OnEquip
     private Mb_ProjectileLauncher _launcher;
@@ -47,6 +48,10 @@ public class Rajah_E_Ability : Sc_BaseAbility
     public override void OnEquip(Mb_CharacterBase user)
     {
         _launcher = user.GetComponent<Mb_ProjectileLauncher>();
+
+        // Fetch the generic projectile prefab from the registry
+        Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
+        _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Rajah_FeatherProjectile);
 
         if (_launcher == null)
             Debug.LogError("[Rajah_E_Ability] No Mb_ProjectileLauncher found on " +
@@ -114,79 +119,51 @@ public class Rajah_E_Ability : Sc_BaseAbility
     // so the spread feathers cannot hit each other mid-flight.
     private void FireFeatherSpread(Mb_CharacterBase user)
     {
-        if (_launcher == null)
-        {
-            Debug.LogError("[Rajah_E_Ability] Cannot fire — Mb_ProjectileLauncher is null.");
-            return;
-        }
+        if (_launcher == null || _projectileData == null) return;
 
-        if (_projectileData == null)
-        {
-            Debug.LogError("[Rajah_E_Ability] Cannot fire — SO_ProjectileData is null. " +
-                           "Assign Rajah_Feather_Spread to SO_Ability.ProjectileData.");
-            return;
-        }
-
-        // Resolve the shared aim point once — all feathers fan around this center.
-        // We keep this local raycast here rather than relying on the launcher's internal
-        // aim resolution because FireToward() bypasses aim resolution by design.
         Vector3 aimTarget = GetAimTarget();
-        Vector3 centerDir = (aimTarget - _Guardian.ProjectileOrigin.position).normalized;
 
-        // Damage is the same for every feather in the spread — calculate once.
-        // E scales with both ATK and AP, unlike Secondary which is ATK-only.
-        // No crit roll on E — spread shots intentionally don't crit individually.
-        // TODO: Revisit crit behavior for E if ability design changes.
+        // Guard: if the aim target is behind or at the ProjectileOrigin (e.g. origin
+        // is inside an obstacle), fall back to the Guardian's body forward direction.
+        Vector3 toTarget = aimTarget - _Guardian.ProjectileOrigin.position;
+        Vector3 centerDir = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
+            ? toTarget.normalized
+            : _Guardian.transform.forward;
+
         float damagePerFeather = _AbilityData.GetStat(
             "Damage", CurrentLevel,
             user.Stats.AttackPower.GetValue(),
             user.Stats.AbilityPower.GetValue()
         );
 
-        // Collect fired projectiles so we can ignore-pair their colliders below.
         Mb_Projectile[] firedProjectiles = new Mb_Projectile[FEATHER_COUNT];
 
         for (int i = 0; i < FEATHER_COUNT; i++)
         {
-            // Map feather index to a normalized 0–1 position across the spread.
-            // t = 0 → leftmost feather, t = 1 → rightmost feather.
             float t = (FEATHER_COUNT == 1) ? 0f : (float)i / (FEATHER_COUNT - 1);
-
-            // Rotate centerDir horizontally by the interpolated angle offset.
             float angleOffset = Mathf.Lerp(-SPREAD_ANGLE / 2f, SPREAD_ANGLE / 2f, t);
             Vector3 featherDir = Quaternion.AngleAxis(angleOffset, Vector3.up) * centerDir;
 
-            // FireToward() spawns, positions, orients, and initializes the projectile.
-            // It returns the instance so we can collect it for the ignore-collision pass.
-            firedProjectiles[i] = _launcher.FireToward(
-                _projectileData,
-                user,
-                damagePerFeather,
-                featherDir
+            firedProjectiles[i] = _launcher.FireToward(_projectilePrefab,
+                _projectileData, user, damagePerFeather, featherDir
             );
 
             Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Feather_Launch);
         }
 
-        // Prevent sibling feathers from hitting each other mid-flight.
-        // We iterate every unique pair (i, j where j > i) and tell the physics
-        // engine to ignore collisions between them for their entire flight.
-        // This is the same approach as the original — preserved because it's correct.
         for (int i = 0; i < firedProjectiles.Length; i++)
         {
             for (int j = i + 1; j < firedProjectiles.Length; j++)
             {
-                // Either projectile may be null if FireToward() failed — guard before use
                 if (firedProjectiles[i] == null || firedProjectiles[j] == null) continue;
-
                 Collider a = firedProjectiles[i].GetComponent<Collider>();
                 Collider b = firedProjectiles[j].GetComponent<Collider>();
-
                 if (a != null && b != null)
                     Physics.IgnoreCollision(a, b);
             }
         }
     }
+
 
 
     // -------------------------------------------------------------------------

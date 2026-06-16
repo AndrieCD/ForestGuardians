@@ -66,6 +66,18 @@ public class Mb_WaveManager : MonoBehaviour
     [Tooltip("Extra delay in seconds between finishing one CuBot type and starting the next.")]
     [SerializeField] private float SpawnTypeSeparatorInterval = 0.5f;
 
+    [Header("Tutorial")]
+    [Tooltip("If true, wave preparation will not begin until this is set to false. " +
+         "Used by Mb_TutorialGateManager to hold waves until gates are complete. " +
+         "Leave false for normal stages.")]
+    public bool HoldWaves = false;
+
+    [Tooltip("If true, ResolutionRoutine will not proceed after the final wave ends. " +
+         "Used by Mb_TutorialGateManager to delay victory until closing dialog finishes. " +
+         "Leave false for normal stages.")]
+    public bool HoldFinalResolution = false;
+
+
     #endregion                      //----------------------------------------
 
 
@@ -161,6 +173,9 @@ public class Mb_WaveManager : MonoBehaviour
     {
         OnPhaseChanged?.Invoke(WavePhase.Preparation);
 
+        while (HoldWaves)
+            yield return new WaitForSeconds(0.2f);
+
         // If a rewards panel is open, wait here until it closes.
         // Mb_RewardsManager sets _rewardsPanelOpen via events.
         while (_rewardsPanelOpen)
@@ -218,10 +233,15 @@ public class Mb_WaveManager : MonoBehaviour
             for (int i = 0; i < entry.count; i++)
             {
                 SpawnSingleEnemy(entry.enemyType, assignedLane);
-                yield return new WaitForSeconds(SpawnInterval);
+
+                // Add small randomness on spawn timing so enemies aren't perfectly locked in step
+                var randomSpawnInterval = SpawnInterval + UnityEngine.Random.Range(-0.5f, 0.25f);
+
+                yield return new WaitForSeconds(randomSpawnInterval);
             }
 
-            yield return new WaitForSeconds(SpawnTypeSeparatorInterval);
+            var randomSpawnTypeSeparatorInterval = SpawnTypeSeparatorInterval + UnityEngine.Random.Range(-1f, 0.5f);
+            yield return new WaitForSeconds(randomSpawnTypeSeparatorInterval);
         }
 
         OnWaveSpawnComplete?.Invoke(CurrentWaveIndex);
@@ -270,6 +290,21 @@ public class Mb_WaveManager : MonoBehaviour
         StartCoroutine(ResolutionRoutine());
     }
 
+    /// <summary>
+    /// Forces the current wave to end immediately.
+    /// Used by the tutorial to end the practice wave manually
+    /// after the closing dialog finishes — the practice dummies
+    /// revive indefinitely so normal kill-count completion never fires.
+    /// </summary>
+    public void ForceEndCurrentWave()
+    {
+        if (!_isWaveActive) return;
+
+        // Clear the active enemy list so EndWave() doesn't re-trigger on a stale count
+        _activeEnemies.Clear();
+        EndWave();
+    }
+
     #endregion                      //----------------------------------------
 
 
@@ -279,22 +314,21 @@ public class Mb_WaveManager : MonoBehaviour
     {
         OnPhaseChanged?.Invoke(WavePhase.Resolution);
 
-        // Hold so TopBar can display "WAVE X COMPLETE" for the full duration
         yield return new WaitForSeconds(ResolutionDuration);
 
-        // Final wave — end the stage instead of looping back
         if (CurrentWaveIndex >= _stageData.WaveDataList.Count - 1)
         {
+            // Hold here until tutorial closing dialog finishes before firing victory
+            // In normal stages HoldFinalResolution is always false so this never runs
+            while (HoldFinalResolution)
+                yield return new WaitForSeconds(0.2f);
+
             Debug.Log("[Mb_WaveManager] All waves cleared. Ending stage.");
             OnAllWavesCleared?.Invoke();
             _stageManager.EndStage();
             yield break;
         }
 
-        // Loop back — Mb_RewardsManager will have already opened the panel
-        // via its OnWaveEnd listener by the time we get here, so
-        // PreparationRoutine's _rewardsPanelOpen check will gate the countdown
-        // until the player chooses (or the rewards timer expires).
         StartCoroutine(PreparationRoutine());
     }
 

@@ -42,6 +42,8 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
 
         _CharacterName = _GuardianTemplate.name;
 
+        Debug.Log($"Health Regen: {_GuardianTemplate.HealthRegen}");
+
         Stats.BuildFromTemplate(_GuardianTemplate);
 
         // Must happen AFTER Stats.BuildFromTemplate() so MaxHealth is ready

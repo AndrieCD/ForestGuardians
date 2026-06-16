@@ -119,6 +119,8 @@ GameObject:
   - component: {fileID: -7641371593033786876}
   - component: {fileID: -3645003652760128644}
   - component: {fileID: 8378467131360355403}
+  - component: {fileID: 4691292819883168682}
+  - component: {fileID: -6060868747167272313}
   m_Layer: 6
   m_Name: Rajah
   m_TagString: Player
@@ -367,6 +369,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusVFXHandler
   _EnableCameraVFX: 1
+--- !u!114 &4691292819883168682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 039bfea7ef966854eb33abff32bb54df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
+  LaunchOrigin: {fileID: 5440143148272402519}
+  AimLayerMask:
+    serializedVersion: 2
+    m_Bits: 251
+  AimRaycastDistance: 100
+--- !u!114 &-6060868747167272313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755061731143313870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3ebd43c4f9eef45851cb2469c50b87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
+  _GenericProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _MariPsychicLeafProjectile: {fileID: 0}
+  _MariPsyshockBoltProjectile: {fileID: 0}
+  _MariMindspikesZone: {fileID: 0}
+  _MariPsychicSlamShockwave: {fileID: 0}
+  _MariBloomZone: {fileID: 0}
+  _MariLaserBeam: {fileID: 0}
+  _MariDotHitVFX: {fileID: 0}
+  _RajahFeatherProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _HunterBulletProjectile: {fileID: 0}
+  _TrapperTrapProjectile: {fileID: 0}
+  _ToxionSludgeProjectile: {fileID: 0}
+  _LuxionBulletProjectile: {fileID: 0}
 --- !u!1 &4182888474188704300
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +437,7 @@ Transform:
   m_GameObject: {fileID: 4182888474188704300}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.000000029802319, z: -0.000000029802319, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 10}
   m_LocalScale: {x: 25.89154, y: 25.891542, z: 25.89154}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -409,7 +453,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.009100005, g: 0.2603773, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.19215688, g: 0.4156863, b: 0.2784314, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -430,11 +474,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: -5
-  far clip plane: 10
+  near clip plane: -10
+  far clip plane: 5
   field of view: 80
   orthographic: 1
-  orthographic size: 40
+  orthographic size: 60
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -478,7 +522,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1650657078772448535}
@@ -582,7 +626,7 @@ Transform:
   m_GameObject: {fileID: 6950224793813158514}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.201, z: 0.75}
+  m_LocalPosition: {x: 0, y: 1.201, z: 0.648}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -63,6 +63,12 @@ public class SceneLoader : MonoBehaviour
         Load($"Stage{stageNumber}", GameState.LoadingStage);
     }
 
+    /// <summary>Loads the tutorial scene.</summary>
+    public void LoadTutorial()
+    {
+        Load("Tutorial", GameState.LoadingStage);
+    }
+
     /// <summary>Loads a cutscene by name.</summary>
     public void LoadCutscene(string cutsceneName)
     {
