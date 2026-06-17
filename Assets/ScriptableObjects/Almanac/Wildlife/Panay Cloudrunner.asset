@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Panay Cloudrunner
   ScientificName: Crateromys heaneyi
   Status: 1
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: The Panay Cloudrunner is a large tree-dwelling rodent active mainly
+    at night. It spends most of its life in the forest canopy feeding on leaves and
+    fruits. Its limited range makes it vulnerable to habitat loss.
+  SilhouetteIcon: {fileID: 21300000, guid: 22db35b6022328547b7c04887a5621c2, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: 22db35b6022328547b7c04887a5621c2, type: 3}
+  ModelPrefab: {fileID: 4838873546777571908, guid: 0a5cb2a6bd0020440a794b091ca1bdbe, type: 3}
   StatBonus:
     TargetStat: 6
     Value: 10
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 2
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 4838873546777571908, guid: 0a5cb2a6bd0020440a794b091ca1bdbe, type: 3}
   AcceptedHabitats: 2
-  Population: 
-  Habitat: 
+  Population: Rare and restricted to Panay Island
+  Habitat: 'Forests of Panay. '
+  DiscoverySequence: {fileID: 0}

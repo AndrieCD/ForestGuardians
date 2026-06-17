@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Sulu Hornbill
   ScientificName: Anthracoceros montani
   Status: 0
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: db3b531453bba3f48825cb56f0696e07, type: 3}
+  Description: The Sulu Hornbill is a fruit-eating bird found nowhere else in the
+    world. It helps forests regenerate by spreading seeds across large areas. Forest
+    clearing has greatly reduced its population.
+  SilhouetteIcon: {fileID: 21300000, guid: 1eb37c9b9cb74e041b1e667759beab59, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: 1eb37c9b9cb74e041b1e667759beab59, type: 3}
+  ModelPrefab: {fileID: 5773395924386966398, guid: a7bce9353f600f347b1aa2e1267bfb51, type: 3}
   StatBonus:
     TargetStat: 3
     Value: 0.2
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 1
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 5773395924386966398, guid: a7bce9353f600f347b1aa2e1267bfb51, type: 3}
   AcceptedHabitats: 6
-  Population: 
-  Habitat: 
+  Population: 1-49
+  Habitat: Lowland forests
+  DiscoverySequence: {fileID: 0}

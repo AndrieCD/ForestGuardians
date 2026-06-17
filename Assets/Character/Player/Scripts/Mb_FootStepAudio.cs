@@ -31,6 +31,7 @@ public class Mb_FootstepAudio : MonoBehaviour
     [SerializeField] private EnvironmentSFX _GroundStepSFX = EnvironmentSFX.Guardian_Footstep_Generic;
     [SerializeField] private EnvironmentSFX _WaterStepSFX = EnvironmentSFX.Guardian_Footstep_Water;
 
+
     [Header("Timing")]
     // How many seconds between footstep sounds at full movement speed.
     // Lower = faster cadence. Tune to match your character's stride animation.
@@ -59,7 +60,6 @@ public class Mb_FootstepAudio : MonoBehaviour
         if (_character == null)
             Debug.LogError($"[Mb_FootstepAudio] No Mb_CharacterBase on {gameObject.name}.");
     }
-
 
     private void Update()
     {

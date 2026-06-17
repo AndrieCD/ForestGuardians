@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Philippine Tarsier
   ScientificName: Carlito syrichta
   Status: 2
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: The Philippine Tarsier is one of the world's smallest primates. Its
+    enormous eyes provide excellent night vision for hunting insects and small animals.
+    Habitat loss and disturbance continue to threaten local populations.
+  SilhouetteIcon: {fileID: 21300000, guid: de07815fe8f405643a4805004bdda7ce, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: de07815fe8f405643a4805004bdda7ce, type: 3}
+  ModelPrefab: {fileID: 7014112400732943418, guid: 3dcf081bfce1dc94cad8745071c4c2b3, type: 3}
   StatBonus:
     TargetStat: 7
     Value: 0.05
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 3
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 7014112400732943418, guid: 3dcf081bfce1dc94cad8745071c4c2b3, type: 3}
   AcceptedHabitats: 2
-  Population: 
-  Habitat: 
+  Population: Declining in parts of its range
+  Habitat: Primary and secondary forests
+  DiscoverySequence: {fileID: 0}

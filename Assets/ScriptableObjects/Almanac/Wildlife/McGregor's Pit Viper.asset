@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: McGregor's Pit Viper
   ScientificName: Trimeresurus mcgregori
   Status: 1
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: McGregor's Pit Viper is a brightly colored venomous snake found only
+    in the northern Philippines. It relies on camouflage and ambush hunting to catch
+    prey. Habitat disturbance threatens its survival.
+  SilhouetteIcon: {fileID: 21300000, guid: 49dd16acd82a90743b5359b292d7fe54, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: 49dd16acd82a90743b5359b292d7fe54, type: 3}
+  ModelPrefab: {fileID: 1123860582802057023, guid: f573b59c0d0d8d3489d6ab8aa779e03c, type: 3}
   StatBonus:
     TargetStat: 7
     Value: 0.1
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 2
   GazeDuration: 2
   ActiveStages: 0100000003000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 1123860582802057023, guid: f573b59c0d0d8d3489d6ab8aa779e03c, type: 3}
   AcceptedHabitats: 1
-  Population: 
-  Habitat: 
+  Population: Limited to small island populations
+  Habitat: Forest vegetation and shrublands of Batanes
+  DiscoverySequence: {fileID: 0}

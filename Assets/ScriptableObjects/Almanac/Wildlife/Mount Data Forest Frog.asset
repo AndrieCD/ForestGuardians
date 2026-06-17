@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Mount Data Forest Frog
   ScientificName: Platymantis subterrestris
   Status: 1
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 3d9c4b31e6e4c284eb611bfd39470f58, type: 3}
+  Description: This small forest frog lives among leaf litter in cool mountain habitats.
+    Unlike many frogs, it develops directly from eggs without a free-swimming tadpole
+    stage. Healthy forests are essential for its survival.
+  SilhouetteIcon: {fileID: 21300000, guid: d4fd0f29c3b0892498c8415d5ce5992e, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: d4fd0f29c3b0892498c8415d5ce5992e, type: 3}
+  ModelPrefab: {fileID: 5830581700804804909, guid: fd311e5b62719b8428c898e2f253d9fb, type: 3}
   StatBonus:
     TargetStat: 5
     Value: 10
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 2
   GazeDuration: 2
   ActiveStages: 0100000003000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 5830581700804804909, guid: fd311e5b62719b8428c898e2f253d9fb, type: 3}
   AcceptedHabitats: 9
-  Population: 
-  Habitat: 
+  Population: Population trend remains uncertain
+  Habitat: Montane forests of northern Luzon
+  DiscoverySequence: {fileID: 0}

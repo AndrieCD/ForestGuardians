@@ -39,6 +39,11 @@ public class Mb_AlmanacDiamondCard : MonoBehaviour
     [Tooltip("Background tint when the entry is unlocked.")]
     [SerializeField] private Color UnlockedColor = new Color(0.9f, 0.85f, 0.7f, 1f);
 
+    [Header("Icon Tint")]
+    [SerializeField] private Color LockedIconTint = Color.white;
+    [SerializeField] private Color UnlockedIconTint = Color.white;
+
+
     #endregion                          //----------------------------------------
 
 
@@ -78,6 +83,7 @@ public class Mb_AlmanacDiamondCard : MonoBehaviour
             {
                 IconImage.sprite = entry.SilhouetteIcon;
                 IconImage.gameObject.SetActive(true);
+                IconImage.color = LockedIconTint;
             }
             else
             {

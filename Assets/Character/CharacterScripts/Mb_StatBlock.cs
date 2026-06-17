@@ -102,6 +102,8 @@ public class Mb_StatBlock : MonoBehaviour
     public void BuildFromTemplate(SO_Panoharra template)
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, 0);
+        HealthRegen = new Sc_Stat(template.HealthRegen, 0);
+
         BuildLookup();
     }
 

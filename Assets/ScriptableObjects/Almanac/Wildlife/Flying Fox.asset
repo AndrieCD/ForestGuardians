@@ -15,19 +15,22 @@ MonoBehaviour:
   CommonName: Golden-crowned Flying Fox
   ScientificName: Acerodon jubatus
   Status: 1
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: One of the largest bats in the world, this giant fruit bat plays an
+    important role in pollination and seed dispersal. It travels long distances while
+    feeding on fruits and flowers. Hunting and habitat loss threaten the species.
+  SilhouetteIcon: {fileID: 21300000, guid: a884d71a9927ef245a4bc617ec174350, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: a884d71a9927ef245a4bc617ec174350, type: 3}
+  ModelPrefab: {fileID: 3715691588331785491, guid: 89d2556a22fd72245866c2eaaaf48130, type: 3}
   StatBonus:
     TargetStat: 2
-    Value: 2
+    Value: 1.25
     Type: 0
     Duration: Infinity
   RequiredCount: 2
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 3715691588331785491, guid: 89d2556a22fd72245866c2eaaaf48130, type: 3}
   AcceptedHabitats: 2
-  Population: 
-  Habitat: 
+  Population: Declining throughout its range
+  Habitat: Lowland forests and mangrove areas
+  DiscoverySequence: {fileID: 0}

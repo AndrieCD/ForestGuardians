@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Mindanao Flying Dragon
   ScientificName: Draco mindanensis
   Status: 2
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: This remarkable lizard can glide between trees using wing-like skin
+    membranes supported by elongated ribs. Gliding helps it escape predators and
+    move efficiently through the forest canopy. It rarely descends to the ground.
+  SilhouetteIcon: {fileID: 21300000, guid: 8ef6d8616b0dc994b83b791e3fd09945, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: 8ef6d8616b0dc994b83b791e3fd09945, type: 3}
+  ModelPrefab: {fileID: 6492257454494834449, guid: 3ab2a4cb0b9d30b4987fd2d19c3d477c, type: 3}
   StatBonus:
     TargetStat: 3
     Value: 0.05
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 3
   GazeDuration: 2
   ActiveStages: 0100000003000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 6492257454494834449, guid: 3ab2a4cb0b9d30b4987fd2d19c3d477c, type: 3}
   AcceptedHabitats: 6
-  Population: 
-  Habitat: 
+  Population: Believed to be stable
+  Habitat: Lowland and secondary forests of Mindanao
+  DiscoverySequence: {fileID: 0}

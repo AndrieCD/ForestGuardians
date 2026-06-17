@@ -231,6 +231,9 @@ public class Mb_Projectile : MonoBehaviour
         // Skip friendly-fire — owner tag: "Player" for Guardians, "CuBot" for CuBot projectiles.
         if (_owner != null && other.gameObject.CompareTag(_owner.tag)) return;
 
+        // Skip Player-Panoharra friendly-fire
+        if (_owner.CompareTag("Player") && other.gameObject.CompareTag("Panoharra")) return;
+
         // Must be damageable — environment colliders (walls, floor) have no I_Damageable.
         I_Damageable damageable = other.GetComponent<I_Damageable>();
         if (damageable == null) return;

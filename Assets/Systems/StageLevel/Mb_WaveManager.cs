@@ -284,10 +284,16 @@ public class Mb_WaveManager : MonoBehaviour
     private void EndWave()
     {
         _isWaveActive = false;
-        OnWaveEnd?.Invoke(CurrentWaveIndex);
-        Debug.Log($"[Mb_WaveManager] Wave {CurrentWaveIndex} cleared.");
+        //OnWaveEnd?.Invoke(CurrentWaveIndex);
+        //Debug.Log($"[Mb_WaveManager] Wave {CurrentWaveIndex} cleared.");
 
         StartCoroutine(ResolutionRoutine());
+    }
+
+    private void ResolveWave()
+    {
+        OnWaveEnd?.Invoke(CurrentWaveIndex);
+        Debug.Log($"[Mb_WaveManager] Wave {CurrentWaveIndex} cleared.");
     }
 
     /// <summary>
@@ -328,6 +334,10 @@ public class Mb_WaveManager : MonoBehaviour
             _stageManager.EndStage();
             yield break;
         }
+
+
+        ResolveWave();
+
 
         StartCoroutine(PreparationRoutine());
     }

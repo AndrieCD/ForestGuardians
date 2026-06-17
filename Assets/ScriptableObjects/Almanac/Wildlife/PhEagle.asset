@@ -19,9 +19,9 @@ MonoBehaviour:
     of the largest eagles in the world. As an apex predator, it helps maintain balance
     in forest ecosystems by hunting mammals, birds, and reptiles. Habitat loss remains
     its greatest threat.
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 9c6039cdb2834de42ad3c5f48570d870, type: 3}
+  SilhouetteIcon: {fileID: 21300000, guid: df42890c5ef1b464c827f667d85cc35a, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: df42890c5ef1b464c827f667d85cc35a, type: 3}
+  ModelPrefab: {fileID: 2000620320016011948, guid: 3b2d9d6d25b40054da9c540a74f5923b, type: 3}
   StatBonus:
     TargetStat: 8
     Value: 0.2
@@ -30,7 +30,8 @@ MonoBehaviour:
   RequiredCount: 1
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 2000620320016011948, guid: 3b2d9d6d25b40054da9c540a74f5923b, type: 3}
   AcceptedHabitats: 6
-  Population: <500 mature individuals remain in the wild
-  Habitat: 'Old-growth tropical forests of Luzon, Samar, Leyte, and Mindanao. '
+  Population: 180-500
+  Habitat: 'Old-growth tropical forests '
+  DiscoverySequence: {fileID: 0}

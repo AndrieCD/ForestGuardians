@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Visayan Spotted Deer
   ScientificName: Rusa alfredi
   Status: 1
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: This shy deer is known for the pale spots scattered across its dark
+    coat. It plays a role in forest regeneration by dispersing seeds. Hunting and
+    deforestation have caused major population declines.
+  SilhouetteIcon: {fileID: 21300000, guid: b0f1026729659ce4a82f63dccfca31f8, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: b0f1026729659ce4a82f63dccfca31f8, type: 3}
+  ModelPrefab: {fileID: 4616422309212741940, guid: faf7196a261450642862d3ad656b5328, type: 3}
   StatBonus:
     TargetStat: 5
     Value: 10
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 2
   GazeDuration: 2
   ActiveStages: 0100000002000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 4616422309212741940, guid: faf7196a261450642862d3ad656b5328, type: 3}
   AcceptedHabitats: 1
-  Population: 
-  Habitat: 
+  Population: 700
+  Habitat: Forests, shrublands, grasslands
+  DiscoverySequence: {fileID: 0}

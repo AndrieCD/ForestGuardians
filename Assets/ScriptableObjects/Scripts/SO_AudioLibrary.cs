@@ -89,6 +89,8 @@ public enum EnvironmentSFX
 {
     Guardian_Footstep_Generic,
     Guardian_Footstep_Water,
+    Guardian_Jump_Generic,
+    Guardian_Land_Generic,
 }
 
 public enum UISFX

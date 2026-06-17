@@ -157,8 +157,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: x2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
+  m_sharedMaterial: {fileID: -8117004716575080434, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -368,8 +368,10 @@ MonoBehaviour:
   LockedQuestionMark: {fileID: 8118888282249989902}
   CompletionCountBadge: {fileID: 6866362089952056174}
   CardButton: {fileID: 5336389526392726282}
-  LockedColor: {r: 0.7, g: 0.65, b: 0.55, a: 1}
-  UnlockedColor: {r: 0.9, g: 0.85, b: 0.7, a: 1}
+  LockedColor: {r: 0.4566037, g: 0.39491877, b: 0.32651472, a: 1}
+  UnlockedColor: {r: 0.98490566, g: 0.96186215, b: 0.8232325, a: 1}
+  LockedIconTint: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  UnlockedIconTint: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4533279053384204028
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,7 +407,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8383984037431373222
 CanvasRenderer:
@@ -512,8 +514,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '?'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
+  m_sharedMaterial: {fileID: -8117004716575080434, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -537,13 +539,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 34.5
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 20
+  m_fontSizeMax: 40
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

@@ -103,6 +103,8 @@ public class Mb_AudioManager : MonoBehaviour
     private const string MIXER_SFX_PARAM = "SFXVolume";
     private const string MIXER_UI_PARAM = "UIVolume";
 
+    GameState _previousState = GameState.MainMenu; // Track previous state to prevent redundant music switches when returning to the main menu from victory/defeat
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // Unity Lifecycle
@@ -493,6 +495,11 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
+        if (_previousState == newState)
+        {
+            return; // Prevent redundant music switches
+        }
+
         Debug.Log("[Mb_AudioManager] Game state changed to " + newState);
         switch (newState)
         {

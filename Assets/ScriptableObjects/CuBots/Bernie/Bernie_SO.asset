@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Bernie
   AttackRange: 4
-  MaxHealth: 600
+  MaxHealth: 700
   HealthRegen: 0
   MoveSpeed: 4
   AttackSpeed: 1

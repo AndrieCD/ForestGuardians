@@ -42,6 +42,8 @@ public class Mb_Movement : MonoBehaviour
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
 
+    [SerializeField] private EnvironmentSFX _JumpSFX = EnvironmentSFX.Guardian_Jump_Generic;
+    [SerializeField] private EnvironmentSFX _LandSFX = EnvironmentSFX.Guardian_Land_Generic;
 
     #region EVENTS
     public event Action OnDashStarted;
@@ -91,11 +93,13 @@ public class Mb_Movement : MonoBehaviour
         {
             Mb_Movement.OnLanded?.Invoke();
             OnGroundedChanged?.Invoke(true);
+            Mb_AudioManager.PlayEnvironmentSFX(_LandSFX, transform.position);
         }
         // Detect leaving ground (true -> false)
         else if (!isGrounded && _wasGrounded)
         {
             OnGroundedChanged?.Invoke(false);
+            Mb_AudioManager.PlayEnvironmentSFX(_JumpSFX, transform.position);
         }
 
         _wasGrounded = isGrounded;
@@ -150,6 +154,7 @@ public class Mb_Movement : MonoBehaviour
             _verticalVelocity = -2f;
             // For animator 
             _playerController.GuardianAnimator.SetGrounded(true);
+
         }
 
         _verticalVelocity += _gravity * Time.deltaTime;

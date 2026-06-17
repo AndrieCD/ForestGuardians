@@ -270,6 +270,8 @@ MonoBehaviour:
   SpeciesNameText: {fileID: 1665625515089111079}
   CounterText: {fileID: 8937848423359865109}
   CompletionOverlay: {fileID: 7587292615867815270}
+  LockedIconTint: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  UnlockedIconTint: {r: 1, g: 1, b: 1, a: 1}
 --- !u!222 &2046663252638867273
 CanvasRenderer:
   m_ObjectHideFlags: 0

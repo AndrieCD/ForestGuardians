@@ -15,10 +15,12 @@ MonoBehaviour:
   CommonName: Philippine Crocodile
   ScientificName: Crocodylus mindorensis
   Status: 0
-  Description: 
-  SilhouetteIcon: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  UnlockedIcon: {fileID: 21300002, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
-  ModelPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  Description: The Philippine Crocodile is one of the rarest crocodilians on Earth.
+    Unlike the larger saltwater crocodile, it lives mainly in freshwater habitats.
+    Conservation efforts are helping protect its remaining wild populations.
+  SilhouetteIcon: {fileID: 21300000, guid: 1a7450d1ee0a93b4eaea4294aed4c64e, type: 3}
+  UnlockedIcon: {fileID: 21300000, guid: 1a7450d1ee0a93b4eaea4294aed4c64e, type: 3}
+  ModelPrefab: {fileID: 7062558628692281134, guid: 45db65700e0d4794b9deaf69c1a75277, type: 3}
   StatBonus:
     TargetStat: 4
     Value: 40
@@ -27,7 +29,8 @@ MonoBehaviour:
   RequiredCount: 1
   GazeDuration: 2
   ActiveStages: 0100000003000000
-  SpawnPrefab: {fileID: 146975328364204255, guid: 6b077dd4bb6b9d3468b524a930d00b9c, type: 3}
+  SpawnPrefab: {fileID: 7062558628692281134, guid: 45db65700e0d4794b9deaf69c1a75277, type: 3}
   AcceptedHabitats: 8
-  Population: 
-  Habitat: 
+  Population: 92-137
+  Habitat: Freshwater rivers, marshes, ponds, and wetlands
+  DiscoverySequence: {fileID: 0}

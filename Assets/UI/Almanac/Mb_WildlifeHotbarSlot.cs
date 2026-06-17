@@ -28,6 +28,10 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
              "Can be a checkmark, highlight border, or completion glow.")]
     [SerializeField] private GameObject CompletionOverlay;
 
+    [Header("Icon Tint")]
+    [SerializeField] private Color LockedIconTint = Color.white;
+    [SerializeField] private Color UnlockedIconTint = Color.white;
+
     #endregion                          //----------------------------------------
 
 
@@ -47,6 +51,7 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
         {
             Icon.sprite = entry.SilhouetteIcon;
             Icon.gameObject.SetActive(entry.SilhouetteIcon != null);
+            Icon.color = LockedIconTint;
         }
 
         if (SpeciesNameText != null)
@@ -86,6 +91,8 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
             Icon.sprite = entry.UnlockedIcon != null
                 ? entry.UnlockedIcon
                 : entry.SilhouetteIcon; // Fallback if unlocked icon not yet assigned
+
+            Icon.color = UnlockedIconTint;
 
             Icon.gameObject.SetActive(true);
         }
