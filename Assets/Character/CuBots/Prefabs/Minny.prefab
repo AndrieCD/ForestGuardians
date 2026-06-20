@@ -20,13 +20,14 @@ GameObject:
   - component: {fileID: 8369047640622771529}
   - component: {fileID: 1357166355434193665}
   - component: {fileID: -7812671766110808287}
+  - component: {fileID: 2356156555620735049}
   m_Layer: 6
   m_Name: Minny
   m_TagString: CuBot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &398177231451683535
 Transform:
   m_ObjectHideFlags: 0
@@ -124,8 +125,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.64, z: 0}
+  m_Size: {x: 0.8802352, y: 0.9232277, z: 0.650476}
+  m_Center: {x: 0.004606346, y: 0.46035263, z: 0.21902521}
 --- !u!208 &8547734475059492323
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -222,6 +223,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusVFXHandler
   _EnableCameraVFX: 0
+--- !u!114 &2356156555620735049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a0fa2d2e25e4514782a9ab9b8072d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_CuBotAnimator
+  _Animator: {fileID: 0}
+  _SpeedDampTime: 0.1
+  _HitDamageThreshold: 0.1
 --- !u!1 &1190940697236583597
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,11 +874,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.141
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.203
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -892,10 +908,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8641339197298593496, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0951d1d9f7c5bab44ae353bea9342bc0, type: 2}
+    - target: {fileID: -8047898860197281640, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad203d033dd993b46a2979dfd54efcd2, type: 2}
+    - target: {fileID: 718193872720482655, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad203d033dd993b46a2979dfd54efcd2, type: 2}
     - target: {fileID: 919132149155446097, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
       propertyPath: m_Name
       value: MinnyFinal
       objectReference: {fileID: 0}
+    - target: {fileID: 1052917478160427000, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad203d033dd993b46a2979dfd54efcd2, type: 2}
+    - target: {fileID: 2622315507144001795, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad203d033dd993b46a2979dfd54efcd2, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -984,7 +1020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6493233127096636273, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 1.406
       objectReference: {fileID: 0}
     - target: {fileID: 6493233127096636273, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -997,6 +1033,10 @@ PrefabInstance:
     - target: {fileID: 6493233127096636273, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9108017846077009569, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+      propertyPath: m_text
+      value: Minny
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
