@@ -15,6 +15,7 @@ public enum VFXType
     Hit_Critical,               // Critical strike flash — fires on any crit from any character
 
 
+
     // ── RAJAH BAGWIS ──────────────────────────────────────────────────────
     // Cast effects spawn at the ability origin when the ability fires.
     // Hit effects spawn at the point of impact (use PlayAtImpact where possible).
@@ -56,6 +57,7 @@ public enum VFXType
     // Shared fallback effects for any CuBot without a type-specific entry.
 
     CuBot_Attack_Generic,       // Any CuBot attack (fallback swing / projectile)
+    CuBot_Aggro,    // Plays when a CuBot switches aggro to the player
 
     // ── CUBOTS — TYPE-SPECIFIC ────────────────────────────────────────────
     // Add entries as each CuBot's visual effects are designed.
@@ -132,23 +134,26 @@ public enum VFXType
 
     Footstep_Grass,      // Leaf / dust puff on grass terrain
     Footstep_Water,      // Water ripple splash
-    Footstep_Mud,        // Mud splatter
-    Footstep_Stone,      // Dust kick on stone or hard surfaces — also used as the fallback
-    // TODO: Add Sand, Wood, Metal if additional surface types are added to the stage
+    Footstep_Generic,    // Generic dust puff — fallback when no layer match is found
+
+    Guardian_Jump,      // Dust/feather burst when Guardian leaves the ground
+    Guardian_Land,      // Impact burst when Guardian lands — scale with fall height later
+                        // TODO: Add Sand, Wood, Metal if additional surface types are added to the stage
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UI VFX
-// Screen-space or near-camera effects tied to UI events.
-// Reserved for future use — none currently implemented.
-// Examples: reward card shimmer, level-up screen flash, defeat vignette.
-// ─────────────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────────
+    // UI VFX
+    // Screen-space or near-camera effects tied to UI events.
+    // Reserved for future use — none currently implemented.
+    // Examples: reward card shimmer, level-up screen flash, defeat vignette.
+    // ─────────────────────────────────────────────────────────────────────────────
 
     // TODO: Define once UI visual direction is confirmed
-     RewardCard_Shimmer,
+    RewardCard_Shimmer,
     LevelUp_ScreenFlash,
     Defeat_Vignette,
     Victory_Confetti,
     Burn_Vignette,
     Poison_Vignette,
+    Guardian_LowHP_Vignette,    // Looping red pulse on the camera — started/stopped by threshold
 }

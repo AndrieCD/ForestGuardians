@@ -64,6 +64,11 @@ public class Rajah_Primary : Sc_BaseAbility
         Vector3 slashCenter = user.transform.position + (Vector3.up * 1.0f) + (user.transform.forward * SLASH_RANGE);
         Collider[] hitColliders = Physics.OverlapSphere(slashCenter, SLASH_RADIUS);
 
+
+        // Instantiate VFX on slashCenter
+        Mb_VFXManager.Play(VFXType.Rajah_Primary_Cast, slashCenter, Quaternion.identity);
+
+
         // Track already-hit enemies in case one has multiple colliders
         HashSet<MB_CuBotBase> alreadyHit = new HashSet<MB_CuBotBase>();
 

@@ -279,8 +279,21 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     protected abstract void UpdateAnimator();
     protected virtual void OnTargetChanged(Transform newTarget)
     {
-        if (_BasicCuBotAnimator != null && newTarget == _PlayerTarget)
+        // Only react when aggro switches TO the player — not when falling back to Panoharra.
+        // Panoharra fallback is a retreat, not an alert moment, so no feedback there.
+        if (newTarget != _PlayerTarget) return;
+
+        // Animator aggro reaction
+        if (_BasicCuBotAnimator != null)
             _BasicCuBotAnimator.TriggerAggro();
+
+        // Audio — alert bark
+        Mb_AudioManager.PlaySFX(CombatSFX.CuBot_Aggro_Generic, transform.position);
+
+        // VFX — exclamation burst above the CuBot's head
+        // Height offset positions it above the mesh; tune _AggroVFXHeightOffset per CuBot size
+        //Vector3 vfxPos = transform.position + Vector3.up * _AggroVFXHeightOffset;
+        //Mb_VFXManager.Play(VFXType.CuBot_Aggro, vfxPos);
     }
     protected virtual void OnControllerReset() { }
 

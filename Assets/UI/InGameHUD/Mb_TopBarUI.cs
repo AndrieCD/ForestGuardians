@@ -86,6 +86,10 @@ public class Mb_TopBarUI : MonoBehaviour
     // Cached so resolution and preparation labels can reference the correct number
     private int _currentWaveIndex = 0;
 
+    // Tracks the last countdown value we played audio for — prevents replaying
+    // the same tick if HandlePreparationTick fires multiple times at the same value
+    private int _lastCountdownPlayed = -1;
+
     #endregion                      //----------------------------------------
 
 
@@ -221,6 +225,24 @@ public class Mb_TopBarUI : MonoBehaviour
     {
         // Round up so the display reads "10" at the start, not "9"
         SetPhaseLabel($"NEXT WAVE IN {Mathf.CeilToInt(remaining)}");
+
+        // Countdown audio — only play each tick once
+        int tick = Mathf.CeilToInt(remaining);
+
+        if (tick != _lastCountdownPlayed && tick <= 3 && tick >= 1)
+        {
+            _lastCountdownPlayed = tick;
+
+            UISFX countdownSFX = tick switch
+            {
+                3 => UISFX.UI_Countdown_3,
+                2 => UISFX.UI_Countdown_2,
+                1 => UISFX.UI_Countdown_1,
+                _ => UISFX.UI_WaveStart // fallback, shouldn't hit
+            };
+
+            Mb_AudioManager.PlayUI(countdownSFX);
+        }
     }
 
 

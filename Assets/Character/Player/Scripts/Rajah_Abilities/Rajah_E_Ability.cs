@@ -149,6 +149,10 @@ public class Rajah_E_Ability : Sc_BaseAbility
             );
 
             Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Feather_Launch);
+
+
+            // Spawn VFX at projectile location.
+            Mb_VFXManager.Play(VFXType.Rajah_E_Cast, firedProjectiles[i].gameObject.transform.position, firedProjectiles[i].gameObject.transform.rotation);
         }
 
         for (int i = 0; i < firedProjectiles.Length; i++)

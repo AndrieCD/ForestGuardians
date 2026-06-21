@@ -34,10 +34,34 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New VFXLibrary", menuName = "ForestGuardians/VFXLibrary")]
 public class SO_VFXLibrary : ScriptableObject
 {
+    private List<VFXEntry> Entries = new List<VFXEntry>();
+
     [Header("VFX Entries")]
     [Tooltip("Add one entry per VFXType value. " +
              "Mb_VFXManager logs a warning at startup for any VFXType with no matching entry.")]
-    public List<VFXEntry> Entries = new List<VFXEntry>();
+    [Header("Generic Combat VFX")]
+    public List<VFXEntry> GenericCombatVFX = new List<VFXEntry>();
+
+    [Header("Rajah VFX")]
+    public List<VFXEntry> RajahVFX = new List<VFXEntry>();
+
+    [Header("Mari VFX")]
+    public List<VFXEntry> MariVFX = new List<VFXEntry>();
+
+    [Header("CuBot Combat VFX")]
+    public List<VFXEntry> CuBotCombatVFX = new List<VFXEntry>();
+
+    [Header("Status Effect VFX")]
+    public List<VFXEntry> StatusEffectVFX = new List<VFXEntry>();
+
+    [Header("Environment VFX")]
+    public List<VFXEntry> EnvironmentVFX = new List<VFXEntry>();
+
+    [Header("Footstep VFX")]
+    public List<VFXEntry> FootstepVFX = new List<VFXEntry>();
+
+    [Header("UI VFX")]
+    public List<VFXEntry> UIVFX = new List<VFXEntry>();
 
     // Built at runtime by BuildLookup() so TryGetEntry() is O(1), not O(n).
     // Dictionary is rebuilt every time the library is loaded — no stale cache risk.
@@ -107,6 +131,21 @@ public class SO_VFXLibrary : ScriptableObject
     // Called lazily — safe to call multiple times (idempotent).
     private void BuildLookup()
     {
+        // Merge all VFX entries into a single list for lookup.
+        if (_lookup == null)
+        {
+            Entries.Clear();
+            Entries.AddRange(GenericCombatVFX);
+            Entries.AddRange(RajahVFX);
+            Entries.AddRange(MariVFX);
+            Entries.AddRange(CuBotCombatVFX);
+            Entries.AddRange(StatusEffectVFX);
+            Entries.AddRange(EnvironmentVFX);
+            Entries.AddRange(FootstepVFX);
+            Entries.AddRange(UIVFX);
+        }
+
+
         _lookup = new Dictionary<VFXType, VFXEntry>();
 
         foreach (var entry in Entries)

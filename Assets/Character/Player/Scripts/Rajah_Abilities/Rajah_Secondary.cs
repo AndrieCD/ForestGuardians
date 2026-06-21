@@ -126,6 +126,10 @@ public class Rajah_Secondary : Sc_BaseAbility
 
         if (projectile == null) return;
 
+        // Spawn VFX at projectile location.
+        Mb_VFXManager.Play(VFXType.Rajah_Secondary_Cast, projectile.gameObject.transform.position, projectile.transform.rotation);
+
+
         // Store the fire direction for OnSecondaryFired — read from the projectile's
         // forward direction immediately after Fire() sets it, before any physics runs.
         Vector3 fireDirection = projectile.transform.forward;

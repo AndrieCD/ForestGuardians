@@ -20,9 +20,11 @@ public class GameManager : MonoBehaviour
 
     public event Action<GameState> OnGameStateChanged;
 
+    //private GameState _previousGameState = GameState.LoadingStage;
+
     public void Initialize( )
     {
-        CurrentState = GameState.MainMenu;
+        CurrentState = GameState.LoadingStage;
 
         Debug.Log("GameManager initialized. Current State: " + CurrentState);
     }
@@ -40,6 +42,9 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
+        if (newState == CurrentState)
+            return;
+
         CurrentState = newState;
         OnGameStateChanged?.Invoke(newState);
 

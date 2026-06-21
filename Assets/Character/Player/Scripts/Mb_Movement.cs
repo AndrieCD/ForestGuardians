@@ -42,13 +42,11 @@ public class Mb_Movement : MonoBehaviour
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
 
-    [SerializeField] private EnvironmentSFX _JumpSFX = EnvironmentSFX.Guardian_Jump_Generic;
-    [SerializeField] private EnvironmentSFX _LandSFX = EnvironmentSFX.Guardian_Land_Generic;
-
     #region EVENTS
     public event Action OnDashStarted;
     public event Action OnDashEnded;
     public static event Action OnLanded;           // fires once when isGrounded transitions false → true
+    public static event Action OnJumped;           // fires once when the player successfully initiates a jump
     public event Action<bool> OnGroundedChanged; // true = just landed, false = just left ground
     #endregion
 
@@ -93,13 +91,12 @@ public class Mb_Movement : MonoBehaviour
         {
             Mb_Movement.OnLanded?.Invoke();
             OnGroundedChanged?.Invoke(true);
-            Mb_AudioManager.PlayEnvironmentSFX(_LandSFX, transform.position);
         }
         // Detect leaving ground (true -> false)
         else if (!isGrounded && _wasGrounded)
         {
             OnGroundedChanged?.Invoke(false);
-            Mb_AudioManager.PlayEnvironmentSFX(_JumpSFX, transform.position);
+            OnJumped?.Invoke();
         }
 
         _wasGrounded = isGrounded;

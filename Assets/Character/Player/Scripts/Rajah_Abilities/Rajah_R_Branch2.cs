@@ -299,10 +299,15 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
             _projectileData,
             _User,
             damage,
+            spawnPosition,
             finalDirection
         );
 
         if (projectile == null) return;
+
+        // Spawn VFX at projectile location.
+        Mb_VFXManager.Play(VFXType.Rajah_R_Branch2_Cast, projectile.gameObject.transform.position, projectile.transform.rotation);
+
 
         // Eagle Eye passive shots intentionally do not trigger Royal Plumage stacks —
         // only the original Secondary shot (which has its own OnHit subscription in

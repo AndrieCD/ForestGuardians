@@ -1,29 +1,4 @@
-﻿// Mb_FootstepAudio.cs
-// Plays footstep sounds timed to the character's movement speed.
-// Detects whether the character is on water or ground using a downward
-// raycast that checks the tag of whatever surface is below.
-//
-// WHY TAG-BASED DETECTION:
-//   Water is a separate GameObject from terrain in this project. Tagging
-//   the water surface "Water" and everything else as default terrain means
-//   a single Raycast gives us the surface type with no extra components needed.
-//   If you add more surface types later (wood, stone, etc.), add a tag and
-//   a new CombatSFX enum entry — nothing else changes.
-//
-// HOW FOOTSTEP TIMING WORKS:
-//   Rather than reading animation events (which requires animator setup),
-//   we use a simple timer: footstep interval = BASE_INTERVAL / normalizedSpeed.
-//   This means faster movement = faster footstep rate, which feels natural.
-//   The timer only ticks when the character is grounded and moving.
-//
-// INSPECTOR SETUP:
-//   - GroundStepSFX: CombatSFX enum for footstep on ground
-//   - WaterStepSFX:  CombatSFX enum for footstep on water
-//   - BaseStepInterval: seconds between steps at full speed (default 0.4s)
-//   - SurfaceCheckDistance: raycast length downward (default 1.2f)
-//   - WaterTag: tag assigned to your water surface GameObject (default "Water")
-
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Mb_FootstepAudio : MonoBehaviour
 {
@@ -31,10 +6,11 @@ public class Mb_FootstepAudio : MonoBehaviour
     [SerializeField] private EnvironmentSFX _GroundStepSFX = EnvironmentSFX.Guardian_Footstep_Generic;
     [SerializeField] private EnvironmentSFX _WaterStepSFX = EnvironmentSFX.Guardian_Footstep_Water;
 
+    [Header("Jump / Land SFX")]
+    [SerializeField] private EnvironmentSFX _JumpSFX = EnvironmentSFX.Guardian_Jump_Generic;
+    [SerializeField] private EnvironmentSFX _LandSFX = EnvironmentSFX.Guardian_Land_Generic;
 
     [Header("Timing")]
-    // How many seconds between footstep sounds at full movement speed.
-    // Lower = faster cadence. Tune to match your character's stride animation.
     [SerializeField] private float _BaseStepInterval = 0.4f;
 
     [Header("Surface Detection")]
@@ -44,11 +20,10 @@ public class Mb_FootstepAudio : MonoBehaviour
 
     private Mb_CharacterBase _character;
     private CharacterController _controller;
+    private Mb_Movement _movement;
 
     private float _stepTimer = 0f;
 
-    // Minimum speed (normalized 0-1) before footsteps start playing.
-    // Prevents a footstep sound when the character is barely drifting.
     private const float MIN_SPEED_THRESHOLD = 0.1f;
 
 
@@ -56,28 +31,49 @@ public class Mb_FootstepAudio : MonoBehaviour
     {
         _character = GetComponent<Mb_CharacterBase>();
         _controller = GetComponent<CharacterController>();
+        _movement = GetComponent<Mb_Movement>();
 
         if (_character == null)
             Debug.LogError($"[Mb_FootstepAudio] No Mb_CharacterBase on {gameObject.name}.");
+
+        if (_movement == null)
+            Debug.LogError($"[Mb_FootstepAudio] No Mb_Movement on {gameObject.name}. " +
+                           "Jump and land SFX will not play.");
     }
+
+
+    private void OnEnable()
+    {
+        if (_movement != null)
+        {
+            Mb_Movement.OnLanded += HandleLand;
+            Mb_Movement.OnJumped += HandleJump;
+        }
+    }
+
+
+    private void OnDisable()
+    {
+        if (_movement != null)
+        {
+            Mb_Movement.OnJumped -= HandleJump;
+            Mb_Movement.OnLanded -= HandleLand;
+        }
+    }
+
 
     private void Update()
     {
-        // Only tick the footstep timer when grounded and actually moving
         if (!IsGrounded()) return;
 
         float speed = GetNormalizedSpeed();
         if (speed < MIN_SPEED_THRESHOLD)
         {
-            // Standing still — reset timer so the first step after
-            // moving again isn't delayed by leftover time
             _stepTimer = 0f;
             return;
         }
 
-        // Speed scales the cadence — moving faster shortens the interval
         float interval = _BaseStepInterval / speed;
-
         _stepTimer += Time.deltaTime;
 
         if (_stepTimer >= interval)
@@ -95,35 +91,38 @@ public class Mb_FootstepAudio : MonoBehaviour
     }
 
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Surface and Movement Detection
-    // ─────────────────────────────────────────────────────────────────────────
+    private void HandleJump()
+    {
+        if (!IsGrounded())
+            Mb_AudioManager.PlayEnvironmentSFX(_JumpSFX, transform.position);
+    }
+
+
+    private void HandleLand()
+    {
+        Mb_AudioManager.PlayEnvironmentSFX(_LandSFX, transform.position);
+    }
+
+
+    // ── Surface and Movement Detection (unchanged) ───────────────────────────
 
     private bool IsGrounded()
     {
         if (_controller != null)
             return _controller.isGrounded;
 
-         //Fallback for characters without a CharacterController (e.g. CuBots on NavMesh)
-         //A short downward raycast works as a grounded check
         return Physics.Raycast(transform.position, Vector3.down, _SurfaceCheckDistance);
     }
 
 
     private bool IsOnWater()
     {
-        // Water collider is a trigger — CheckSphere ignores triggers by default.
-        // OverlapSphere with QueryTriggerInteraction.Collide detects them explicitly.
-        Vector3 checkOrigin = transform.position;
-
         Collider[] hits = Physics.OverlapSphere(
-            checkOrigin,
+            transform.position,
             0.2f,
             LayerMask.GetMask("Water"),
             QueryTriggerInteraction.Collide
         );
-
-        //Debug.Log($"Checking for water under {gameObject.name}. Hits: {hits.Length}");
 
         return hits.Length > 0;
     }
@@ -133,8 +132,6 @@ public class Mb_FootstepAudio : MonoBehaviour
     {
         if (_character == null) return 0f;
 
-        // Compare actual XZ velocity against the character's max move speed
-        // to get a 0-1 normalized value — same as what the animator uses
         if (_controller != null)
         {
             Vector3 flatVelocity = new Vector3(

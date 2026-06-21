@@ -72,6 +72,8 @@ public enum CombatSFX
 
     // ── CUBOTS — SHARED ───────────────────────────────────────────────────
     CuBot_Hit_Generic,      // fallback for any cubot hit
+    CuBot_Attack_Generic,    // fallback for any cubot attack (swing or projectile)
+    CuBot_Aggro_Generic,
     CuBot_Chopper_Attack,
     CuBot_Chopper_Hit,
     CuBot_Hunter_Attack,
@@ -115,10 +117,15 @@ public enum UISFX
     UI_Pause_Resume,
 
     // Wave Announcements
+    UI_Countdown_3,         // "3" voice or beep
+    UI_Countdown_2,         // "2"
+    UI_Countdown_1,         // "1"
     UI_WaveStart,
     UI_WaveComplete,
     UI_StageClear,          // all waves done
-    UI_StageDefeat          // Panoharra destroyed
+    UI_StageDefeat,          // Panoharra destroyed
+
+    UX_Heartbeat,             // low thump that plays when HP is low, or as a warning cue
 }
 
 

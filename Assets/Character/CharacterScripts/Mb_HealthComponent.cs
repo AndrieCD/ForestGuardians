@@ -60,6 +60,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     #endregion              //----------------------------------------
 
 
+
     /// <summary>
     /// Sets CurrentHealth to MaxHealth and clears the dead flag.
     /// Call this after StatBlock.BuildFromTemplate() has run — we need MaxHealth to be ready.
@@ -130,12 +131,13 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         OnDamageTaken?.Invoke(amount);
 
 
-        // Play Sound
+        // Play SFX and VFX
         // different if guardian or cubot
         if (gameObject.CompareTag("Player"))
         {
             // Play sound
             Mb_AudioManager.PlaySFX(CombatSFX.Hit_Guardian);
+
         }
         else if (gameObject.CompareTag("CuBot"))
         {

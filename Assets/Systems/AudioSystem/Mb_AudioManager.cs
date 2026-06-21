@@ -257,6 +257,7 @@ public class Mb_AudioManager : MonoBehaviour
     public static void PlayUI(UISFX sfx, Vector3? worldPosition = null)
     {
         if (Instance == null) return;
+        Debug.Log("[AudioManager] PlayUI called for " + sfx);
         Instance.PlayUIInternal(sfx);
     }
 
@@ -495,10 +496,10 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
-        if (_previousState == newState)
-        {
-            return; // Prevent redundant music switches
-        }
+        //if (_previousState == newState)
+        //{
+        //    return; // Prevent redundant music switches
+        //}
 
         Debug.Log("[Mb_AudioManager] Game state changed to " + newState);
         switch (newState)

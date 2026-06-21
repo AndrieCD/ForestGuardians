@@ -61,6 +61,11 @@ public class Rajah_Q_Ability : Sc_BaseAbility
         TriggerAbilityAnimation(user);
 
 
+        // Spawn VFX attached to player
+        Mb_VFXManager.Play(VFXType.Rajah_Q_Cast, user.transform.position, user.transform);
+
+
+
         // Flatten camera forward to XZ plane so the dash is always horizontal
         Vector3 dashDir = _cam.transform.forward;
         dashDir.y = 0f;
