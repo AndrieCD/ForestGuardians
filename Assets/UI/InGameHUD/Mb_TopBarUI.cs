@@ -67,6 +67,17 @@ public class Mb_TopBarUI : MonoBehaviour
     [Tooltip("Seconds the bar holds at full before resetting for the next wave.")]
     [SerializeField] private float WaveClearHoldSeconds = 0.8f;
 
+
+    [Header("Panoharra Attack Warning")]
+    [Tooltip("Color the Panoharra fill bar blinks to when under attack. Default red.")]
+    [SerializeField] private Color PanoharraWarningColor = Color.red;
+
+    [Tooltip("How many times the bar blinks on a warning. Default 3.")]
+    [SerializeField] private int PanoharraBlinkCount = 3;
+
+    [Tooltip("Seconds for each blink on/off cycle. Default 0.2f.")]
+    [SerializeField] private float PanoharraBlinkInterval = 0.2f;
+
     #endregion                      //----------------------------------------
 
 
@@ -89,6 +100,9 @@ public class Mb_TopBarUI : MonoBehaviour
     // Tracks the last countdown value we played audio for — prevents replaying
     // the same tick if HandlePreparationTick fires multiple times at the same value
     private int _lastCountdownPlayed = -1;
+
+    private Coroutine _panoharraBlinkCoroutine;
+    private Color _panoharraFillBaseColor = Color.green;
 
     #endregion                      //----------------------------------------
 
@@ -154,6 +168,8 @@ public class Mb_TopBarUI : MonoBehaviour
         MB_CuBotBase.OnCuBotDeath -= HandleCuBotDeath;
         MB_CuBotBase.OnCuBotDeath += HandleCuBotDeath;
 
+        Mb_PanoharraManager.OnPanoharraUnderAttack += HandlePanoharraUnderAttack;
+
         RefreshPanoharraBar();
     }
 
@@ -169,6 +185,9 @@ public class Mb_TopBarUI : MonoBehaviour
         Mb_WaveManager.OnEnemySpawned -= HandleEnemySpawned;
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
         MB_CuBotBase.OnCuBotDeath -= HandleCuBotDeath;
+
+        Mb_PanoharraManager.OnPanoharraUnderAttack -= HandlePanoharraUnderAttack;
+
     }
 
     #endregion                      //----------------------------------------
@@ -181,7 +200,19 @@ public class Mb_TopBarUI : MonoBehaviour
         _cachedPanoharraMaxHP = maxHP > 0f ? maxHP : 1f;
 
         if (PanoharraFill != null)
-            PanoharraFill.fillAmount = Mathf.Clamp01(currentHP / _cachedPanoharraMaxHP);
+        {
+            float fill = Mathf.Clamp01(currentHP / _cachedPanoharraMaxHP);
+            PanoharraFill.fillAmount = fill;
+
+            // Update base color based on health — low HP shifts to orange/red
+            // Only update if not currently blinking so the blink isn't interrupted
+            if (_panoharraBlinkCoroutine == null)
+            {
+                Color healthColor = GetPanoharraHealthColor(fill);
+                PanoharraFill.color = healthColor;
+                _panoharraFillBaseColor = healthColor;
+            }
+        }
 
         if (PanoharraHPText != null)
             PanoharraHPText.text = Mathf.CeilToInt(currentHP).ToString();
@@ -343,4 +374,56 @@ public class Mb_TopBarUI : MonoBehaviour
     }
 
     #endregion                      //----------------------------------------
+
+
+    private void HandlePanoharraUnderAttack()
+    {
+        // Play the warning audio
+        Mb_AudioManager.PlayUI(UISFX.UI_PanoharraUnderAttack);
+
+        // Start blink — cancel any in-flight blink first so hits in quick
+        // succession don't stack coroutines (the cooldown in PanoharraManager
+        // prevents this in practice, but guard here too)
+        if (_panoharraBlinkCoroutine != null)
+            StopCoroutine(_panoharraBlinkCoroutine);
+
+        _panoharraBlinkCoroutine = StartCoroutine(PanoharraBlinkRoutine());
+    }
+
+
+    private IEnumerator PanoharraBlinkRoutine()
+    {
+        if (PanoharraFill == null) yield break;
+
+        // Cache the current fill color so we can restore it after blinking
+        Color originalColor = PanoharraFill.color;
+
+        for (int i = 0; i < PanoharraBlinkCount; i++)
+        {
+            PanoharraFill.color = PanoharraWarningColor;
+            yield return new WaitForSeconds(PanoharraBlinkInterval);
+
+            PanoharraFill.color = originalColor;
+            yield return new WaitForSeconds(PanoharraBlinkInterval);
+        }
+
+        _panoharraBlinkCoroutine = null;
+    }
+
+    private Color GetPanoharraHealthColor(float fill)
+    {
+        if (fill < 0.5f)
+        {
+            if (fill < 0.25f)
+            {
+                // Yellow to Red
+                float t1 = fill * 2f; // Normalize to 0-1
+                return Color.Lerp(Color.red, Color.yellow, t1);
+            }
+            // Green to Yellow
+            float t2 = (fill - 0.5f) * 2f; // Normalize to 0-1
+            return Color.Lerp(Color.yellow, Color.green, t2);
+        }
+        return _panoharraFillBaseColor;
+    }
 }

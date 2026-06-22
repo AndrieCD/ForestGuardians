@@ -42,6 +42,10 @@ MonoBehaviour:
     Prefab: {fileID: 4479242269041949980, guid: 051bd2c3fb8f40f4593aa0c5557357ee, type: 3}
     Lifetime: 2
     PoolSize: 20
+  - Type: 12
+    Prefab: {fileID: 2734805333431787683, guid: c591205baffd7b0449c49448ccb0063e, type: 3}
+    Lifetime: 20
+    PoolSize: 20
   MariVFX: []
   CuBotCombatVFX:
   - Type: 1
@@ -52,27 +56,43 @@ MonoBehaviour:
     Prefab: {fileID: 4273060829039023248, guid: 93d383ba07188e743b6f70b67f587c96, type: 3}
     Lifetime: 2
     PoolSize: 20
+  - Type: 34
+    Prefab: {fileID: 193110238101679430, guid: 98275aff7f8dcc143ac1cc6e0d4b4db7, type: 3}
+    Lifetime: 2
+    PoolSize: 20
+  - Type: 41
+    Prefab: {fileID: 544674701638327960, guid: 2a7234ef93a9c21408054c9a57281030, type: 3}
+    Lifetime: 2
+    PoolSize: 5
   StatusEffectVFX:
-  - Type: 39
-    Prefab: {fileID: 3344008844848411623, guid: ed2a1351b5452774ca4b9cc9d1087236, type: 3}
+  - Type: 42
+    Prefab: {fileID: 994081385684806583, guid: 512a923e680f3ce47ac69a5545405039, type: 3}
     Lifetime: 999
     PoolSize: 5
-  EnvironmentVFX: []
+  - Type: 46
+    Prefab: {fileID: 2734805333431787683, guid: c591205baffd7b0449c49448ccb0063e, type: 3}
+    Lifetime: 999
+    PoolSize: 5
+  EnvironmentVFX:
+  - Type: 48
+    Prefab: {fileID: 6299658623613784175, guid: 92d78c3c76febf94487317a0b108ed1b, type: 3}
+    Lifetime: 4
+    PoolSize: 10
   FootstepVFX:
-  - Type: 52
+  - Type: 57
     Prefab: {fileID: 1817986171443504903, guid: c13ecec396318c444a728dfdd167af08, type: 3}
     Lifetime: 1
     PoolSize: 10
-  - Type: 53
+  - Type: 58
     Prefab: {fileID: 1822715066681866867, guid: 6dff635240b90134d84fe356026819ad, type: 3}
     Lifetime: 1
     PoolSize: 10
-  - Type: 55
+  - Type: 59
     Prefab: {fileID: 7711429842146121223, guid: f83833e9b9df73843b89375cd87446c7, type: 3}
     Lifetime: 1
     PoolSize: 10
-  - Type: 54
-    Prefab: {fileID: 1822715066681866867, guid: 6dff635240b90134d84fe356026819ad, type: 3}
-    Lifetime: 1
+  UIVFX:
+  - Type: 64
+    Prefab: {fileID: 3344008844848411623, guid: ed2a1351b5452774ca4b9cc9d1087236, type: 3}
+    Lifetime: 999
     PoolSize: 10
-  UIVFX: []

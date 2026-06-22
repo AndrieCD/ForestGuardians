@@ -126,6 +126,8 @@ public enum UISFX
     UI_StageDefeat,          // Panoharra destroyed
 
     UX_Heartbeat,             // low thump that plays when HP is low, or as a warning cue
+
+    UI_PanoharraUnderAttack,
 }
 
 

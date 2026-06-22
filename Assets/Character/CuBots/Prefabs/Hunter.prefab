@@ -22,13 +22,14 @@ GameObject:
   - component: {fileID: 8623771945360821832}
   - component: {fileID: -5099223452303057995}
   - component: {fileID: -640623321627676626}
+  - component: {fileID: 2011742260094740264}
   m_Layer: 6
   m_Name: Hunter
   m_TagString: CuBot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8302499489538260724
 Transform:
   m_ObjectHideFlags: 0
@@ -268,6 +269,21 @@ MonoBehaviour:
   _TrapperTrapProjectile: {fileID: 0}
   _ToxionSludgeProjectile: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
+--- !u!114 &2011742260094740264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513359888028754751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a0fa2d2e25e4514782a9ab9b8072d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_CuBotAnimator
+  _Animator: {fileID: 8857844146091459615}
+  _SpeedDampTime: 0.1
+  _HitDamageThreshold: 0.1
 --- !u!1 &2975238022844232155
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,7 +1024,7 @@ Animator:
   m_GameObject: {fileID: 78171443807939819}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4cd9b9073d62dc54aba842d4b4203087, type: 2}
+  m_Controller: {fileID: 9100000, guid: 965266d884527de4595ef57350e4dccf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: HunterIDLE
-      takeName: HunterIDLE.001
+      name: HunterPRIMARYATTACK (1)
+      takeName: HunterPRIMARYATTACK
       internalID: -99527095769645771
-      firstFrame: 1
-      lastFrame: 192
+      firstFrame: 6.3
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

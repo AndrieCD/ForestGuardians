@@ -230,6 +230,12 @@ public class Mb_WaveManager : MonoBehaviour
         {
             Transform assignedLane = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
 
+
+            // Announce spawn location with a tall visible VFX beacon.
+            // Plays at the exact spawn position so the player can see
+            // which lane the CuBot came from even before spotting the enemy.
+            Mb_VFXManager.Play(VFXType.CuBot_SpawnPillar, assignedLane.position);
+
             for (int i = 0; i < entry.count; i++)
             {
                 SpawnSingleEnemy(entry.enemyType, assignedLane);

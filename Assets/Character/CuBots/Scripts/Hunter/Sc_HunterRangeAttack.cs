@@ -72,6 +72,9 @@ public class Sc_HunterRangeAttack : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+
+        user.GetComponent<Mb_CuBotAnimator>()?.TriggerAttack();
+
         Shoot(user);
 
         StartCooldown(user, GetAttackCooldown(user));

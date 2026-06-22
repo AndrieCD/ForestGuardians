@@ -54,7 +54,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         _atkModifier = BuildModifier(
             "Sovereign's Wrath — ATK Bonus",
             ModifierSource.Ability,
-            new Sc_StatEffect(StatType.AttackPower, bonusATK, StatModType.Flat)
+            new Sc_StatEffect(StatType.AttackPower, bonusATK, StatModType.Percent)
         );
 
         ApplyToSelf(user, _atkModifier);
@@ -125,6 +125,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         for (int i = 0; i < TICK_COUNT; i++)
         {
             PerformAoEHit(user, forward, isFinal: false);
+
             yield return new WaitForSeconds(TICK_INTERVAL);
         }
 
@@ -151,6 +152,38 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         Vector3 center = user.transform.position + forward * HIT_OFFSET;
 
         Collider[] hits = Physics.OverlapSphere(center, HIT_RADIUS);
+
+        // Play SFX
+        Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Primary);
+
+        if (isFinal)
+        {
+            // Play VFX (Rajah_Primary_Cast) 4x at random spots within the range
+            for (int j = 0; j < 16; j++)
+            {
+                Vector3 randomPosition = center + UnityEngine.Random.insideUnitSphere * HIT_RADIUS;
+
+                Mb_VFXManager.Play(
+                    VFXType.Rajah_Primary_Cast,
+                    randomPosition,
+                    Quaternion.identity
+                );
+            }
+        } else
+        {
+            // Play VFX (Rajah_Primary_Cast) 4x at random spots within the range
+            for (int j = 0; j < 8; j++)
+            {
+                Vector3 randomPosition = center + UnityEngine.Random.insideUnitSphere * HIT_RADIUS;
+
+                Mb_VFXManager.Play(
+                    VFXType.Rajah_Primary_Cast,
+                    randomPosition,
+                    Quaternion.identity
+                );
+            }
+        }
+
 
         float damage = isFinal
             ? _AbilityData.GetStat("Damage", CurrentLevel, user.Stats.AttackPower.GetValue()) * 3f

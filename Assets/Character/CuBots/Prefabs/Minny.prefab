@@ -27,7 +27,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &398177231451683535
 Transform:
   m_ObjectHideFlags: 0
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0fa2d2e25e4514782a9ab9b8072d0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_CuBotAnimator
-  _Animator: {fileID: 0}
+  _Animator: {fileID: 6172935877263239760}
   _SpeedDampTime: 0.1
   _HitDamageThreshold: 0.1
 --- !u!1 &1190940697236583597
@@ -935,13 +935,43 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6172935877263239760}
   m_SourcePrefab: {fileID: 100100000, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
 --- !u!4 &353024028736488274 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
   m_PrefabInstance: {fileID: 246721641780438201}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1129807396360968680 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 115e7431799be544abb0a8596109d7eb, type: 3}
+  m_PrefabInstance: {fileID: 246721641780438201}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6172935877263239760
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129807396360968680}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: eed41e868913f7d45a7706e585db433b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &2569640839935357407
 PrefabInstance:
   m_ObjectHideFlags: 0

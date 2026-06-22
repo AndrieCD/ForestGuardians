@@ -151,14 +151,14 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
 
 
     // Returns how many extra shots fire per Secondary based on guardian level.
-    // Thresholds: level 4 → 1 shot, level 8 → 2 shots, level 12 → 4 shots.
+    // Thresholds: level 3 → 1 shot, level 8 → 2 shots, level 12 → 3 shots.
     private int GetExtraShotCount()
     {
         int level = _User.GetLevel();
 
-        if (level >= 12) return 4;
+        if (level >= 12) return 3;
         if (level >= 8) return 2;
-        if (level >= 4) return 1;
+        if (level >= 1) return 1;
         return 0;
     }
 
@@ -279,6 +279,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         Vector3 targetPoint = origin + baseDirection * 100f;
         Vector3 finalDirection = (targetPoint - spawnPosition).normalized;
 
+
         // Calculate damage at fire time using current ability level and ATK.
         // Crit is rolled per shot — each Eagle Eye feather can independently crit.
         float damage = _AbilityData.GetStat(
@@ -287,6 +288,12 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
             _User.Stats.AttackPower.GetValue()
         );
         damage = ApplyCriticalStrike(damage, _User);
+
+        // Check if passive or not, passive additional feathers are at 75% efficiency
+
+        if (isPassive) {
+            damage *= 0.75f;
+        }
 
         // FireToward() handles: spawn at spawnPosition, orient toward finalDirection,
         // call Initialize(data, owner, damage), then SetActive(true).

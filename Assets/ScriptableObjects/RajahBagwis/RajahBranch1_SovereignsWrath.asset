@@ -26,9 +26,9 @@ MonoBehaviour:
   ScalingStats:
   - StatName: Damage
     BaseValuePerLevel:
-    - 75
+    - 100
     ATKScalingPerLevel:
-    - 0.25
+    - 0.3
     APScalingPerLevel:
     - 0
   - StatName: Lifesteal
@@ -37,4 +37,11 @@ MonoBehaviour:
     ATKScalingPerLevel:
     - 0.25
     APScalingPerLevel:
-    - 0.2
+    - 0.5
+  - StatName: BonusBaseDamage
+    BaseValuePerLevel:
+    - 0.3
+    ATKScalingPerLevel:
+    - 0
+    APScalingPerLevel:
+    - 0

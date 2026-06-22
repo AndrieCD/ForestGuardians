@@ -451,8 +451,19 @@ public class Mb_VFXManager : MonoBehaviour
     {
         if (deadCuBot == null) return;
 
+
         // Play the death burst at the CuBot's last known position
-        Play(VFXType.CuBot_Death_Generic, deadCuBot.transform.position);
+
+        Debug.Log("[VFXManager] Dead CuBot name: " + deadCuBot.name);
+        // if boss cubot (bernie, toxion, luxion) play the boss death vfx instead
+        if (deadCuBot.name.Contains("Bernie") || deadCuBot.name.Contains("Toxion") || deadCuBot.name.Contains("Luxion"))
+        {
+            Play(VFXType.CuBot_Boss_Death_Generic, deadCuBot.transform.position);
+        }
+        else
+        {
+            Play(VFXType.CuBot_Death_Generic, deadCuBot.transform.position);
+        }
     }
 
 

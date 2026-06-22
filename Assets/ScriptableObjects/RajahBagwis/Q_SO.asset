@@ -47,18 +47,18 @@ MonoBehaviour:
     - 1.5
   - StatName: Shield
     BaseValuePerLevel:
-    - 150
-    - 200
     - 250
     - 300
     - 350
+    - 450
     - 500
+    - 700
     ATKScalingPerLevel:
     - 0
     APScalingPerLevel:
-    - 0.7
     - 0.85
     - 1
-    - 1.15
+    - 1.25
     - 1.5
     - 2
+    - 3

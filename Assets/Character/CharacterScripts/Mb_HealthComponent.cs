@@ -255,6 +255,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         if (duration != float.PositiveInfinity)
             StartCoroutine(HandleShieldDuration(shield));
 
+        OnShieldAdded?.Invoke(amount);
         OnShieldChanged?.Invoke(CurrentShield);
     }
 
@@ -281,6 +282,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
             if (shield.CurrentValue <= 0)
             {
+                OnShieldBroken?.Invoke();
                 _shields.RemoveAt(i);
                 i--;
             }

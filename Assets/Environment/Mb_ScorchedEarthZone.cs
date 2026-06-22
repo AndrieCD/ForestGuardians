@@ -136,7 +136,7 @@ public class Mb_ScorchedEarthZone : MonoBehaviour
         statusController.Apply(burnEffect);
 
 
-        Mb_VFXManager.Play(VFXType.Status_Burn, Camera.main.transform.position, character.transform);
+        //Mb_VFXManager.Play(VFXType.Status_Burn, Camera.main.transform.position, character.transform);
 
         // Subscribe to death so we can clean up if the character dies inside the zone.
         // CuBot pool safety: Mb_StatusEffectController.ClearAll() also runs on OnEnable,

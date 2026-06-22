@@ -51,6 +51,10 @@ public class Mb_PanoharraManager : MonoBehaviour
     /// </summary>
     public static event Action OnPanoharraDestroyed;
 
+    // Fired when the Panoharra takes damage, gated by a cooldown so it
+    // doesn't spam every hit. Mb_TopBarUI subscribes to trigger audio and blink.
+    public static event Action OnPanoharraUnderAttack;
+
     #endregion                          //----------------------------------------
 
 
@@ -64,6 +68,12 @@ public class Mb_PanoharraManager : MonoBehaviour
 
     /// <summary>The Panoharra's maximum health. Read by the HUD health bar.</summary>
     public float MaxHealth => _stats != null ? _stats.MaxHealth.GetValue() : 0f;
+
+    private float _attackWarningCooldown = 0f;
+
+    [Header("Attack Warning")]
+    [Tooltip("Minimum seconds between 'under attack' warning triggers. Default 10f.")]
+    [SerializeField] private float AttackWarningInterval = 10f;
 
     #endregion                          //----------------------------------------
 
@@ -100,23 +110,44 @@ public class Mb_PanoharraManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // Subscribe here so the death event is caught even if the Panoharra
-        // was temporarily disabled and re-enabled (e.g. for cutscene staging).
         if (_health != null)
             _health.OnDeath += HandleDeath;
+
+        // Subscribe to damage so we can fire the warning event
+        if (_health != null)
+            _health.OnDamageTaken += HandleDamageTaken;
     }
 
 
     private void OnDisable()
     {
         if (_health != null)
+        {
             _health.OnDeath -= HandleDeath;
+            _health.OnDamageTaken -= HandleDamageTaken;
+        }
     }
+
+
+    private void Update()
+    {
+        if (_attackWarningCooldown > 0f)
+            _attackWarningCooldown -= Time.deltaTime;
+    }
+
+
 
     #endregion                          //----------------------------------------
 
 
     #region Event Handler               //----------------------------------------
+    private void HandleDamageTaken(float amount)
+    {
+        if (_attackWarningCooldown > 0f) return;
+
+        _attackWarningCooldown = AttackWarningInterval;
+        OnPanoharraUnderAttack?.Invoke();
+    }
 
     private void HandleDeath()
     {

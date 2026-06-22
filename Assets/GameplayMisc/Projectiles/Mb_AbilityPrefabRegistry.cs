@@ -50,6 +50,7 @@ public enum AbilityPrefabID
     // ── RAJAH ─────────────────────────────────────────────────────────────────
     // Rajah uses a single generic projectile prefab — no additional entries needed
     Rajah_FeatherProjectile,        // Rajah's feather shot projectile
+    Rajah_SkyRendShield,
 
     // ── FUTURE GUARDIANS ──────────────────────────────────────────────────────
     // Add entries here as new guardians and abilities are designed.
@@ -111,6 +112,8 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
     [Header("Rajah")]
     [Tooltip("Rajah's feather shot projectile. Must have Mb_Projectile, Rigidbody, Collider.")]
     [SerializeField] private GameObject _RajahFeatherProjectile;
+    [Tooltip("Rajah's Sky Rend shield.")]
+    [SerializeField] private GameObject _RajahSkyRendShield;
 
     // CuBots
     [Header("CuBots")]
@@ -151,6 +154,7 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
             AbilityPrefabID.Mari_DotHitVFX => _MariDotHitVFX,
 
             AbilityPrefabID.Rajah_FeatherProjectile => _RajahFeatherProjectile, 
+            AbilityPrefabID.Rajah_SkyRendShield => _RajahSkyRendShield,
 
             AbilityPrefabID.Hunter_BulletProjectile => _HunterBulletProjectile,
             AbilityPrefabID.Trapper_TrapProjectile => _TrapperTrapProjectile,

@@ -58,6 +58,7 @@ public enum VFXType
 
     CuBot_Attack_Generic,       // Any CuBot attack (fallback swing / projectile)
     CuBot_Aggro,    // Plays when a CuBot switches aggro to the player
+    CuBot_Boss_Death_Generic,
 
     // ── CUBOTS — TYPE-SPECIFIC ────────────────────────────────────────────
     // Add entries as each CuBot's visual effects are designed.
@@ -71,6 +72,8 @@ public enum VFXType
 
     CuBot_Minny_Attack,         // Mining slam
     CuBot_Minny_Hit,            // Minny takes damage
+
+    CuBot_Bernie_Attack,
 
     // TODO: Add when Stage 2 / Stage 3 CuBot designs are finalised
     // CuBot_Sawyer_Attack,
@@ -98,18 +101,20 @@ public enum VFXType
     Status_Poison,              // Toxic particle loop (Poison DoT)
     Status_Slow,                // Frost / slow-field loop (MoveSlow + AttackSlow share this)
     Status_Stun,                // Stars / daze particles orbiting the head
-    // TODO: Status_Root and Status_Silence when visual design is confirmed
+    Status_Shield,              // Generic shield aura — plays on ANY character (Guardian or CuBot) while shielded
+                                // TODO: Status_Root and Status_Silence when visual design is confirmed
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ENVIRONMENT VFX
-// World-space one-shot effects driven by gameplay events.
-// None of these are parented to a character — they play at a world position.
-// ─────────────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────────
+    // ENVIRONMENT VFX
+    // World-space one-shot effects driven by gameplay events.
+    // None of these are parented to a character — they play at a world position.
+    // ─────────────────────────────────────────────────────────────────────────────
 
     // ── WAVE EVENTS ───────────────────────────────────────────────────────
     Wave_Start,                 // Ambient energy pulse at the Panoharra Tree — auto-fired by Mb_VFXManager on OnWaveStart
     CuBot_Spawn,                // Materialise effect when a CuBot activates from the pool
+    CuBot_SpawnPillar,      // Large visible beacon at spawn point — announces CuBot location
 
     // ── GUARDIAN EVENTS ───────────────────────────────────────────────────
     Guardian_Death,             // Large burst on Guardian death — call from Mb_GuardianBase.HandleDeath()

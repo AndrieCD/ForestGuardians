@@ -76,6 +76,8 @@ public class Sc_BernieFireCone : Sc_BaseAbility
     {
         if (!CheckCooldown()) return;
 
+        user.GetComponent<Mb_CuBotAnimator>()?.TriggerAttack();
+
         FireCone(user);
 
         StartCooldown(user, GetAttackCooldown(user));
@@ -92,12 +94,11 @@ public class Sc_BernieFireCone : Sc_BaseAbility
             ? _firePoint.position
             : user.transform.position + Vector3.up * 1.0f;
 
-        // VFX — fire burst at the nozzle origin
-        //Mb_VFXManager.Play(
-        //    VFXType.CuBot_Bernie_Attack,
-        //    origin,
-        //    parent: null    // World-space one-shot — not parented to Bernie
-        //);
+        //VFX — fire burst at the nozzle origin
+       Mb_VFXManager.Play(
+           VFXType.CuBot_Bernie_Attack,
+           origin
+       );
 
         // SFX — flamethrower whoosh at the nozzle
         //Mb_AudioManager.PlaySFX(CombatSFX.Bernie_FireCone, origin);
