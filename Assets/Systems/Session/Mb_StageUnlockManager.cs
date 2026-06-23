@@ -29,6 +29,15 @@ using UnityEngine;
 
 public class Mb_StageUnlockManager : MonoBehaviour
 {
+
+    [Header("Build Limits")]
+    [Tooltip("Highest stage number currently playable in this build. " +
+             "Set to 1 while only Stage 1 exists — prevents Stage 2/3 from " +
+             "ever being unlocked even if HandleStageEnd fires. " +
+             "TODO: Raise to 2, then 3 as those stages are completed.")]
+    [SerializeField] private int MaxAvailableStage = 1;
+
+
     // -------------------------------------------------------------------------
     // Singleton
     // -------------------------------------------------------------------------
@@ -112,6 +121,11 @@ public class Mb_StageUnlockManager : MonoBehaviour
     /// </summary>
     public bool IsUnlocked(int stageNumber)
     {
+        // Tutorial (stage 4) is not part of the sequential unlock chain —
+        // it's always available regardless of MaxAvailableStage.
+        if (stageNumber == 4) return _saveData.IsUnlocked(stageNumber);
+
+        if (stageNumber > MaxAvailableStage) return false;
         return _saveData.IsUnlocked(stageNumber);
     }
 
@@ -192,6 +206,14 @@ public class Mb_StageUnlockManager : MonoBehaviour
         {
             Debug.Log($"[Mb_StageUnlockManager] Stage {completedStage} is the final stage. " +
                       "No further stages to unlock.");
+            return;
+        }
+
+        // TEMP BUILD GUARD: don't unlock stages that don't exist in this build yet
+        if (nextStage > MaxAvailableStage)
+        {
+            Debug.Log($"[Mb_StageUnlockManager] Stage {nextStage} is beyond MaxAvailableStage " +
+                      $"({MaxAvailableStage}) — skipping unlock for this build.");
             return;
         }
 
