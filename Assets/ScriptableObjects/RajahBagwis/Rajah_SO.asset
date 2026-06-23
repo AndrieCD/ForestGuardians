@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Guardian
   GuardianID: 0
   CharacterName: Rajah Bagwis
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 408170c220b00f54f8dfc3385a74bb06, type: 3}
   ModelPrefab: {fileID: 0}
   GuardianArchetype1: Melee Duelist
   GuardianArchetype2: Ranged Sharpshooter

@@ -33,6 +33,7 @@ public class Mb_PauseMenuUI : MonoBehaviour
     public void OnGiveUpClicked()
     {
         // TODO: Show confirmation panel first
+        Mb_PauseManager.Instance.SetPause(false);
 
         // Go back to main menu
         SceneLoader.Instance.LoadMainMenu();

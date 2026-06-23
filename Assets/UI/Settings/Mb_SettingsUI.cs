@@ -141,7 +141,9 @@ public class Mb_SettingsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.OnGameStateChanged += OnGameStateChanged;
+        //GameManager.Instance.OnGameStateChanged += OnGameStateChanged;
+
+        Mb_PauseManager.OnResumed += () => gameObject.SetActive(false);
 
         // Refresh controls from the current saved/working state every time the panel opens
         Initialize();
@@ -149,6 +151,7 @@ public class Mb_SettingsUI : MonoBehaviour
 
     private void OnGameStateChanged(GameState obj)
     {
+        if (gameObject == null) return;
         if (obj != GameState.Paused)
         {
             // Close settings if we leave the Paused state — prevents weird edge cases

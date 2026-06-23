@@ -49,6 +49,8 @@ public class GameManager : MonoBehaviour
         OnGameStateChanged?.Invoke(newState);
 
         HandleMouseVisibilityAndLock(newState);
+
+        Debug.Log($"[GameManager] {CurrentState}");
     }
 
     private void HandleMouseVisibilityAndLock(GameState state)

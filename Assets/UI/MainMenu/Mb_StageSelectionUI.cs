@@ -141,16 +141,16 @@ public class Mb_StageSelectionUI : MonoBehaviour
         // Index 0 = Stage 1, 1 = Stage 2, 2 = Stage 3, 3 = Tutorial — matches StageDetails[].
         _stageGems = new Mb_StageGemNode[] { GemStage1, GemStage2, GemStage3, GemTutorial };
 
-        // Validate gem references so missing assignments surface immediately
-        for (int i = 0; i < _stageGems.Length; i++)
-        {
-            if (_stageGems[i] == null)
-                Debug.LogError($"[Mb_StageSelectionUI] GemStage{i + 1} is not assigned " +
-                               "in the Inspector.");
-        }
+        //// Validate gem references so missing assignments surface immediately
+        //for (int i = 0; i < _stageGems.Length; i++)
+        //{
+        //    if (_stageGems[i] == null)
+        //        Debug.LogError($"[Mb_StageSelectionUI] GemStage{i + 1} is not assigned " +
+        //                       "in the Inspector.");
+        //}
 
-        if (SelectStageButton == null)
-            Debug.LogError("[Mb_StageSelectionUI] SelectStageButton is not assigned.");
+        //if (SelectStageButton == null)
+        //    Debug.LogError("[Mb_StageSelectionUI] SelectStageButton is not assigned.");
 
         if (MainMenuController == null)
             Debug.LogError("[Mb_StageSelectionUI] MainMenuController is not assigned.");
