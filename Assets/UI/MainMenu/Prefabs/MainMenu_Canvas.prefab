@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6285464588997608186}
   - component: {fileID: 6885712088501892896}
   - component: {fileID: 1215873600568090218}
-  - component: {fileID: 3256484924898510072}
   m_Layer: 5
   m_Name: MainMenu_Canvas
   m_TagString: Untagged
@@ -107,23 +106,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3256484924898510072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2445422054956494309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60f5b2a3082d76749a6fa374a4201811, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  MainMenuCanvas: {fileID: 0}
-  StageSelectionCanvas: {fileID: 0}
-  GuardianSelectionCanvas: {fileID: 0}
-  AlmanacCanvas: {fileID: 0}
-  CharactersCanvas: {fileID: 0}
 --- !u!1 &2599875241679571511
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,8 +145,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.63481236, y: 0.22940744}
   m_AnchorMax: {x: 0.9374376, y: 0.40462965}
-  m_AnchoredPosition: {x: -9, y: 3}
-  m_SizeDelta: {x: 19, y: 11}
+  m_AnchoredPosition: {x: -58.88, y: 200}
+  m_SizeDelta: {x: 88.1785, y: -9.1771}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8051739364308159736
 CanvasRenderer:
@@ -218,8 +200,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3256484924898510072}
-        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Mb_MainMenuController, Assembly-CSharp
         m_MethodName: OnAlmanacClicked
         m_Mode: 1
         m_Arguments:
@@ -852,7 +834,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4609480085657731340
 RectTransform:
   m_ObjectHideFlags: 0
@@ -870,8 +852,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.63481236, y: 0.4628889}
   m_AnchorMax: {x: 0.9374376, y: 0.6351111}
-  m_AnchoredPosition: {x: -9, y: 4}
-  m_SizeDelta: {x: 19, y: 14}
+  m_AnchoredPosition: {x: -34.44, y: -27.433}
+  m_SizeDelta: {x: 68.88, y: -27.4327}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1941794873070561016
 CanvasRenderer:
@@ -925,7 +907,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3256484924898510072}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
         m_MethodName: OnGuardiansClicked
         m_Mode: 1
@@ -1255,8 +1237,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3256484924898510072}
-        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Mb_MainMenuController, Assembly-CSharp
         m_MethodName: OnPlayClicked
         m_Mode: 1
         m_Arguments:
@@ -1457,7 +1439,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3256484924898510072}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
         m_MethodName: OnQuitClicked
         m_Mode: 1
