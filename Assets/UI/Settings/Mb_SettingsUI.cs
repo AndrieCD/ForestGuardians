@@ -141,12 +141,19 @@ public class Mb_SettingsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        //GameManager.Instance.OnGameStateChanged += OnGameStateChanged;
-
-        Mb_PauseManager.OnResumed += () => gameObject?.SetActive(false);
-
-        // Refresh controls from the current saved/working state every time the panel opens
+        Mb_PauseManager.OnResumed += HandleResumed;
         Initialize();
+    }
+
+    private void OnDisable()
+    {
+        Mb_PauseManager.OnResumed -= HandleResumed;
+    }
+
+    // Named handler — can be unsubscribed cleanly, unlike an anonymous lambda
+    private void HandleResumed()
+    {
+        gameObject.SetActive(false);
     }
 
     private void OnGameStateChanged(GameState obj)

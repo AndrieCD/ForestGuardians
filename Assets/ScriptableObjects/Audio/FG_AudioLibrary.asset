@@ -15,7 +15,7 @@ MonoBehaviour:
   MusicTracks:
   - Track: 2
     Clip: {fileID: 8300000, guid: 796cbfa19ecdd5743967e74a315b1dad, type: 3}
-    DefaultVolume: 1
+    DefaultVolume: 0.6
   - Track: 1
     Clip: {fileID: 8300000, guid: a5c07d674e7368b4ea1d1a7ec71105be, type: 3}
     DefaultVolume: 1
