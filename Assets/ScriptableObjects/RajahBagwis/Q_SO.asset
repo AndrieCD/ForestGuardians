@@ -19,12 +19,12 @@ MonoBehaviour:
     Gain
     a shield for each enemy hit.'
   Cooldown:
-  - 10
-  - 8
-  - 7
+  - 9
   - 7
   - 6
-  - 4
+  - 6
+  - 5
+  - 3
   ProjectileData: {fileID: 0}
   MaxLevel: 6
   ScalingStats:
@@ -47,12 +47,12 @@ MonoBehaviour:
     - 1.5
   - StatName: Shield
     BaseValuePerLevel:
-    - 250
-    - 300
-    - 350
-    - 450
-    - 500
-    - 700
+    - 550
+    - 600
+    - 650
+    - 750
+    - 800
+    - 100
     ATKScalingPerLevel:
     - 0
     APScalingPerLevel:

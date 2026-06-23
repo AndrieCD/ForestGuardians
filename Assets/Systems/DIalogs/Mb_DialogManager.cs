@@ -12,17 +12,12 @@
 //     is called with the matching key. ContinueIndicator shown during this wait.
 //   - Pause-safe: AudioSource paused/resumed via Mb_PauseManager events.
 //   - Visibility: panel shown only during Playing and Paused game states.
-//   - Gap between lines: a short configurable delay separates each dialog so
-//     back-to-back lines don't feel like they are running together.
 //
 // INSPECTOR SETUP:
 //   - DialogUI: drag the child DialogPanel GameObject (which has Mb_DialogUI on it).
 //   - FallbackDismissDuration: seconds to wait before auto-dismiss when VoiceClip is null.
 //     TODO: 3f is a reasonable starting point — tune per dialog pacing.
-//   - LinePause: seconds of silence between consecutive dialog lines.
-//     TODO: 0.6f feels like a natural breath between lines — tune to taste.
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,19 +46,11 @@ public class Mb_DialogManager : MonoBehaviour
     [Tooltip("The child DialogPanel GameObject that has Mb_DialogUI on it.")]
     [SerializeField] private Mb_DialogUI _DialogUI;
 
-    [Header("Timing")]
+    [Header("Fallback")]
     [Tooltip("Seconds before auto-dismiss when a dialog has no VoiceClip assigned. " +
              "Does not apply to tutorial instructions — those always wait for CompleteInstruction().")]
     // TODO: Tune this value — 3f is a safe starting point for average-length dialog lines.
     [SerializeField] private float _FallbackDismissDuration = 3f;
-
-    // *** NEW ***
-    [Tooltip("Seconds of silence between consecutive dialog lines. " +
-             "The panel hides during this gap so each line feels distinct. " +
-             "Set to 0 to disable the gap entirely.")]
-    // TODO: 0.6f is a comfortable breath between lines. Raise to 1f for a more
-    // cinematic feel, lower to 0.3f if the pacing feels too slow.
-    [SerializeField] private float _LinePause = 0.6f;
 
     #endregion                  //----------------------------------------
 
@@ -94,16 +81,6 @@ public class Mb_DialogManager : MonoBehaviour
     // Whether dialog panel should be visible at all in the current game state
     private bool _panelAllowed = false;
 
-    // *** NEW ***
-    // Handle for the gap coroutine so we can cancel it cleanly if ClearAll() is called
-    // mid-gap — prevents the next dialog from playing after a forced clear.
-    private Coroutine _linePauseCoroutine = null;
-
-    // *** NEW ***
-    // True while the gap coroutine is running — blocks TryPlayNext() from firing
-    // a second time during the pause window.
-    private bool _inLinePause = false;
-
     #endregion                  //----------------------------------------
 
 
@@ -111,6 +88,7 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void Start()
     {
+        // Fetch AudioSource on this GameObject — must be added in the Inspector
         _audioSource = GetComponent<AudioSource>();
 
         if (_audioSource == null)
@@ -120,6 +98,7 @@ public class Mb_DialogManager : MonoBehaviour
         if (_DialogUI == null)
             Debug.LogError("[Mb_DialogManager] DialogUI is not assigned in the Inspector.");
 
+        // Start hidden — UpdatePanelVisibility will show it when state allows
         _DialogUI?.Hide();
     }
 
@@ -130,6 +109,9 @@ public class Mb_DialogManager : MonoBehaviour
         Mb_PauseManager.OnResumed += HandleResume;
         GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
 
+
+        // On Scene load (dialog manager is not active yet when state is changed to playing
+        // explicit gamestatechaned here
         HandleGameStateChanged(GameState.Playing);
     }
 
@@ -139,6 +121,7 @@ public class Mb_DialogManager : MonoBehaviour
         Mb_PauseManager.OnPaused -= HandlePause;
         Mb_PauseManager.OnResumed -= HandleResume;
 
+        // Guard: GameManager may already be destroyed on scene teardown
         if (GameManager.Instance != null)
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
     }
@@ -146,13 +129,17 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void Update()
     {
+        // Only poll when a dialog is active — keeps Update() free otherwise
         if (!_dialogActive) return;
 
         // --- Fallback timer path (no VoiceClip) ---
         if (_usingFallbackTimer)
         {
+            // Tutorial instructions ignore the fallback timer — they always
+            // wait for CompleteInstruction() regardless of clip presence
             if (_activeDialog != null && _activeDialog.IsTutorialInstruction)
             {
+                // Switch to waiting-for-completion mode immediately
                 _usingFallbackTimer = false;
                 EnterWaitForCompletion();
                 return;
@@ -169,14 +156,17 @@ public class Mb_DialogManager : MonoBehaviour
         // --- AudioSource polling path ---
         if (_audioSource == null) return;
 
+        // Audio has finished playing
         if (!_audioSource.isPlaying && _dialogActive && !_waitingForCompletion)
         {
             if (_activeDialog != null && _activeDialog.IsTutorialInstruction)
             {
+                // Audio done but this is a tutorial instruction — wait for the player
                 EnterWaitForCompletion();
             }
             else
             {
+                // Normal dialog — dismiss as soon as audio ends
                 DismissActive();
             }
         }
@@ -187,6 +177,10 @@ public class Mb_DialogManager : MonoBehaviour
 
     #region Public API          //----------------------------------------
 
+    /// <summary>
+    /// Enqueues a single dialog. Plays immediately if nothing is active.
+    /// Safe to call while another dialog is playing — it will wait in the queue.
+    /// </summary>
     public void EnqueueDialog(SO_Dialog dialog)
     {
         if (dialog == null)
@@ -200,6 +194,10 @@ public class Mb_DialogManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Enqueues all dialogs in a sequence in order.
+    /// Safe to call while another dialog is playing.
+    /// </summary>
     public void EnqueueSequence(SO_DialogSequence sequence)
     {
         if (sequence == null)
@@ -221,29 +219,30 @@ public class Mb_DialogManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Fires a completion event by key.
+    /// If the active dialog is a tutorial instruction with a matching CompletionEventKey,
+    /// it is dismissed immediately. Otherwise the call is silently ignored.
+    /// </summary>
     public void CompleteInstruction(string eventKey)
     {
         if (!_waitingForCompletion) return;
         if (_activeDialog == null) return;
 
         if (_activeDialog.CompletionEventKey == eventKey)
+        {
             DismissActive();
+        }
     }
 
 
+    /// <summary>
+    /// Immediately clears the active dialog and empties the queue.
+    /// Use on scene transitions or stage end.
+    /// </summary>
     public void ClearAll()
     {
         _queue.Clear();
-
-        // *** NEW ***
-        // Cancel any in-flight gap coroutine so the next dialog does not
-        // play after a forced clear — e.g. on scene transition or stage end.
-        if (_linePauseCoroutine != null)
-        {
-            StopCoroutine(_linePauseCoroutine);
-            _linePauseCoroutine = null;
-        }
-        _inLinePause = false;
 
         if (_dialogActive)
             ForceStopActive();
@@ -254,15 +253,11 @@ public class Mb_DialogManager : MonoBehaviour
 
     #region Playback Internals  //----------------------------------------
 
+    // Starts the next queued dialog if nothing is currently active.
     private void TryPlayNext()
     {
         // Already showing something — let it finish naturally
         if (_dialogActive) return;
-
-        // *** NEW ***
-        // A gap coroutine is running between lines — let it finish.
-        // The coroutine will call TryPlayNext() itself when the pause expires.
-        if (_inLinePause) return;
 
         if (_queue.Count == 0) return;
 
@@ -271,6 +266,7 @@ public class Mb_DialogManager : MonoBehaviour
     }
 
 
+    // Activates a dialog: populates UI, plays audio, starts dismiss logic.
     private void PlayDialog(SO_Dialog dialog)
     {
         _activeDialog = dialog;
@@ -279,9 +275,11 @@ public class Mb_DialogManager : MonoBehaviour
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
 
+        // Show UI only if the current game state permits it
         if (_panelAllowed)
             _DialogUI?.Show(dialog);
 
+        // Play voice clip if one is provided
         if (_audioSource != null)
         {
             _audioSource.Stop();
@@ -293,6 +291,8 @@ public class Mb_DialogManager : MonoBehaviour
             }
             else
             {
+                // No clip — use fallback timer unless it's a tutorial instruction,
+                // which transitions to wait-for-completion in Update()
                 if (!dialog.IsTutorialInstruction)
                 {
                     _usingFallbackTimer = true;
@@ -300,6 +300,7 @@ public class Mb_DialogManager : MonoBehaviour
                 }
                 else
                 {
+                    // Tutorial instruction with no clip — go straight to waiting
                     EnterWaitForCompletion();
                 }
             }
@@ -307,13 +308,18 @@ public class Mb_DialogManager : MonoBehaviour
     }
 
 
+    // Transitions a tutorial instruction into the "waiting for player action" state.
+    // Called when audio ends (or immediately if no clip) on an IsTutorialInstruction dialog.
     private void EnterWaitForCompletion()
     {
         _waitingForCompletion = true;
+
+        // Show the continue indicator so the player knows they need to act
         _DialogUI?.SetContinueIndicatorVisible(true);
     }
 
 
+    // Dismisses the active dialog and tries to play the next one.
     private void DismissActive()
     {
         _activeDialog = null;
@@ -325,39 +331,12 @@ public class Mb_DialogManager : MonoBehaviour
         _audioSource?.Stop();
         _DialogUI?.Hide();
 
-        // *** NEW ***
-        // Insert a gap before the next line instead of chaining immediately.
-        // If _LinePause is zero or negative, skip straight to the next line —
-        // this makes it easy to disable the gap without changing code.
-        if (_LinePause > 0f && _queue.Count > 0)
-        {
-            _linePauseCoroutine = StartCoroutine(LinePauseRoutine());
-        }
-        else
-        {
-            TryPlayNext();
-        }
-    }
-
-
-    // *** NEW ***
-    // Waits _LinePause seconds with the panel hidden, then plays the next line.
-    // Using WaitForSecondsRealtime so the gap survives Time.timeScale changes —
-    // though dialog typically only plays while unpaused.
-    // If you want the gap to freeze during pause, swap to WaitForSeconds instead.
-    private IEnumerator LinePauseRoutine()
-    {
-        _inLinePause = true;
-
-        yield return new WaitForSeconds(_LinePause);
-
-        _inLinePause = false;
-        _linePauseCoroutine = null;
-
+        // Chain to the next dialog in the queue if one is waiting
         TryPlayNext();
     }
 
 
+    // Hard stop with no chaining — used by ClearAll().
     private void ForceStopActive()
     {
         _activeDialog = null;
@@ -377,6 +356,7 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void HandlePause()
     {
+        // Pause the voice clip in place — it will resume from the same position
         if (_audioSource != null && _audioSource.isPlaying)
             _audioSource.Pause();
     }
@@ -384,6 +364,7 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void HandleResume()
     {
+        // Resume only if a dialog is active and had a clip playing
         if (_audioSource != null && _dialogActive && !_waitingForCompletion)
             _audioSource.UnPause();
     }
@@ -391,12 +372,13 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
-        _panelAllowed = newState == GameState.Playing
-                     || newState == GameState.Paused
-                     || newState == GameState.RewardsPanel;
+        // Dialog panel is visible during Playing and Paused only
+        _panelAllowed = newState == GameState.Playing || newState == GameState.Paused || newState == GameState.RewardsPanel;
 
         if (_dialogActive)
         {
+            // Show or hide the panel based on whether the state allows it,
+            // but don't dismiss — the dialog keeps its position in playback
             if (_panelAllowed)
                 _DialogUI?.Show(_activeDialog);
             else

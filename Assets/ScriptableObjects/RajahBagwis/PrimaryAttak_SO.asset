@@ -25,6 +25,6 @@ MonoBehaviour:
     BaseValuePerLevel:
     - 0
     ATKScalingPerLevel:
-    - 1
+    - 1.15
     APScalingPerLevel:
     - 0

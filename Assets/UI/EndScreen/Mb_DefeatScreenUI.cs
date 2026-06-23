@@ -77,6 +77,10 @@ public class Mb_DefeatScreenUI : Mb_EndScreenUI
         // until defeat is actually triggered.
         gameObject.SetActive(true);
 
+
+        Mb_AudioManager.PlayUI(UISFX.UI_StageDefeat);
+
+
         // Populate the message before the fade completes so text is ready the moment
         // it becomes visible — no pop-in delay.
         if (_DefeatMessageText != null)

@@ -90,6 +90,9 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
     {
         gameObject.SetActive(true);
 
+        Mb_AudioManager.PlayUI(UISFX.UI_StageClear);
+
+
         // Populate the message before the fade so it is ready the moment it becomes visible.
         if (_VictoryMessageText != null)
             _VictoryMessageText.text = message;

@@ -24,7 +24,7 @@ MonoBehaviour:
   CriticalChance: 0
   CriticalDamage: 1.5
   LifeSteal: 0
-  MaxHealthScaling: 0.45
+  MaxHealthScaling: 0.5
   HealthRegenScaling: 0
   MoveSpeedScaling: 0
   AttackSpeedScaling: 0
