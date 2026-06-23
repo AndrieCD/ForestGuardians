@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 9
   Population: Population trend remains uncertain
   Habitat: Montane forests of northern Luzon
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 7a6ec656159bd5e4e812e4cd41553dbf, type: 2}

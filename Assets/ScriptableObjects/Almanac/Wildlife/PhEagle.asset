@@ -34,4 +34,4 @@ MonoBehaviour:
   AcceptedHabitats: 6
   Population: 180-500
   Habitat: 'Old-growth tropical forests '
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 9016b54406b63644e944d4a2e3f6bc02, type: 2}

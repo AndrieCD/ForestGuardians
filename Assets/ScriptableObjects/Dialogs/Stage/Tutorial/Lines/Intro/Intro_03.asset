@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Intro_03
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
-  DialogText: Before you face them, you must know what you are capable of. I have
-    asked Dudong to show you the way.
-  VoiceClip: {fileID: 0}
+  DialogText: They move in waves. They are relentless. They will not stop.
+  VoiceClip: {fileID: 8300000, guid: cb7ab7357becba14d81b89360766cef9, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

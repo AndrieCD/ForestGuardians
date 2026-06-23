@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Minny_01
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 21300000, guid: 73f2b1bca2b06134f82f2cb95ca3d0b5, type: 3}
+  Portrait: {fileID: 21300000, guid: d5f70654288a35b46aec2bd3ce70daaf, type: 3}
   SpeakerName: Dudong
   DialogText: "Minny is here \u2014 slow, but incredibly durable. Do not try to burst
     it down. Go straight to the CuBots that are taking cover behind it."

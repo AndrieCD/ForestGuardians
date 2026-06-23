@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 6
   Population: Believed to be stable
   Habitat: Lowland and secondary forests of Mindanao
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: d31419dd8881f1a4d8ca06367116fbf3, type: 2}

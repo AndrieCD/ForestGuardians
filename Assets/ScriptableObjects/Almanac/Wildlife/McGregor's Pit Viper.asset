@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 1
   Population: Limited to small island populations
   Habitat: Forest vegetation and shrublands of Batanes
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: d2cf45ba2ad6509419cfa0de865ce196, type: 2}

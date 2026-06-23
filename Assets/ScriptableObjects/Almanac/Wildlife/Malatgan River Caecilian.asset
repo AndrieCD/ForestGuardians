@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 8
   Population: Currently unknown, but declining
   Habitat: Forests and wetlands of Palawan
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 6e275d10a575d8f468a1f9e29435cefc, type: 2}

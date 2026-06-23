@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: StageStart_01
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
   DialogText: "Guardian. They are already moving through the trees \u2014 the CuBots
     have found Talihaya. They will not stop. Not until there is nothing left to take."

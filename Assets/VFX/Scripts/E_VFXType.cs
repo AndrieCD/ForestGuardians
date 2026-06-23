@@ -161,4 +161,7 @@ public enum VFXType
     Burn_Vignette,
     Poison_Vignette,
     Guardian_LowHP_Vignette,    // Looping red pulse on the camera — started/stopped by threshold
+
+
+    Almanac_Collected,
 }

@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 1
   Population: 220-300
   Habitat: Forest, Shrubland, Grassland
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 3f5bdcdbfc7ec3e439774a12e9cd9175, type: 2}

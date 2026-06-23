@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 2
   Population: Rare and restricted to Panay Island
   Habitat: 'Forests of Panay. '
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: fe9b9607bdbcba94abfb71c00fbadb26, type: 2}

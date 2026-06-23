@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Move_03
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: d5f70654288a35b46aec2bd3ce70daaf, type: 3}
   SpeakerName: Dudong
   DialogText: "Start by moving around \u2014 use WASD. Get a feel for where you are."
   VoiceClip: {fileID: 8300000, guid: 78c291b91c95ee443b29d30b6a09c634, type: 3}

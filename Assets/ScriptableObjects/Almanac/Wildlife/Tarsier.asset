@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 2
   Population: Declining in parts of its range
   Habitat: Primary and secondary forests
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 05d7e10e4bf91b241bb97fbff3ff3744, type: 2}

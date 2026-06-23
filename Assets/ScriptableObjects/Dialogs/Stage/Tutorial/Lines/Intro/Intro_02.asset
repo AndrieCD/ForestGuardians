@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Intro_02
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
-  DialogText: "The machines that threaten this land are called CuBots. They come
-    in waves \u2014 relentless, cold, and hungry for what grows here."
-  VoiceClip: {fileID: 0}
+  DialogText: "Our enemies have found us. The CuBots \u2014 machines built to strip
+    and consume \u2014 have broken through into Talihaya."
+  VoiceClip: {fileID: 8300000, guid: 2dfbd581533b6f742b9b1922080057f8, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

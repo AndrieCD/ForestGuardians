@@ -34,4 +34,4 @@ MonoBehaviour:
   AcceptedHabitats: 8
   Population: Extremely rare, no data available
   Habitat: Freshwater streams, wetlands, and forests
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: f1797ab8fb5be2249bd2f52a2d0c0426, type: 2}

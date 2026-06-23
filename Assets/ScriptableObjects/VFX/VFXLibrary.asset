@@ -78,6 +78,10 @@ MonoBehaviour:
     Prefab: {fileID: 6299658623613784175, guid: 92d78c3c76febf94487317a0b108ed1b, type: 3}
     Lifetime: 4
     PoolSize: 10
+  - Type: 67
+    Prefab: {fileID: 4626061957930869540, guid: ea779a7d806664a4699219f1f370de62, type: 3}
+    Lifetime: 1
+    PoolSize: 2
   FootstepVFX:
   - Type: 57
     Prefab: {fileID: 1817986171443504903, guid: c13ecec396318c444a728dfdd167af08, type: 3}

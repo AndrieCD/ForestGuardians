@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Widlife_0 1
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
   DialogText: "The CuBots did not only threaten the Panoharra. The animals of Talihaya
     who took refuge here\u2014 had scattered from fear. The chaos drove them away
     and they are now missing."
-  VoiceClip: {fileID: 8300000, guid: 41b369d31d4affa4cb2d7477e8110fd7, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 156c2824f6414b340a91411406c0004d, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

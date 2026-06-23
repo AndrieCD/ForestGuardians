@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 8
   Population: 92-137
   Habitat: Freshwater rivers, marshes, ponds, and wetlands
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: aa34de090d7e59648a25052792a100d6, type: 2}

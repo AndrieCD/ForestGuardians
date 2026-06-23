@@ -715,6 +715,7 @@ GameObject:
   - component: {fileID: 6156228166698820880}
   - component: {fileID: 8547592411285692237}
   - component: {fileID: 4015477302748956092}
+  - component: {fileID: 8070277022970669749}
   m_Layer: 5
   m_Name: LeftCard
   m_TagString: Untagged
@@ -838,6 +839,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8070277022970669749}
+        m_TargetAssemblyTypeName: Mb_UIAudioTrigger, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8070277022970669749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4971402440595790720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10da5c230aa6e3947a3e5f7f431b13aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_UIAudioTrigger
+  _OnClickSFX: 7
+  _OnHoverSFX: 3
+  _HasOpenSound: 0
+  _OnOpenSFX: 6
 --- !u!1 &5060273369640457653
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,6 +1309,7 @@ GameObject:
   - component: {fileID: 5188143683126071857}
   - component: {fileID: 5496210369477601279}
   - component: {fileID: 8506346670080677247}
+  - component: {fileID: 3881782016121490787}
   m_Layer: 5
   m_Name: RightCard
   m_TagString: Untagged
@@ -1403,6 +1433,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6937107188762544582}
+        m_TargetAssemblyTypeName: Mb_RewardsPanelUI, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3881782016121490787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6937107188762544582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10da5c230aa6e3947a3e5f7f431b13aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_UIAudioTrigger
+  _OnClickSFX: 7
+  _OnHoverSFX: 3
+  _HasOpenSound: 0
+  _OnOpenSFX: 6
 --- !u!1 &8840931209563145444
 GameObject:
   m_ObjectHideFlags: 0

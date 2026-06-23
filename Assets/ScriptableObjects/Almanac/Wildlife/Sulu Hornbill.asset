@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 6
   Population: 1-49
   Habitat: Lowland forests
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: 34e2c87f8058be74580bb1ee2986732f, type: 2}

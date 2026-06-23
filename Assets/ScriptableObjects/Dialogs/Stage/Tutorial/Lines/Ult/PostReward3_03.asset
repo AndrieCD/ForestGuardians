@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: PostReward3_03
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: d5f70654288a35b46aec2bd3ce70daaf, type: 3}
   SpeakerName: Dudong
   DialogText: "Three more are coming. Use your ultimate \u2014 R. See what it does."
   VoiceClip: {fileID: 8300000, guid: c9de497d550aabf4ca65bf1a1626412b, type: 3}

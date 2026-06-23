@@ -736,6 +736,8 @@ GameObject:
   - component: {fileID: 441286183}
   - component: {fileID: 441286185}
   - component: {fileID: 441286184}
+  - component: {fileID: 441286186}
+  - component: {fileID: 441286187}
   m_Layer: 0
   m_Name: StageManagerScripts
   m_TagString: Untagged
@@ -959,7 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6378152782bc02149960a572d086901e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StageDialogBinder
-  StageStartSequence: {fileID: 11400000, guid: 25ae250c568fb614c962967469a5868b, type: 2}
+  StageStartSequence: {fileID: 11400000, guid: 464d941a06681ea4b9ac361fb514704c, type: 2}
   Delay: 1
 --- !u!114 &441286185
 MonoBehaviour:
@@ -974,9 +976,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_WaveDialogBinder
   WaveDialogs:
-  - WaveIndex: 0
-    Trigger: 1
+  - WaveIndex: 2
+    Trigger: 0
+    Sequence: {fileID: 11400000, guid: 16cc786a92209e845b5070800673ce52, type: 2}
+  - WaveIndex: 9
+    Trigger: 0
+    Sequence: {fileID: 11400000, guid: 8c407ecded7f8714f83fb776769520ba, type: 2}
+--- !u!114 &441286186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441286174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 523023e8447858e4e8052ccc50b1dde1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_EnemyTypeDialogBinder
+  EnemyDialogs:
+  - EnemyPrefabName: Chopper
     Sequence: {fileID: 11400000, guid: ec207a1274643a344a21da1e39539097, type: 2}
+  - EnemyPrefabName: Hunter
+    Sequence: {fileID: 11400000, guid: 4b32f79eb7e1f40468e6ac275c0efa43, type: 2}
+  - EnemyPrefabName: Minny
+    Sequence: {fileID: 11400000, guid: 497d4536ce20959438156396f1b88089, type: 2}
+  - EnemyPrefabName: Bernie
+    Sequence: {fileID: 11400000, guid: 662b442e621d2924b9ec66d8cc1a9738, type: 2}
+--- !u!114 &441286187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441286174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53c7f298b239a5e49800c1a4518ec664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeDialogBinder
 --- !u!224 &446464490 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2064517062931066413, guid: 47a37a7841ea2344088eeccafc82c1a5, type: 3}
@@ -4828,6 +4866,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VictoryScreenCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4682771139423572835, guid: a2845d733158c5a449f7262ad3386a97, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7873027204557874192, guid: a2845d733158c5a449f7262ad3386a97, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -6292,10 +6334,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD_Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4041607627270859877, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4347244177226938432, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -6375,18 +6413,6 @@ PrefabInstance:
     - target: {fileID: 4347244177226938432, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4702367162515863972, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8677672112590769424, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 5.8930817
-      objectReference: {fileID: 0}
-    - target: {fileID: 8677672112590769424, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.28753662
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

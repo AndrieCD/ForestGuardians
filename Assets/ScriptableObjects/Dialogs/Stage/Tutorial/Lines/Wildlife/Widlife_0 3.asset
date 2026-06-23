@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Widlife_0 3
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
   DialogText: "Seek them out as you fight. Hold your gaze on them \u2014 let them
     know you are not a threat. And in return, they will offer/ you something valuable."
-  VoiceClip: {fileID: 8300000, guid: 41b369d31d4affa4cb2d7477e8110fd7, type: 3}
+  VoiceClip: {fileID: 8300000, guid: aca350f30fd9d0c4996d2d7f09f9418f, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

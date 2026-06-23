@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Chopper_01
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 21300000, guid: 73f2b1bca2b06134f82f2cb95ca3d0b5, type: 3}
+  Portrait: {fileID: 21300000, guid: d5f70654288a35b46aec2bd3ce70daaf, type: 3}
   SpeakerName: Dudong
   DialogText: "The first of them is here \u2014 that\u2019s Chopper. Fast, reckless,
     and it will chop everything in its path to reach the Panoharra."

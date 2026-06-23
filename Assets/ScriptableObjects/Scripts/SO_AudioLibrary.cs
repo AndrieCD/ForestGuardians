@@ -93,6 +93,8 @@ public enum EnvironmentSFX
     Guardian_Footstep_Water,
     Guardian_Jump_Generic,
     Guardian_Land_Generic,
+
+    Almanac_Collected,
 }
 
 public enum UISFX

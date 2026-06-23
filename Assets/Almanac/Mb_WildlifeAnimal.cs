@@ -47,6 +47,8 @@ public class Mb_WildlifeAnimal : MonoBehaviour
     // TODO: Confirm this naming convention with whoever builds the prefabs.
     private const string VFX_CHILD_NAME = "VFX";
 
+    private bool _isQuestSpecies = false;
+
     #endregion                          //----------------------------------------
 
 
@@ -134,8 +136,7 @@ public class Mb_WildlifeAnimal : MonoBehaviour
         _gazeTimer = 0f;
         _isCollected = false;
 
-        if (GazeProgressBar != null)
-            GazeProgressBar.fillAmount = 0f;
+        _isQuestSpecies = isQuestSpecies;
     }
 
     #endregion                          //----------------------------------------
@@ -158,6 +159,8 @@ public class Mb_WildlifeAnimal : MonoBehaviour
 
     #region Gaze Detection              //----------------------------------------
 
+    // REPLACE the existing UpdateGaze() method with this:
+
     private void UpdateGaze()
     {
         // Fire a ray from the camera's screen center (crosshair position)
@@ -175,16 +178,15 @@ public class Mb_WildlifeAnimal : MonoBehaviour
                 isBeingGazedAt = true;
         }
 
+        if (!_isQuestSpecies) return;
         if (isBeingGazedAt)
         {
             // Accumulate gaze time — unscaled so pause doesn't affect it
             // TODO: Switch to Time.deltaTime if pausing should halt gaze progress
             _gazeTimer += Time.deltaTime;
 
-            // Update the optional progress bar fill
-            if (GazeProgressBar != null)
-                GazeProgressBar.fillAmount =
-                    Mathf.Clamp01(_gazeTimer / Entry.GazeDuration);
+            // Report progress to the shared ring UI — it shows itself automatically
+            Mb_GazeProgressUI.Instance?.ReportGaze(_gazeTimer / Entry.GazeDuration);
 
             // Check if the player has held gaze long enough
             if (_gazeTimer >= Entry.GazeDuration)
@@ -196,9 +198,7 @@ public class Mb_WildlifeAnimal : MonoBehaviour
             if (_gazeTimer > 0f)
             {
                 _gazeTimer = 0f;
-
-                if (GazeProgressBar != null)
-                    GazeProgressBar.fillAmount = 0f;
+                Mb_GazeProgressUI.Instance?.HideRing();
             }
         }
     }
@@ -218,9 +218,8 @@ public class Mb_WildlifeAnimal : MonoBehaviour
         // Deactivate VFX — animal stays visible but no longer glows/pulses
         _vfxChild?.SetActive(false);
 
-        // Clear the progress bar
-        if (GazeProgressBar != null)
-            GazeProgressBar.fillAmount = 0f;
+        Mb_GazeProgressUI.Instance?.HideRing();
+
 
         // Vacate the spawn point so it's marked available for future use
         // (relevant if a system ever wants to respawn animals — not currently planned)
@@ -233,10 +232,13 @@ public class Mb_WildlifeAnimal : MonoBehaviour
         // Suggested: Mb_VFXManager.Instance.PlayAtPosition("WildlifeCollect",
         //                transform.position)
         // Or activate a second child VFX named "CollectVFX" for a burst effect
+        Mb_VFXManager.Play(VFXType.Almanac_Collected, transform.position);
+
 
         // TODO: Play collection SFX here
         // Suggested: Mb_AudioManager.Instance.PlaySFX("WildlifeCollect")
         // Or use a species-specific sound keyed by entry.CommonName
+        Mb_AudioManager.PlayEnvironmentSFX(EnvironmentSFX.Almanac_Collected, transform.position);
 
         Debug.Log($"[Mb_WildlifeAnimal] '{Entry.CommonName}' collected " +
                   $"at {transform.position}.");

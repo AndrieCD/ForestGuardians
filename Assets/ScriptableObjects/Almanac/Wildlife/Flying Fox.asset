@@ -33,4 +33,4 @@ MonoBehaviour:
   AcceptedHabitats: 2
   Population: Declining throughout its range
   Habitat: Lowland forests and mangrove areas
-  DiscoverySequence: {fileID: 0}
+  DiscoverySequence: {fileID: 11400000, guid: ddd54176d1813044198d5fbf469fc50e, type: 2}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Tarsier_01
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 8cacde2158aa57847b04f63956f4ce01, type: 3}
   SpeakerName: Almanac
   DialogText: "The Philippine Tarsier. One of the smallest primates in the world
     \u2014 and those eyes are not just for show. They give it perfect night vision
