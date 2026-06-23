@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c287966c8d1683448d07b73c239f8b0, type: 3}
   m_Name: Wave7Sequence
   m_EditorClassIdentifier: Assembly-CSharp::SO_DialogSequence
-  Dialogs: []
+  Dialogs:
+  - {fileID: 11400000, guid: 2b5c6d987f63c904cbd18f0e71cfea09, type: 2}

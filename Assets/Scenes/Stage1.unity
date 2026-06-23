@@ -982,6 +982,12 @@ MonoBehaviour:
   - WaveIndex: 9
     Trigger: 0
     Sequence: {fileID: 11400000, guid: 8c407ecded7f8714f83fb776769520ba, type: 2}
+  - WaveIndex: 6
+    Trigger: 0
+    Sequence: {fileID: 11400000, guid: c3c3af4ebedc9c64eafbacc0331507e2, type: 2}
+  - WaveIndex: 14
+    Trigger: 0
+    Sequence: {fileID: 11400000, guid: c90c5db3579d5dd41b1f69a360210e27, type: 2}
 --- !u!114 &441286186
 MonoBehaviour:
   m_ObjectHideFlags: 0

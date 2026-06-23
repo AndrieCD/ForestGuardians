@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
   m_Name: Wave7_01
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
-  Portrait: {fileID: 0}
-  SpeakerName: 
-  DialogText: 
-  VoiceClip: {fileID: 0}
+  Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
+  SpeakerName: Diya
+  DialogText: "Guardian\u2014 remember to seek out the missing animals of Talihaya.
+    Just hold your gaze on them to let them know you mean no harm"
+  VoiceClip: {fileID: 8300000, guid: e859fece0a2513947933ee5b60786433, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 
