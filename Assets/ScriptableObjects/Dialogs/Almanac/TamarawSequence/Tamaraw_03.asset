@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
+  m_Name: Tamaraw_03
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
+  Portrait: {fileID: 0}
+  SpeakerName: Almanac
+  DialogText: "It has become a symbol of what we stand to lose \u2014 and what we
+    are still fighting to keep."
+  VoiceClip: {fileID: 8300000, guid: a18b97e8bf064dd49b539283efe39fd5, type: 3}
+  IsTutorialInstruction: 0
+  CompletionEventKey: 

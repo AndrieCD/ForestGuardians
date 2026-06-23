@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
+  m_Name: Eagle_03
+  m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
+  Portrait: {fileID: 0}
+  SpeakerName: Almanac
+  DialogText: But due to deforestation and hunting, the Philippine Eagle has been
+    brought to the edge with only 180 to 500 remaining in the wild
+  VoiceClip: {fileID: 8300000, guid: d864b3224518c7245aebcb72657a688f, type: 3}
+  IsTutorialInstruction: 0
+  CompletionEventKey: 
