@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Diya
-  DialogText: Go. The first wave is already on its way.
-  VoiceClip: {fileID: 0}
+  DialogText: Thank you, Dudong.
+  VoiceClip: {fileID: 8300000, guid: 9fa8ff8dba1cd684bb410e430cf1e708, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

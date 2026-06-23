@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Good. Movement, attacks, abilities \u2014 you have the foundation."
-  VoiceClip: {fileID: 0}
+  DialogText: "Okay. That is the foundation. It is not much time to prepare, I know
+    \u2014 I am sorry about that."
+  VoiceClip: {fileID: 8300000, guid: 02dbfeab213b6454da4f67bdbb9fb81e, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

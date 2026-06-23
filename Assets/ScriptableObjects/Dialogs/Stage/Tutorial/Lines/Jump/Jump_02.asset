@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: Press Space to jump. Show me you can rise above it.
-  VoiceClip: {fileID: 0}
+  DialogText: "Press Space to jump. It sounds simple, but \u2014 it matters more
+    than you think. Try it."
+  VoiceClip: {fileID: 8300000, guid: afaeaedc3201c644cb06817f7cafe9be, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

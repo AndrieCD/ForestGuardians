@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: Sovereign's Wrath strikes hard and heals through damage. Eagle Eye
-    turns your feathers into a relentless storm.
-  VoiceClip: {fileID: 0}
+  DialogText: Always choose carefully. Once you choose, that is your build for the
+    entire fight. It will shape everything from there.
+  VoiceClip: {fileID: 8300000, guid: c540901db6973e2468b635678a178e9a, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

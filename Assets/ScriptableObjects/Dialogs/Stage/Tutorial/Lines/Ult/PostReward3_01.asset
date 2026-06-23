@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "This is the moment that defines your build \u2014 your Ultimate Branch."
-  VoiceClip: {fileID: 0}
+  DialogText: "That is an important one. Your ultimate ability. Every guardian has
+    one \u2014 but it splits into two paths."
+  VoiceClip: {fileID: 8300000, guid: 933cc0ca25ae0d249b33e3133fc14004, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

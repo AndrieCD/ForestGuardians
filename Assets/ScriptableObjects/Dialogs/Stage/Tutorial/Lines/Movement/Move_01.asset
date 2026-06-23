@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Guardian! I am Dudong. I have trained many before you \u2014 none
-    as important as this."
-  VoiceClip: {fileID: 0}
+  DialogText: "I\u2019m glad to be of service for the Panoharra, Diya. I\u2019m Dudong
+    from the Mangroves."
+  VoiceClip: {fileID: 8300000, guid: bce05d7380e38dd489647d95786d535e, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

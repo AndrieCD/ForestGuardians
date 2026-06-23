@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "E \u2014 Feather Barrage. Leap back and unleash a volley of razor
-    feathers. Distance and damage in one motion."
-  VoiceClip: {fileID: 0}
+  DialogText: "I have seen what your abilities can do. Do not hold back with them
+    \u2014 they can turn a bad situation around quickly."
+  VoiceClip: {fileID: 8300000, guid: 47ed15de71c260247b2b51d07d0015cf, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

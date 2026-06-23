@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "And when it falls \u2014 the forest will reward you. Pay attention
-    to what comes next."
-  VoiceClip: {fileID: 0}
+  DialogText: When they fall, the forest will give you something in return. Pay attention
+    to what that looks like.
+  VoiceClip: {fileID: 8300000, guid: 4a7ca78d13978eb4780d69eaa72094fd, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

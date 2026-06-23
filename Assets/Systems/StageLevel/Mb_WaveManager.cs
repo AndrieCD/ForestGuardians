@@ -328,10 +328,11 @@ public class Mb_WaveManager : MonoBehaviour
 
         yield return new WaitForSeconds(ResolutionDuration);
 
+        // Always fire OnWaveEnd — final wave or not
+        ResolveWave();
+
         if (CurrentWaveIndex >= _stageData.WaveDataList.Count - 1)
         {
-            // Hold here until tutorial closing dialog finishes before firing victory
-            // In normal stages HoldFinalResolution is always false so this never runs
             while (HoldFinalResolution)
                 yield return new WaitForSeconds(0.2f);
 
@@ -340,10 +341,6 @@ public class Mb_WaveManager : MonoBehaviour
             _stageManager.EndStage();
             yield break;
         }
-
-
-        ResolveWave();
-
 
         StartCoroutine(PreparationRoutine());
     }

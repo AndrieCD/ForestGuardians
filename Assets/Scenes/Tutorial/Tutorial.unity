@@ -4215,6 +4215,7 @@ MonoBehaviour:
   AttackSequence: {fileID: 11400000, guid: 97df2e1099bdb2247973c2e0d44539f1, type: 2}
   AbilitySequence: {fileID: 11400000, guid: c4e04770fc801e0488b3df02bdc64ac9, type: 2}
   WaveReadySequence: {fileID: 11400000, guid: 7eeec9829f35b09478b60cce3de1612a, type: 2}
+  WildlifeSequence: {fileID: 11400000, guid: c9f01f20eb8f9324aabca94bffe84502, type: 2}
   ClosingSequence: {fileID: 11400000, guid: a386175a9c88ab34c981322fbeb21c40, type: 2}
   PostRewardSequences:
   - {fileID: 11400000, guid: 6d916b355e4b71b439460f90c268ea40, type: 2}
@@ -5770,6 +5771,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1297408173}
     m_Modifications:
+    - target: {fileID: 1715893247519333650, guid: b69d8af017c3ed041b4800c2cad5cb7c, type: 3}
+      propertyPath: _RewardsManager
+      value: 
+      objectReference: {fileID: 1068296191}
     - target: {fileID: 3371062833504289791, guid: b69d8af017c3ed041b4800c2cad5cb7c, type: 3}
       propertyPath: m_Pivot.x
       value: 0

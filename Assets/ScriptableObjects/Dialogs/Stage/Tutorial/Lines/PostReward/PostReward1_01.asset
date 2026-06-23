@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "That panel \u2014 that is your reward for surviving a wave. Ability
-    upgrades make your strikes hit harder and your skills last longer."
-  VoiceClip: {fileID: 0}
+  DialogText: "That panel \u2014 that is a reward. The forest recognizes what you
+    did and gives something back."
+  VoiceClip: {fileID: 8300000, guid: a3eee0f39a48458429e841d67eb9b955, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

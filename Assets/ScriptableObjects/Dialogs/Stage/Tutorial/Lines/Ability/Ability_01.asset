@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Beyond raw strikes, you carry abilities. Q \u2014 Sky Rend. A dash
-    that cuts through anything in your path and grants you a brief shield."
-  VoiceClip: {fileID: 0}
+  DialogText: "You have abilities too \u2014 things only you can do. Q and E. They
+    are... different for each of us."
+  VoiceClip: {fileID: 8300000, guid: 5df991be190932c459587e41c734f61d, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

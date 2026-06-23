@@ -37,6 +37,9 @@ public class Mb_TutorialGateManager : MonoBehaviour
     [SerializeField] private SO_DialogSequence AttackSequence;
     [SerializeField] private SO_DialogSequence AbilitySequence;
     [SerializeField] private SO_DialogSequence WaveReadySequence;
+    [Tooltip("Diya explains the Almanac and Wildlife Discovery. " +
+         "Plays after all waves clear, before the closing sequence.")]
+    [SerializeField] private SO_DialogSequence WildlifeSequence;
     [SerializeField] private SO_DialogSequence ClosingSequence;
 
     [Header("Post-Reward Dialog Sequences")]
@@ -282,16 +285,23 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
     private IEnumerator PlayClosingAndEndStage()
     {
-        // Hold the wave manager's final resolution so victory doesn't
-        // fire before the closing dialog finishes
+        // Hold victory until both wildlife and closing sequences finish
         if (_WaveManager != null)
             _WaveManager.HoldFinalResolution = true;
 
+        // Short pause so the last wave's resolution feels clean
         yield return new WaitForSeconds(1.5f);
 
+        // Diya speaks about the Almanac and wildlife
+        yield return StartCoroutine(PlaySequenceAndWait(WildlifeSequence));
+
+        // Brief breath between Diya's wildlife lines and the closing
+        yield return new WaitForSeconds(0.5f);
+
+        // Dudong and Diya closing
         yield return StartCoroutine(PlaySequenceAndWait(ClosingSequence));
 
-        // Closing dialog done — release the hold so victory fires naturally
+        // All dialog done — release victory
         if (_WaveManager != null)
             _WaveManager.HoldFinalResolution = false;
     }

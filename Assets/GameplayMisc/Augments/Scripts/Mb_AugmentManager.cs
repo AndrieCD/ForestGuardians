@@ -33,6 +33,8 @@ public class Mb_AugmentManager : MonoBehaviour
     // Cached reference to the player's character component — fetched once in Start
     private Mb_CharacterBase _player;
 
+    public static event System.Action OnAugmentsChanged;
+
 
     private void Start()
     {
@@ -91,6 +93,8 @@ public class Mb_AugmentManager : MonoBehaviour
 
         // Apply the augment's stat effects immediately
         augment.OnEquip(_player);
+
+        OnAugmentsChanged?.Invoke();
 
         Debug.Log($"[Mb_AugmentManager] Equipped augment: {augment.AugmentName} ({_equippedAugments.Count}/{MAX_AUGMENTS})");
     }

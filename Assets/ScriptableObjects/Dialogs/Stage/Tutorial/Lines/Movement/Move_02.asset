@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "First \u2014 your feet. Use W, A, S, D to move. The forest rewards
-    those who know how to move through it."
-  VoiceClip: {fileID: 0}
+  DialogText: We do not have much time so I will try to be useful.
+  VoiceClip: {fileID: 8300000, guid: 9df041292ed0d9143b247b8cf03f2e82, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

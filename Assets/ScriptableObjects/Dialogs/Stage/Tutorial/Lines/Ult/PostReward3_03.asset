@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Press R to use it. Three dummies wait \u2014 make them count."
-  VoiceClip: {fileID: 0}
+  DialogText: "Three more are coming. Use your ultimate \u2014 R. See what it does."
+  VoiceClip: {fileID: 8300000, guid: c9de497d550aabf4ca65bf1a1626412b, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

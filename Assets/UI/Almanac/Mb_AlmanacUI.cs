@@ -4,6 +4,11 @@
 //   Left page  — diamond grid of all 13 entry cards + progress counter
 //   Right page — detail panel for the selected entry
 //
+// FLAVOR TEXT ROTATION:
+//   FlavourTexts is a list of strings assigned in the Inspector.
+//   They cycle one at a time through FlavourText (TMP_Text) every
+//   FlavorTextInterval seconds. Timer resets each time the Almanac opens.
+//
 // LAYOUT HIERARCHY (build this in the Unity Editor):
 //
 //   AlmanacCanvas (this GameObject)
@@ -36,8 +41,8 @@
 //   - Assign DiamondGrid as the parent RectTransform for card instantiation
 //     Use a Grid Layout Group set to diamond arrangement, or position manually
 //   - Assign ModelViewerRawImage — point its Texture to a RenderTexture asset
-//     // TODO: Create a second Camera rendering to that RenderTexture, position
-//     //       it to frame the ModelPrefab once 3D models are ready
+//   - Assign FlavourTexts — paste each flavor text string as a list element
+//   - Set FlavorTextInterval — default 5 seconds, tune to taste
 //   - Wire CloseButton.OnClick → Mb_AlmanacUI.OnCloseClicked in Inspector
 //   - This Canvas starts inactive — activated by MainMenuController.OnAlmanacClicked()
 
@@ -59,10 +64,20 @@ public class Mb_AlmanacUI : MonoBehaviour
     [Tooltip("Image at the top of the left page — title art or logo.")]
     [SerializeField] private Image HeaderImage;
 
-    [Tooltip("Flavour text below the header. " +
-             "Suggested: 'The missing creatures of Panohara need your help! " +
-             "Set out in the wilds to find them and earn their blessings.'")]
+    [Tooltip("TMP_Text that displays the rotating flavor text. " +
+             "Cycles through FlavourTexts every FlavorTextInterval seconds.")]
     [SerializeField] private TMP_Text FlavourText;
+
+    [Tooltip("List of flavor text strings to rotate through. " +
+             "Displayed one at a time in order, looping back to index 0. " +
+             "Paste each educational flavor text as a separate list element here.")]
+    [SerializeField] private List<string> FlavourTexts = new List<string>();
+
+    [Tooltip("How many seconds each flavor text is shown before switching to the next. " +
+             "Default: 5 seconds.")]
+    // TODO: Tune this — 5s works for reading speed at ~100 WPM for 3-4 sentence texts.
+    //       Raise to 7–8s if playtesting shows players don't finish reading.
+    [SerializeField] private float FlavorTextInterval = 5f;
 
     [Tooltip("Parent RectTransform that diamond card prefabs are instantiated under. " +
              "Recommended: use a custom anchored layout or manually position cards " +
@@ -78,15 +93,10 @@ public class Mb_AlmanacUI : MonoBehaviour
     [Header("Right Page — 3D Viewer")]
     [Tooltip("RawImage that displays the RenderTexture from the model viewer camera. " +
              "Assign a RenderTexture asset to both this RawImage and the viewer Camera.")]
-    // TODO: Create a dedicated Camera in the scene rendering to a RenderTexture asset.
-    //       Position it to frame the ModelPrefab once 3D models are available.
-    //       Assign the same RenderTexture to both the Camera's Output Texture
-    //       and this RawImage's Texture field.
     [SerializeField] private RawImage ModelViewerRawImage;
 
     [Tooltip("GameObject that holds the model in the viewer scene. " +
              "Swap its child mesh when a new entry is selected.")]
-    // TODO: Assign once 3D model viewer camera rig is built in the scene.
     [SerializeField] private GameObject ModelViewerRoot;
 
     [Header("Right Page — Entry Detail")]
@@ -106,15 +116,11 @@ public class Mb_AlmanacUI : MonoBehaviour
     [Tooltip("'About the Animal' section description text.")]
     [SerializeField] private TMP_Text DescriptionText;
 
-    [Tooltip("References field at the bottom of the right page. " +
-             "Populate manually per entry or leave as stub.")]
-    // TODO: Add a References string field to SO_WildlifeEntry if per-species
-    //       citation text is needed for the thesis documentation.
+    [Tooltip("References field at the bottom of the right page.")]
     [SerializeField] private TMP_Text ReferencesText;
 
     [Header("Right Page — Empty State")]
-    [Tooltip("Shown on the right page when no card has been selected yet. " +
-             "Hide this when a card is selected.")]
+    [Tooltip("Shown on the right page when no card has been selected yet.")]
     [SerializeField] private GameObject EmptyDetailPanel;
 
     [Tooltip("Root that holds all detail fields. Hidden until a card is selected.")]
@@ -128,7 +134,7 @@ public class Mb_AlmanacUI : MonoBehaviour
     #endregion                          //----------------------------------------
 
 
-    #region Runtime State               //----------------------------------------
+    #region Private State               //----------------------------------------
 
     // All instantiated diamond card components — kept so we can refresh them
     // when OnEntryUnlocked fires mid-session
@@ -141,6 +147,12 @@ public class Mb_AlmanacUI : MonoBehaviour
     // The entry whose detail is currently shown on the right page
     private SO_WildlifeEntry _selectedEntry;
 
+    // Which flavor text is currently displayed — advances each interval
+    private int _currentFlavorIndex = 0;
+
+    // Accumulates delta time — when it exceeds FlavorTextInterval, we advance
+    private float _flavorTimer = 0f;
+
     #endregion                          //----------------------------------------
 
 
@@ -148,22 +160,62 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void OnEnable()
     {
-        // Subscribe to unlock events so newly unlocked entries refresh their
-        // cards and detail panel without needing a full rebuild
         Mb_AlmanacManager.OnEntryUnlocked += HandleEntryUnlocked;
         Mb_AlmanacManager.OnRepeatCompleted += HandleRepeatCompleted;
 
-        // Rebuild the grid every time the Almanac is opened —
-        // catches any unlocks that happened since last open
         BuildGrid();
         RefreshProgressCounter();
         ShowEmptyDetail();
+
+        // Reset rotation to index 0 every time the Almanac opens
+        // so the player always sees the first text on a fresh open
+        _currentFlavorIndex = 0;
+        _flavorTimer = 0f;
+        ShowCurrentFlavourText();
     }
 
     private void OnDisable()
     {
         Mb_AlmanacManager.OnEntryUnlocked -= HandleEntryUnlocked;
         Mb_AlmanacManager.OnRepeatCompleted -= HandleRepeatCompleted;
+    }
+
+    private void Update()
+    {
+        // Only rotate if there is more than one text to cycle through
+        if (FlavourTexts == null || FlavourTexts.Count <= 1) return;
+        if (FlavorTextInterval <= 0f) return;
+
+        _flavorTimer += Time.deltaTime;
+
+        if (_flavorTimer >= FlavorTextInterval)
+        {
+            _flavorTimer = 0f;
+            AdvanceFlavourText();
+        }
+    }
+
+    #endregion                          //----------------------------------------
+
+
+    #region Flavor Text Rotation        //----------------------------------------
+
+    // Moves to the next flavor text in the list, wrapping back to 0 after the last.
+    private void AdvanceFlavourText()
+    {
+        // Wrap around to index 0 after the last entry
+        _currentFlavorIndex = (_currentFlavorIndex + 1) % FlavourTexts.Count;
+        ShowCurrentFlavourText();
+    }
+
+    // Writes the current flavor text to the FlavourText TMP component.
+    // Silently skips if the list is empty or the component is unassigned.
+    private void ShowCurrentFlavourText()
+    {
+        if (FlavourText == null) return;
+        if (FlavourTexts == null || FlavourTexts.Count == 0) return;
+
+        FlavourText.text = FlavourTexts[_currentFlavorIndex];
     }
 
     #endregion                          //----------------------------------------
@@ -188,15 +240,9 @@ public class Mb_AlmanacUI : MonoBehaviour
 
         ClearGrid();
 
-        // Iterate every Panel child under DiamondGrid.
-        // Each Panel that has an Mb_AlmanacPanelSlot with an Entry assigned
-        // gets one card instantiated and parented to it.
-        // Panels without a slot component or with a null Entry are skipped.
         foreach (Transform panel in DiamondGrid)
         {
             Mb_AlmanacPanelSlot slot = panel.GetComponent<Mb_AlmanacPanelSlot>();
-
-            // Skip panels with no slot component or no entry assigned
             if (slot == null || slot.Entry == null) continue;
 
             SO_WildlifeEntry entry = slot.Entry;
@@ -211,9 +257,6 @@ public class Mb_AlmanacUI : MonoBehaviour
                 continue;
             }
 
-            // Stretch the card to fill its parent Panel exactly —
-            // the Panel's RectTransform controls position and size,
-            // the card just fills it
             RectTransform cardRect = cardGO.GetComponent<RectTransform>();
             if (cardRect != null)
             {
@@ -238,9 +281,6 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void ClearGrid()
     {
-        // Destroy only the instantiated card children inside each Panel —
-        // never destroy the Panels themselves since they are manually
-        // positioned by the designer and must persist
         foreach (Transform panel in DiamondGrid)
         {
             foreach (Transform child in panel)
@@ -256,10 +296,6 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #region Card Selection              //----------------------------------------
 
-    /// <summary>
-    /// Called by each Mb_AlmanacDiamondCard when clicked.
-    /// Populates the right page detail panel with the entry's data.
-    /// </summary>
     private void OnCardClicked(SO_WildlifeEntry entry)
     {
         _selectedEntry = entry;
@@ -278,7 +314,6 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void PopulateDetailPanel(SO_WildlifeEntry entry, bool isUnlocked)
     {
-        // Switch from empty state to content panel
         EmptyDetailPanel?.SetActive(false);
         DetailContentPanel?.SetActive(true);
 
@@ -289,9 +324,6 @@ public class Mb_AlmanacUI : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Fills the right page with full species data for an unlocked entry.
-    /// </summary>
     private void PopulateUnlocked(SO_WildlifeEntry entry)
     {
         if (NameBannerText != null)
@@ -306,8 +338,6 @@ public class Mb_AlmanacUI : MonoBehaviour
         if (StatusText != null)
             StatusText.text = $"Status: {BuildStatusString(entry.Status)}";
 
-        // Population and Habitat are filled directly from the SO —
-        // these fields are set by the designer in the Inspector
         if (PopulationText != null)
             PopulationText.text = $"Population: {entry.Population}";
 
@@ -317,18 +347,11 @@ public class Mb_AlmanacUI : MonoBehaviour
         if (DescriptionText != null)
             DescriptionText.text = entry.Description;
 
-        // TODO: Populate ReferencesText from SO_WildlifeEntry.References
-        //       once that field is added to the SO
         if (ReferencesText != null)
             ReferencesText.text = "References:";
     }
 
 
-    /// <summary>
-    /// Fills the right page with ??? placeholders for a locked entry.
-    /// Conservation status is intentionally shown — it hints at rarity
-    /// and explains why certain species are harder to find in the wild.
-    /// </summary>
     private void PopulateLocked(SO_WildlifeEntry entry)
     {
         if (NameBannerText != null)
@@ -340,8 +363,6 @@ public class Mb_AlmanacUI : MonoBehaviour
         if (ScientificNameText != null)
             ScientificNameText.text = "???";
 
-        // Conservation status is always visible even on locked entries —
-        // rarity hints help players understand spawn probability
         if (StatusText != null)
             StatusText.text = BuildStatusString(entry.Status);
 
@@ -371,37 +392,24 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #region Model Viewer                //----------------------------------------
 
-    /// <summary>
-    /// Swaps the model displayed in the 3D viewer panel.
-    /// Instantiates the entry's ModelPrefab under ModelViewerRoot.
-    /// </summary>
     private void SwapModelViewer(SO_WildlifeEntry entry, bool isUnlocked)
     {
         if (ModelViewerRoot == null) return;
 
-        // Destroy the previously displayed model
         foreach (Transform child in ModelViewerRoot.transform)
             Destroy(child.gameObject);
 
-        // Only show the model if the entry is unlocked and a prefab is assigned
         if (!isUnlocked || entry.ModelPrefab == null)
         {
-            // TODO: Optionally show a silhouette mesh or "???" placeholder
-            //       in the viewer when the entry is locked
             ModelViewerRawImage?.gameObject.SetActive(false);
             return;
         }
 
         ModelViewerRawImage?.gameObject.SetActive(true);
 
-        // Instantiate the model under the viewer root —
-        // the viewer Camera renders this root to its RenderTexture
         GameObject model = Instantiate(entry.ModelPrefab, ModelViewerRoot.transform);
         model.transform.localPosition = Vector3.zero;
         model.transform.localRotation = Quaternion.identity;
-
-        // TODO: Add a slow auto-rotation behaviour to the model for presentation polish
-        // Suggested: model.AddComponent<Mb_ModelAutoRotate>() once that utility exists
     }
 
     #endregion                          //----------------------------------------
@@ -414,8 +422,6 @@ public class Mb_AlmanacUI : MonoBehaviour
         if (ProgressCounterText == null) return;
         if (Mb_AlmanacManager.Instance == null) return;
 
-        // Count total assigned panels — not AllEntries.Count —
-        // so the denominator matches exactly what's visible in the grid
         int total = 0;
         int unlocked = 0;
 
@@ -439,17 +445,14 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void HandleEntryUnlocked(SO_WildlifeEntry entry)
     {
-        // Refresh the specific card that just unlocked
         if (_cardMap.TryGetValue(entry, out Mb_AlmanacDiamondCard card))
         {
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
             card.Initialize(entry, isUnlocked: true, completionCount, OnCardClicked);
         }
 
-        // Refresh the progress counter
         RefreshProgressCounter();
 
-        // If this entry is currently selected on the right page, refresh the detail
         if (_selectedEntry == entry)
             PopulateDetailPanel(entry, isUnlocked: true);
     }
@@ -457,7 +460,6 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void HandleRepeatCompleted(SO_WildlifeEntry entry)
     {
-        // Refresh the card's completion count badge
         if (_cardMap.TryGetValue(entry, out Mb_AlmanacDiamondCard card))
         {
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
@@ -470,17 +472,9 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #region Navigation                  //----------------------------------------
 
-    /// <summary>
-    /// Called by the Close (X) Button's OnClick in the Inspector.
-    /// Hides the Almanac canvas and returns to the main menu state.
-    /// </summary>
     public void OnCloseClicked()
     {
         MainMenuController?.ShowMainMenu();
-
-        //gameObject.SetActive(false);
-
-
     }
 
     #endregion                          //----------------------------------------
@@ -488,10 +482,6 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #region String Builders             //----------------------------------------
 
-    /// <summary>
-    /// Builds a human-readable stat bonus string from the entry's StatBonus effect.
-    /// e.g. "+20% Critical Damage" or "+200 Max HP"
-    /// </summary>
     private string BuildStatBonusString(SO_WildlifeEntry entry)
     {
         if (entry.StatBonus == null) return "???";
@@ -512,19 +502,14 @@ public class Mb_AlmanacUI : MonoBehaviour
             _ => entry.StatBonus.TargetStat.ToString()
         };
 
-        // Format value — percent modifiers display as % values, flat as raw numbers
         string valueStr = entry.StatBonus.Type == StatModType.Percent
             ? $"+{entry.StatBonus.Value * 100f:F0}%"
-            : $"+{entry.StatBonus.Value:F0}";
+            : $"+{entry.StatBonus.Value}";
 
         return $"{valueStr} {statName}";
     }
 
 
-    /// <summary>
-    /// Converts a ConservationStatus enum to a readable display string
-    /// with an IUCN-style label.
-    /// </summary>
     private string BuildStatusString(ConservationStatus status)
     {
         return status switch
@@ -538,5 +523,3 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     #endregion                          //----------------------------------------
 }
-
-

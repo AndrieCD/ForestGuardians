@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: The real CuBots will not stand still. They will chase, swarm, and push
-    toward the Panoharra. Do not let them reach it.
+  DialogText: The real waves will be harder. The CuBots coming for the Panoharra
+    are not holding back. But you have seen enough now to know what to do.
   VoiceClip: {fileID: 0}
   IsTutorialInstruction: 0
   CompletionEventKey: 

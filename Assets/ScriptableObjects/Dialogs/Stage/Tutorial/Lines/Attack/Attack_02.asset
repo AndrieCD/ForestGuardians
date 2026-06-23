@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Right Click sends a feather bolt at range. Use both \u2014 know when
-    to close in and when to hold back."
-  VoiceClip: {fileID: 0}
+  DialogText: Every guardian fights differently. But those two are always there.
+    Learn when to use each one.
+  VoiceClip: {fileID: 8300000, guid: f817b0bd2b8572c46b51515ba0e00430, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

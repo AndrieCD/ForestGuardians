@@ -43,14 +43,13 @@ public class Mb_AugmentSlotsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Mb_RewardsManager.OnRewardChosen += HandleRewardChosen;
+        Mb_AugmentManager.OnAugmentsChanged += Refresh;
         Refresh();
     }
 
-
     private void OnDisable()
     {
-        Mb_RewardsManager.OnRewardChosen -= HandleRewardChosen;
+        Mb_AugmentManager.OnAugmentsChanged -= Refresh;
     }
 
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Strike. Left Click \u2014 now."
-  VoiceClip: {fileID: 0}
+  DialogText: Try your primary attack. Left Click.
+  VoiceClip: {fileID: 8300000, guid: 4f536c3007253af4089efa934a3209f9, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

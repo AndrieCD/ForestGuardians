@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: Now we test what you have learned. A training dummy waits ahead. Take
-    it down.
-  VoiceClip: {fileID: 0}
+  DialogText: "I\u2019ve found some broken CuBots we can use for practice. Not many
+    \u2014 just enough to get the feel."
+  VoiceClip: {fileID: 8300000, guid: 394c717c71bfd1142b5bb21011214240, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

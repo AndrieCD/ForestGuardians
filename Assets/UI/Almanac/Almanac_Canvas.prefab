@@ -209,6 +209,46 @@ MonoBehaviour:
   MainMenuController: {fileID: 0}
   HeaderImage: {fileID: 4319050544947855006}
   FlavourText: {fileID: 1741985324980071781}
+  FlavourTexts:
+  - 'The IUCN evaluates species using strict criteria: population size, rate of decline,
+    and probability of extinction. Critically Endangered is the last tier before
+    a species disappears from the wild entirely. '
+  - 'The Philippines is one of only 36 biodiversity hotspots in the world, holding
+    over 52,000 known species despite covering less than 0.5% of Earth''s land area.
+    More than half of those species exist nowhere else on the planet. '
+  - "An endemic species exists exclusively in one place \u2014 destroy its last habitat
+    and it is gone from the world forever. Every animal in this Almanac is endemic
+    to the Philippines. "
+  - "Every forest animal holds a role others depend on \u2014 predators regulate
+    prey, frugivores disperse seeds, and amphibians control insects. When one species
+    disappears, its absence cascades through the entire ecosystem. "
+  - "The illegal wildlife trade generates an estimated USD 23 billion annually, and
+    the Philippines sits at the center of it. Rare endemic species are captured and
+    sold as pets, medicine, or trophies \u2014 targeted and immediate in a way habitat
+    loss is not. "
+  - 'Climate change destabilizes the specific conditions species have evolved for
+    over millions of years. High-altitude animals like the Mount Data Forest Frog
+    face shrinking habitats as temperatures rise faster than they can adapt. '
+  - "The Philippines has lost over 90% of its original forest cover since the early
+    20th century. Forest-dependent species don't just lose shelter when trees fall
+    \u2014 they lose their entire food chain, breeding ground, and migratory corridor
+    at once. "
+  - 'Chemical runoff from agriculture and industry flows into rivers, accumulating
+    up the food chain through a process called bioaccumulation. Aquatic and semi-aquatic
+    species like the Philippine Crocodile and Forest Turtle absorb toxins from both
+    land and water. '
+  - "Poachers typically target the largest, most reproductively mature individuals
+    \u2014 the ones a population can least afford to lose. For slow-breeding species
+    like the Philippine Eagle, which raises only one chick every two years, a single
+    hunting event can set a population back by a decade. "
+  - 'Roads, dams, and urban expansion fragment forests, cutting off the wildlife
+    corridors animals use to find mates and food. Isolated populations become genetically
+    vulnerable over generations, making them less resilient to disease and change. '
+  - "Biodiversity conservation means protecting the full variety of life in an ecosystem
+    \u2014 not just visible animals, but the insects, fungi, and soil microbes that
+    hold everything together. Forests also provide clean water, flood regulation,
+    and climate buffering that human communities depend on directly. "
+  FlavorTextInterval: 5
   DiamondGrid: {fileID: 6961688527886222561}
   DiamondCardPrefab: {fileID: 3421173078648985811, guid: 0c442f443b2fa7842993232deb359cb3, type: 3}
   ProgressCounterText: {fileID: 8868627249582879215}

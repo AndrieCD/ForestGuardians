@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: That is enough. You move like someone who belongs in this forest.
+  DialogText: "You did well. Really. I mean that \u2014 not just saying it."
   VoiceClip: {fileID: 0}
   IsTutorialInstruction: 0
   CompletionEventKey: 

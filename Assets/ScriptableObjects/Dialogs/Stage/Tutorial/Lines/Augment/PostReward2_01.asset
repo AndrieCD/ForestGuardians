@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "An Augment. These are gifts from the forest itself \u2014 passive
-    blessings that change how you fight entirely."
-  VoiceClip: {fileID: 0}
+  DialogText: That one is an Augment. A blessing that changes how you fight without
+    you having to do anything extra.
+  VoiceClip: {fileID: 8300000, guid: e28d0ca25f8b533458cb68f70b426334, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

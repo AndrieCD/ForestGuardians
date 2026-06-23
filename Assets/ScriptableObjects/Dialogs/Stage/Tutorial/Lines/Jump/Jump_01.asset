@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Good. Now \u2014 the air. A Guardian does not stay on the ground when
-    the enemy approaches."
-  VoiceClip: {fileID: 0}
+  DialogText: "Good. Now, not all CuBots are the same. You will want to stay mobile
+    \u2014 on the ground and above it."
+  VoiceClip: {fileID: 8300000, guid: f8b03b9fb9f508c49a18216af00776fb, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

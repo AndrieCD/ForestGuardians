@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: Move around. Get a feel for the ground beneath you.
-  VoiceClip: {fileID: 0}
+  DialogText: "Start by moving around \u2014 use WASD. Get a feel for where you are."
+  VoiceClip: {fileID: 8300000, guid: 78c291b91c95ee443b29d30b6a09c634, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

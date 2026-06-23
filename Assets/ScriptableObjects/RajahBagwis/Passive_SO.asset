@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Passive_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Royal Plumage
-  Icon: {fileID: 21300090, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  Icon: {fileID: 21300000, guid: 87ccf2c1f0cf3764cb1924d89b19225e, type: 3}
   AbilityDescription: "Successful basic attacks grants a  stack of Royal Plumage,
     increasing your Attack Speed. Takedowns will upgrade Royal Plumage to also grant
     Attack Power and Critical Chance per stack. \nStacks rapidly decay while out

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_AudioLibrary
   MusicTracks:
   - Track: 2
-    Clip: {fileID: 8300000, guid: d0556c80254380b43ac63059bc8efd27, type: 3}
+    Clip: {fileID: 8300000, guid: 796cbfa19ecdd5743967e74a315b1dad, type: 3}
     DefaultVolume: 1
   - Track: 1
     Clip: {fileID: 8300000, guid: a5c07d674e7368b4ea1d1a7ec71105be, type: 3}
@@ -86,7 +86,7 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 23e4471659aad9f40a93d255c282515e, type: 3}
     DefaultVolume: 1
   - Key: 16
-    Clip: {fileID: 8300000, guid: e7802e0b6f4e7174998acd7388726ac2, type: 3}
+    Clip: {fileID: 8300000, guid: b447614a338a9bc4a990eaa45e3c18b0, type: 3}
     DefaultVolume: 1
   - Key: 17
     Clip: {fileID: 8300000, guid: cd106f1a6aa1cb74ab1d21117d256b7d, type: 3}

@@ -3957,7 +3957,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a23abbfb8352543aa637535041e58c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_SelectionAbilitySlotUI
-  SlotIcon: {fileID: 6619015631683470974}
+  SlotIcon: {fileID: 4590525210329468737}
   SlotButton: {fileID: 4195229999685165236}
 --- !u!114 &4195229999685165236
 MonoBehaviour:

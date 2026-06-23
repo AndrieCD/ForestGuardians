@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Diya
-  DialogText: "The forest has chosen you, Guardian. What you protect here matters
-    \u2014 not just in this fight, but for every creature that calls Talihaya home."
+  DialogText: "I have to get back to the Mangroves. My home needs me too. But \u2014
+    good luck. I mean it."
   VoiceClip: {fileID: 0}
   IsTutorialInstruction: 0
   CompletionEventKey: 

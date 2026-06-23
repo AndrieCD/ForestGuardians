@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: Choose wisely each time. The next wave awaits.
-  VoiceClip: {fileID: 0}
+  DialogText: "Upgrading an ability makes it stronger. More damage, shorter cooldown
+    \u2014 it adds up over time."
+  VoiceClip: {fileID: 8300000, guid: b2a671ddcac6c1a4ab9f45d9f62741af, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

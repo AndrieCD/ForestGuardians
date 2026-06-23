@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
-  m_Name: Ability_03
+  m_Name: Widlife_0 1
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
-  SpeakerName: Dudong
-  DialogText: "Use Q. Just \u2014 try it and see."
-  VoiceClip: {fileID: 8300000, guid: fce73af55112ecc479aa3d3c3132b332, type: 3}
+  SpeakerName: Diya
+  DialogText: "The CuBots did not only threaten the Panoharra. The animals of Talihaya
+    who took refuge here\u2014 had scattered from fear. The chaos drove them away
+    and they are now missing."
+  VoiceClip: {fileID: 8300000, guid: 41b369d31d4affa4cb2d7477e8110fd7, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

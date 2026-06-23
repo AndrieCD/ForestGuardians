@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
-  m_Name: Ability_03
+  m_Name: Closing_05
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
-  SpeakerName: Dudong
-  DialogText: "Use Q. Just \u2014 try it and see."
-  VoiceClip: {fileID: 8300000, guid: fce73af55112ecc479aa3d3c3132b332, type: 3}
+  SpeakerName: Diya
+  DialogText: "Guardian \u2014 the forest is counting on you. Every creature in Talihaya,
+    every root and river and ridge \u2014 it all holds together as long as the Panoharra
+    stands."
+  VoiceClip: {fileID: 8300000, guid: a164d462fb6be0845b6898efc982c779, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

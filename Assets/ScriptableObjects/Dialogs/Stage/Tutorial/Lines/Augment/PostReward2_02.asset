@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: You may carry three at most. Choose the one that fits how you play.
-  VoiceClip: {fileID: 0}
+  DialogText: You can have three at most. Some guardians build around one; others
+    spread across a few. Just pick what feels right.
+  VoiceClip: {fileID: 8300000, guid: 3344560786f639f4193f0df05a38d775, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

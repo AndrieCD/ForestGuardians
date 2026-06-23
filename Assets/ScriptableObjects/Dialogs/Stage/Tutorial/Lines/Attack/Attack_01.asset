@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
   SpeakerName: Dudong
-  DialogText: "Your body is your first weapon. Left Click strikes with your talons
-    \u2014 fast, close, and punishing."
-  VoiceClip: {fileID: 0}
+  DialogText: "Ok... Now \u2014 your attacks. Left Click and Right Click for your
+    basic attacks"
+  VoiceClip: {fileID: 8300000, guid: df22be0d72c67924da58d2a2b74ac06b, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

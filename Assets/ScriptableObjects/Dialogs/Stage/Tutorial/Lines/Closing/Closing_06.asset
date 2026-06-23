@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34871edd11abf4e41b102e52ecb16f67, type: 3}
-  m_Name: Ability_03
+  m_Name: Closing_06
   m_EditorClassIdentifier: Assembly-CSharp::SO_Dialog
   Portrait: {fileID: 0}
-  SpeakerName: Dudong
-  DialogText: "Use Q. Just \u2014 try it and see."
-  VoiceClip: {fileID: 8300000, guid: fce73af55112ecc479aa3d3c3132b332, type: 3}
+  SpeakerName: Diya
+  DialogText: Go. They are already on their way.
+  VoiceClip: {fileID: 8300000, guid: 5fb91f8e7b55a8d4ca93bae4913a13fd, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 
