@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: Keep your distance from its flame thrower, wear it down, and do not
     panic. You can do this.
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 863a4c043ac3dee448376589478ebe3a, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

@@ -17,6 +17,6 @@ MonoBehaviour:
   DialogText: "The herald of kaingin \u2014 setting entire sections of forest on
     fire to clear land. Everything caught in its flames has nowhere to go. It leaves
     nothing but ashes, and a land that will never grow again."
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 18e180ab6e0ec6143935b62b3b376b2b, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

@@ -17,6 +17,6 @@ MonoBehaviour:
   DialogText: "It\u2019s responsible for the deforestation tearing through Talihaya.
     Every tree it chops destroys an animal\u2019s home. Without trees, floods and
     landslides are also more common and destructive."
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 93ce44089e53cc141bda9a7b91a94785, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

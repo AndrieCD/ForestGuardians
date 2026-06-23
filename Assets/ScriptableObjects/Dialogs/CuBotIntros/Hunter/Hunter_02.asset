@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: Hunter is behind the death of wildlife across the lands. It shoots
     any animal in the forest for bounty, glory, and even just for fun.
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: d676eddef3ced194e99417f3446098bd, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 
