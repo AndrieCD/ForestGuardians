@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: "I have to get back to the Mangroves. My home needs me too. But \u2014
     good luck. I mean it."
-  VoiceClip: {fileID: 0}
+  VoiceClip: {fileID: 8300000, guid: 035a4fd9fd4bc3a49a5369f1ed603700, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

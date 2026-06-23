@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: "The first of them is here \u2014 that\u2019s Chopper. Fast, reckless,
     and it will chop everything in its path to reach the Panoharra."
-  VoiceClip: {fileID: 8300000, guid: 28311560b16d92e4cad6d11c6e1110ec, type: 3}
+  VoiceClip: {fileID: 8300000, guid: c8273201675de9149ade6b0866db0de1, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

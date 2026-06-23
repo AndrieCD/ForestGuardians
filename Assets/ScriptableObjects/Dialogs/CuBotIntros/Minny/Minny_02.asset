@@ -17,6 +17,6 @@ MonoBehaviour:
   DialogText: Minny chips away at the hills and mountains of our land. Its mining
     has destroyed habitats, and polluted our waters. Harming all kinds of animals
     in its wake.
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 86b88271207201448983fe968db220e6, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

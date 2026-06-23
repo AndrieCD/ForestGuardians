@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: "Minny is here \u2014 slow, but incredibly durable. Do not try to burst
     it down. Go straight to the CuBots that are taking cover behind it."
-  VoiceClip: {fileID: 8300000, guid: 28311560b16d92e4cad6d11c6e1110ec, type: 3}
+  VoiceClip: {fileID: 8300000, guid: f233a42b4cc761049a58521cc2c5da62, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

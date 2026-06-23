@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: The real waves will be harder. The CuBots coming for the Panoharra
     are not holding back. But you have seen enough now to know what to do.
-  VoiceClip: {fileID: 0}
+  VoiceClip: {fileID: 8300000, guid: 66a333cf2d585214494c4a221c34518e, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

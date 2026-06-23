@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: "Hunter has entered the forest \u2014 it stays back and shoots from
     a distance. It's fragile, but it will take you down fast with space."
-  VoiceClip: {fileID: 8300000, guid: 28311560b16d92e4cad6d11c6e1110ec, type: 3}
+  VoiceClip: {fileID: 8300000, guid: a4386695455f74946a3240ac65834402, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

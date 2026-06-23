@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Dudong
   DialogText: They will not stop cutting until there is nothing left. Do not let
     it reach the Panoharra.
-  VoiceClip: {fileID: 8300000, guid: 034ce5337b9227e4394ee20505b829df, type: 3}
+  VoiceClip: {fileID: 8300000, guid: cffbd60d19b5dfb4092d5979d3a0d4d1, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 
