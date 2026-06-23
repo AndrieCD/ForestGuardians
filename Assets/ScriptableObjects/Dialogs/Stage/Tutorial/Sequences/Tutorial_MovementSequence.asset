@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_DialogSequence
   Dialogs:
   - {fileID: 11400000, guid: 2617f02f4eb00934eaaca884fd15b4f7, type: 2}
-  - {fileID: 11400000, guid: 1e1c61d059619e442bb21f2e665b3448, type: 2}
   - {fileID: 11400000, guid: 6cbb9673a1cb50944bb0af04dbc4e3c5, type: 2}

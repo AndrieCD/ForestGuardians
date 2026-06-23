@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Tutorial_WaveReadySequence
   m_EditorClassIdentifier: Assembly-CSharp::SO_DialogSequence
   Dialogs:
-  - {fileID: 11400000, guid: 68a066a888f90bc4488c615f83ec0a50, type: 2}
   - {fileID: 11400000, guid: be940c9687588274b9ebbd73b65ceb71, type: 2}
   - {fileID: 11400000, guid: 32f0815ab540778458179e5860f2723e, type: 2}

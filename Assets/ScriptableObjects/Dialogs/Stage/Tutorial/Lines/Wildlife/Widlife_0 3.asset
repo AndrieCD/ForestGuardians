@@ -15,7 +15,7 @@ MonoBehaviour:
   Portrait: {fileID: 21300000, guid: 4eec28a605c537c4fa5bbef9039bba4f, type: 3}
   SpeakerName: Diya
   DialogText: "Seek them out as you fight. Hold your gaze on them \u2014 let them
-    know you are not a threat. And in return, they will offer/ you something valuable."
+    know you are not a threat. And in return, they will offer you something valuable."
   VoiceClip: {fileID: 8300000, guid: aca350f30fd9d0c4996d2d7f09f9418f, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

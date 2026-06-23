@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Diya
   DialogText: Your Almanac records every creature of Talihaya. It records the life
     and status of all animals in this land.
-  VoiceClip: {fileID: 8300000, guid: 156c2824f6414b340a91411406c0004d, type: 3}
+  VoiceClip: {fileID: 8300000, guid: 7155f25a8b6802944863ed818c664e89, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 
