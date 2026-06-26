@@ -1,0 +1,200 @@
+{
+    "AssetName": "VFXLibrary",
+    "AssetPath": "Assets/ScriptableObjects/VFX/VFXLibrary.asset",
+    "ExportedAt": "2026-06-26T16:49:58.4153759+08:00",
+    "GenericCombatVFX": [
+        {
+            "Category": "GenericCombatVFX",
+            "EnumName": "Hit_Projectile_Generic",
+            "EnumValue": 2,
+            "PrefabPath": "Assets/Character/VFX/GenericHit.prefab",
+            "PrefabGuid": "3c8f9def557565e4d8624230d50768cb",
+            "Lifetime": 1.100000023841858,
+            "PoolSize": 20
+        },
+        {
+            "Category": "GenericCombatVFX",
+            "EnumName": "Hit_Guardian_Generic",
+            "EnumValue": 0,
+            "PrefabPath": "Assets/Character/VFX/GenericHit.prefab",
+            "PrefabGuid": "3c8f9def557565e4d8624230d50768cb",
+            "Lifetime": 1.100000023841858,
+            "PoolSize": 20
+        }
+    ],
+    "RajahVFX": [
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_Primary_Cast",
+            "EnumValue": 6,
+            "PrefabPath": "Assets/Character/VFX/BasicAttackVFX.prefab",
+            "PrefabGuid": "b2e28e187ce535c4cbbb606b937fee36",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_Secondary_Cast",
+            "EnumValue": 8,
+            "PrefabPath": "Assets/Character/VFX/FeatherLaunchVFX.prefab",
+            "PrefabGuid": "ed76dd6e75ea25c469cfeee8af9e1989",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_R_Branch2_Cast",
+            "EnumValue": 18,
+            "PrefabPath": "Assets/Character/VFX/FeatherLaunchVFX.prefab",
+            "PrefabGuid": "ed76dd6e75ea25c469cfeee8af9e1989",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_E_Cast",
+            "EnumValue": 13,
+            "PrefabPath": "Assets/Character/VFX/FeatherLaunchVFX.prefab",
+            "PrefabGuid": "ed76dd6e75ea25c469cfeee8af9e1989",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_Q_Cast",
+            "EnumValue": 10,
+            "PrefabPath": "Assets/Character/VFX/RajahQVFX.prefab",
+            "PrefabGuid": "051bd2c3fb8f40f4593aa0c5557357ee",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "RajahVFX",
+            "EnumName": "Rajah_Q_Shield",
+            "EnumValue": 12,
+            "PrefabPath": "Assets/Character/Prefab/ShieldVFX.prefab",
+            "PrefabGuid": "c591205baffd7b0449c49448ccb0063e",
+            "Lifetime": 20.0,
+            "PoolSize": 20
+        }
+    ],
+    "MariVFX": [],
+    "CuBotCombatVFX": [
+        {
+            "Category": "CuBotCombatVFX",
+            "EnumName": "Hit_CuBot_Generic",
+            "EnumValue": 1,
+            "PrefabPath": "Assets/Character/VFX/GenericHit.prefab",
+            "PrefabGuid": "3c8f9def557565e4d8624230d50768cb",
+            "Lifetime": 1.100000023841858,
+            "PoolSize": 20
+        },
+        {
+            "Category": "CuBotCombatVFX",
+            "EnumName": "CuBot_Death_Generic",
+            "EnumValue": 3,
+            "PrefabPath": "Assets/Character/VFX/CuBotExplosion.prefab",
+            "PrefabGuid": "93d383ba07188e743b6f70b67f587c96",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "CuBotCombatVFX",
+            "EnumName": "CuBot_Boss_Death_Generic",
+            "EnumValue": 34,
+            "PrefabPath": "Assets/Character/VFX/BossExplosion.prefab",
+            "PrefabGuid": "98275aff7f8dcc143ac1cc6e0d4b4db7",
+            "Lifetime": 2.0,
+            "PoolSize": 20
+        },
+        {
+            "Category": "CuBotCombatVFX",
+            "EnumName": "CuBot_Bernie_Attack",
+            "EnumValue": 41,
+            "PrefabPath": "Assets/Character/VFX/Bernie_FireCone_VFX.prefab",
+            "PrefabGuid": "2a7234ef93a9c21408054c9a57281030",
+            "Lifetime": 2.0,
+            "PoolSize": 5
+        }
+    ],
+    "StatusEffectVFX": [
+        {
+            "Category": "StatusEffectVFX",
+            "EnumName": "Status_Burn",
+            "EnumValue": 42,
+            "PrefabPath": "Assets/Character/VFX/BurningVFX.prefab",
+            "PrefabGuid": "512a923e680f3ce47ac69a5545405039",
+            "Lifetime": 999.0,
+            "PoolSize": 5
+        },
+        {
+            "Category": "StatusEffectVFX",
+            "EnumName": "Status_Shield",
+            "EnumValue": 46,
+            "PrefabPath": "Assets/Character/Prefab/ShieldVFX.prefab",
+            "PrefabGuid": "c591205baffd7b0449c49448ccb0063e",
+            "Lifetime": 999.0,
+            "PoolSize": 5
+        }
+    ],
+    "EnvironmentVFX": [
+        {
+            "Category": "EnvironmentVFX",
+            "EnumName": "CuBot_Spawn",
+            "EnumValue": 48,
+            "PrefabPath": "Assets/Environment/General/VFX/SpawnVFX.prefab",
+            "PrefabGuid": "92d78c3c76febf94487317a0b108ed1b",
+            "Lifetime": 4.0,
+            "PoolSize": 10
+        },
+        {
+            "Category": "EnvironmentVFX",
+            "EnumName": "Almanac_Collected",
+            "EnumValue": 67,
+            "PrefabPath": "Assets/Almanac/Prefabs/WildlifeDiscoveryVFX.prefab",
+            "PrefabGuid": "ea779a7d806664a4699219f1f370de62",
+            "Lifetime": 1.0,
+            "PoolSize": 2
+        }
+    ],
+    "FootstepVFX": [
+        {
+            "Category": "FootstepVFX",
+            "EnumName": "Footstep_Generic",
+            "EnumValue": 57,
+            "PrefabPath": "Assets/Character/VFX/VFX_Footsteps_Generic.prefab",
+            "PrefabGuid": "c13ecec396318c444a728dfdd167af08",
+            "Lifetime": 1.0,
+            "PoolSize": 10
+        },
+        {
+            "Category": "FootstepVFX",
+            "EnumName": "Guardian_Jump",
+            "EnumValue": 58,
+            "PrefabPath": "Assets/Character/VFX/Jump_VFX.prefab",
+            "PrefabGuid": "6dff635240b90134d84fe356026819ad",
+            "Lifetime": 1.0,
+            "PoolSize": 10
+        },
+        {
+            "Category": "FootstepVFX",
+            "EnumName": "Guardian_Land",
+            "EnumValue": 59,
+            "PrefabPath": "Assets/Character/VFX/Land_VFX.prefab",
+            "PrefabGuid": "f83833e9b9df73843b89375cd87446c7",
+            "Lifetime": 1.0,
+            "PoolSize": 10
+        }
+    ],
+    "UIVFX": [
+        {
+            "Category": "UIVFX",
+            "EnumName": "Burn_Vignette",
+            "EnumValue": 64,
+            "PrefabPath": "Assets/Character/VFX/Camera_BurningVFX.prefab",
+            "PrefabGuid": "ed2a1351b5452774ca4b9cc9d1087236",
+            "Lifetime": 999.0,
+            "PoolSize": 10
+        }
+    ]
+}

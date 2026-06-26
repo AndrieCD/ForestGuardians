@@ -5,7 +5,7 @@
 // WHY THIS EXISTS:
 //   SO_AudioLibrary is filled manually in the Inspector. It's easy to forget
 //   to assign a clip, or to add a new enum value without adding the matching entry.
-//   This validator scans all three enum categories and logs a clear warning for
+//   This validator scans all audio categories and logs a clear warning for
 //   every gap — so the team catches missing clips immediately during development,
 //   not when a sound fails to play during a playtest.
 //
@@ -32,7 +32,8 @@ public class Sc_AudioLibraryLoader
 
 
     /// <summary>
-    /// Scans all three audio categories and logs a warning for every enum key
+    /// Scans audio entries and logs a warning for every assigned row with a null clip.
+    /// If SO_AudioLibrary.WarnForMissingEntries is true, it also checks every enum key.
     /// that has no matching entry, or has an entry with a null clip.
     ///
     /// Call this once in Mb_AudioManager.Awake() before any audio plays.
@@ -44,6 +45,7 @@ public class Sc_AudioLibraryLoader
 
         ValidateMusicTracks();
         ValidateCombatSFX();
+        ValidateEnvironmentSFX();
         ValidateUISFX();
 
         if (MissingClipCount == 0)
@@ -66,7 +68,22 @@ public class Sc_AudioLibraryLoader
 
     private void ValidateMusicTracks()
     {
-        // MusicTrack.None is intentionally not a real clip — skip it
+        foreach (MusicEntry entry in _library.MusicTracks)
+        {
+            if (entry.Track == MusicTrack.None)
+                continue;
+
+            if (entry.Clip == null)
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] NULL CLIP — MusicTrack.{entry.Track} " +
+                                 "has an entry in SO_AudioLibrary but its AudioClip is not assigned.");
+                MissingClipCount++;
+            }
+        }
+
+        if (!_library.WarnForMissingEntries)
+            return;
+
         foreach (MusicTrack track in Enum.GetValues(typeof(MusicTrack)))
         {
             if (track == MusicTrack.None) continue;
@@ -92,6 +109,19 @@ public class Sc_AudioLibraryLoader
 
     private void ValidateCombatSFX()
     {
+        foreach (CombatSFXEntry entry in _library.CombatSounds)
+        {
+            if (entry.Clip == null)
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] NULL CLIP — CombatSFX.{entry.Key} " +
+                                 "has an entry in SO_AudioLibrary but its AudioClip is not assigned.");
+                MissingClipCount++;
+            }
+        }
+
+        if (!_library.WarnForMissingEntries)
+            return;
+
         foreach (CombatSFX key in Enum.GetValues(typeof(CombatSFX)))
         {
             if (!_library.TryGetCombatSFX(key, out CombatSFXEntry entry))
@@ -111,9 +141,55 @@ public class Sc_AudioLibraryLoader
         }
     }
 
+    private void ValidateEnvironmentSFX()
+    {
+        foreach (EnvironmentSFXEntry entry in _library.EnvironmentSounds)
+        {
+            if (entry.Clip == null)
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] NULL CLIP — EnvironmentSFX.{entry.Key} " +
+                                 "has an entry in SO_AudioLibrary but its AudioClip is not assigned.");
+                MissingClipCount++;
+            }
+        }
+
+        if (!_library.WarnForMissingEntries)
+            return;
+
+        foreach (EnvironmentSFX key in Enum.GetValues(typeof(EnvironmentSFX)))
+        {
+            if (!_library.TryGetEnvironmentSFX(key, out EnvironmentSFXEntry entry))
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] MISSING ENTRY — EnvironmentSFX.{key} " +
+                                 "has no entry in SO_AudioLibrary.EnvironmentSounds.");
+                MissingClipCount++;
+                continue;
+            }
+
+            if (entry.Clip == null)
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] NULL CLIP — EnvironmentSFX.{key} " +
+                                 "has an entry in SO_AudioLibrary but its AudioClip is not assigned.");
+                MissingClipCount++;
+            }
+        }
+    }
 
     private void ValidateUISFX()
     {
+        foreach (UISFXEntry entry in _library.UISounds)
+        {
+            if (entry.Clip == null)
+            {
+                Debug.LogWarning($"[Sc_AudioLibraryLoader] NULL CLIP — UISFX.{entry.Key} " +
+                                 "has an entry in SO_AudioLibrary but its AudioClip is not assigned.");
+                MissingClipCount++;
+            }
+        }
+
+        if (!_library.WarnForMissingEntries)
+            return;
+
         foreach (UISFX key in Enum.GetValues(typeof(UISFX)))
         {
             if (!_library.TryGetUISFX(key, out UISFXEntry entry))

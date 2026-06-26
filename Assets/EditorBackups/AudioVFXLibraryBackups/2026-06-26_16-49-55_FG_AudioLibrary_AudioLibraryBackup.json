@@ -1,0 +1,221 @@
+{
+    "AssetName": "FG_AudioLibrary",
+    "AssetPath": "Assets/ScriptableObjects/Audio/FG_AudioLibrary.asset",
+    "ExportedAt": "2026-06-26T16:49:55.2984576+08:00",
+    "MusicTracks": [
+        {
+            "Category": "MusicTracks",
+            "EnumName": "Combat_Stage1",
+            "EnumValue": 2,
+            "ClipPath": "Assets/Audio/Music/Loop 1 Primal Combat.wav",
+            "ClipGuid": "796cbfa19ecdd5743967e74a315b1dad",
+            "DefaultVolume": 0.6000000238418579
+        },
+        {
+            "Category": "MusicTracks",
+            "EnumName": "MainMenu",
+            "EnumValue": 1,
+            "ClipPath": "Assets/Audio/Music/Open World Happiness Full.wav",
+            "ClipGuid": "a5c07d674e7368b4ea1d1a7ec71105be",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "MusicTracks",
+            "EnumName": "Victory",
+            "EnumValue": 5,
+            "ClipPath": "Assets/Audio/Music/Tribal Victory.wav",
+            "ClipGuid": "5ef196c91cf74f24286b073df78757cc",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "MusicTracks",
+            "EnumName": "Defeat",
+            "EnumValue": 6,
+            "ClipPath": "Assets/Audio/Music/The Warrior No Return Full.wav",
+            "ClipGuid": "7b092a2662425754bb4e4ed1a2463719",
+            "DefaultVolume": 1.0
+        }
+    ],
+    "CombatSounds": [
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Hit_Guardian",
+            "EnumValue": 0,
+            "ClipPath": "Assets/Audio/CombatSFX/77_flesh_02.wav",
+            "ClipGuid": "2b21ef916f6943c439b71a7c74568878",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Rajah_Feather_Launch",
+            "EnumValue": 4,
+            "ClipPath": "Assets/Audio/Rajah/feather_pew.wav",
+            "ClipGuid": "24d25793e7e276a47b1379c2f911eba5",
+            "DefaultVolume": 0.25
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Rajah_Primary",
+            "EnumValue": 5,
+            "ClipPath": "Assets/Audio/CombatSFX/03_Claw_03.wav",
+            "ClipGuid": "56703418e3aed4c47a5f6622816b8e41",
+            "DefaultVolume": 0.25
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Rajah_Secondary_Swing",
+            "EnumValue": 7,
+            "ClipPath": "Assets/Audio/Rajah/throw feathers - 2 (1).wav",
+            "ClipGuid": "bfb49da4acab01644b9e2f8dcf512b70",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Rajah_Q_Cast",
+            "EnumValue": 9,
+            "ClipPath": "Assets/Audio/Rajah/Dash (Q) 2nd option (1).wav",
+            "ClipGuid": "d1c08ef72d611f24584c4fded0966dd3",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Rajah_E_Launch",
+            "EnumValue": 11,
+            "ClipPath": "Assets/Audio/Rajah/Dash (E) (1).wav",
+            "ClipGuid": "f617d1dc8eece2c4786c334921f769bc",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "Hit_CuBot",
+            "EnumValue": 1,
+            "ClipPath": "Assets/Audio/Rajah/Metal Tink.wav",
+            "ClipGuid": "8d66b2f22d643d245b0f5f19737fe982",
+            "DefaultVolume": 0.25
+        },
+        {
+            "Category": "CombatSounds",
+            "EnumName": "CuBot_Death",
+            "EnumValue": 2,
+            "ClipPath": "Assets/Audio/CombatSFX/04_Fire_explosion_04_medium.wav",
+            "ClipGuid": "a652877b012108e41871f867ada9f176",
+            "DefaultVolume": 0.5
+        }
+    ],
+    "EnvironmentSounds": [
+        {
+            "Category": "EnvironmentSounds",
+            "EnumName": "Guardian_Footstep_Generic",
+            "EnumValue": 0,
+            "ClipPath": "Assets/Audio/EnvironmentSFX/03_Step_grass_03.wav",
+            "ClipGuid": "df7087e4d8a8bb546bc08ce68632903f",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "EnvironmentSounds",
+            "EnumName": "Guardian_Footstep_Water",
+            "EnumValue": 1,
+            "ClipPath": "Assets/Audio/EnvironmentSFX/Footsteps_WaterV2_Walk_01.wav",
+            "ClipGuid": "518cdd508d673124da33c3a5cdd93f05",
+            "DefaultVolume": 0.75
+        },
+        {
+            "Category": "EnvironmentSounds",
+            "EnumName": "Guardian_Jump_Generic",
+            "EnumValue": 2,
+            "ClipPath": "Assets/Audio/EnvironmentSFX/30_Jump_03.wav",
+            "ClipGuid": "4e349dc959014a845b9aa317d1c2b7f0",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "EnvironmentSounds",
+            "EnumName": "Guardian_Land_Generic",
+            "EnumValue": 3,
+            "ClipPath": "Assets/Audio/EnvironmentSFX/Footsteps_Grass_Jump_Land_02.wav",
+            "ClipGuid": "a967f92e38352bb4291945423de63499",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "EnvironmentSounds",
+            "EnumName": "Almanac_Collected",
+            "EnumValue": 4,
+            "ClipPath": "Assets/Audio/Almanac/Collected.wav",
+            "ClipGuid": "4e5bbeaf5021664448de1227dc64540a",
+            "DefaultVolume": 1.0
+        }
+    ],
+    "UISounds": [
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_Click_Generic",
+            "EnumValue": 0,
+            "ClipPath": "Assets/Audio/UISFX/button_press_99.wav",
+            "ClipGuid": "b0a135c19dbc2cc49909a2a583d55719",
+            "DefaultVolume": 0.5
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_Hover",
+            "EnumValue": 3,
+            "ClipPath": "Assets/Audio/UISFX/Wood Block1.mp3",
+            "ClipGuid": "80721227073f0cf4497b42ead9687c56",
+            "DefaultVolume": 0.25
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_RewardSelect",
+            "EnumValue": 7,
+            "ClipPath": "Assets/Audio/UISFX/02_Heal_02.wav",
+            "ClipGuid": "cfce0cea076109f478783201b2a9f57f",
+            "DefaultVolume": 0.5
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_Pause_Open",
+            "EnumValue": 9,
+            "ClipPath": "Assets/Audio/UISFX/Wood Block1.wav",
+            "ClipGuid": "acbd01cdf53506541ae5c30df72606a1",
+            "DefaultVolume": 0.5
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_Pause_Resume",
+            "EnumValue": 10,
+            "ClipPath": "Assets/Audio/UISFX/Wood Block2.wav",
+            "ClipGuid": "df60351d9c281ba4aaa683bb517d7bbb",
+            "DefaultVolume": 0.5
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UX_Heartbeat",
+            "EnumValue": 18,
+            "ClipPath": "Assets/Audio/CombatSFX/Heartbeat_boosted_300_boosted_150.mp3",
+            "ClipGuid": "4c2b7ef92f8c1aa41ba627f5f4d86aba",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_PanoharraUnderAttack",
+            "EnumValue": 19,
+            "ClipPath": "Assets/Audio/StageSFXDialogs/SFX_PanoharraUnderAttack.mp3",
+            "ClipGuid": "23e4471659aad9f40a93d255c282515e",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_StageClear",
+            "EnumValue": 16,
+            "ClipPath": "Assets/Audio/StageSFXDialogs/SFX_Victory_ver4.mp3",
+            "ClipGuid": "b447614a338a9bc4a990eaa45e3c18b0",
+            "DefaultVolume": 1.0
+        },
+        {
+            "Category": "UISounds",
+            "EnumName": "UI_StageDefeat",
+            "EnumValue": 17,
+            "ClipPath": "Assets/Audio/StageSFXDialogs/SFX_Defeat.mp3",
+            "ClipGuid": "cd106f1a6aa1cb74ab1d21117d256b7d",
+            "DefaultVolume": 1.0
+        }
+    ]
+}

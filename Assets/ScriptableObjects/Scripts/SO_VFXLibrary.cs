@@ -9,7 +9,7 @@
 //
 // INSPECTOR SETUP:
 //   1. Right-click in the Project window → Create → ForestGuardians → VFXLibrary
-//   2. You will see a list of VFXEntry rows — one per VFXType value.
+//   2. Fill the category-specific lists instead of one long global dropdown.
 //   3. For each row:
 //        - Prefab      → drag in the particle system prefab
 //        - Lifetime    → how long (seconds) before the instance returns to pool
@@ -34,34 +34,33 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New VFXLibrary", menuName = "ForestGuardians/VFXLibrary")]
 public class SO_VFXLibrary : ScriptableObject
 {
-    private List<VFXEntry> Entries = new List<VFXEntry>();
+    [Header("Validation")]
+    [Tooltip("When true, Validate() logs every VFXType that has no library entry. Keep false while planned enum keys are still empty.")]
+    public bool WarnForMissingEntries = false;
 
-    [Header("VFX Entries")]
-    [Tooltip("Add one entry per VFXType value. " +
-             "Mb_VFXManager logs a warning at startup for any VFXType with no matching entry.")]
     [Header("Generic Combat VFX")]
-    public List<VFXEntry> GenericCombatVFX = new List<VFXEntry>();
+    public List<GenericCombatVFXEntry> GenericCombatVFX = new List<GenericCombatVFXEntry>();
 
     [Header("Rajah VFX")]
-    public List<VFXEntry> RajahVFX = new List<VFXEntry>();
+    public List<RajahVFXEntry> RajahVFX = new List<RajahVFXEntry>();
 
     [Header("Mari VFX")]
-    public List<VFXEntry> MariVFX = new List<VFXEntry>();
+    public List<MariVFXEntry> MariVFX = new List<MariVFXEntry>();
 
     [Header("CuBot Combat VFX")]
-    public List<VFXEntry> CuBotCombatVFX = new List<VFXEntry>();
+    public List<CuBotVFXEntry> CuBotCombatVFX = new List<CuBotVFXEntry>();
 
     [Header("Status Effect VFX")]
-    public List<VFXEntry> StatusEffectVFX = new List<VFXEntry>();
+    public List<StatusVFXEntry> StatusEffectVFX = new List<StatusVFXEntry>();
 
     [Header("Environment VFX")]
-    public List<VFXEntry> EnvironmentVFX = new List<VFXEntry>();
+    public List<EnvironmentVFXEntry> EnvironmentVFX = new List<EnvironmentVFXEntry>();
 
     [Header("Footstep VFX")]
-    public List<VFXEntry> FootstepVFX = new List<VFXEntry>();
+    public List<FootstepVFXEntry> FootstepVFX = new List<FootstepVFXEntry>();
 
     [Header("UI VFX")]
-    public List<VFXEntry> UIVFX = new List<VFXEntry>();
+    public List<UIVFXEntry> UIVFX = new List<UIVFXEntry>();
 
     // Built at runtime by BuildLookup() so TryGetEntry() is O(1), not O(n).
     // Dictionary is rebuilt every time the library is loaded — no stale cache risk.
@@ -97,20 +96,25 @@ public class SO_VFXLibrary : ScriptableObject
 
         int missingCount = 0;
 
-        foreach (VFXType type in Enum.GetValues(typeof(VFXType)))
+        foreach (VFXEntry entry in _lookup.Values)
         {
-            if (!_lookup.TryGetValue(type, out VFXEntry entry))
-            {
-                Debug.LogWarning($"[SO_VFXLibrary] MISSING ENTRY — VFXType.{type} " +
-                                 "has no entry in the VFX library. Add it in the Inspector.");
-                missingCount++;
-                continue;
-            }
-
             if (entry.Prefab == null)
             {
-                Debug.LogWarning($"[SO_VFXLibrary] NULL PREFAB — VFXType.{type} " +
+                Debug.LogWarning($"[SO_VFXLibrary] NULL PREFAB — VFXType.{entry.Type} " +
                                  "has an entry but its Prefab field is not assigned.");
+                missingCount++;
+            }
+        }
+
+        if (WarnForMissingEntries)
+        {
+            foreach (VFXType type in Enum.GetValues(typeof(VFXType)))
+            {
+                if (_lookup.ContainsKey(type))
+                    continue;
+
+                Debug.LogWarning($"[SO_VFXLibrary] MISSING ENTRY — VFXType.{type} " +
+                                 "has no entry in the VFX library. Add it in the Inspector.");
                 missingCount++;
             }
         }
@@ -131,34 +135,44 @@ public class SO_VFXLibrary : ScriptableObject
     // Called lazily — safe to call multiple times (idempotent).
     private void BuildLookup()
     {
-        // Merge all VFX entries into a single list for lookup.
-        if (_lookup == null)
-        {
-            Entries.Clear();
-            Entries.AddRange(GenericCombatVFX);
-            Entries.AddRange(RajahVFX);
-            Entries.AddRange(MariVFX);
-            Entries.AddRange(CuBotCombatVFX);
-            Entries.AddRange(StatusEffectVFX);
-            Entries.AddRange(EnvironmentVFX);
-            Entries.AddRange(FootstepVFX);
-            Entries.AddRange(UIVFX);
-        }
-
-
         _lookup = new Dictionary<VFXType, VFXEntry>();
 
-        foreach (var entry in Entries)
+        AddEntries(GenericCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(RajahVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(MariVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(CuBotCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(StatusEffectVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(EnvironmentVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(FootstepVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(UIVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+    }
+
+    private void AddEntries<TEntry, TEnum>(
+        List<TEntry> entries,
+        Func<TEntry, TEnum> getType,
+        Func<TEntry, GameObject> getPrefab,
+        Func<TEntry, float> getLifetime,
+        Func<TEntry, int> getPoolSize) where TEnum : Enum
+    {
+        foreach (TEntry sourceEntry in entries)
         {
-            if (_lookup.ContainsKey(entry.Type))
+            VFXType runtimeType = (VFXType)Convert.ToInt32(getType(sourceEntry));
+            var runtimeEntry = new VFXEntry
             {
-                // Duplicate entries would silently overwrite each other — warn instead.
-                Debug.LogWarning($"[SO_VFXLibrary] Duplicate entry for VFXType.{entry.Type}. " +
+                Type = runtimeType,
+                Prefab = getPrefab(sourceEntry),
+                Lifetime = getLifetime(sourceEntry),
+                PoolSize = getPoolSize(sourceEntry)
+            };
+
+            if (_lookup.ContainsKey(runtimeType))
+            {
+                Debug.LogWarning($"[SO_VFXLibrary] Duplicate entry for VFXType.{runtimeType}. " +
                                  "Only the first entry will be used. Remove the duplicate.");
                 continue;
             }
 
-            _lookup[entry.Type] = entry;
+            _lookup[runtimeType] = runtimeEntry;
         }
     }
 }
@@ -169,7 +183,7 @@ public class SO_VFXLibrary : ScriptableObject
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// <summary>
-/// One row in SO_VFXLibrary — pairs a VFXType with its prefab and pool settings.
+/// Runtime VFX row used by Mb_VFXManager after category entries are converted.
 /// </summary>
 [Serializable]
 public class VFXEntry
@@ -192,4 +206,76 @@ public class VFXEntry
              "Mb_VFXManager expands the pool with a warning if this is too small.")]
     [Min(1)]
     public int PoolSize = 3;
+}
+
+[Serializable]
+public class GenericCombatVFXEntry
+{
+    public GenericCombatVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class RajahVFXEntry
+{
+    public RajahVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class MariVFXEntry
+{
+    public MariVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class CuBotVFXEntry
+{
+    public CuBotVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class StatusVFXEntry
+{
+    public StatusVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class EnvironmentVFXEntry
+{
+    public EnvironmentVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class FootstepVFXEntry
+{
+    public FootstepVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
+}
+
+[Serializable]
+public class UIVFXEntry
+{
+    public UIVFXType Type;
+    public GameObject Prefab;
+    public float Lifetime = 2f;
+    [Min(1)] public int PoolSize = 3;
 }

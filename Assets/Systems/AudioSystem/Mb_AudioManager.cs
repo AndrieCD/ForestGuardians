@@ -347,7 +347,7 @@ public class Mb_AudioManager : MonoBehaviour
 
         if (!_AudioLibrary.TryGetCombatSFX(sfx, out CombatSFXEntry entry) || entry.Clip == null)
         {
-            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for EnvironmentSFX.{sfx}. Skipping.");
+            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for CombatSFX.{sfx}. Skipping.");
             return;
         }
 
@@ -370,7 +370,7 @@ public class Mb_AudioManager : MonoBehaviour
 
         if (!_AudioLibrary.TryGetEnvironmentSFX(sfx, out EnvironmentSFXEntry entry) || entry.Clip == null)
         {
-            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for CombatSFX.{sfx}. Skipping.");
+            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for EnvironmentSFX.{sfx}. Skipping.");
             return;
         }
 

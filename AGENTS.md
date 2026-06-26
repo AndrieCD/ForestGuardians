@@ -203,3 +203,7 @@ Unless instructed otherwise:
 * Assume this repository is an actively developed production codebase.
 
 Before implementing, also read **PROJECT_CONTEXT.md** for project-specific information.
+<!-- UNITY CODE ASSIST INSTRUCTIONS START -->
+- Project name: ForestGuardians
+- Unity version: Unity 6000.3.9f1
+<!-- UNITY CODE ASSIST INSTRUCTIONS END -->

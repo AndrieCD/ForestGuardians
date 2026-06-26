@@ -12,91 +12,92 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74d0b74a0038cc649a8d884c298cd71f, type: 3}
   m_Name: VFXLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SO_VFXLibrary
+  WarnForMissingEntries: 0
   GenericCombatVFX:
-  - Type: 2
+  - Type: 1020
     Prefab: {fileID: 8926355762202132010, guid: 3c8f9def557565e4d8624230d50768cb, type: 3}
     Lifetime: 1.1
     PoolSize: 20
-  - Type: 0
+  - Type: 1000
     Prefab: {fileID: 8926355762202132010, guid: 3c8f9def557565e4d8624230d50768cb, type: 3}
     Lifetime: 1.1
     PoolSize: 20
   RajahVFX:
-  - Type: 6
+  - Type: 2000
     Prefab: {fileID: 7391640138327888454, guid: b2e28e187ce535c4cbbb606b937fee36, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 8
+  - Type: 2020
     Prefab: {fileID: 3122643807721101044, guid: ed76dd6e75ea25c469cfeee8af9e1989, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 18
+  - Type: 2120
     Prefab: {fileID: 3122643807721101044, guid: ed76dd6e75ea25c469cfeee8af9e1989, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 13
+  - Type: 2070
     Prefab: {fileID: 3122643807721101044, guid: ed76dd6e75ea25c469cfeee8af9e1989, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 10
+  - Type: 2040
     Prefab: {fileID: 4479242269041949980, guid: 051bd2c3fb8f40f4593aa0c5557357ee, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 12
+  - Type: 2060
     Prefab: {fileID: 2734805333431787683, guid: c591205baffd7b0449c49448ccb0063e, type: 3}
     Lifetime: 20
     PoolSize: 20
   MariVFX: []
   CuBotCombatVFX:
-  - Type: 1
+  - Type: 1010
     Prefab: {fileID: 8926355762202132010, guid: 3c8f9def557565e4d8624230d50768cb, type: 3}
     Lifetime: 1.1
     PoolSize: 20
-  - Type: 3
+  - Type: 1030
     Prefab: {fileID: 4273060829039023248, guid: 93d383ba07188e743b6f70b67f587c96, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 34
+  - Type: 4020
     Prefab: {fileID: 193110238101679430, guid: 98275aff7f8dcc143ac1cc6e0d4b4db7, type: 3}
     Lifetime: 2
     PoolSize: 20
-  - Type: 41
+  - Type: 4160
     Prefab: {fileID: 544674701638327960, guid: 2a7234ef93a9c21408054c9a57281030, type: 3}
     Lifetime: 2
     PoolSize: 5
   StatusEffectVFX:
-  - Type: 42
+  - Type: 5000
     Prefab: {fileID: 994081385684806583, guid: 512a923e680f3ce47ac69a5545405039, type: 3}
     Lifetime: 999
     PoolSize: 5
-  - Type: 46
+  - Type: 5040
     Prefab: {fileID: 2734805333431787683, guid: c591205baffd7b0449c49448ccb0063e, type: 3}
     Lifetime: 999
     PoolSize: 5
   EnvironmentVFX:
-  - Type: 48
+  - Type: 6010
     Prefab: {fileID: 6299658623613784175, guid: 92d78c3c76febf94487317a0b108ed1b, type: 3}
     Lifetime: 4
     PoolSize: 10
-  - Type: 67
+  - Type: 6080
     Prefab: {fileID: 4626061957930869540, guid: ea779a7d806664a4699219f1f370de62, type: 3}
     Lifetime: 1
     PoolSize: 2
   FootstepVFX:
-  - Type: 57
+  - Type: 7020
     Prefab: {fileID: 1817986171443504903, guid: c13ecec396318c444a728dfdd167af08, type: 3}
     Lifetime: 1
     PoolSize: 10
-  - Type: 58
+  - Type: 7100
     Prefab: {fileID: 1822715066681866867, guid: 6dff635240b90134d84fe356026819ad, type: 3}
     Lifetime: 1
     PoolSize: 10
-  - Type: 59
+  - Type: 7110
     Prefab: {fileID: 7711429842146121223, guid: f83833e9b9df73843b89375cd87446c7, type: 3}
     Lifetime: 1
     PoolSize: 10
   UIVFX:
-  - Type: 64
+  - Type: 8040
     Prefab: {fileID: 3344008844848411623, guid: ed2a1351b5452774ca4b9cc9d1087236, type: 3}
     Lifetime: 999
     PoolSize: 10

@@ -17,4 +17,5 @@
   <Project Path="Unity.TextMeshPro.Tests.csproj" />
   <Project Path="Unity.InternalAPIEngineBridge.004.csproj" />
   <Project Path="CFXR.WelcomeScreen.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>
