@@ -151,8 +151,6 @@ public class Mb_PanoharraManager : MonoBehaviour
 
     private void HandleDeath()
     {
-        Debug.Log("[Mb_PanoharraManager] The Panoharra Tree has been destroyed!");
-
         // Notify the defeat manager (and any future listener) without a direct reference.
         // The defeat manager's OnEnable() subscribes to this static event.
         OnPanoharraDestroyed?.Invoke();

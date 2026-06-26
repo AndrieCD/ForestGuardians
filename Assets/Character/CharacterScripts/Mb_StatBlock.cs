@@ -49,11 +49,14 @@ public class Mb_StatBlock : MonoBehaviour
 
     #region Build From Template         //----------------------------------------
 
+    /// <summary>
+    /// Builds guardian stats from ScriptableObject base values and scaling values.
+    /// Call before health initialization or ability setup.
+    /// </summary>
     public void BuildFromTemplate(SO_Guardian template)
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
         HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
-        Debug.Log($"Health Regen: {template.HealthRegen}");
 
         MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
         AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
@@ -82,6 +85,10 @@ public class Mb_StatBlock : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Builds CuBot stats from ScriptableObject base values and scaling values.
+    /// Use this during pool reset so reused enemies start from clean base stats.
+    /// </summary>
     public void BuildFromTemplate(SO_CuBots template)
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
@@ -99,6 +106,10 @@ public class Mb_StatBlock : MonoBehaviour
         BuildLookup();
     }
 
+    /// <summary>
+    /// Builds Panoharra stats from ScriptableObject base values.
+    /// Panoharra only uses health-related stats.
+    /// </summary>
     public void BuildFromTemplate(SO_Panoharra template)
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, 0);
@@ -160,8 +171,6 @@ public class Mb_StatBlock : MonoBehaviour
 
         OnStatsChanged?.Invoke();
 
-        Debug.Log($"Level set to {level}. MaxHealth changed from {oldMaxHP} to {MaxHealth.GetValue()}.");
-
         // Return how much MaxHealth grew so the caller can top up HP by the same amount
         return MaxHealth.GetValue() - oldMaxHP;
     }
@@ -177,7 +186,11 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void AddModifier(Sc_Modifier modifier)
     {
-        Debug.Log($"Adding modifier '{modifier.ModifierName}' from source {modifier.Source} with duration {modifier.Duration} seconds.");
+        if (modifier == null)
+        {
+            Debug.LogWarning("[Mb_StatBlock] AddModifier received null modifier.");
+            return;
+        }
 
         _activeModifiers.Add(modifier);
         ApplyEffects(modifier);
@@ -278,20 +291,31 @@ public class Mb_StatBlock : MonoBehaviour
         foreach (var effect in modifier.Effects)
         {
             if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
+            {
                 stat.Effects.Add(effect);
-            stat.NotifyChanged(); // ← stat-level event fires here
+                stat.NotifyChanged(); // stat-level event fires here
+            }
+            else
+            {
+                Debug.LogWarning($"[Mb_StatBlock] Modifier '{modifier.ModifierName}' targets unsupported stat '{effect.TargetStat}'.");
+            }
 
         }
     }
 
 
+    /// <summary>
+    /// Removes all effects from the specified modifier from their corresponding target stats.
+    /// </summary>
     private void RemoveEffects(Sc_Modifier modifier)
     {
         foreach (var effect in modifier.Effects)
         {
             if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
+            {
                 stat.Effects.Remove(effect);
-            stat.NotifyChanged(); // ← stat-level event fires here
+                stat.NotifyChanged(); // stat-level event fires here
+            }
         }
     }
 
@@ -305,6 +329,9 @@ public class Mb_StatBlock : MonoBehaviour
     #endregion          //----------------------------------------
 
 
+    /// <summary>
+    /// Manually notifies listeners that a stat changed when a caller updates stat-adjacent state.
+    /// </summary>
     public void NotifyStatsChanged()
     {
         OnStatsChanged?.Invoke();

@@ -42,8 +42,6 @@ public class Mb_StageManager : MonoBehaviour
 
     private void StartStage()
     {
-        Debug.Log("Start Stage");
-
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {

@@ -1,15 +1,15 @@
 ﻿// Mb_VFXManager.cs
-// The central VFX system for Forest Guardians.
-// Persists across all scene loads — mirrors the Mb_AudioManager singleton pattern.
+// Central VFX playback manager for Forest Guardians.
+// Create one instance in Bootstrap and keep it alive across scene loads.
 //
-// WHY A SINGLETON MANAGER WITH OBJECT POOLING:
+// OBJECT POOLING:
 //   Combat can spawn many simultaneous hit effects (multi-enemy abilities, DoT ticks,
 //   CuBot death bursts). Instantiating a new GameObject per effect would generate
 //   garbage and cause visible stutter during the most visually active moments.
 //   Pre-warming a pool per VFXType at scene start means zero runtime allocation
 //   during gameplay — the same pattern used by Mb_AudioManager's SFX pool.
 //
-// HOW TO SPAWN A VFX FROM ANY SCRIPT (no direct reference needed):
+// STATIC API:
 //   Mb_VFXManager.Play(VFXType.Hit_Generic, hitPosition);
 //   Mb_VFXManager.Play(VFXType.Status_Burn, transform.position, transform);
 //   Mb_VFXManager.PlayAtImpact(VFXType.Hit_Critical, hitPoint, hitNormal);
@@ -21,30 +21,18 @@
 //   pool size in SO_VFXLibrary. Silent failure (skipping the effect) was rejected
 //   because missing VFX during combat are harder to diagnose than a console warning.
 //
-// EVENT HOOKS (automatic VFX, no caller required):
-//   MB_CuBotBase.OnCuBotSpawn     → Env_CuBot_Spawn
+// EVENT HOOKS:
+//   MB_CuBotBase.OnCuBotSpawn     → intentionally skipped here; spawn position is set after activation
 //   MB_CuBotBase.OnCuBotDeath     → Hit_CuBot_Death
 //   Sc_BaseAbility.OnCriticalHit  → Hit_Critical
 //   Mb_WaveManager.OnWaveStart    → Env_Wave_Start  (at Panoharra position)
 //
-// FOR ABILITY-SPECIFIC VFX (Q, E, R, Primary, Secondary):
+// ABILITY-SPECIFIC VFX:
 //   Call Mb_VFXManager.Play() directly inside the ability's Activate() method.
-//   // TODO: Add VFXManager.Play(VFXType.Ability_Q, user.transform.position)
-//   //        inside Rajah_Q_Ability.Activate() once the prefab is ready.
 //
-// FOR GUARDIAN DEATH VFX:
-//   // TODO: Add VFXManager.Play(VFXType.Env_Guardian_Death, transform.position)
-//   //        inside Mb_GuardianBase.HandleDeath() once the prefab is ready.
-//
-// FOR LEVEL-UP VFX:
-//   // TODO: Add VFXManager.Play(VFXType.Env_Levelup, player.transform.position)
-//   //        inside Mb_RewardsManager.HandleWaveEnd() after LevelUp() is called.
-//
-// FOR PROJECTILE IMPACT VFX:
+// PROJECTILE IMPACT VFX:
 //   Call PlayAtImpact() from Mb_Projectile.OnTriggerEnter() when the impact point
 //   is known. Fall back to the target's transform.position when it is not.
-//   // TODO: Add VFXManager.PlayAtImpact(VFXType.Hit_Generic, contactPoint, hitNormal)
-//   //        inside Mb_Projectile.OnTriggerEnter() once prefabs are ready.
 //
 // INSPECTOR SETUP:
 //   1. Create a persistent GameObject in your bootstrap scene (e.g. "VFXManager").
@@ -204,9 +192,6 @@ public class Mb_VFXManager : MonoBehaviour
     {
         if (Instance == null) return;
         Instance.PlayInternal(type, position, Quaternion.identity, parent);
-
-        Debug.Log($"[Mb_VFXManager] Play called with parent {parent.name} for VFXType.{type}. " +
-                  $"Playing at {position}.");
     }
 
 
@@ -451,11 +436,7 @@ public class Mb_VFXManager : MonoBehaviour
     {
         if (deadCuBot == null) return;
 
-
-        // Play the death burst at the CuBot's last known position
-
-        Debug.Log("[VFXManager] Dead CuBot name: " + deadCuBot.name);
-        // if boss cubot (bernie, toxion, luxion) play the boss death vfx instead
+        // Boss CuBots use a heavier death burst than standard enemies.
         if (deadCuBot.name.Contains("Bernie") || deadCuBot.name.Contains("Toxion") || deadCuBot.name.Contains("Luxion"))
         {
             Play(VFXType.CuBot_Boss_Death_Generic, deadCuBot.transform.position);
@@ -482,10 +463,8 @@ public class Mb_VFXManager : MonoBehaviour
     private void HandleProjectileHit(Mb_Projectile projectile, Mb_CharacterBase attacker, Mb_CharacterBase characterHit)
     {
         Transform projectileTrans = projectile.transform;
-        Transform hitTransform = projectile.transform;
 
         PlayAtImpact(VFXType.Hit_Projectile_Generic, projectileTrans.position, Vector3.up);
-
     }
 
 
@@ -520,23 +499,7 @@ public class Mb_VFXManager : MonoBehaviour
 
     private void HandlePaused()
     {
-        // Pause ALL instances of every type — active and inactive alike.
-        // Inactive instances have no particles playing, so Pause() on them is a no-op.
-        // Iterating _allInstances is safe because it tracks every instance ever created.
-        foreach (var instanceList in _allInstances.Values)
-        {
-            foreach (Mb_VFXInstance instance in instanceList)
-            {
-                // Mb_VFXInstance.HandlePause() is subscribed to Mb_PauseManager.OnPaused
-                // directly on each instance, so we don't need to call it manually here.
-                // This block exists as a safety net for instances that were inactive
-                // (and therefore unsubscribed) when the pause event fired.
-                // Because inactive instances have no playing particles, this is safe.
-            }
-        }
-        // NOTE: Active instances handle their own pause via their OnEnable subscription.
-        // This handler exists to ensure the manager itself can respond to pause if needed
-        // in future (e.g. stopping pool expansion during pause).
+        // Active VFX instances handle pause through their own event subscriptions.
     }
 
 

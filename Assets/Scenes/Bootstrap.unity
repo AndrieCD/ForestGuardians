@@ -751,6 +751,70 @@ MonoBehaviour:
   MainMenuCanvas: {fileID: 2445422054956494309, guid: 23bf5c90654506045bd5ddf9db1fdef7, type: 3}
   HUDCanvas: {fileID: 0}
   PauseMenuCanvas: {fileID: 0}
+--- !u!1 &1311085583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1311085584}
+  - component: {fileID: 1311085585}
+  m_Layer: 0
+  m_Name: CoreDebugMonitor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1311085584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311085583}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1311085585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311085583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 001df980861d68a49b4d9e01604043c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_CoreDebugMonitor
+  EnableConsoleLogging: 1
+  IncludeFrameCount: 1
+  MaxStoredEvents: 20
+  TrackSceneFlow: 1
+  TrackGameState: 1
+  TrackStageFlow: 1
+  TrackWaveFlow: 1
+  TrackRewards: 1
+  TrackPause: 1
+  TrackEnemies: 1
+  TrackObjective: 1
+  _CurrentScene: 
+  _CurrentGameState: 0
+  _CurrentWavePhase: 0
+  _CurrentWaveIndex: -1
+  _ActiveEnemyCount: 0
+  _SpawnedEnemyCount: 0
+  _DefeatedEnemyCount: 0
+  _IsPaused: 0
+  _RecentEvents: 
 --- !u!1 &1440851114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,3 +1244,4 @@ SceneRoots:
   - {fileID: 1698070825}
   - {fileID: 1887397639}
   - {fileID: 1936061967}
+  - {fileID: 1311085584}

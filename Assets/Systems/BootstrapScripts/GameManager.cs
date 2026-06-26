@@ -25,8 +25,6 @@ public class GameManager : MonoBehaviour
     public void Initialize( )
     {
         CurrentState = GameState.LoadingStage;
-
-        Debug.Log("GameManager initialized. Current State: " + CurrentState);
     }
 
     private void Awake( )
@@ -49,8 +47,6 @@ public class GameManager : MonoBehaviour
         OnGameStateChanged?.Invoke(newState);
 
         HandleMouseVisibilityAndLock(newState);
-
-        Debug.Log($"[GameManager] {CurrentState}");
     }
 
     private void HandleMouseVisibilityAndLock(GameState state)

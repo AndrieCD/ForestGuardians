@@ -17,6 +17,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     // HealthComponent needs StatBlock to know the MaxHealth cap when healing
     private Mb_StatBlock _statBlock;
+    private Sc_Stat _observedMaxHealth;
 
 
     #region Runtime State   //----------------------------------------
@@ -60,6 +61,12 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     #endregion              //----------------------------------------
 
 
+    private void OnDisable()
+    {
+        UnsubscribeFromMaxHealth();
+        StopRegenCoroutine();
+    }
+
 
     /// <summary>
     /// Sets CurrentHealth to MaxHealth and clears the dead flag.
@@ -78,6 +85,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         }
 
         IsDead = false;
+        _shields.Clear();
         CurrentHealth = _statBlock.MaxHealth.GetValue();
 
         // Stop any leftover regen coroutine before starting a fresh one.
@@ -90,17 +98,38 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
         OnShieldChanged?.Invoke(CurrentShield);
 
-        _statBlock.MaxHealth.OnStatChanged += HandleMaxHealthChanged;
+        SubscribeToMaxHealth(_statBlock.MaxHealth);
     }
 
-    private void HandleMaxHealthChanged(float obj)
+    private void SubscribeToMaxHealth(Sc_Stat maxHealth)
     {
-        // When MaxHealth changes (e.g. from Heart of the Forest), we may need to adjust CurrentHealth if it exceeds the new MaxHealth.
-        if (CurrentHealth > obj)
-        {
-            CurrentHealth = obj;
-            OnHealthChanged?.Invoke(CurrentHealth, obj);
-        }
+        if (_observedMaxHealth == maxHealth) return;
+
+        UnsubscribeFromMaxHealth();
+
+        _observedMaxHealth = maxHealth;
+
+        if (_observedMaxHealth != null)
+            _observedMaxHealth.OnStatChanged += HandleMaxHealthChanged;
+    }
+
+    private void UnsubscribeFromMaxHealth()
+    {
+        if (_observedMaxHealth == null) return;
+
+        _observedMaxHealth.OnStatChanged -= HandleMaxHealthChanged;
+        _observedMaxHealth = null;
+    }
+
+    private void HandleMaxHealthChanged(float maxHealth)
+    {
+        OnMaxHealthChanged?.Invoke(maxHealth);
+
+        // When MaxHealth changes, clamp CurrentHealth if it now exceeds the new cap.
+        if (CurrentHealth <= maxHealth) return;
+
+        CurrentHealth = maxHealth;
+        OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
     }
 
 
@@ -115,8 +144,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         if (IsDead) return;
         if (IsUntargetable) return;
 
-        Debug.Log($"[{gameObject.name}] is taking {amount} damage. Current HP: {CurrentHealth}, Max Health: {GetMaxHealth()}");
-
         float remainingDamage = AbsorbWithShields(amount);
 
         if (remainingDamage > 0)
@@ -127,7 +154,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
         }
 
-        // Debug.Log($"[{gameObject.name}] took {amount} damage. Remaining HP: {CurrentHealth}");
         OnDamageTaken?.Invoke(amount);
 
 
@@ -144,10 +170,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             // Play sound
             Mb_AudioManager.PlaySFX(CombatSFX.Hit_CuBot, gameObject.transform.position);
         }
-
-
-        Debug.Log($"[{gameObject.name}] took {amount} damage out of {GetMaxHealth()}");
-
 
         if (CurrentHealth <= 0f)
             Die();
@@ -218,7 +240,6 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
             yield return wait;
             if (_statBlock == null || _statBlock.HealthRegen == null) continue;
             float regenAmount = _statBlock.HealthRegen.GetValue();
-            Debug.Log($"Regen Amount: {regenAmount}");
 
             // Skip the Heal() call entirely if regen is zero — avoids a
             // pointless Mathf.Min and an OnHealthChanged event fire with no change
@@ -245,6 +266,9 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 
     #region Shield API              //----------------------------------------
 
+    /// <summary>
+    /// Adds a temporary or permanent shield that absorbs incoming damage before health.
+    /// </summary>
     public void AddShield(float amount, float duration)
     {
         if (amount <= 0) return;
@@ -304,6 +328,9 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     #endregion                      //----------------------------------------
 
 
+    /// <summary>
+    /// Returns the current MaxHealth stat value.
+    /// </summary>
     public float GetMaxHealth()
     {
         return _statBlock.MaxHealth.GetValue();

@@ -10,6 +10,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Owns a character's equipped abilities and provides the activation entry points used by player input and CuBot AI.
+/// </summary>
 public class Mb_AbilityController : MonoBehaviour
 {
     // The character that owns these abilities — passed into every Activate() call
@@ -32,7 +35,9 @@ public class Mb_AbilityController : MonoBehaviour
 
     private bool _isPaused = false;
 
-    // If true, all ability activation is blocked (e.g. during cutscenes, stun, death)
+    /// <summary>
+    /// True when ability activation should be blocked because the owner is missing, paused, or dead.
+    /// </summary>
     public bool IsBlocked =>
         _owner == null ||
         _owner.Health == null ||
@@ -43,24 +48,19 @@ public class Mb_AbilityController : MonoBehaviour
 
     #region Events              //----------------------------------------
 
-    // Fired every time any ability successfully activates (not blocked, not null).
-    // Primal Resonance subscribes to this to count casts and add stacks.
-    // The string argument is the slot name ("Q", "E", "R", "Primary", "Secondary", "Passive")
-    // in case a listener only cares about specific slots.
+    /// <summary>
+    /// Fired when this controller successfully activates a castable ability slot.
+    /// The argument is the slot name, such as "Q", "E", or "R".
+    /// </summary>
     public event Action<string> OnAbilityActivated;
+
+    /// <summary>
+    /// Fired when any ability controller successfully activates any assigned slot.
+    /// </summary>
     public static event Action<string> OnAnyAbilityActivated;
 
 
     #endregion                  //----------------------------------------
-
-
-    //private void Awake()
-    //{
-    //    _owner = GetComponent<Mb_CharacterBase>();
-
-    //    if (_owner == null)
-    //        Debug.LogError($"[Mb_AbilityController] No Mb_CharacterBase found on {gameObject.name}.");
-    //}
 
 
     private void OnEnable()
@@ -76,6 +76,10 @@ public class Mb_AbilityController : MonoBehaviour
         Mb_PauseManager.OnResumed -= HandleResume;
     }
 
+    /// <summary>
+    /// Assigns the character that owns this controller.
+    /// Must be called before assigning or activating ability slots.
+    /// </summary>
     public void Initialize(Mb_CharacterBase owner)
     {
         _owner = owner;
@@ -137,8 +141,6 @@ public class Mb_AbilityController : MonoBehaviour
     /// </summary>
     public void SetRSlot(Sc_BaseAbility r)
     {
-        Debug.Log($"[DEBUG] SetRSlot called with: {r?.GetType().Name ?? "null"}");
-
         // Unequip the old R ability first if one was already set
         _rAbility?.OnUnequip(_owner);
 
@@ -189,18 +191,39 @@ public class Mb_AbilityController : MonoBehaviour
     #region Activation Methods          //----------------------------------------
     // These are called directly from Mb_PlayerController's input bindings
 
+    /// <summary>
+    /// Attempts to activate the passive slot.
+    /// </summary>
     public void ActivatePassive() => TryActivate(_passiveAbility, "Passive");
+
+    /// <summary>
+    /// Attempts to activate the Q ability slot.
+    /// </summary>
     public void ActivateQ() => TryActivate(_qAbility, "Q");
+
+    /// <summary>
+    /// Attempts to activate the E ability slot.
+    /// </summary>
     public void ActivateE() => TryActivate(_eAbility, "E");
-    public void ActivateR()
-    {
-        Debug.Log($"[DEBUG] ActivateR called. _rAbility is null: {_rAbility == null}. IsBlocked: {IsBlocked}");
-        TryActivate(_rAbility, "R");
-    }
+
+    /// <summary>
+    /// Attempts to activate the R ability slot.
+    /// </summary>
+    public void ActivateR() => TryActivate(_rAbility, "R");
+
+    /// <summary>
+    /// Attempts to activate the primary attack slot.
+    /// </summary>
     public void ActivatePrimary() => TryActivate(_primaryAttack, "Primary");
+
+    /// <summary>
+    /// Attempts to activate the secondary attack slot.
+    /// </summary>
     public void ActivateSecondary() => TryActivate(_secondaryAttack, "Secondary");
 
-    // CuBots call this from their AI logic
+    /// <summary>
+    /// Attempts to activate the primary attack slot from CuBot AI logic.
+    /// </summary>
     public void ActivatePrimaryAsAI() => TryActivate(_primaryAttack, "Primary");
 
 
@@ -209,10 +232,6 @@ public class Mb_AbilityController : MonoBehaviour
         // Single choke point — paused or dead means nothing fires
         if (IsBlocked) return;
         if (ability == null) return;
-
-
-        // DEBUG
-        Debug.Log($"[DEBUG] Activating {slotName} ability: {ability.GetType().Name} for {_owner.name}");
 
         ability.Activate(_owner);
 

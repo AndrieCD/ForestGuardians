@@ -1,20 +1,20 @@
 ﻿// Mb_AudioManager.cs
-// The central audio system for Forest Guardians.
-// Persists across all scene loads — create it once on a DontDestroyOnLoad GameObject.
+// Central audio playback manager for Forest Guardians.
+// Create one instance in Bootstrap and keep it alive across scene loads.
 //
-// WHY AN AUDIOMIXER:
+// AUDIO MIXER:
 //   An AudioMixer gives us three independent volume buses — Music, SFX, and UI.
 //   This means the settings screen can adjust each channel separately without
 //   touching every AudioSource manually. It also lets Unity's mixer handle
 //   ducking and compression per-group if needed later.
 //
-// WHY A SOURCE POOL FOR SFX:
+// SFX POOL:
 //   Frequent sounds (hits, ability casts, CuBot deaths) can fire many times per
 //   second. Instantiating a new AudioSource each time would generate garbage and
 //   stutter. Instead, we pre-warm a fixed pool of AudioSources in Awake() and
 //   hand them out round-robin — zero runtime allocation.
 //
-// HOW TO USE FROM OTHER SCRIPTS (no direct reference needed):
+// STATIC API:
 //   Mb_AudioManager.PlayMusic(MusicTrack.Combat_Stage1);
 //   Mb_AudioManager.PlaySFX(CombatSFX.Ability_Q);
 //   Mb_AudioManager.PlayUI(UISFX.UI_Click);
@@ -103,17 +103,12 @@ public class Mb_AudioManager : MonoBehaviour
     private const string MIXER_SFX_PARAM = "SFXVolume";
     private const string MIXER_UI_PARAM = "UIVolume";
 
-    GameState _previousState = GameState.MainMenu; // Track previous state to prevent redundant music switches when returning to the main menu from victory/defeat
-
-
     // ─────────────────────────────────────────────────────────────────────────
     // Unity Lifecycle
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
     {
-        Debug.Log("Mb_AudioManager Awake - initializing audio system and building sources.");
-
         // Standard singleton guard — only one AudioManager should ever exist
         if (Instance != null && Instance != this)
         {
@@ -147,7 +142,9 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+
         Mb_StageManager.OnStageStart -= HandleStageStart;
         Mb_WaveManager.OnWaveStart -= HandleWaveStart;
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
@@ -247,6 +244,7 @@ public class Mb_AudioManager : MonoBehaviour
         Instance.PlaySFXInternal(sfx, worldPosition ?? Instance.transform.position);
     }
 
+    /// <summary>Plays an environment SFX clip from the shared SFX pool.</summary>
     public static void PlayEnvironmentSFX(EnvironmentSFX sfx, Vector3? worldPosition = null)
     {
         if (Instance == null) return;
@@ -257,7 +255,6 @@ public class Mb_AudioManager : MonoBehaviour
     public static void PlayUI(UISFX sfx, Vector3? worldPosition = null)
     {
         if (Instance == null) return;
-        Debug.Log("[AudioManager] PlayUI called for " + sfx);
         Instance.PlayUIInternal(sfx);
     }
 
@@ -350,7 +347,7 @@ public class Mb_AudioManager : MonoBehaviour
 
         if (!_AudioLibrary.TryGetCombatSFX(sfx, out CombatSFXEntry entry) || entry.Clip == null)
         {
-            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for CombatSFX.{sfx}. Skipping.");
+            Debug.LogWarning($"[Mb_AudioManager] PlaySFX: no clip for EnvironmentSFX.{sfx}. Skipping.");
             return;
         }
 
@@ -496,16 +493,9 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
-        //if (_previousState == newState)
-        //{
-        //    return; // Prevent redundant music switches
-        //}
-
-        Debug.Log("[Mb_AudioManager] Game state changed to " + newState);
         switch (newState)
         {
             case GameState.MainMenu:
-                Debug.Log("[Mb_AudioManager] Handling MainMenu state: crossfading to menu music.");
                 // Player returned to the main menu — play the menu track with a crossfade
                 PlayMusicInternal(MusicTrack.MainMenu, crossfade: true);
                 break;

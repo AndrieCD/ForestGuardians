@@ -149,6 +149,42 @@ Launching Stage1 directly will produce null reference errors (UIManager, GameMan
 
 ---
 
+## Source Location Map
+
+Use these paths as the first place to inspect before broad repository searches.
+
+| Area | Primary path |
+|---|---|
+| Shared character components | `Assets/Character/CharacterScripts` |
+| Player / guardian scripts | `Assets/Character/Player/Scripts` |
+| Player / guardian prefabs | `Assets/Character/Player/Prefabs` |
+| CuBot scripts | `Assets/Character/CuBots/Scripts` |
+| CuBot prefabs | `Assets/Character/CuBots/Prefabs` |
+| Stage, wave, rewards, victory, defeat | `Assets/Systems/StageLevel` |
+| Bootstrap / persistent managers | `Assets/Systems/BootstrapScripts` |
+| Pause system | `Assets/Systems/PauseManager` |
+| Dialog system | `Assets/Systems/DIalogs` |
+| Audio system | `Assets/Systems/AudioSystem` |
+| Game/session systems | `Assets/Game`, `Assets/Systems/Session` |
+| ScriptableObject assets and definitions | `Assets/ScriptableObjects`, `Assets/Resources` |
+| Shared interfaces and enums | `Assets/Interface_Enums` |
+| Main HUD UI | `Assets/UI/InGameHUD` |
+| Ability HUD UI | `Assets/UI/InGameHUD/AbilitiesPanel` |
+| Combat UI / healthbars | `Assets/UI/InGameHUD/CombatUI`, `Assets/UI/CuBotHealthbar` |
+| Rewards UI | `Assets/UI/Rewards` |
+| Almanac UI | `Assets/UI/Almanac`, `Assets/Almanac` |
+| Main menu / pause / settings UI | `Assets/UI/MainMenu`, `Assets/UI/PauseMenu`, `Assets/UI/Settings` |
+| Scenes | `Assets/Scenes` |
+| VFX assets and runtime helpers | `Assets/VFX`, `Assets/Character/VFX` |
+| Third-party assets | `Assets/_ThirdParty` |
+
+Search guidance:
+- Prefer targeted searches inside the relevant path above.
+- Avoid full-repository searches unless the system location is unknown.
+- Avoid searching `Library`, `Temp`, `Logs`, and generated project files.
+
+---
+
 ## Coding Conventions
 
 ### Naming prefixes
@@ -251,6 +287,14 @@ Launching Stage1 directly will produce null reference errors (UIManager, GameMan
 ## Communication Style
 
 Preferred response structure for implementation requests:
+
+**Task:** one sentence
+**Assumptions:** bullet list
+**Affected systems:** bullet list
+**Implementation:** complete code
+**Inspector setup:** steps
+**Testing:** how to verify
+
 Preferred response structure for design/architecture questions:
 - Direct recommendation first
 - Reasoning second
