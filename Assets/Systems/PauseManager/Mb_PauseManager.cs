@@ -43,13 +43,12 @@ public class Mb_PauseManager : MonoBehaviour
         playerMap = InputSystem.actions.FindActionMap("Player");
         pauseAction = playerMap.FindAction("Pause");
 
-        pauseAction.performed += HandlePauseAction;
+        pauseAction.performed += ctx => SetPause(!IsPaused); // Toggle pause on button press
     }
 
     private void OnDisable()
     {
-        if (pauseAction != null)
-            pauseAction.performed -= HandlePauseAction;
+        pauseAction.performed -= ctx => SetPause(!IsPaused);
     }
 
 
@@ -59,6 +58,9 @@ public class Mb_PauseManager : MonoBehaviour
     /// </summary>
     public void SetPause(bool pause)
     {
+        Debug.Log(pause ? "Pausing game..." : "Resuming game...");
+        Debug.Log($"GameState: {GameManager.Instance.CurrentState}");
+
         // Guard: don't allow pausing outside of active gameplay and don't allow resuming if not currently paused
         if (pause == true && GameManager.Instance.CurrentState != GameState.Playing) return;
         if (pause == false && GameManager.Instance.CurrentState != GameState.Paused) return;
@@ -86,10 +88,6 @@ public class Mb_PauseManager : MonoBehaviour
             OnResumed?.Invoke();
             GameManager.Instance.ChangeState(GameState.Playing);
         }
-    }
-
-    private void HandlePauseAction(InputAction.CallbackContext context)
-    {
-        SetPause(!IsPaused);
+        Debug.Log($"GameState: {GameManager.Instance.CurrentState}");
     }
 }
