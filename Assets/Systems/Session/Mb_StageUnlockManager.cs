@@ -123,7 +123,7 @@ public class Mb_StageUnlockManager : MonoBehaviour
     {
         // Tutorial (stage 4) is not part of the sequential unlock chain —
         // it's always available regardless of MaxAvailableStage.
-        if (stageNumber == 4) return _saveData.IsUnlocked(stageNumber);
+        if (stageNumber == Sc_RunSession.TUTORIAL_STAGE) return _saveData.IsUnlocked(stageNumber);
 
         if (stageNumber > MaxAvailableStage) return false;
         return _saveData.IsUnlocked(stageNumber);
@@ -202,7 +202,7 @@ public class Mb_StageUnlockManager : MonoBehaviour
         int nextStage = completedStage + 1;
 
         // Only stages 1 and 2 can unlock a next stage — Stage 3 is the final stage
-        if (nextStage > 3)
+        if (nextStage > Sc_RunSession.STAGE_3)
         {
             Debug.Log($"[Mb_StageUnlockManager] Stage {completedStage} is the final stage. " +
                       "No further stages to unlock.");

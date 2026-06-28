@@ -13,7 +13,6 @@
 // Inspector setup:
 //   - AnchorZone: a RectTransform on the HUD that marks where texts spawn.
 //     Position it freely in the UI — the code reads its screen position at runtime.
-//   - PlayerObject: drag the Guardian GameObject here.
 //   - InitialPoolSize: how many text elements to pre-warm (default 10).
 //   - FloatSpeed: upward pixels-per-second for the slide animation.
 //   - FadeDuration: total seconds from spawn to fully transparent.
@@ -34,10 +33,6 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     [Tooltip("RectTransform on the HUD that marks where floating texts spawn. " +
              "Move this freely in the UI — no code changes needed.")]
     [SerializeField] private RectTransform AnchorZone;
-
-    [Header("References")]
-    [Tooltip("Drag the Guardian (Player) GameObject here.")]
-    [SerializeField] private GameObject PlayerObject;
 
     [Tooltip("Prefab containing RectTransform, TMP_Text, and Mb_PlayerFloatingText.")]
     [SerializeField] private Mb_PlayerFloatingText FloatingTextPrefab;
@@ -102,23 +97,9 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
 
     private void Start()
     {
-        // Start() rather than Awake() — PlayerObject may not be fully initialized
-        // during Awake on the first frame, so we fetch components here.
-        if (PlayerObject != null)
-        {
-            _playerHealth = PlayerObject.GetComponent<Mb_HealthComponent>();
-            _statusEffectController = PlayerObject.GetComponent<Mb_StatusEffectController>();
-        }
+        // Start catches the case where the Guardian was already active before this UI enabled.
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
 
-        if (_playerHealth == null)
-            Debug.LogError("[Mb_PlayerFloatingTextManager] Could not find Mb_HealthComponent " +
-                           "on PlayerObject. Assign the correct GameObject in the Inspector.");
-
-        // Warn but don't error — status text is optional if the controller isn't
-        // attached to the Guardian yet (e.g. early prototype without status effects)
-        if (_statusEffectController == null)
-            Debug.LogWarning("[Mb_PlayerFloatingTextManager] No Mb_StatusEffectController found " +
-                             "on PlayerObject. Status effect text will not display.");
     }
 
 
@@ -127,20 +108,17 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
         // We subscribe via a helper because OnEnable can fire before Start(),
         // meaning _playerHealth and _statusEffectController may not be cached yet.
         // The helper guards against null before subscribing.
-        SubscribeToComponents();
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
+
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
     }
 
 
     private void OnDisable()
     {
-        if (_playerHealth != null)
-        {
-            _playerHealth.OnHealthChanged -= HandleHealthChanged;
-            _playerHealth.OnShieldChanged -= HandleShieldChanged;
-        }
-
-        if (_statusEffectController != null)
-            _statusEffectController.OnStatusApplied -= HandleStatusApplied;
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        UnbindGuardian();
     }
 
     #endregion                  //----------------------------------------
@@ -347,29 +325,57 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     // Subscribes to both health and status effect events.
     // Called from both OnEnable() and Start() — the null guards ensure
     // it's safe to call from whichever fires first.
-    private void SubscribeToComponents()
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
     {
-        if (_playerHealth == null && PlayerObject != null)
-            _playerHealth = PlayerObject.GetComponent<Mb_HealthComponent>();
+        BindGuardian(guardian);
+    }
 
-        if (_statusEffectController == null && PlayerObject != null)
-            _statusEffectController = PlayerObject.GetComponent<Mb_StatusEffectController>();
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        UnbindGuardian();
+        ResetHealthTracking();
+
+        if (guardian == null)
+            return;
+
+        _playerHealth = guardian.Health;
+        _statusEffectController = guardian.GetComponent<Mb_StatusEffectController>();
 
         if (_playerHealth != null)
         {
-            // Unsubscribe before subscribing to prevent duplicate listeners
-            _playerHealth.OnHealthChanged -= HandleHealthChanged;
             _playerHealth.OnHealthChanged += HandleHealthChanged;
-
-            _playerHealth.OnShieldChanged -= HandleShieldChanged;
             _playerHealth.OnShieldChanged += HandleShieldChanged;
+        }
+        else
+        {
+            Debug.LogError($"[Mb_PlayerFloatingTextManager] No Mb_HealthComponent found on {guardian.gameObject.name}.");
         }
 
         if (_statusEffectController != null)
         {
-            _statusEffectController.OnStatusApplied -= HandleStatusApplied;
             _statusEffectController.OnStatusApplied += HandleStatusApplied;
         }
+        else
+        {
+            Debug.LogWarning($"[Mb_PlayerFloatingTextManager] No Mb_StatusEffectController found on {guardian.gameObject.name}. Status effect text will not display.");
+        }
+    }
+
+
+    private void UnbindGuardian()
+    {
+        if (_playerHealth != null)
+        {
+            _playerHealth.OnHealthChanged -= HandleHealthChanged;
+            _playerHealth.OnShieldChanged -= HandleShieldChanged;
+        }
+
+        if (_statusEffectController != null)
+            _statusEffectController.OnStatusApplied -= HandleStatusApplied;
+
+        _playerHealth = null;
+        _statusEffectController = null;
     }
 
 

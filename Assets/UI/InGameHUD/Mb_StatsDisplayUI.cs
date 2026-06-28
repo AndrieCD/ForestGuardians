@@ -4,17 +4,14 @@
 // whenever any stat changes (augments, level-ups, modifiers).
 //
 // Inspector Setup:
-//   - GuardianObject: drag the Guardian (Player) GameObject here.
-//   - ATKText, APText, HSTText: drag the corresponding TMP_Text components.
+//   - ATKText, APText, CRIText, HSTText: drag the corresponding TMP_Text components.
+//   - Guardian binding is automatic through Mb_GuardianBase.CurrentGuardian.
 
 using TMPro;
 using UnityEngine;
 
 public class Mb_StatsDisplayUI : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private GameObject GuardianObject;
-
     [Header("Stat Labels")]
     [SerializeField] private TMP_Text ATKText;
     [SerializeField] private TMP_Text APText;   
@@ -26,32 +23,49 @@ public class Mb_StatsDisplayUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (GuardianObject == null)
-        {
-            Debug.LogError("[Mb_StatsDisplayUI] GuardianObject is not assigned.");
-            return;
-        }
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
 
-        if (_statBlock == null)
-            _statBlock = GuardianObject.GetComponent<Mb_StatBlock>();
-
-        if (_statBlock == null)
-        {
-            Debug.LogError("[Mb_StatsDisplayUI] No Mb_StatBlock found on GuardianObject.");
-            return;
-        }
-
-        _statBlock.OnStatsChanged -= Refresh;
-        _statBlock.OnStatsChanged += Refresh;
-
-        Refresh();
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
     }
 
 
     private void OnDisable()
     {
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        UnbindStatBlock();
+    }
+
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
+    {
+        BindGuardian(guardian);
+    }
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        UnbindStatBlock();
+
+        if (guardian == null)
+            return;
+
+        _statBlock = guardian.Stats;
+
+        if (_statBlock == null)
+        {
+            Debug.LogError($"[Mb_StatsDisplayUI] No Mb_StatBlock found on {guardian.gameObject.name}.");
+            return;
+        }
+
+        _statBlock.OnStatsChanged += Refresh;
+        Refresh();
+    }
+
+    private void UnbindStatBlock()
+    {
         if (_statBlock != null)
             _statBlock.OnStatsChanged -= Refresh;
+
+        _statBlock = null;
     }
 
 

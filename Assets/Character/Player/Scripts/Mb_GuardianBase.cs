@@ -4,11 +4,14 @@
 //
 // Derived classes: Mb_PlayerController (Rajah Bagwis), and future guardian classes.
 
+using System;
 using UnityEngine;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Mb_GuardianBase : Mb_CharacterBase
 {
+    public static Mb_GuardianBase CurrentGuardian { get; private set; }
+    public static event Action<Mb_GuardianBase> OnActiveGuardianChanged;
+
     [Header("Guardian Template")]
     [SerializeField] protected SO_Guardian _GuardianTemplate;
 
@@ -22,9 +25,28 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         base.Awake();
         GuardianAnimator = GetComponent<Mb_GuardianAnimator>();
 
-
+        SetCurrentGuardian(this);
     }
 
+    protected virtual void OnEnable()
+    {
+        SetCurrentGuardian(this);
+    }
+
+    protected virtual void OnDisable()
+    {
+        if (CurrentGuardian == this)
+            SetCurrentGuardian(null);
+    }
+
+    private static void SetCurrentGuardian(Mb_GuardianBase guardian)
+    {
+        if (CurrentGuardian == guardian)
+            return;
+
+        CurrentGuardian = guardian;
+        OnActiveGuardianChanged?.Invoke(CurrentGuardian);
+    }
 
     /// <summary>
     /// Populates stats and health from the Guardian SO, then wires up abilities.

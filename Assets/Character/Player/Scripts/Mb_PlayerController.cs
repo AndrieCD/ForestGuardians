@@ -44,8 +44,10 @@ public class Mb_PlayerController : Mb_GuardianBase
     }
 
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         Sc_BuildLogger.Trace("PlayerController OnEnable START");
 
 
@@ -148,8 +150,10 @@ public class Mb_PlayerController : Mb_GuardianBase
 
 
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
+
         // Named method references match exactly — these actually unsubscribe correctly.
         _jumpAction.performed -= HandleJump;
         _qAction.performed -= HandleQ;

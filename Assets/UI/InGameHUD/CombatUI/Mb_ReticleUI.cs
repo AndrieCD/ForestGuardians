@@ -26,7 +26,6 @@
 //       └── RMB_CooldownOverlay  (Image — same size, fillMethod Vertical, ~40% black)
 //
 // Inspector Setup:
-//   - GuardianObject: drag the Guardian (Player) GameObject here.
 //   - ReticleImage: the center crosshair Image.
 //   - LMBIcon, RMBIcon: the attack icon Images.
 //   - LMBOverlay, RMBOverlay: the cooldown overlay Images (child of each icon).
@@ -44,10 +43,6 @@ using UnityEngine.UI;
 public class Mb_ReticleUI : MonoBehaviour
 {
     #region Inspector Fields    //----------------------------------------
-
-    [Header("References")]
-    [Tooltip("Drag the Guardian (Player) GameObject here.")]
-    [SerializeField] private GameObject GuardianObject;
 
     [Header("UI Elements")]
     [SerializeField] private Image ReticleImage;
@@ -178,10 +173,10 @@ public class Mb_ReticleUI : MonoBehaviour
         // All fetching and subscribing happens in OnEnable so the order is guaranteed.
         if (_primaryAbility == null)
             Debug.LogError("[Mb_ReticleUI] _primaryAbility is still null after Start(). " +
-                           "Check that GuardianObject is assigned and abilities are set in Awake.");
+                           "Check that an active Guardian exists and abilities are set in Awake.");
         if (_secondaryAbility == null)
             Debug.LogError("[Mb_ReticleUI] _secondaryAbility is still null after Start(). " +
-                           "Check that GuardianObject is assigned and abilities are set in Awake.");
+                           "Check that an active Guardian exists and abilities are set in Awake.");
     }
 
 
@@ -190,8 +185,10 @@ public class Mb_ReticleUI : MonoBehaviour
         // Fetch ability refs here — OnEnable can fire before Start() on the first frame,
         // so refs must be ready BEFORE we try to subscribe. The null guard means it's
         // safe to call this multiple times.
-        FetchAbilityRefs();
-        SubscribeToAbilities();
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
+
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
 
         if (GameManager.Instance != null)
         {
@@ -203,6 +200,7 @@ public class Mb_ReticleUI : MonoBehaviour
 
     private void OnDisable()
     {
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
         UnsubscribeFromAbilities();
 
         if (GameManager.Instance != null)
@@ -420,6 +418,35 @@ public class Mb_ReticleUI : MonoBehaviour
 
     #region Subscriptions       //----------------------------------------
 
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
+    {
+        BindGuardian(guardian);
+    }
+
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        UnsubscribeFromAbilities();
+
+        _abilityController = null;
+        _primaryAbility = null;
+        _secondaryAbility = null;
+
+        if (guardian == null)
+            return;
+
+        _abilityController = guardian.Abilities;
+
+        if (_abilityController == null)
+        {
+            Debug.LogError($"[Mb_ReticleUI] No Mb_AbilityController found on {guardian.gameObject.name}.");
+            return;
+        }
+
+        FetchAbilityRefs();
+        SubscribeToAbilities();
+    }
+
     // Separated from OnEnable so they can be called again if abilities are
     // reassigned mid-game (e.g. after branch selection replaces R slot).
     // Primary and Secondary don't change, but the pattern is consistent.
@@ -450,19 +477,10 @@ public class Mb_ReticleUI : MonoBehaviour
 
     private void FetchAbilityRefs()
     {
-        if (GuardianObject == null)
-        {
-            Debug.LogError("[Mb_ReticleUI] GuardianObject is not assigned in the Inspector.");
-            return;
-        }
-
         // Only fetch if not already cached — avoids redundant GetComponent calls
         if (_abilityController == null)
-            _abilityController = GuardianObject.GetComponent<Mb_AbilityController>();
-
-        if (_abilityController == null)
         {
-            Debug.LogError("[Mb_ReticleUI] No Mb_AbilityController found on GuardianObject.");
+            Debug.LogError("[Mb_ReticleUI] No active Guardian ability controller is available.");
             return;
         }
 

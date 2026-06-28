@@ -27,7 +27,6 @@
 //   └── RSlot                 (same structure — starts showing LockedIcon)
 //
 // Inspector Setup:
-//   - GuardianObject: drag the Guardian (Player) GameObject here.
 //   - PassiveSlot, QSlot, ESlot, RSlot: drag each Mb_AbilitySlotUI component.
 //   - PipFilledSprite, PipEmptySprite: sprites for filled/unfilled level pips.
 //   - LockedIcon: sprite shown on R slot before branch is chosen.
@@ -41,10 +40,6 @@ using UnityEngine.UI;
 public class Mb_AbilitiesPanelUI : MonoBehaviour
 {
     #region Inspector Fields    //----------------------------------------
-
-    [Header("References")]
-    [Tooltip("Drag the Guardian (Player) GameObject here.")]
-    [SerializeField] private GameObject GuardianObject;
 
     [Header("Slots")]
     [SerializeField] private Mb_AbilitySlotUI QSlot;
@@ -87,17 +82,12 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
 
     #region Unity Lifecycle     //----------------------------------------
 
-    private void Awake()
-    {
-        if (GuardianObject == null)
-            Debug.LogError("[Mb_AbilitiesPanelUI] GuardianObject is not assigned.");
-
-    }
-
-
     private void OnEnable()
     {
-        FetchAndSubscribe();
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
+
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
 
         if (GameManager.Instance != null)
         {
@@ -109,6 +99,7 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
 
     private void OnDisable()
     {
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
         UnsubscribeAll();
 
         if (GameManager.Instance != null)
@@ -120,18 +111,29 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
 
     #region Setup               //----------------------------------------
 
-    private void FetchAndSubscribe()
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
     {
-        GuardianObject = GameObject.FindGameObjectWithTag("Player");
+        BindGuardian(guardian);
+    }
 
-        if (GuardianObject == null) return;
 
-        if (_abilityController == null)
-            _abilityController = GuardianObject.GetComponent<Mb_AbilityController>();
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        UnsubscribeAll();
+
+        _abilityController = null;
+        _qAbility = null;
+        _eAbility = null;
+        _rAbility = null;
+
+        if (guardian == null)
+            return;
+
+        _abilityController = guardian.Abilities;
 
         if (_abilityController == null)
         {
-            Debug.LogError("[Mb_AbilitiesPanelUI] No Mb_AbilityController found on GuardianObject.");
+            Debug.LogError($"[Mb_AbilitiesPanelUI] No Mb_AbilityController found on {guardian.gameObject.name}.");
             return;
         }
 

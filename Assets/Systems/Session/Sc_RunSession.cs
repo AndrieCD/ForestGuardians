@@ -30,6 +30,14 @@ using UnityEngine;
 
 public static class Sc_RunSession
 {
+    public const int STAGE_1 = 1;
+    public const int STAGE_2 = 2;
+    public const int STAGE_3 = 3;
+    public const int TUTORIAL_STAGE = 4;
+
+    public const int MIN_SELECTABLE_STAGE = STAGE_1;
+    public const int MAX_SELECTABLE_STAGE = TUTORIAL_STAGE;
+
     // -------------------------------------------------------------------------
     // Session Data
     // -------------------------------------------------------------------------
@@ -79,14 +87,16 @@ public static class Sc_RunSession
     public static bool IsValid()
     {
         bool guardianSet = SelectedGuardian != null;
-        bool stageSet = SelectedStageNumber >= 1 && SelectedStageNumber <= 4;
+        bool stageSet = SelectedStageNumber >= MIN_SELECTABLE_STAGE &&
+                        SelectedStageNumber <= MAX_SELECTABLE_STAGE;
 
         if (!guardianSet)
             Debug.LogWarning("[Sc_RunSession] IsValid check failed — SelectedGuardian is null.");
 
         if (!stageSet)
             Debug.LogWarning($"[Sc_RunSession] IsValid check failed — " +
-                             $"SelectedStageNumber is {SelectedStageNumber} (must be 1–4).");
+                             $"SelectedStageNumber is {SelectedStageNumber} " +
+                             $"(must be {MIN_SELECTABLE_STAGE}–{MAX_SELECTABLE_STAGE}).");
 
         return guardianSet && stageSet;
     }

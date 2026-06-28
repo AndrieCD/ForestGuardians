@@ -68,10 +68,10 @@ public class Sc_StageSaveData
     {
         return stageNumber switch
         {
-            1 => Stage1Unlocked,
-            2 => Stage2Unlocked,
-            3 => Stage3Unlocked,
-            4 => TutorialUnlocked,
+            Sc_RunSession.STAGE_1 => Stage1Unlocked,
+            Sc_RunSession.STAGE_2 => Stage2Unlocked,
+            Sc_RunSession.STAGE_3 => Stage3Unlocked,
+            Sc_RunSession.TUTORIAL_STAGE => TutorialUnlocked,
             _ => false
         };
     }
@@ -86,10 +86,10 @@ public class Sc_StageSaveData
     {
         switch (stageNumber)
         {
-            case 1: Stage1Unlocked = true; break;
-            case 2: Stage2Unlocked = true; break;
-            case 3: Stage3Unlocked = true; break;
-            case 4: TutorialUnlocked = true; break;
+            case Sc_RunSession.STAGE_1: Stage1Unlocked = true; break;
+            case Sc_RunSession.STAGE_2: Stage2Unlocked = true; break;
+            case Sc_RunSession.STAGE_3: Stage3Unlocked = true; break;
+            case Sc_RunSession.TUTORIAL_STAGE: TutorialUnlocked = true; break;
             default:
                 Debug.LogWarning($"[Sc_StageSaveData] Unlock called with invalid " +
                                  $"stage number: {stageNumber}. Must be 1–4.");

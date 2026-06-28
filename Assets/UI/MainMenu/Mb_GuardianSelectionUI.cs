@@ -444,7 +444,7 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
                   $"Stage: {Sc_RunSession.SelectedStageNumber}. Loading stage.");
 
 
-        if (Sc_RunSession.SelectedStageNumber == 4) // 4 is tutorial
+        if (Sc_RunSession.SelectedStageNumber == Sc_RunSession.TUTORIAL_STAGE)
         {
             // Load the tutorial scene instead of the normal stage scene
             SceneLoader.Instance.LoadTutorial();

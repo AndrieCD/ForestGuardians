@@ -1,4 +1,4 @@
-    // Mb_GuardianHealthbarUI.cs
+// Mb_GuardianHealthbarUI.cs
 // Replaces the Mb_Healthbar.cs prototype.
 // Drives the Guardian's health and shield bar on the HUD Canvas.
 // Also manages low HP feedback: heartbeat SFX loop and camera vignette.
@@ -11,10 +11,6 @@ using UnityEngine.UI;
 public class Mb_GuardianHealthbarUI : MonoBehaviour
 {
     #region Inspector Fields    //----------------------------------------
-
-    [Header("References")]
-    [Tooltip("Drag the Guardian (Player) GameObject here.")]
-    [SerializeField] private GameObject GuardianObject;
 
     [Header("Bar Images")]
     [SerializeField] private Image HPFill;
@@ -90,35 +86,17 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (GuardianObject != null)
-        {
-            _healthComponent = GuardianObject.GetComponent<Mb_HealthComponent>();
-            _statBlock = GuardianObject.GetComponent<Mb_StatBlock>();
-        }
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
 
-        if (_healthComponent != null)
-        {
-            _healthComponent.OnHealthChanged += HandleHealthChanged;
-            _healthComponent.OnShieldChanged += HandleShieldChanged;
-        }
-
-        if (_statBlock != null)
-            _statBlock.MaxHealth.OnStatChanged += UpdateMaxHealth;
-
-        RefreshFromCurrentHealth();
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
     }
 
 
     private void OnDisable()
     {
-        if (_healthComponent != null)
-        {
-            _healthComponent.OnHealthChanged -= HandleHealthChanged;
-            _healthComponent.OnShieldChanged -= HandleShieldChanged;
-        }
-
-        if (_statBlock != null)
-            _statBlock.MaxHealth.OnStatChanged -= UpdateMaxHealth;
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
+        UnbindGuardian();
 
         // Always clean up low HP feedback when the HUD disables
         // (death, scene teardown, defeat screen appearing)
@@ -143,6 +121,61 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
             float fillRatio = _healthComponent.CurrentHealth / _cachedMaxHP;
             UpdateVignetteScale(fillRatio);
         }
+    }
+
+    #endregion                  //----------------------------------------
+
+
+    #region Guardian Binding    //----------------------------------------
+
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
+    {
+        BindGuardian(guardian);
+    }
+
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        UnbindGuardian();
+
+        if (guardian == null)
+            return;
+
+        _healthComponent = guardian.Health;
+        _statBlock = guardian.Stats;
+
+        if (_healthComponent != null)
+        {
+            _healthComponent.OnHealthChanged += HandleHealthChanged;
+            _healthComponent.OnShieldChanged += HandleShieldChanged;
+        }
+        else
+        {
+            Debug.LogError($"[Mb_GuardianHealthbarUI] No Mb_HealthComponent found on {guardian.gameObject.name}.");
+        }
+
+        if (_statBlock != null)
+            _statBlock.MaxHealth.OnStatChanged += UpdateMaxHealth;
+        else
+            Debug.LogError($"[Mb_GuardianHealthbarUI] No Mb_StatBlock found on {guardian.gameObject.name}.");
+
+        RefreshFromCurrentHealth();
+    }
+
+
+    private void UnbindGuardian()
+    {
+        if (_healthComponent != null)
+        {
+            _healthComponent.OnHealthChanged -= HandleHealthChanged;
+            _healthComponent.OnShieldChanged -= HandleShieldChanged;
+        }
+
+        if (_statBlock != null)
+            _statBlock.MaxHealth.OnStatChanged -= UpdateMaxHealth;
+
+        _healthComponent = null;
+        _statBlock = null;
     }
 
     #endregion                  //----------------------------------------
