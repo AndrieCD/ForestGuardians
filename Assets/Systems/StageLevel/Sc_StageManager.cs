@@ -42,10 +42,10 @@ public class Mb_StageManager : MonoBehaviour
 
     private void StartStage()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        Mb_GuardianBase guardian = Mb_GuardianBase.CurrentGuardian;
+        if (guardian != null)
         {
-            Mb_StatBlock guardianStats = player.GetComponent<Mb_StatBlock>();
+            Mb_StatBlock guardianStats = guardian.GetComponent<Mb_StatBlock>();
             if (guardianStats != null && Mb_AlmanacManager.Instance != null)
                 Mb_AlmanacManager.Instance.ReapplyAllBonuses(guardianStats);
         }

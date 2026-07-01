@@ -964,9 +964,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: GuardianSelection_Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 150099786490384852, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2017234451691295272, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5106661044021233921, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
       propertyPath: m_Pivot.x
@@ -1048,10 +1048,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5340709226497760464, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 408170c220b00f54f8dfc3385a74bb06, type: 3}
     - target: {fileID: 5474564579937845837, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
       propertyPath: MainMenuController
       value: 

@@ -15,7 +15,7 @@
 //
 // INSPECTOR SETUP:
 //   - Add Mb_DefeatManager to the Stage GameObject.
-//   - PlayerObject: drag the Guardian (player character) GameObject.
+//   - PlayerObject: optional fallback; dynamic stages bind to Mb_GuardianBase.CurrentGuardian.
 //   - DefeatScreen: drag the Mb_DefeatScreenUI component.
 //   - StageManager: drag the Mb_StageManager component (inherited field).
 //   - SequenceDuration: defaults to 4f real seconds (inherited field).
@@ -70,17 +70,13 @@ public class Mb_DefeatManager : Mb_EndSequenceManager
 
     private void Start()
     {
-        if (_PlayerObject != null)
-            _guardianHealth = _PlayerObject.GetComponent<Mb_HealthComponent>();
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
+
+        if (_guardianHealth == null && _PlayerObject != null)
+            BindGuardian(_PlayerObject.GetComponent<Mb_GuardianBase>());
 
         if (_guardianHealth == null)
             Debug.LogError("[Mb_DefeatManager] Could not find Mb_HealthComponent on PlayerObject.");
-
-        // Subscribe to Guardian death here (after Start caches the reference)
-        // rather than OnEnable, because OnEnable can fire before Start and
-        // _guardianHealth would not be cached yet.
-        if (_guardianHealth != null)
-            _guardianHealth.OnDeath += HandleGuardianDeath;
 
         if (_DefeatScreen == null)
             Debug.LogError("[Mb_DefeatManager] DefeatScreen is not assigned in the Inspector.");
@@ -94,13 +90,14 @@ public class Mb_DefeatManager : Mb_EndSequenceManager
     private void OnEnable()
     {
         Mb_PanoharraManager.OnPanoharraDestroyed += HandlePanoharraDestroyed;
-        // Guardian OnDeath subscribed in Start() — see comment above.
+        Mb_GuardianBase.OnActiveGuardianChanged += BindGuardian;
     }
 
 
     private void OnDisable()
     {
         Mb_PanoharraManager.OnPanoharraDestroyed -= HandlePanoharraDestroyed;
+        Mb_GuardianBase.OnActiveGuardianChanged -= BindGuardian;
 
         if (_guardianHealth != null)
             _guardianHealth.OnDeath -= HandleGuardianDeath;
@@ -114,6 +111,19 @@ public class Mb_DefeatManager : Mb_EndSequenceManager
     private void HandlePanoharraDestroyed() => TriggerDefeat(PickRandom(_PanoharraMessages));
 
     private void HandleGuardianDeath() => TriggerDefeat(PickRandom(_GuardianMessages));
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        if (_guardianHealth != null)
+            _guardianHealth.OnDeath -= HandleGuardianDeath;
+
+        _guardianHealth = guardian != null
+            ? guardian.GetComponent<Mb_HealthComponent>()
+            : null;
+
+        if (_guardianHealth != null)
+            _guardianHealth.OnDeath += HandleGuardianDeath;
+    }
 
 
     private void TriggerDefeat(string message)

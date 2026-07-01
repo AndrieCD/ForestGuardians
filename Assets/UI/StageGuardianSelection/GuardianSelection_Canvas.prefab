@@ -259,9 +259,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mb_GuardianSelectionUI
   GuardianEntries:
   - {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  - {fileID: 11400000, guid: 8347e816eaefc774cb2abc1a4925537a, type: 2}
   PortraitImage: {fileID: 5003261828751946210}
   SelectorButtons:
   - {fileID: 2559241845642307079}
+  - {fileID: 3985631247848082666}
   SelectedSelectorColor: {r: 0.9, g: 0.8, b: 0.4, a: 1}
   UnselectedSelectorColor: {r: 1, g: 1, b: 1, a: 1}
   GuardianNameText: {fileID: 7539827242343714302}
@@ -295,7 +297,7 @@ GameObject:
   - component: {fileID: 5340709226497760464}
   - component: {fileID: 2559241845642307079}
   m_Layer: 5
-  m_Name: GuardianButton
+  m_Name: RajahButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +350,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 408170c220b00f54f8dfc3385a74bb06, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -536,7 +538,7 @@ GameObject:
   - component: {fileID: 1690764700271358281}
   - component: {fileID: 3985631247848082666}
   m_Layer: 5
-  m_Name: GuardianButton (1)
+  m_Name: MariButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

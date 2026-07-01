@@ -16,6 +16,8 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
     [SerializeField] protected SO_Guardian _GuardianTemplate;
 
     public Mb_GuardianAnimator GuardianAnimator;
+    public SO_Guardian GuardianTemplate => _GuardianTemplate;
+
     // On Mb_GuardianBase or Mb_PlayerController:
     [SerializeField] public Transform ProjectileOrigin;
 

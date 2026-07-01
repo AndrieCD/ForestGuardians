@@ -11,7 +11,8 @@
 //   - Call OnWaveEnd on all augments at the end of every wave
 //   - Call OnUnequip on all augments and clear the list at stage end
 //
-// Inspector setup: assign the Player GameObject reference in the Inspector.
+// Inspector setup: PlayerObject is optional for legacy scenes; dynamic stages
+// bind to Mb_GuardianBase.CurrentGuardian.
 // Mb_RewardsManager (a sibling on this same GameObject) calls AddAugment().
 
 using System.Collections.Generic;
@@ -38,8 +39,9 @@ public class Mb_AugmentManager : MonoBehaviour
 
     private void Start()
     {
-        // Cache the player character reference once so we don't search every time
-        if (_PlayerObject != null)
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
+
+        if (_player == null && _PlayerObject != null)
             _player = _PlayerObject.GetComponent<Mb_CharacterBase>();
 
         if (_player == null)
@@ -54,6 +56,7 @@ public class Mb_AugmentManager : MonoBehaviour
 
         // Listen to stage end so we clean everything up
         Mb_StageManager.OnStageEnd += HandleStageEnd;
+        Mb_GuardianBase.OnActiveGuardianChanged += BindGuardian;
     }
 
 
@@ -61,6 +64,7 @@ public class Mb_AugmentManager : MonoBehaviour
     {
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
         Mb_StageManager.OnStageEnd -= HandleStageEnd;
+        Mb_GuardianBase.OnActiveGuardianChanged -= BindGuardian;
     }
 
 
@@ -137,5 +141,12 @@ public class Mb_AugmentManager : MonoBehaviour
         _equippedAugments.Clear();
 
         Debug.Log("[Mb_AugmentManager] All augments cleared at stage end.");
+    }
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        if (guardian == null) return;
+
+        _player = guardian.GetComponent<Mb_CharacterBase>();
     }
 }

@@ -258,6 +258,8 @@ GameObject:
   - component: {fileID: 3589917230278247358}
   - component: {fileID: 1055867621044175176}
   - component: {fileID: 7806697298728242195}
+  - component: {fileID: 1774799198732743584}
+  - component: {fileID: 1136455206244027565}
   m_Layer: 6
   m_Name: Mari
   m_TagString: Player
@@ -298,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d88de4073164248a38e5eac7bee739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController_Mb
-  _GuardianTemplate: {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  _GuardianTemplate: {fileID: 11400000, guid: 8347e816eaefc774cb2abc1a4925537a, type: 2}
   GuardianAnimator: {fileID: 4428036635590234767}
   ProjectileOrigin: {fileID: 5299518965919639933}
   GuardianName: Rajah Bagwis
@@ -458,6 +460,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mb_FootstepAudio
   _GroundStepSFX: 0
   _WaterStepSFX: 1
+  _JumpSFX: 7100
+  _LandSFX: 7110
   _BaseStepInterval: 0.4
   _SurfaceCheckDistance: 1.2
   _WaterTag: Water
@@ -486,13 +490,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e65da45eaf7dbf4dad10a88cbac2b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_FootstepVFXEmitter
-  _LeftFootBone: {fileID: 6869650198383414496}
-  _RightFootBone: {fileID: 2891575478079934178}
-  _RaycastDistance: 0.3
-  _GroundLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  _SurfaceMappings: []
+  _GroundStepVFX: 7020
+  _WaterStepVFX: 7010
+  _JumpVFX: 7100
+  _LandVFX: 7110
+  _JumpLandHeightOffset: 0.1
+  _BaseStepInterval: 0.4
+  _SurfaceCheckDistance: 1.2
+  _WaterLayerName: Water
 --- !u!114 &1055867621044175176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,11 +524,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
   LaunchOrigin: {fileID: 5299518965919639933}
-  ProjectilePrefab: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
   AimLayerMask:
     serializedVersion: 2
     m_Bits: 251
   AimRaycastDistance: 100
+--- !u!114 &1774799198732743584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5918655219564441784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3ebd43c4f9eef45851cb2469c50b87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
+  _GenericProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _MariPsychicLeafProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _MariPsyshockBoltProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _MariMindspikesZone: {fileID: 0}
+  _MariPsychicSlamShockwave: {fileID: 0}
+  _MariBloomZone: {fileID: 0}
+  _MariLaserBeam: {fileID: 0}
+  _MariDotHitVFX: {fileID: 0}
+  _RajahFeatherProjectile: {fileID: 0}
+  _RajahSkyRendShield: {fileID: 0}
+  _HunterBulletProjectile: {fileID: 0}
+  _TrapperTrapProjectile: {fileID: 0}
+  _ToxionSludgeProjectile: {fileID: 0}
+  _LuxionBulletProjectile: {fileID: 0}
+--- !u!114 &1136455206244027565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5918655219564441784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55c7dfa6746d37f4f950b3d814b058e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ShieldVFXHandler
 --- !u!1 &7544332974362222593
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,16 +1396,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4429949993815426068}
   m_SourcePrefab: {fileID: 100100000, guid: b16e20bda199d4141a255872571feb54, type: 3}
---- !u!4 &2891575478079934178 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6217460935137570209, guid: b16e20bda199d4141a255872571feb54, type: 3}
-  m_PrefabInstance: {fileID: 9108577889750704963}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6869650198383414496 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2395296120768343971, guid: b16e20bda199d4141a255872571feb54, type: 3}
-  m_PrefabInstance: {fileID: 9108577889750704963}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8262208131251854866 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b16e20bda199d4141a255872571feb54, type: 3}

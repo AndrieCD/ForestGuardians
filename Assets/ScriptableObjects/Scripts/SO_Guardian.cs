@@ -11,6 +11,8 @@ public class SO_Guardian : ScriptableObject
     public GuardiansEnum GuardianID;             // Unique identifier for the guardian
     public string CharacterName;
     public Sprite icon;
+    [Tooltip("Stage-ready guardian prefab spawned after Guardian Selection.")]
+    public GameObject GuardianPrefab;
     public GameObject ModelPrefab;          // The 3D model specific to this guardian
     public string GuardianArchetype1;
     public string GuardianArchetype2;

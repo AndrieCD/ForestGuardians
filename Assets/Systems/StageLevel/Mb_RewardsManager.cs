@@ -89,11 +89,10 @@ public class Mb_RewardsManager : MonoBehaviour
         if (_StageData == null)
             Debug.LogError("[Mb_RewardsManager] No SO_StageData assigned. Rewards will not fire.");
 
-        if (_PlayerObject != null)
-        {
-            _abilityController = _PlayerObject.GetComponent<Mb_AbilityController>();
-            _guardian = _PlayerObject.GetComponent<Mb_GuardianBase>();
-        }
+        BindGuardian(Mb_GuardianBase.CurrentGuardian);
+
+        if (_guardian == null && _PlayerObject != null)
+            BindGuardian(_PlayerObject.GetComponent<Mb_GuardianBase>());
 
         if (_abilityController == null)
             Debug.LogError("[Mb_RewardsManager] Could not find Mb_AbilityController on Player.");
@@ -102,8 +101,17 @@ public class Mb_RewardsManager : MonoBehaviour
             Debug.LogError("[Mb_RewardsManager] Could not find Mb_GuardianBase on Player.");
     }
 
-    private void OnEnable() => Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
-    private void OnDisable() => Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
+    private void OnEnable()
+    {
+        Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
+        Mb_GuardianBase.OnActiveGuardianChanged += BindGuardian;
+    }
+
+    private void OnDisable()
+    {
+        Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
+        Mb_GuardianBase.OnActiveGuardianChanged -= BindGuardian;
+    }
 
     #endregion                      //----------------------------------------
 
@@ -137,7 +145,14 @@ public class Mb_RewardsManager : MonoBehaviour
             return;
         }
 
-        _PlayerObject.GetComponent<Mb_CharacterBase>().LevelUp();
+        Mb_CharacterBase player = GetPlayerCharacter();
+        if (player == null)
+        {
+            Debug.LogError("[Mb_RewardsManager] Cannot apply reward because no active Guardian is bound.");
+            return;
+        }
+
+        player.LevelUp();
 
         OpenRewardsPanel(rewardType);
     }
@@ -448,7 +463,17 @@ public class Mb_RewardsManager : MonoBehaviour
 
     private Mb_CharacterBase GetPlayerCharacter()
     {
-        return _PlayerObject.GetComponent<Mb_CharacterBase>();
+        return _guardian != null
+            ? _guardian.GetComponent<Mb_CharacterBase>()
+            : null;
+    }
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        _guardian = guardian;
+        _abilityController = guardian != null
+            ? guardian.GetComponent<Mb_AbilityController>()
+            : null;
     }
 
     #endregion                      //----------------------------------------

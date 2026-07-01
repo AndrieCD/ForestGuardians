@@ -108,7 +108,8 @@ public class Mb_PlayerController : Mb_GuardianBase
                 primary: _GuardianTemplate.PrimaryAttack != null ? new Rajah_Primary(_GuardianTemplate.PrimaryAttack, this) : null,
                 secondary: _GuardianTemplate.SecondaryAttack != null ? new Rajah_Secondary(_GuardianTemplate.SecondaryAttack, this) : null
             );
-        } else if (_GuardianTemplate.GuardianID == GuardiansEnum.Mari)
+        }
+        else if (_GuardianTemplate.GuardianID == GuardiansEnum.Mari)
         {
             Abilities.SetSlots(
                 passive: _GuardianTemplate.PassiveAbility != null ? new Mari_Passive(_GuardianTemplate.PassiveAbility, this) : null,
@@ -135,17 +136,33 @@ public class Mb_PlayerController : Mb_GuardianBase
         {
             DisplayData = _GuardianTemplate.BranchDisplay1,
             AbilityData = branch1AbilityData,
-            CreateAbility = owner => new Rajah_R_Branch1(branch1AbilityData, owner)
+            CreateAbility = owner => CreateBranchAbility(1, branch1AbilityData, owner)
         };
 
         Sc_BranchOption branch2 = new Sc_BranchOption
         {
             DisplayData = _GuardianTemplate.BranchDisplay2,
             AbilityData = branch2AbilityData,
-            CreateAbility = owner => new Rajah_R_Branch2(branch2AbilityData, owner)
+            CreateAbility = owner => CreateBranchAbility(2, branch2AbilityData, owner)
         };
 
         return (branch1, branch2);
+    }
+
+    private Sc_BaseAbility CreateBranchAbility(int branchNumber, SO_Ability abilityData, Mb_CharacterBase owner)
+    {
+        return _GuardianTemplate.GuardianID switch
+        {
+            GuardiansEnum.RajahBagwis => branchNumber == 1
+                ? new Rajah_R_Branch1(abilityData, owner)
+                : new Rajah_R_Branch2(abilityData, owner),
+
+            GuardiansEnum.Mari => branchNumber == 1
+                ? new Mari_R_Branch1(abilityData, owner)
+                : new Mari_R_Branch2(abilityData, owner),
+
+            _ => null
+        };
     }
 
 
@@ -155,14 +172,14 @@ public class Mb_PlayerController : Mb_GuardianBase
         base.OnDisable();
 
         // Named method references match exactly — these actually unsubscribe correctly.
-        _jumpAction.performed -= HandleJump;
-        _qAction.performed -= HandleQ;
-        _eAction.performed -= HandleE;
-        _rAction.performed -= HandleR;
-        _primaryAtkAction.performed -= HandlePrimary;
-        _secondaryAtkAction.performed -= HandleSecondary;
+        if (_jumpAction != null) _jumpAction.performed -= HandleJump;
+        if (_qAction != null) _qAction.performed -= HandleQ;
+        if (_eAction != null) _eAction.performed -= HandleE;
+        if (_rAction != null) _rAction.performed -= HandleR;
+        if (_primaryAtkAction != null) _primaryAtkAction.performed -= HandlePrimary;
+        if (_secondaryAtkAction != null) _secondaryAtkAction.performed -= HandleSecondary;
 
-        _playerActionMap.Disable();
+        _playerActionMap?.Disable();
     }
 
 

@@ -4018,6 +4018,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8843961953195587208, guid: 9913abcdb9cb2774e93aad2e2bd2f2d8, type: 3}
   m_PrefabInstance: {fileID: 1371784471059197450}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1922182546
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1922182547}
+  - component: {fileID: 1922182548}
+  m_Layer: 0
+  m_Name: GuardianSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1922182547
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922182546}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 27.23, y: 12.18, z: 149.97}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1922182548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922182546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b74ea6dfb6874074a8079a32535be542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_GuardianStageSpawner
+  DefaultGuardian: {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  SpawnPoint: {fileID: 1922182547}
+  SpawnParent: {fileID: 0}
+  ThirdPersonAimCamera: {fileID: 682600368}
+  SceneGuardiansToRemove:
+  - {fileID: 1594412821520456633}
 --- !u!1 &1927614714
 GameObject:
   m_ObjectHideFlags: 0
@@ -6077,7 +6127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1755061731143313870, guid: 9a9e81c8adb7c91478b439e2141c0f73, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4142987456964203181, guid: 9a9e81c8adb7c91478b439e2141c0f73, type: 3}
       propertyPath: far clip plane
@@ -6693,6 +6743,7 @@ SceneRoots:
   - {fileID: 1256339667}
   - {fileID: 1133444500}
   - {fileID: 1594412821520456631}
+  - {fileID: 1922182547}
   - {fileID: 1851823496}
   - {fileID: 59337280}
   - {fileID: 660096178}
