@@ -14,6 +14,8 @@ using UnityEngine;
 /// </summary>
 public class Mb_HealthComponent : MonoBehaviour, I_Damageable
 {
+    public static bool PlayerGodModeEnabled { get; private set; }
+
 
     // HealthComponent needs StatBlock to know the MaxHealth cap when healing
     private Mb_StatBlock _statBlock;
@@ -142,6 +144,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     public void TakeDamage(float amount, DamageType type = DamageType.Physical)
     {
         if (IsDead) return;
+        if (PlayerGodModeEnabled && gameObject.CompareTag("Player")) return;
         if (IsUntargetable) return;
 
         float remainingDamage = AbsorbWithShields(amount);
@@ -334,5 +337,15 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     public float GetMaxHealth()
     {
         return _statBlock.MaxHealth.GetValue();
+    }
+
+
+    /// <summary>
+    /// Enables or disables admin/demo invincibility for the player guardian.
+    /// </summary>
+    public static void SetPlayerGodModeEnabled(bool enabled)
+    {
+        PlayerGodModeEnabled = enabled;
+        Debug.Log($"[Mb_HealthComponent] Player god mode {(enabled ? "enabled" : "disabled")}.");
     }
 }

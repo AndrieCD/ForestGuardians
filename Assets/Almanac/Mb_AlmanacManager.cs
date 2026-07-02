@@ -74,6 +74,9 @@ public class Mb_AlmanacManager : MonoBehaviour
     // The 5% repeat bonus has already been applied when this fires.
     public static event Action<SO_WildlifeEntry> OnRepeatCompleted;
 
+    // Fired when admin/debug commands change many entries at once.
+    public static event Action OnAlmanacProgressChanged;
+
 
     // -------------------------------------------------------------------------
     // Unity Lifecycle
@@ -212,6 +215,49 @@ public class Mb_AlmanacManager : MonoBehaviour
         Debug.Log($"[Mb_AlmanacManager] '{entry.CommonName}' completed again " +
                   $"(x{newCount}). Repeat bonus: {entry.StatBonus.TargetStat} " +
                   $"+{repeatBonusValue} (5% of {entry.StatBonus.Value})");
+    }
+
+
+    /// <summary>
+    /// Unlocks every configured almanac entry once. Admin/demo use only.
+    /// </summary>
+    public void FillAllEntriesForDebug()
+    {
+        _saveData = new Sc_AlmanacSaveData();
+
+        foreach (SO_WildlifeEntry entry in AllEntries)
+        {
+            if (entry == null) continue;
+            if (string.IsNullOrWhiteSpace(entry.CommonName)) continue;
+
+            _saveData.UnlockedEntries.Add(entry.CommonName);
+            _saveData.SetCount(entry.CommonName, 1);
+        }
+
+        Sc_AlmanacSaveData.Save(_saveData);
+
+        if (_guardianStats != null)
+            ReapplyAllBonuses(_guardianStats);
+
+        OnAlmanacProgressChanged?.Invoke();
+
+        Debug.Log($"[Mb_AlmanacManager] Debug filled almanac. " +
+                  $"Unlocked entries: {_saveData.UnlockedEntries.Count}/{AllEntries.Count}");
+    }
+
+
+    /// <summary>
+    /// Clears every almanac unlock and completion count. Admin/demo use only.
+    /// </summary>
+    public void ClearAllEntriesForDebug()
+    {
+        _saveData = Sc_AlmanacSaveData.Reset();
+
+        _guardianStats?.RemoveAllFromSource(ModifierSource.Almanac);
+
+        OnAlmanacProgressChanged?.Invoke();
+
+        Debug.Log("[Mb_AlmanacManager] Debug cleared almanac. Unlocked entries: 0.");
     }
 
 

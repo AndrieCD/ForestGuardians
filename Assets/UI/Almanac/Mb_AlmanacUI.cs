@@ -162,6 +162,7 @@ public class Mb_AlmanacUI : MonoBehaviour
     {
         Mb_AlmanacManager.OnEntryUnlocked += HandleEntryUnlocked;
         Mb_AlmanacManager.OnRepeatCompleted += HandleRepeatCompleted;
+        Mb_AlmanacManager.OnAlmanacProgressChanged += HandleAlmanacProgressChanged;
 
         BuildGrid();
         RefreshProgressCounter();
@@ -178,6 +179,7 @@ public class Mb_AlmanacUI : MonoBehaviour
     {
         Mb_AlmanacManager.OnEntryUnlocked -= HandleEntryUnlocked;
         Mb_AlmanacManager.OnRepeatCompleted -= HandleRepeatCompleted;
+        Mb_AlmanacManager.OnAlmanacProgressChanged -= HandleAlmanacProgressChanged;
     }
 
     private void Update()
@@ -464,6 +466,43 @@ public class Mb_AlmanacUI : MonoBehaviour
         {
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
             card.Initialize(entry, isUnlocked: true, completionCount, OnCardClicked);
+        }
+    }
+
+
+    private void HandleAlmanacProgressChanged()
+    {
+        RefreshAllCards();
+        RefreshProgressCounter();
+
+        if (_selectedEntry == null)
+        {
+            ShowEmptyDetail();
+            return;
+        }
+
+        bool isUnlocked = Mb_AlmanacManager.Instance != null
+            && Mb_AlmanacManager.Instance.IsUnlocked(_selectedEntry);
+
+        PopulateDetailPanel(_selectedEntry, isUnlocked);
+        SwapModelViewer(_selectedEntry, isUnlocked);
+    }
+
+
+    private void RefreshAllCards()
+    {
+        if (Mb_AlmanacManager.Instance == null) return;
+
+        foreach (KeyValuePair<SO_WildlifeEntry, Mb_AlmanacDiamondCard> pair in _cardMap)
+        {
+            SO_WildlifeEntry entry = pair.Key;
+            Mb_AlmanacDiamondCard card = pair.Value;
+
+            if (entry == null || card == null) continue;
+
+            bool isUnlocked = Mb_AlmanacManager.Instance.IsUnlocked(entry);
+            int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
+            card.Initialize(entry, isUnlocked, completionCount, OnCardClicked);
         }
     }
 

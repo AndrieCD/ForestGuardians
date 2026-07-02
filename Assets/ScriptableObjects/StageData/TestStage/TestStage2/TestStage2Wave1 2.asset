@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: TestStage2Wave1 2
   m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
   enemyDataList:
-  - enemyType: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
+  - enemyType: {fileID: 4105497819398190046, guid: d8936ec8db4e35e458166d614725d1e0, type: 3}
     count: 1
   WaveReward: 0

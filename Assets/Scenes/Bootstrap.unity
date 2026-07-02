@@ -1014,6 +1014,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1765798522}
   - component: {fileID: 1765798523}
+  - component: {fileID: 1765798524}
   m_Layer: 0
   m_Name: GameInitializer
   m_TagString: Untagged
@@ -1048,6 +1049,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7804da8d1b10614d94ee1e40e0189d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInitializer
+--- !u!114 &1765798524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765798521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ef1fa443f264c499a98b2e3fb553e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RequirePlayingState: 1
+  LogCommandFeedback: 1
 --- !u!1 &1877479933
 GameObject:
   m_ObjectHideFlags: 0

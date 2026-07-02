@@ -63,6 +63,18 @@ public class SceneLoader : MonoBehaviour
         Load($"Stage{stageNumber}", GameState.LoadingStage);
     }
 
+    /// <summary>Loads a test stage scene by exact scene name.</summary>
+    public void LoadTestStage(string sceneName)
+    {
+        if (string.IsNullOrWhiteSpace(sceneName))
+        {
+            Debug.LogError("[SceneLoader] Cannot load test stage with an empty scene name.");
+            return;
+        }
+
+        Load(sceneName, GameState.LoadingStage);
+    }
+
     /// <summary>Loads the tutorial scene.</summary>
     public void LoadTutorial()
     {

@@ -12,13 +12,14 @@ GameObject:
   - component: {fileID: 6285464588997608186}
   - component: {fileID: 6885712088501892896}
   - component: {fileID: 1215873600568090218}
+  - component: {fileID: 7725930184207560111}
   m_Layer: 5
   m_Name: MainMenu_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3432706983895515939
 RectTransform:
   m_ObjectHideFlags: 0
@@ -106,6 +107,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7725930184207560111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2445422054956494309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d1ec7ab5e3b4c84aa74b1f23fa70c58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RajahGuardian: {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  RequireMainMenuState: 1
+  LogCommandFeedback: 1
 --- !u!1 &2599875241679571511
 GameObject:
   m_ObjectHideFlags: 0
