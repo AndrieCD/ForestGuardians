@@ -1,5 +1,5 @@
 ﻿// Mb_CuBotIndicatorManager.cs
-// Singleton manager that owns and drives all screen-edge CuBot indicators.
+// Singleton manager that owns and drives all hidden CuBot indicators.
 //
 // HOW IT WORKS:
 //   - Lives on a persistent Screen Space — Overlay Canvas in the scene.
@@ -23,6 +23,11 @@
 //   - IndicatorPrefab: a prefab with RectTransform, Image, and Mb_CuBotIndicator
 //   - InitialPoolSize: how many indicators to pre-warm (default 20)
 //   - EdgeMargin: pixels from screen edge the indicator stops at (default 40)
+//   - OcclusionMask: layers that can block direct camera visibility to a CuBot
+//   - EdgeIndicatorOpacity: opacity for off-screen and behind-camera indicators
+//   - FrontViewNearOpacity / FrontViewFarOpacity: distance fade for occluded in-front indicators
+//   - MinimumSize / MaximumSize: indicator size at the configured distance limits
+//   - MinimumSizeDistance / MaximumSizeDistance: world-space distance range for sizing
 //   - PulseInterval: seconds between automatic pulses (default 5)
 //   - PulseScale: peak scale during pulse pop (default 1.3)
 
@@ -52,6 +57,35 @@ public class Mb_CuBotIndicatorManager : MonoBehaviour
     [Tooltip("Distance from the screen edge where indicators are clamped, in pixels.")]
     [SerializeField] private float EdgeMargin = 40f;
 
+    [Header("Visibility")]
+    [Tooltip("World layers that can block the camera's view of an in-front CuBot.")]
+    [SerializeField] private LayerMask OcclusionMask = ~0;
+
+    [Tooltip("Opacity for off-screen and behind-camera indicators.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float EdgeIndicatorOpacity = 1f;
+
+    [Tooltip("Opacity for occluded front-view indicators at or closer than MinimumSizeDistance.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float FrontViewNearOpacity = 0.2f;
+
+    [Tooltip("Opacity for occluded front-view indicators at or farther than MaximumSizeDistance.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float FrontViewFarOpacity = 0.75f;
+
+    [Header("Distance Size")]
+    [Tooltip("Indicator size in pixels when a CuBot is at or beyond MaximumSizeDistance.")]
+    [SerializeField] private float MinimumSize = 28f;
+
+    [Tooltip("Indicator size in pixels when a CuBot is at or closer than MinimumSizeDistance.")]
+    [SerializeField] private float MaximumSize = 56f;
+
+    [Tooltip("Distance where the indicator reaches MaximumSize.")]
+    [SerializeField] private float MinimumSizeDistance = 5f;
+
+    [Tooltip("Distance where the indicator reaches MinimumSize.")]
+    [SerializeField] private float MaximumSizeDistance = 60f;
+
     [Header("Pulse Animation")]
     [Tooltip("Seconds between automatic pulse pops while a CuBot is alive.")]
     [SerializeField] private float PulseInterval = 5f;
@@ -77,6 +111,26 @@ public class Mb_CuBotIndicatorManager : MonoBehaviour
 
     // Handle on the shared pulse coroutine so we can stop it on disable
     private Coroutine _pulseCoroutine;
+
+    #endregion                  //----------------------------------------
+
+
+    #region Validation          //----------------------------------------
+
+    private void OnValidate()
+    {
+        InitialPoolSize = Mathf.Max(0, InitialPoolSize);
+        EdgeMargin = Mathf.Max(0f, EdgeMargin);
+        EdgeIndicatorOpacity = Mathf.Clamp01(EdgeIndicatorOpacity);
+        FrontViewNearOpacity = Mathf.Clamp01(FrontViewNearOpacity);
+        FrontViewFarOpacity = Mathf.Clamp01(FrontViewFarOpacity);
+        MinimumSize = Mathf.Max(1f, MinimumSize);
+        MaximumSize = Mathf.Max(MinimumSize, MaximumSize);
+        MinimumSizeDistance = Mathf.Max(0f, MinimumSizeDistance);
+        MaximumSizeDistance = Mathf.Max(MinimumSizeDistance + 0.01f, MaximumSizeDistance);
+        PulseInterval = Mathf.Max(0.01f, PulseInterval);
+        PulseScale = Mathf.Max(1f, PulseScale);
+    }
 
     #endregion                  //----------------------------------------
 
@@ -274,7 +328,18 @@ public class Mb_CuBotIndicatorManager : MonoBehaviour
         );
 
         // Pass shared config so every indicator uses the same tuning values
-        indicator.Configure(_mainCamera, EdgeMargin, PulseScale);
+        indicator.Configure(
+            _mainCamera,
+            EdgeMargin,
+            PulseScale,
+            MinimumSize,
+            MaximumSize,
+            MinimumSizeDistance,
+            MaximumSizeDistance,
+            EdgeIndicatorOpacity,
+            FrontViewNearOpacity,
+            FrontViewFarOpacity,
+            OcclusionMask);
 
         return indicator;
     }

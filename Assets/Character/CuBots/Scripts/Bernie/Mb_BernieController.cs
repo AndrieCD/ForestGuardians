@@ -18,8 +18,6 @@
 //       "BurnDuration" — flat seconds only
 
 using UnityEngine;
-using static UnityEngine.UI.Image;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class Mb_BernieController : Mb_CuBotController
 {
@@ -96,16 +94,4 @@ public class Mb_BernieController : Mb_CuBotController
         // and clears itself via OnEnable() pool safety — no action needed here.
     }
 
-#if UNITY_EDITOR
-
-    private void OnDrawGizmosSelected()
-    {
-        Vector3 origin = _FirePoint.position;
-
-        // Primary slash hitbox
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(origin, 2.5f);
-    }
-
-#endif
 }

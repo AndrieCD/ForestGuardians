@@ -167,15 +167,4 @@ public class MB_CuBotBase : Mb_CharacterBase
         Abilities.ActivatePrimaryAsAI();
     }
 
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        if (_CuBotTemplate == null) return;
-
-        Gizmos.color = Color.red;
-        Vector3 slashCenter = transform.position + transform.forward * 1.8f;
-        Gizmos.DrawWireSphere(slashCenter, 1.0f);
-    }
-#endif
 }

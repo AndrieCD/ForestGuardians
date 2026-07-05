@@ -63,8 +63,6 @@ public class Mb_HunterController : Mb_CuBotController
         Vector3 direction = (targetPos - origin).normalized;
         float distance = Vector3.Distance(origin, targetPos);
 
-        Debug.DrawRay(origin, direction * distance, Color.red, 0.1f);
-
         if (Physics.Raycast(origin, direction, out RaycastHit hit, distance))
         {
             // Accept the hit if it belongs to the target's GameObject or any of its children.

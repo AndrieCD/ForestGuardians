@@ -115,11 +115,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036c0744dd7eb024e87ca9bb4b5cc1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_CuBotIndicatorManager
-  IndicatorPrefab: {fileID: 0}
+  IndicatorPrefab: {fileID: 4802989193991392455, guid: c4a1da5cf4e052a49ab92a42f11eb8bd, type: 3}
   InitialPoolSize: 20
   EdgeMargin: 40
+  OcclusionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  EdgeIndicatorOpacity: 1
+  FrontViewNearOpacity: 0.1
+  FrontViewFarOpacity: 0.5
+  MinimumSize: 26
+  MaximumSize: 56
+  MinimumSizeDistance: 5
+  MaximumSizeDistance: 60
   PulseInterval: 5
-  PulseScale: 1.3
+  PulseScale: 1.1
 --- !u!1001 &3030955576486165898
 PrefabInstance:
   m_ObjectHideFlags: 0

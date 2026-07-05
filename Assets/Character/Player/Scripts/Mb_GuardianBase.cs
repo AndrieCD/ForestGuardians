@@ -122,38 +122,4 @@ public abstract class Mb_GuardianBase : Mb_CharacterBase
         GuardianAnimator?.TriggerDefeat();
     }
 
-
-    // Add to Mb_PlayerController.cs
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        if (_GuardianTemplate == null) return;
-
-        Vector3 center = transform.position + Vector3.up * .8f; // adjust this value
-
-        // Primary slash hitbox
-        Gizmos.color = Color.red;
-        Vector3 slashCenter = center + transform.forward * 1.5f;
-        Gizmos.DrawWireSphere(slashCenter, 1.5f);
-
-        // Q dash hit radius
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(center, 1.4f);
-
-        // R1 slashes hitbox
-        float HIT_RADIUS = 5f;
-        float HIT_OFFSET = 5f;
-        Gizmos.color = Color.yellow;
-        center = transform.position + transform.forward * HIT_OFFSET;
-        Gizmos.DrawWireSphere(center, HIT_RADIUS);
-
-
-        // Feet
-        Vector3 feet = transform.position + Vector3.up * 0.0f; // adjust this value
-
-        // FEET radius
-        Gizmos.color = Color.pink;
-        Gizmos.DrawWireSphere(feet, 0.2f);
-    }
-#endif
 }

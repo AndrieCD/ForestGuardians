@@ -11,11 +11,11 @@
   <Project Path="UnityEditor.UI.Analytics.csproj" />
   <Project Path="CFXRRuntime.csproj" />
   <Project Path="Unity.TextMeshPro.Editor.Tests.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="KinoBloom.Runtime.csproj" />
   <Project Path="ToonyColorsPro.Demo.Editor.csproj" />
   <Project Path="CFXRDemo.csproj" />
   <Project Path="Unity.TextMeshPro.Tests.csproj" />
   <Project Path="Unity.InternalAPIEngineBridge.004.csproj" />
   <Project Path="CFXR.WelcomeScreen.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>

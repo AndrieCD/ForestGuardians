@@ -1,12 +1,13 @@
 ﻿// Mb_CuBotIndicator.cs
-// A single screen-edge indicator UI element that points toward one off-screen CuBot.
+// A single UI indicator element that points toward one hidden CuBot.
 //
 // HOW IT WORKS:
 //   - Mb_CuBotIndicatorManager creates and pools these.
 //   - Each frame, the manager calls UpdatePosition() with the CuBot's world position.
 //   - This script projects that world position to screen space and decides:
-//       • If the CuBot is on-screen  → hide the indicator
-//       • If the CuBot is off-screen → show and pin to the nearest screen edge
+//       • If the CuBot is visible on-screen       → hide the indicator
+//       • If the CuBot is on-screen but occluded  → show at the projected point
+//       • If the CuBot is off-screen              → show and pin to the nearest screen edge
 //   - Pulse animation (brief scale pop) is triggered externally by the manager
 //     via TriggerPulse(). This keeps all timing logic in one place.
 //   - Assign() binds this indicator to a CuBot. Release() unbinds it for pool return.
@@ -14,7 +15,7 @@
 // Inspector setup:
 //   - This script lives on a prefab that contains a RectTransform and an Image.
 //   - The Image is the visual dot/arrow for the indicator.
-//   - All sizing and color is set on the prefab — this script drives position only.
+//   - Base color is set on the prefab — this script adjusts front-view opacity by distance.
 
 using System.Collections;
 using UnityEngine;
@@ -28,11 +29,17 @@ public class Mb_CuBotIndicator : MonoBehaviour
     // Assigned in Awake — must be on this same GameObject
     private Image _image;
 
+    // Original prefab color. Opacity settings are applied from this baseline.
+    private Color _baseImageColor = Color.white;
+
     // RectTransform of this indicator — used to set screen-edge position
     private RectTransform _rectTransform;
 
     // Cached camera — passed in from the manager so we never call Camera.main per frame
     private Camera _mainCamera;
+
+    // Original prefab size. Distance scaling is applied from this baseline.
+    private Vector2 _baseSizeDelta;
 
     #endregion                  //----------------------------------------
 
@@ -59,6 +66,14 @@ public class Mb_CuBotIndicator : MonoBehaviour
     // so all indicators share the same tuning values from one Inspector source
     private float _edgeMargin;
     private float _pulseScale;
+    private float _minimumSize;
+    private float _maximumSize;
+    private float _minimumSizeDistance;
+    private float _maximumSizeDistance;
+    private float _edgeIndicatorOpacity;
+    private float _frontViewNearOpacity;
+    private float _frontViewFarOpacity;
+    private LayerMask _occlusionMask;
 
     #endregion                  //----------------------------------------
 
@@ -72,6 +87,11 @@ public class Mb_CuBotIndicator : MonoBehaviour
 
         if (_image == null)
             Debug.LogError($"[Mb_CuBotIndicator] No Image component found on {gameObject.name}.");
+        else
+            _baseImageColor = _image.color;
+
+        if (_rectTransform != null)
+            _baseSizeDelta = _rectTransform.sizeDelta;
     }
 
 
@@ -97,11 +117,30 @@ public class Mb_CuBotIndicator : MonoBehaviour
     /// Called once by the manager after instantiation to pass shared config values.
     /// Keeps tuning data in one place (the manager's Inspector) instead of per-prefab.
     /// </summary>
-    public void Configure(Camera mainCamera, float edgeMargin, float pulseScale)
+    public void Configure(
+        Camera mainCamera,
+        float edgeMargin,
+        float pulseScale,
+        float minimumSize,
+        float maximumSize,
+        float minimumSizeDistance,
+        float maximumSizeDistance,
+        float edgeIndicatorOpacity,
+        float frontViewNearOpacity,
+        float frontViewFarOpacity,
+        LayerMask occlusionMask)
     {
         _mainCamera = mainCamera;
         _edgeMargin = edgeMargin;
         _pulseScale = pulseScale;
+        _minimumSize = minimumSize;
+        _maximumSize = maximumSize;
+        _minimumSizeDistance = minimumSizeDistance;
+        _maximumSizeDistance = maximumSizeDistance;
+        _edgeIndicatorOpacity = edgeIndicatorOpacity;
+        _frontViewNearOpacity = frontViewNearOpacity;
+        _frontViewFarOpacity = frontViewFarOpacity;
+        _occlusionMask = occlusionMask;
     }
 
 
@@ -116,6 +155,8 @@ public class Mb_CuBotIndicator : MonoBehaviour
 
         // Reset scale in case a previous pulse left it mid-animation
         transform.localScale = Vector3.one;
+        ApplyDistanceSize(false);
+        ApplyIndicatorOpacity(false);
     }
 
 
@@ -128,6 +169,8 @@ public class Mb_CuBotIndicator : MonoBehaviour
         _trackedCuBot = null;
         _isPulsing = false;
         transform.localScale = Vector3.one;
+        ResetSize();
+        ApplyIndicatorOpacity(false);
         gameObject.SetActive(false);
     }
 
@@ -147,19 +190,24 @@ public class Mb_CuBotIndicator : MonoBehaviour
         // z < 0 means the point is behind the camera — treat as off-screen.
         Vector3 viewportPos = _mainCamera.WorldToViewportPoint(_trackedCuBot.position);
 
-        bool isOnScreen = viewportPos.z > 0f
+        bool isInFront = viewportPos.z > 0f;
+        bool isOnScreen = isInFront
             && viewportPos.x >= 0f && viewportPos.x <= 1f
             && viewportPos.y >= 0f && viewportPos.y <= 1f;
 
-        if (isOnScreen)
+        bool isOccluded = isOnScreen && IsTrackedCuBotOccluded();
+
+        if (isOnScreen && !isOccluded)
         {
-            // CuBot is visible — hide the indicator
+            // CuBot is visible on-screen — hide the indicator
             if (_image.enabled) _image.enabled = false;
             return;
         }
 
-        // CuBot is off-screen — show the indicator and pin it to the screen edge
+        // CuBot is hidden — show the indicator.
         if (!_image.enabled) _image.enabled = true;
+        ApplyDistanceSize(isOnScreen && isOccluded);
+        ApplyIndicatorOpacity(isOnScreen && isOccluded);
 
         // If the CuBot is behind the camera, flip the viewport position so
         // the indicator appears on the correct side of the screen
@@ -175,22 +223,20 @@ public class Mb_CuBotIndicator : MonoBehaviour
             viewportPos.y = (viewportPos.y < 0.5f) ? 0f : 1f;
         }
 
-        // Convert viewport (0-1) to screen pixels, then clamp to screen edges
-        // with the configured margin so the indicator stays fully on-screen
+        // Convert viewport (0-1) to screen pixels, then clamp with the configured
+        // margin so off-screen indicators stay fully visible. Occluded CuBots that
+        // are in front of the camera stay at their projected on-screen position.
         float screenWidth = Screen.width;
         float screenHeight = Screen.height;
 
-        float screenX = Mathf.Clamp(
-            viewportPos.x * screenWidth,
-            _edgeMargin,
-            screenWidth - _edgeMargin
-        );
+        float screenX = viewportPos.x * screenWidth;
+        float screenY = viewportPos.y * screenHeight;
 
-        float screenY = Mathf.Clamp(
-            viewportPos.y * screenHeight,
-            _edgeMargin,
-            screenHeight - _edgeMargin
-        );
+        if (!isOnScreen)
+        {
+            screenX = Mathf.Clamp(screenX, _edgeMargin, screenWidth - _edgeMargin);
+            screenY = Mathf.Clamp(screenY, _edgeMargin, screenHeight - _edgeMargin);
+        }
 
         // Screen Space — Overlay canvas uses screen pixels directly as anchor position
         _rectTransform.position = new Vector3(screenX, screenY, 0f);
@@ -259,6 +305,104 @@ public class Mb_CuBotIndicator : MonoBehaviour
 
         transform.localScale = Vector3.one;
         _isPulsing = false;
+    }
+
+    #endregion                  //----------------------------------------
+
+
+    #region Visibility          //----------------------------------------
+
+    private bool IsTrackedCuBotOccluded()
+    {
+        Vector3 cameraPosition = _mainCamera.transform.position;
+        Vector3 targetPosition = _trackedCuBot.position;
+        Vector3 direction = targetPosition - cameraPosition;
+        float distance = direction.magnitude;
+
+        if (distance <= 0f)
+            return false;
+
+        if (!Physics.Raycast(
+            cameraPosition,
+            direction.normalized,
+            out RaycastHit hit,
+            distance,
+            _occlusionMask,
+            QueryTriggerInteraction.Ignore))
+        {
+            return false;
+        }
+
+        return !hit.transform.IsChildOf(_trackedCuBot);
+    }
+
+    #endregion                  //----------------------------------------
+
+
+    #region Opacity             //----------------------------------------
+
+    private void ApplyIndicatorOpacity(bool isFrontViewIndicator)
+    {
+        if (_image == null)
+            return;
+
+        float opacity = isFrontViewIndicator
+            ? Mathf.Lerp(_frontViewNearOpacity, _frontViewFarOpacity, GetNormalizedDistance())
+            : _edgeIndicatorOpacity;
+
+        Color color = _baseImageColor;
+        color.a *= opacity;
+        _image.color = color;
+    }
+
+    #endregion                  //----------------------------------------
+
+
+    #region Distance Sizing     //----------------------------------------
+
+    private void ApplyDistanceSize(bool isFrontViewIndicator)
+    {
+        if (_rectTransform == null || _trackedCuBot == null || _mainCamera == null)
+            return;
+
+        if (isFrontViewIndicator)
+        {
+            ApplySize(_minimumSize);
+            return;
+        }
+
+        float size = Mathf.Lerp(_maximumSize, _minimumSize, GetNormalizedDistance());
+        ApplySize(size);
+    }
+
+
+    private float GetNormalizedDistance()
+    {
+        if (_trackedCuBot == null || _mainCamera == null)
+            return 1f;
+
+        float distance = Vector3.Distance(_mainCamera.transform.position, _trackedCuBot.position);
+        float distanceRange = _maximumSizeDistance - _minimumSizeDistance;
+        return distanceRange <= 0f
+            ? 1f
+            : Mathf.Clamp01((distance - _minimumSizeDistance) / distanceRange);
+    }
+
+
+    private void ApplySize(float size)
+    {
+        _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
+        _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
+    }
+
+
+    private void ResetSize()
+    {
+        if (_rectTransform == null)
+            return;
+
+        _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _baseSizeDelta.x);
+        _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _baseSizeDelta.y);
     }
 
     #endregion                  //----------------------------------------
