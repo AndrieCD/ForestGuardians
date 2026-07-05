@@ -7,7 +7,7 @@
 //   1. CAMERA FOLLOW
 //      The MinimapCamera is already parented to the main camera in your prototype,
 //      so it follows automatically. This script just manages its orthographic size
-//      (zoom) and ensures it's assigned.
+//      (zoom) when an optional camera reference is assigned.
 //
 //   2. MAP BORDER / PANEL VISIBILITY
 //      The RawImage displaying the RenderTexture, the border frame, and any
@@ -31,7 +31,7 @@
 //   [ ] All terrain/path/environment GOs are on their normal layers (NOT Minimap).
 //
 // Inspector Setup:
-//   - MinimapCamera: drag the minimap orthographic camera here.
+//   - MinimapCamera: optional reference for default zoom setup.
 //   - DefaultOrthographicSize: starting zoom level (world units half-height visible).
 //   - MinimapPanel: the root panel GO containing the RawImage + border — toggled on state change.
 
@@ -68,9 +68,7 @@ public class Mb_MinimapUI : MonoBehaviour
 
     private void Awake()
     {
-        if (MinimapCamera == null)
-            Debug.LogError("[Mb_MinimapUI] MinimapCamera is not assigned.");
-        else
+        if (MinimapCamera != null)
             MinimapCamera.orthographicSize = DefaultOrthographicSize;
 
         if (MinimapPanel == null)
