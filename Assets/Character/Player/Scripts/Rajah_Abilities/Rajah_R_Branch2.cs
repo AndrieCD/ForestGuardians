@@ -3,19 +3,19 @@
 //
 // PASSIVE: Every Secondary shot fires 1–4 additional feathers after a short delay.
 //   Extra shot count scales with Guardian level (4 → 1, 8 → 2, 12 → 4).
-//   Listens to Rajah_Secondary.OnSecondaryFired — receives launch origin and
-//   normalized direction so FireToward() can be called directly without re-aiming.
+//   Listens to Rajah_Secondary.OnSecondaryFired, then resolves Rajah's current
+//   ProjectileOrigin and aim direction for each delayed extra shot.
 //
 // ACTIVE: Locks abilities/attacks and fires a continuous stream of spread feathers
 //   for ACTIVE_DURATION seconds. Each shot is offset randomly within a circle
-//   around the ProjectileOrigin before direction is recalculated, giving the
-//   burst its characteristic spray pattern.
+//   around the current ProjectileOrigin before direction is recalculated, giving
+//   the burst its characteristic spray pattern.
 //
 // PROJECTILE SYSTEM CHANGE:
 //   Previously used Instantiate() + SetOwner/SetOwnerTag/SetDamageAmount per shot.
 //   Now delegates all spawning to _launcher.FireToward() — one call per projectile.
-//   SpawnProjectile() now takes a normalized direction instead of a world targetPoint,
-//   matching the updated OnSecondaryFired signature from Rajah_Secondary.
+//   SpawnProjectile() takes a launch origin and normalized direction so delayed
+//   shots do not stay anchored to an old player position.
 
 using System.Collections;
 using UnityEngine;
@@ -114,7 +114,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
     // Passive — Extra Shots on Secondary Fire
     // -------------------------------------------------------------------------
 
-    // Receives the origin and normalized direction from Rajah_Secondary.OnSecondaryFired.
+    // Receives the secondary event and starts the delayed extra-shot burst.
     // Filters by source so Eagle Eye only reacts to this guardian's own Secondary shots,
     // not shots from a second guardian if multiplayer is ever added.
     private void HandleSecondaryFired(Mb_CharacterBase source, Vector3 origin, Vector3 direction)
@@ -129,20 +129,22 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         if (_passiveRoutine != null)
             _User.StopCoroutine(_passiveRoutine);
 
-        _passiveRoutine = _User.StartCoroutine(
-            FireExtraShots(origin, direction, extraShots)
-        );
+        _passiveRoutine = _User.StartCoroutine(FireExtraShots(extraShots));
     }
 
 
     // Fires each extra shot after a short delay so they trail behind the initial shot.
-    // Uses the same origin and direction as the triggering Secondary — extra shots
-    // fly parallel to the original but with a random spread offset applied in SpawnProjectile.
-    private IEnumerator FireExtraShots(Vector3 origin, Vector3 direction, int count)
+    // Each shot resolves the current ProjectileOrigin and aim direction at fire time,
+    // so moving or turning after the original Secondary changes where extras spawn.
+    private IEnumerator FireExtraShots(int count)
     {
         for (int i = 0; i < count; i++)
         {
             yield return new WaitForSeconds(EXTRA_SHOT_DELAY);
+
+            if (!TryResolveCurrentProjectileAim(out Vector3 origin, out Vector3 direction))
+                continue;
+
             SpawnProjectile(origin, direction, isPassive: true);
         }
 
@@ -221,26 +223,10 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
     // track where the player is pointing as the burst plays out.
     private void FireSpreadShot(Mb_CharacterBase user)
     {
-        if (_Guardian.ProjectileOrigin == null) return;
+        if (!TryResolveCurrentProjectileAim(out Vector3 origin, out Vector3 direction))
+            return;
 
-        Camera cam = Camera.main;
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-
-        int aimMask = (1 << LayerMask.NameToLayer("Default")) |
-                      (1 << LayerMask.NameToLayer("Character"));
-
-        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, aimMask)
-            ? hit.point
-            : ray.origin + ray.direction * 100f;
-
-        // Guard: if the aim target is behind the ProjectileOrigin, fall back to
-        // Guardian body forward so the burst doesn't fire backward into the player.
-        Vector3 toTarget = targetPoint - _Guardian.ProjectileOrigin.position;
-        Vector3 direction = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
-            ? toTarget.normalized
-            : _Guardian.transform.forward;
-
-        SpawnProjectile(_Guardian.ProjectileOrigin.position, direction, isPassive: false);
+        SpawnProjectile(origin, direction, isPassive: false);
     }
 
 
@@ -323,6 +309,41 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         // max out the passive stack count in one activation otherwise.
 
         Mb_AudioManager.PlaySFX(CombatSFX.Rajah_Feather_Launch);
+    }
+
+
+    private bool TryResolveCurrentProjectileAim(out Vector3 origin, out Vector3 direction)
+    {
+        origin = Vector3.zero;
+        direction = Vector3.zero;
+
+        if (_Guardian == null || _Guardian.ProjectileOrigin == null)
+            return false;
+
+        origin = _Guardian.ProjectileOrigin.position;
+
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            direction = _Guardian.transform.forward;
+            return true;
+        }
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        int aimMask = (1 << LayerMask.NameToLayer("Default")) |
+                      (1 << LayerMask.NameToLayer("Character"));
+
+        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, aimMask)
+            ? hit.point
+            : ray.origin + ray.direction * 100f;
+
+        Vector3 toTarget = targetPoint - origin;
+        direction = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
+            ? toTarget.normalized
+            : _Guardian.transform.forward;
+
+        return true;
     }
 
     private void SetUntargetable(bool state)

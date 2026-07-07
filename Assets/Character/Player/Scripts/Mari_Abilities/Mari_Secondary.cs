@@ -18,9 +18,8 @@
 // BRANCH 2 INTERACTION:
 //   OnSecondaryFired fires after every shot so Mari_R_Branch2 (Mind Unbound)
 //   can react with its splash damage passive without holding a direct reference
-//   to this ability. Passes (source, launchOrigin, normalizedDirection) —
-//   identical signature to Rajah_Secondary.OnSecondaryFired so the pattern
-//   is consistent and Branch2 can follow the same structure.
+//   to this ability. Passes (source, launchOrigin, normalizedDirection, projectile)
+//   so Branch2 can subscribe to the exact projectile's confirmed OnHit event.
 //
 // VFX:
 //   "PsyshockMuzzleVFX" — child ParticleSystem on Mari's prefab, plays on fire.
@@ -38,10 +37,8 @@ public class Mari_Secondary : Sc_BaseAbility
 
     // Fired after every Psyshock shot.
     // Mari_R_Branch2 subscribes to this for its splash damage passive.
-    // Parameters: (source character, launch world position, normalized fire direction)
-    // Normalized direction matches the pattern established by Rajah_Secondary
-    // so Branch2 can call FireToward() directly without recalculating direction.
-    public static event Action<Mb_CharacterBase, Vector3, Vector3> OnSecondaryFired;
+    // Parameters: (source character, launch world position, normalized fire direction, projectile instance)
+    public static event Action<Mb_CharacterBase, Vector3, Vector3, Mb_Projectile> OnSecondaryFired;
 
 
     // -------------------------------------------------------------------------
@@ -181,7 +178,7 @@ public class Mari_Secondary : Sc_BaseAbility
         // Branch2's passive reacts to this with splash damage around the hit target.
         // We fire this regardless of whether Branch2 is equipped — the null
         // subscriber list is a no-op, so no guard is needed here.
-        OnSecondaryFired?.Invoke(user, launchOrigin, fireDirection);
+        OnSecondaryFired?.Invoke(user, launchOrigin, fireDirection, projectile);
     }
 
 

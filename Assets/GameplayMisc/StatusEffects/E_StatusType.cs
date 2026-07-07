@@ -42,4 +42,9 @@ public enum StatusType
     // No stat modifier — pure DoT.
     // Applied by Bernie and fire-themed abilities.
     Burn,
+
+    // Mari R1 passive damage-over-time.
+    // Uses the generic DoT controller path but needs its own type so it does not
+    // refresh or block Poison/Burn from other sources.
+    PsychicBloom,
 }

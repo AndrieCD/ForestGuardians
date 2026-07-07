@@ -14,36 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Mind Spikes
   Icon: {fileID: 21300090, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
+  AbilityDescription: 
   Cooldown:
-  - 10
+  - 8
+  - 8
   - 8
   - 7
   - 7
   - 6
-  - 4
   ProjectileData: {fileID: 0}
   MaxLevel: 6
   ScalingStats:
-  - StatName: Damage
+  - StatName: DoT
     BaseValuePerLevel:
-    - 10
+    - 15
     ATKScalingPerLevel:
-    - 0.05
-    - 0.05
-    - 0.1
-    - 0.12
-    - 0.15
-    - 0.2
-    APScalingPerLevel:
-    - 0.1
-    - 0.15
     - 0.2
     - 0.25
     - 0.3
-    - 0.4
+    - 0.45
+    - 0.5
+    - 0.6
+    APScalingPerLevel:
+    - 0.025
+    - 0.03
+    - 0.05
+    - 0.06
+    - 0.07
+    - 0.1
   - StatName: Slow
     BaseValuePerLevel:
-    - 15
+    - 0.15
     ATKScalingPerLevel:
     - 0
     APScalingPerLevel:

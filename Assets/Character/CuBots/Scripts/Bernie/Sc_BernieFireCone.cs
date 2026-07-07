@@ -128,13 +128,13 @@ public class Sc_BernieFireCone : Sc_BaseAbility
             if (hit.gameObject == user.gameObject) continue;
             if (hit.gameObject.CompareTag("CuBot")) continue;
 
-            // Cone filter — dot product between Bernie's forward and the direction
-            // to the target. A dot > cos(halfAngle) means the target is inside the cone.
-            Vector3 dirToTarget = (hit.transform.position - origin).normalized;
-            float dot = Vector3.Dot(user.transform.forward, dirToTarget);
-            float cosHalfAngle = Mathf.Cos(CONE_HALF_ANGLE * Mathf.Deg2Rad);
+            //// Cone filter — dot product between Bernie's forward and the direction
+            //// to the target. A dot > cos(halfAngle) means the target is inside the cone.
+            //Vector3 dirToTarget = (hit.transform.position - origin).normalized;
+            //float dot = Vector3.Dot(user.transform.forward, dirToTarget);
+            //float cosHalfAngle = Mathf.Cos(CONE_HALF_ANGLE * Mathf.Deg2Rad);
 
-            if (dot < cosHalfAngle) continue; // Outside the cone — skip
+            //if (dot < cosHalfAngle) continue; // Outside the cone — skip
 
             // Apply direct damage
             I_Damageable damageable = hit.GetComponent<I_Damageable>();

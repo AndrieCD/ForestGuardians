@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afb92f12c326254aa0a128756a461e6, type: 3}
+  m_Name: Shovy_SO
+  m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
+  CharacterName: Shovy
+  AttackRange: 12
+  MaxHealth: 150
+  HealthRegen: 0
+  MoveSpeed: 6
+  AttackSpeed: 0.8
+  AttackPower: 70
+  AbilityPower: 0
+  Haste: 0
+  CriticalChance: 0
+  CriticalDamage: 1.5
+  LifeSteal: 0
+  MaxHealthScaling: 0.35
+  HealthRegenScaling: 0
+  MoveSpeedScaling: 0
+  AttackSpeedScaling: 0
+  AttackPowerScaling: 0.45
+  AbilityPowerScaling: 0
+  HasteScaling: 0
+  CriticalChanceScaling: 0
+  CriticalDamageScaling: 0
+  LifeStealScaling: 0
+  PassiveAbility: {fileID: 0}
+  AbilityQ: {fileID: 0}
+  AbilityE: {fileID: 0}
+  AbilityR: {fileID: 0}
+  PrimaryAttack: {fileID: 11400000, guid: f296d3344ad944dfba6e9902e6fc5e78, type: 2}
+  SecondaryAttack: {fileID: 0}

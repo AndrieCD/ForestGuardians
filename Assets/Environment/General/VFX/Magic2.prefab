@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2959770332533863302}
   - component: {fileID: 444586745367858055}
   - component: {fileID: 2731272683686338225}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Magic2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

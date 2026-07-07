@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6498735222121196317}
   - component: {fileID: 8925032213805183986}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Magic3
   m_TagString: Untagged
   m_Icon: {fileID: 0}

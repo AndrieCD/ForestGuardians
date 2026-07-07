@@ -59,6 +59,7 @@ public enum AbilityPrefabID
     // CuBots (eg. Hunter, Trapper, Toxion, Luxion) may also need new entries for their unique projectiles and effects.
     Hunter_BulletProjectile,           // Hunter's basic bolt projectile
     Trapper_TrapProjectile,           // Trapper's trap projectile
+    Trapper_ProximityTrap,            // Trapper's ground proximity trap
     Toxion_SludgeProjectile,     // Toxion's poison cloud projectile
     Luxion_BulletProjectile            // Luxion's laser projectile
 }
@@ -123,6 +124,9 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
     [Tooltip("Trapper's trap projectile. Must have Mb_Projectile, Rigidbody, Collider.")]
     [SerializeField] private GameObject _TrapperTrapProjectile;
 
+    [Tooltip("Trapper's ground proximity trap. Must have Mb_TrapperProximityTrap and a trigger Collider.")]
+    [SerializeField] private GameObject _TrapperProximityTrap;
+
     [Tooltip("Toxion's poison cloud projectile. Must have Mb_Projectile, Rigidbody, Collider.")]
     [SerializeField] private GameObject _ToxionSludgeProjectile;
 
@@ -158,6 +162,7 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
 
             AbilityPrefabID.Hunter_BulletProjectile => _HunterBulletProjectile,
             AbilityPrefabID.Trapper_TrapProjectile => _TrapperTrapProjectile,
+            AbilityPrefabID.Trapper_ProximityTrap => _TrapperProximityTrap,
             AbilityPrefabID.Toxion_SludgeProjectile => _ToxionSludgeProjectile,
             AbilityPrefabID.Luxion_BulletProjectile => _LuxionBulletProjectile,
 

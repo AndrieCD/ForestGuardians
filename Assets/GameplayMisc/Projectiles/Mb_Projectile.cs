@@ -235,8 +235,15 @@ public class Mb_Projectile : MonoBehaviour
         if (_owner.CompareTag("Player") && other.gameObject.CompareTag("Panoharra")) return;
 
         // Must be damageable — environment colliders (walls, floor) have no I_Damageable.
+        // Gravity-enabled projectiles are thrown objects, so they should expire when they land.
         I_Damageable damageable = other.GetComponent<I_Damageable>();
-        if (damageable == null) return;
+        if (damageable == null)
+        {
+            if (_rb != null && _rb.useGravity)
+                Deactivate();
+
+            return;
+        }
 
         // Register the hit so this collider cannot be hit again this flight.
         _hitColliders.Add(other);

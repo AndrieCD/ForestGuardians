@@ -18,7 +18,7 @@
 //
 // HOW TO APPLY A STATUS EFFECT FROM AN ABILITY SCRIPT:
 //   1. Get the controller: var status = target.GetComponent<Mb_StatusEffectController>();
-//   2. Build the effect:   var slow = Sc_StatusEffect.Slow(3f, 0.30f);
+//   2. Build the effect:   var slow = Sc_StatusEffect.MoveSlow(3f, 0.30f);
 //   3. Apply it:           status?.Apply(slow);
 //
 // Inspector setup:
@@ -133,7 +133,7 @@ public class Mb_StatusEffectController : MonoBehaviour
     ///
     /// REAPPLICATION RULE:
     ///   If the same StatusType is already active, the duration is refreshed
-    ///   and the existing stat modifier is left in place — no double-stacking.
+    ///   and the status modifier is replaced — no double-stacking.
     ///   This keeps behavior predictable when abilities hit the same target twice.
     ///
     /// If the character is already dead, the effect is silently ignored.
@@ -145,10 +145,11 @@ public class Mb_StatusEffectController : MonoBehaviour
 
         if (_activeEffects.ContainsKey(effect.Type))
         {
-            // Same type is already running — refresh the duration only.
+            // Same type is already running — refresh the duration and modifier.
             // The coroutine reads _activeEffects[type] each tick, so updating
             // the value here is enough to extend the effect without restarting anything.
             _activeEffects[effect.Type] = effect.Duration;
+            ReplaceModifierForType(effect.Type, effect.StatModifier);
 
             Debug.Log($"[Mb_StatusEffectController] {effect.Type} refreshed on {gameObject.name} " +
                       $"({effect.Duration}s).");
@@ -374,6 +375,22 @@ public class Mb_StatusEffectController : MonoBehaviour
             _statBlock?.RemoveModifier(modifier);
             _appliedModifiers.Remove(type);
         }
+    }
+
+
+    /// <summary>
+    /// Replaces the stat modifier for an already-active status effect.
+    /// This keeps reapplications from stacking while still allowing a refreshed
+    /// status to use the newest slow strength.
+    /// </summary>
+    private void ReplaceModifierForType(StatusType type, Sc_Modifier modifier)
+    {
+        RemoveModifierForType(type);
+
+        if (modifier == null || _statBlock == null) return;
+
+        _statBlock.AddModifier(modifier);
+        _appliedModifiers[type] = modifier;
     }
 
     #endregion                      //----------------------------------------

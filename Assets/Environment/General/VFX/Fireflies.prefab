@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 239985188085031131}
   - component: {fileID: 8102330379062521407}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Fireflies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 804864432133941315}
   - component: {fileID: 7268568594045414922}
   - component: {fileID: 7009738308355479809}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Particle System 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

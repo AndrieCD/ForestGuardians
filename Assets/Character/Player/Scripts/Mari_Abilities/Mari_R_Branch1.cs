@@ -3,8 +3,8 @@
 //
 // PASSIVE — Blooming DoT:
 //   Every Mind Flurry (LMB) hit applies a damage-over-time effect to the enemy
-//   struck. The DoT deals DOT_PERCENT (30%) of the projectile's base damage
-//   over DOT_DURATION (5s) in ticks every DOT_TICK_INTERVAL (0.5s).
+//   struck. The DoT total damage is sourced from the SO "DoT" stat, then split
+//   across DOT_DURATION by the generic status-effect controller.
 //   Applied fresh on every hit — re-application resets the DoT timer on that
 //   enemy (last hit wins, no stacking).
 //   Subscribes to Mari_Primary.OnPrimaryHit — filters by source so only this
@@ -40,12 +40,12 @@
 //   Assign prefab to Mari_R_Branch1.BloomZonePrefab in the Inspector.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Mari_R_Branch1 : Sc_BaseAbility
 {
+    private const float DAMAGE_TICK_INTERVAL = 0.5f;
+
     // -------------------------------------------------------------------------
     // Inspector-Assigned Fields
     // -------------------------------------------------------------------------
@@ -57,15 +57,8 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     private GameObject _bloomZonePrefab;
 
     [Header("Passive — Blooming DoT")]
-    // Fraction of the hitting projectile's base damage applied as total DoT
-    // TODO: Tune — 0.3 = 30% of the hit damage as DoT over DOT_DURATION
-    [SerializeField] private float _DotPercent = 0.30f;
-
     // Total duration of the DoT in seconds
     [SerializeField] private float _DotDuration = 5f;
-
-    // How often the DoT ticks — total DoT damage is divided evenly across ticks
-    [SerializeField] private float _DotTickInterval = 0.5f;
 
     [Header("Active — Bloom Field")]
     // Radius of the spherical zone in world units
@@ -75,11 +68,8 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     // How long the field persists in seconds
     [SerializeField] private float _FieldDuration = 4f;
 
-    // Seconds between damage ticks inside the field
-    [SerializeField] private float _FieldTickInterval = 0.5f;
-
-    // Slow applied to enemies inside the field each tick
-    [SerializeField] private float _FieldSlowPercent = 25f;
+    // Slow duration applied to enemies inside the field each tick.
+    // Slow strength is sourced from the SO "Slow" stat.
     [SerializeField] private float _FieldSlowDuration = 1f;
 
 
@@ -89,11 +79,6 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
     // Cast burst VFX on Mari — located by name in OnEquip
     private ParticleSystem _castVFX;
-
-    // DoT hit VFX prefab — instantiated briefly on each DoT tick target
-    // TODO: Leo — create a small burst prefab named "BloomDoTVFX" and assign here
-    [SerializeField] private GameObject _DotHitVFXPrefab;
-
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -113,7 +98,7 @@ public class Mari_R_Branch1 : Sc_BaseAbility
         _bloomZonePrefab = registry?.GetPrefab(AbilityPrefabID.Mari_BloomZone);
 
         if (_bloomZonePrefab == null)
-            Debug.LogError("[Mari_Q] Mari_BloomZone prefab not found in registry.");
+            Debug.LogError("[Mari_R_Branch1] Mari_BloomZone prefab not found in registry.");
 
         // Subscribe to Mari_Primary's confirmed hit event for DoT passive
         // Unsubscribe-first prevents duplicate listeners on re-equip
@@ -170,60 +155,33 @@ public class Mari_R_Branch1 : Sc_BaseAbility
         if (target == null) return;
         if (target.Health == null || target.Health.IsDead) return;
 
-        // Calculate total DoT damage — DotPercent of the hit damage
-        float totalDotDamage = damageDealt * _DotPercent;
+        float totalDotDamage = _AbilityData.GetStat(
+            "DoT",
+            CurrentLevel,
+            _User.Stats.AttackPower.GetValue(),
+            _User.Stats.AbilityPower.GetValue()
+        );
 
-        // Calculate damage per tick — divide total evenly across the tick count
-        int tickCount = Mathf.Max(1, Mathf.RoundToInt(_DotDuration / _DotTickInterval));
+        totalDotDamage *= damageDealt;
+
+        int tickCount = Mathf.Max(1, Mathf.RoundToInt(_DotDuration / DAMAGE_TICK_INTERVAL));
         float damagePerTick = totalDotDamage / tickCount;
 
-        // Start DoT coroutine on the user (MonoBehaviour runner)
-        // If a DoT is already running on this target from a previous hit,
-        // the new one will run concurrently — last hit refreshes independently.
-        // TODO: Consider a per-target coroutine tracker (Dictionary<target, Coroutine>)
-        // if stacking becomes a balance issue. For now, re-application is intentional.
-        _User.StartCoroutine(
-            ApplyDotRoutine(target, damagePerTick, tickCount)
+        Mb_StatusEffectController statusController = target.GetComponent<Mb_StatusEffectController>();
+        if (statusController == null)
+        {
+            Debug.LogWarning($"[Psychic Bloom Passive] {target.CharacterName} has no " +
+                             "Mb_StatusEffectController. DoT skipped.");
+            return;
+        }
+
+        statusController.Apply(
+            Sc_StatusEffect.PsychicBloom(_DotDuration, damagePerTick, DAMAGE_TICK_INTERVAL)
         );
 
         Debug.Log($"[Psychic Bloom Passive] DoT applied to {target.CharacterName} — " +
                   $"{damagePerTick:F1} per tick × {tickCount} ticks " +
                   $"({totalDotDamage:F1} total over {_DotDuration}s).");
-    }
-
-
-    // -------------------------------------------------------------------------
-    // DoT Coroutine
-    // -------------------------------------------------------------------------
-
-    private IEnumerator ApplyDotRoutine(MB_CuBotBase target, float damagePerTick, int tickCount)
-    {
-        for (int i = 0; i < tickCount; i++)
-        {
-            yield return new WaitForSeconds(_DotTickInterval);
-
-            // Guard each tick — the enemy may have died or been pooled
-            if (target == null) yield break;
-            if (!target.gameObject.activeInHierarchy) yield break;
-            if (target.Health == null || target.Health.IsDead) yield break;
-
-            // Apply one tick of DoT damage
-            target.Health.TakeDamage(damagePerTick);
-
-            // Spawn brief DoT VFX on the target position
-            // TODO: Replace with a pool once VFX asset is built — Instantiate
-            // is fine for prototype but will generate GC on busy waves.
-            if (_DotHitVFXPrefab != null)
-            {
-                GameObject vfx = GameObject.Instantiate(
-                    _DotHitVFXPrefab,
-                    target.transform.position + Vector3.up * 1f,
-                    Quaternion.identity
-                );
-                // Auto-destroy the VFX GO after 2 seconds
-                GameObject.Destroy(vfx, 2f);
-            }
-        }
     }
 
 
@@ -241,9 +199,16 @@ public class Mari_R_Branch1 : Sc_BaseAbility
             return;
         }
 
-        // Resolve damage from SO scaling — Psychic Bloom active scales with AP
-        float damage = _AbilityData.GetStat(
+        float damagePerSecond = _AbilityData.GetStat(
             "Damage",
+            CurrentLevel,
+            user.Stats.AttackPower.GetValue(),
+            user.Stats.AbilityPower.GetValue()
+        );
+        float damagePerTick = damagePerSecond * DAMAGE_TICK_INTERVAL;
+
+        float slowPercent = _AbilityData.GetStat(
+            "Slow",
             CurrentLevel,
             user.Stats.AttackPower.GetValue(),
             user.Stats.AbilityPower.GetValue()
@@ -270,9 +235,9 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
         zone.Initialize(
             owner: user,
-            damage: damage,
-            tickInterval: _FieldTickInterval,
-            slowPercent: _FieldSlowPercent,
+            damage: damagePerTick,
+            tickInterval: DAMAGE_TICK_INTERVAL,
+            slowPercent: slowPercent,
             slowDuration: _FieldSlowDuration,
             radius: _FieldRadius,
             duration: _FieldDuration
@@ -296,182 +261,5 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     {
         if (user is Mb_GuardianBase guardian)
             guardian.GuardianAnimator?.TriggerR1Ability();
-    }
-}
-
-
-// =============================================================================
-// Mb_BloomZone.cs
-// Spherical trigger zone for Psychic Bloom's active.
-// Mirrors Mb_MindspikesZone exactly but uses a SphereCollider.
-// Kept as a separate MonoBehaviour so it can be a prefab component.
-// =============================================================================
-
-public class Mb_BloomZone : MonoBehaviour
-{
-    // -------------------------------------------------------------------------
-    // Runtime State
-    // -------------------------------------------------------------------------
-
-    private Mb_CharacterBase _owner;
-    private float _damage;
-    private float _tickInterval;
-    private float _slowPercent;
-    private float _slowDuration;
-    private float _duration;
-
-    // Per-enemy tick gate — same pattern as Mb_MindspikesZone
-    private Dictionary<MB_CuBotBase, float> _tickTimers
-        = new Dictionary<MB_CuBotBase, float>();
-
-    private SphereCollider _collider;
-
-    // Visual sphere root — scaled uniformly to match radius
-    // TODO: Leo — name the bloom sphere mesh child GO "BloomVisualRoot"
-    private Transform _visualRoot;
-
-    // Looping aura VFX
-    private ParticleSystem _fieldVFX;
-
-
-    // -------------------------------------------------------------------------
-    // Initialize
-    // -------------------------------------------------------------------------
-
-    public void Initialize(
-        Mb_CharacterBase owner,
-        float damage,
-        float tickInterval,
-        float slowPercent,
-        float slowDuration,
-        float radius,
-        float duration)
-    {
-        _owner = owner;
-        _damage = damage;
-        _tickInterval = tickInterval;
-        _slowPercent = slowPercent;
-        _slowDuration = slowDuration;
-        _duration = duration;
-
-        // --- Resize SphereCollider ---
-        _collider = GetComponent<SphereCollider>();
-        if (_collider != null)
-        {
-            _collider.radius = radius;
-            _collider.center = Vector3.zero;
-        }
-        else
-        {
-            Debug.LogError("[Mb_BloomZone] No SphereCollider found on bloom zone prefab.");
-        }
-
-        // --- Scale visual root uniformly to match radius ---
-        // A unit sphere mesh (diameter = 1) scaled by (radius * 2) fills the collider
-        _visualRoot = transform.Find("BloomVisualRoot");
-        if (_visualRoot != null)
-            _visualRoot.localScale = Vector3.one * (radius * 2f);
-
-        // --- Locate and play field VFX ---
-        foreach (ParticleSystem ps in GetComponentsInChildren<ParticleSystem>(true))
-        {
-            if (ps.gameObject.name == "BloomFieldVFX")
-            {
-                _fieldVFX = ps;
-                break;
-            }
-        }
-        _fieldVFX?.Play();
-
-        StartCoroutine(DurationRoutine());
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Trigger Detection
-    // -------------------------------------------------------------------------
-
-    private void OnTriggerStay(Collider other)
-    {
-        // Ignore the owner — Mari should not damage herself
-        if (_owner != null && other.gameObject == _owner.gameObject) return;
-
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
-        if (enemy == null) return;
-        if (enemy.Health == null || enemy.Health.IsDead) return;
-
-        float now = Time.time;
-        if (_tickTimers.TryGetValue(enemy, out float lastTick))
-        {
-            if (now - lastTick < _tickInterval) return;
-        }
-
-        _tickTimers[enemy] = now;
-        ApplyDamageAndSlow(enemy);
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
-        if (enemy != null)
-            _tickTimers.Remove(enemy);
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Damage and Slow
-    // -------------------------------------------------------------------------
-
-    private void ApplyDamageAndSlow(MB_CuBotBase enemy)
-    {
-        enemy.Health.TakeDamage(_damage);
-
-        Sc_StatEffect slowEffect = new Sc_StatEffect(
-            StatType.MoveSpeed,
-            -_slowPercent,
-            StatModType.Percent
-        );
-
-        Sc_Modifier slowModifier = new Sc_Modifier(
-            "Psychic Bloom Slow",
-            ModifierSource.Ability,
-            new List<Sc_StatEffect> { slowEffect },
-            _slowDuration
-        );
-
-        enemy.Stats.AddModifier(slowModifier);
-
-        Debug.Log($"[Mb_BloomZone] Hit {enemy.CharacterName} for {_damage} " +
-                  $"and applied {_slowPercent}% slow.");
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Duration and Cleanup
-    // -------------------------------------------------------------------------
-
-    private IEnumerator DurationRoutine()
-    {
-        yield return new WaitForSeconds(_duration);
-        DeactivateZone();
-    }
-
-    private void DeactivateZone()
-    {
-        if (_fieldVFX != null)
-            _fieldVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-
-        _tickTimers.Clear();
-
-        StartCoroutine(DestroyAfterDelay(1.5f));
-    }
-
-    private IEnumerator DestroyAfterDelay(float delay)
-    {
-        if (_collider != null)
-            _collider.enabled = false;
-
-        yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
     }
 }

@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 7806697298728242195}
   - component: {fileID: 1774799198732743584}
   - component: {fileID: 1136455206244027565}
+  - component: {fileID: 1609583405460640478}
   m_Layer: 6
   m_Name: Mari
   m_TagString: Player
@@ -526,7 +527,7 @@ MonoBehaviour:
   LaunchOrigin: {fileID: 5299518965919639933}
   AimLayerMask:
     serializedVersion: 2
-    m_Bits: 251
+    m_Bits: 65
   AimRaycastDistance: 100
 --- !u!114 &1774799198732743584
 MonoBehaviour:
@@ -543,15 +544,16 @@ MonoBehaviour:
   _GenericProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
   _MariPsychicLeafProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
   _MariPsyshockBoltProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
-  _MariMindspikesZone: {fileID: 0}
-  _MariPsychicSlamShockwave: {fileID: 0}
-  _MariBloomZone: {fileID: 0}
-  _MariLaserBeam: {fileID: 0}
+  _MariMindspikesZone: {fileID: 305272131102240570, guid: a9d4ddf90e5a2dd46967edb0ff36c916, type: 3}
+  _MariPsychicSlamShockwave: {fileID: 5852090260040347908, guid: 085b472713f8b2945b6ce50fc542b172, type: 3}
+  _MariBloomZone: {fileID: 5571114826960639448, guid: 35d4cd11f59324a45830b4c9a6e59957, type: 3}
+  _MariLaserBeam: {fileID: 1733768832928850590, guid: 1e2ee5616dda7e0499f6479ceb8898ea, type: 3}
   _MariDotHitVFX: {fileID: 0}
   _RajahFeatherProjectile: {fileID: 0}
   _RajahSkyRendShield: {fileID: 0}
   _HunterBulletProjectile: {fileID: 0}
   _TrapperTrapProjectile: {fileID: 0}
+  _TrapperProximityTrap: {fileID: 0}
   _ToxionSludgeProjectile: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
 --- !u!114 &1136455206244027565
@@ -566,6 +568,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55c7dfa6746d37f4f950b3d814b058e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_ShieldVFXHandler
+--- !u!114 &1609583405460640478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5918655219564441784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc5441cfe014d4489edb67b345d96ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_DebugShapeGizmoDrawer
+  DrawGizmos: 1
+  DrawAlwaysVisibleShapes: 1
+  Shapes:
+  - Name: 
+    Enabled: 1
+    DrawOnlyWhenSelected: 0
+    ShapeType: 1
+    Color: {r: 0, g: 0, b: 0, a: 0}
+    OriginOverride: {fileID: 0}
+    LocalOffset: {x: 0, y: 0, z: 5}
+    LocalDirection: {x: 0, y: 0, z: 0}
+    Size: {x: 4, y: 1.75, z: 10}
+    Radius: 0
+    Distance: 0
 --- !u!1 &7544332974362222593
 GameObject:
   m_ObjectHideFlags: 0

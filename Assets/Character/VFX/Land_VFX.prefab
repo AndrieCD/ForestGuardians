@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7941691696807946794}
   - component: {fileID: 2589713453727213017}
   - component: {fileID: 1579927929010444793}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Land_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

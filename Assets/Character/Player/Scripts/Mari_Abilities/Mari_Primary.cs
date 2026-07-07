@@ -247,10 +247,7 @@ public class Mari_Primary : Sc_BaseAbility
         Camera cam = Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        // Exclude the Character layer so the ray doesn't hit Mari herself
-        int layerMask = ~(1 << LayerMask.NameToLayer("Character"));
-
-        return Physics.Raycast(ray, out RaycastHit hit, 1000f, layerMask)
+        return Physics.Raycast(ray, out RaycastHit hit, 1000f)
             ? hit.point
             : ray.origin + ray.direction * 100f;
     }

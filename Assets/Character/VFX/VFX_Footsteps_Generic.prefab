@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4274552205414531438}
   - component: {fileID: 2388119100712780286}
   - component: {fileID: 5404845845438069972}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_Footsteps_Generic
   m_TagString: Untagged
   m_Icon: {fileID: 0}

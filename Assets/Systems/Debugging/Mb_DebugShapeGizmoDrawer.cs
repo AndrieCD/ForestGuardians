@@ -10,8 +10,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class Mb_DebugShapeGizmoDrawer : MonoBehaviour
 {
+    private const float MIN_VISIBLE_ALPHA = 0.35f;
+
     [Header("Debug Visibility")]
     [SerializeField] private bool DrawGizmos = true;
 
@@ -56,8 +59,10 @@ public class Mb_DebugShapeGizmoDrawer : MonoBehaviour
         Transform origin = shape.OriginOverride != null ? shape.OriginOverride : transform;
         Vector3 center = origin.TransformPoint(shape.LocalOffset);
         Vector3 direction = GetWorldDirection(origin, shape.LocalDirection);
+        Matrix4x4 previousMatrix = Gizmos.matrix;
 
-        Gizmos.color = shape.Color;
+        Gizmos.matrix = Matrix4x4.identity;
+        Gizmos.color = GetVisibleColor(shape.Color);
 
         switch (shape.ShapeType)
         {
@@ -81,6 +86,8 @@ public class Mb_DebugShapeGizmoDrawer : MonoBehaviour
                 DrawCapsule(center, direction, shape);
                 break;
         }
+
+        Gizmos.matrix = previousMatrix;
     }
 
     private void DrawBox(Transform origin, Sc_DebugGizmoShape shape, Vector3 center)
@@ -121,6 +128,14 @@ public class Mb_DebugShapeGizmoDrawer : MonoBehaviour
             localDirection = Vector3.forward;
 
         return origin.TransformDirection(localDirection.normalized);
+    }
+
+    private Color GetVisibleColor(Color color)
+    {
+        if (color.a < MIN_VISIBLE_ALPHA)
+            color.a = 1f;
+
+        return color;
     }
 }
 

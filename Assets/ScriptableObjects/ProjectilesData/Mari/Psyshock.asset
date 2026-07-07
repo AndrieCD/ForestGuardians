@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19ac2c92beac8e14f89bac8cc9dd1362, type: 3}
   m_Name: Psyshock
   m_EditorClassIdentifier: Assembly-CSharp::SO_ProjectileData
-  LaunchSpeed: 40
+  LaunchSpeed: 50
   MaxRange: 40
   IsPiercing: 0
   MaxPierceTargets: 3

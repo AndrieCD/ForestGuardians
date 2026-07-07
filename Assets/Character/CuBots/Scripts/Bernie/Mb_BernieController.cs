@@ -39,7 +39,7 @@ public class Mb_BernieController : Mb_CuBotController
                                        "is not assigned on the SO_CuBots template.");
             return;
         }
-
+         
         Abilities.SetPrimarySlot(new Sc_BernieFireCone(
             _CuBotTemplate.PrimaryAttack,
             this,

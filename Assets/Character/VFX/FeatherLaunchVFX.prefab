@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4685344081395580156}
   - component: {fileID: 7166540515370654747}
   - component: {fileID: 1984368045676041128}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FeatherLaunchVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

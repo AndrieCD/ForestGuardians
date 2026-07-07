@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public enum WavePhase
 {
@@ -122,6 +123,8 @@ public class Mb_WaveManager : MonoBehaviour
 
     // Set true while enemies are alive — guards EndWave from firing twice
     private bool _isWaveActive = false;
+
+    private const float SPAWN_NAVMESH_SAMPLE_RADIUS = 5.0f;
 
     // Set true when Mb_RewardsManager opens a panel — WaveManager waits for
     // OnRewardsPanelClosed before starting the preparation countdown
@@ -265,7 +268,22 @@ public class Mb_WaveManager : MonoBehaviour
                 child.gameObject.name == enemyType.name)
             {
                 Vector3 offset = new Vector3(UnityEngine.Random.Range(-3f, 3f), 0f, 0f);
-                child.position = spawnPoint.position + offset;
+                Vector3 spawnPosition = spawnPoint.position + offset;
+
+                if (NavMesh.SamplePosition(
+                    spawnPosition,
+                    out NavMeshHit hit,
+                    SPAWN_NAVMESH_SAMPLE_RADIUS,
+                    NavMesh.AllAreas))
+                {
+                    spawnPosition = hit.position;
+                }
+                else
+                {
+                    Debug.LogWarning($"[Mb_WaveManager] No NavMesh found near spawn position {spawnPosition} for {child.gameObject.name}.");
+                }
+
+                child.position = spawnPosition;
                 child.rotation = spawnPoint.rotation;
                 child.gameObject.SetActive(true);
 

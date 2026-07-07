@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4074854809425435476}
   - component: {fileID: 7971030284870993114}
   - component: {fileID: 1232066409937897043}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_Fire 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4847,7 +4847,7 @@ GameObject:
   - component: {fileID: 5984158860631457365}
   - component: {fileID: 220655326728951931}
   - component: {fileID: 919646281888082352}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_Fire 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

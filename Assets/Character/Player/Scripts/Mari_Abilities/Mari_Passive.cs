@@ -35,7 +35,7 @@ public class Mari_Passive : Sc_BaseAbility
     // Constants
     // -------------------------------------------------------------------------
 
-    private const int MAX_STACKS = 5;
+    private const int MAX_STACKS = 10;
 
     // Flat AP bonus per stack — TODO: expose in SO_Ability scaling table when tuning
     private const float AP_PER_STACK = 10f;

@@ -31,6 +31,9 @@ public class Sc_Stat
     // Do not write to this list from anywhere else.
     public List<Sc_StatEffect> Effects = new List<Sc_StatEffect>();
 
+    private readonly bool _useStrongestNegativePercentOnly;
+    private readonly float _minimumValue;
+
 
     // ─── Events ────────────────────────────────────────────────────────────
 
@@ -46,11 +49,17 @@ public class Sc_Stat
 
     // ─── Constructor ───────────────────────────────────────────────────────
 
-    public Sc_Stat(float baseValue, float scalingPerLevel)
+    public Sc_Stat(
+        float baseValue,
+        float scalingPerLevel,
+        bool useStrongestNegativePercentOnly = false,
+        float minimumValue = float.NegativeInfinity)
     {
         _originalBaseValue = baseValue;
         BaseValue = baseValue;
         _scalingPerLevel = scalingPerLevel;
+        _useStrongestNegativePercentOnly = useStrongestNegativePercentOnly;
+        _minimumValue = minimumValue;
     }
 
 
@@ -78,17 +87,15 @@ public class Sc_Stat
     public float GetValue()
     {
         float finalValue = BaseValue;
-        float percentBonus = 0f;
+        float percentBonus = GetPercentBonus();
 
         foreach (Sc_StatEffect effect in Effects)
         {
-            if (effect.Type == StatModType.Percent)
-                percentBonus += effect.Value;
-            else
+            if (effect.Type != StatModType.Percent)
                 finalValue += effect.Value;
         }
 
-        return finalValue * (1f + percentBonus);
+        return Mathf.Max(_minimumValue, finalValue * (1f + percentBonus));
     }
 
     /// <summary>
@@ -99,17 +106,48 @@ public class Sc_Stat
     public float BonusValue()
     {
         float flatBonus = 0f;
-        float percentBonus = 0f;
+        float percentBonus = GetPercentBonus();
 
         foreach (Sc_StatEffect effect in Effects)
         {
-            if (effect.Type == StatModType.Percent)
-                percentBonus += effect.Value;
-            else
+            if (effect.Type != StatModType.Percent)
                 flatBonus += effect.Value;
         }
 
         return flatBonus + (BaseValue * percentBonus);
+    }
+
+
+    private float GetPercentBonus()
+    {
+        if (!_useStrongestNegativePercentOnly)
+        {
+            float totalPercent = 0f;
+
+            foreach (Sc_StatEffect effect in Effects)
+            {
+                if (effect.Type == StatModType.Percent)
+                    totalPercent += effect.Value;
+            }
+
+            return totalPercent;
+        }
+
+        float positivePercent = 0f;
+        float strongestNegativePercent = 0f;
+
+        foreach (Sc_StatEffect effect in Effects)
+        {
+            if (effect.Type != StatModType.Percent)
+                continue;
+
+            if (effect.Value < strongestNegativePercent)
+                strongestNegativePercent = effect.Value;
+            else if (effect.Value > 0f)
+                positivePercent += effect.Value;
+        }
+
+        return positivePercent + strongestNegativePercent;
     }
 
 

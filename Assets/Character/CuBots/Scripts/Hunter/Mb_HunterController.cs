@@ -15,6 +15,10 @@ public class Mb_HunterController : Mb_CuBotController
 {
     [SerializeField] private Transform _FirePoint;
 
+    protected override bool RequiresLineOfSightToAttack => true;
+
+    protected override Transform AttackLineOfSightOrigin => _FirePoint != null ? _FirePoint : transform;
+
     protected override void AssignAbilities()
     {
         Abilities.SetPrimarySlot(new Sc_HunterRangeAttack(
@@ -29,7 +33,7 @@ public class Mb_HunterController : Mb_CuBotController
         if (_CurrentTarget != null)
             transform.LookAt(_CurrentTarget);
 
-        if (!HasLineOfSight())
+        if (!HasLineOfSightToCurrentTarget())
         {
             // LOS blocked — resume movement so Hunter repositions
             // rather than freezing in place
@@ -47,31 +51,4 @@ public class Mb_HunterController : Mb_CuBotController
         _BasicCuBotAnimator.SetSpeed(_Agent.velocity.magnitude);
     }
 
-    /// <summary>
-    /// Checks whether Hunter has an unobstructed line of sight to the current target.
-    /// Casts against ALL layers and checks if the first thing hit belongs to the target.
-    /// This correctly handles targets on any layer — no mask configuration needed.
-    /// </summary>
-    private bool HasLineOfSight()
-    {
-        if (_CurrentTarget == null || _FirePoint == null) return false;
-
-        Vector3 origin = _FirePoint.position;
-
-        // Aim at chest height of target to avoid floor clips
-        Vector3 targetPos = _CurrentTarget.position + Vector3.up * 1.0f;
-        Vector3 direction = (targetPos - origin).normalized;
-        float distance = Vector3.Distance(origin, targetPos);
-
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance))
-        {
-            // Accept the hit if it belongs to the target's GameObject or any of its children.
-            // IsChildOf returns true even when called on the root itself, so this covers
-            // both the root collider and any child colliders on large objects like Panoharra.
-            return hit.transform.IsChildOf(_CurrentTarget) || hit.transform == _CurrentTarget;
-        }
-
-        // Nothing blocked the ray — clear line of sight
-        return true;
-    }
 }

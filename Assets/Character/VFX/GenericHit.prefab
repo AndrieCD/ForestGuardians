@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1118961596421927273}
   - component: {fileID: 746532445253674774}
   - component: {fileID: 709602124767537204}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Particle System (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4906,7 +4906,7 @@ GameObject:
   - component: {fileID: 3413180195084686946}
   - component: {fileID: 2613659536765055276}
   - component: {fileID: 2275024668587763229}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: GenericHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}

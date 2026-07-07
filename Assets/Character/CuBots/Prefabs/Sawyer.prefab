@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 8687641053665929630}
   - component: {fileID: 8369047640622771529}
   - component: {fileID: -7812671766110808287}
+  - component: {fileID: 3918908586848192617}
   m_Layer: 6
   m_Name: Sawyer
   m_TagString: CuBot
@@ -205,6 +206,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusVFXHandler
   _EnableCameraVFX: 0
+--- !u!114 &3918908586848192617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd0c3ca0e73f91f449c1ae3df7aa8652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_SawyerController
+  _CuBotTemplate: {fileID: 11400000, guid: 258669dc090d4447bf00bc88fa81df31, type: 2}
+  AggroRange: 30
+  DeAggroRange: 35
+  AggroRetryCooldown: 2
 --- !u!1 &1190940697236583597
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,6 +40,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     // Destination throttling — avoids re-pathing every frame on large targets
     private Vector3 _lastDestination;
     private const float DESTINATION_UPDATE_THRESHOLD = 0.5f;
+    private const float NAVMESH_SPAWN_SAMPLE_RADIUS = 5.0f;
 
     // Aggro state
     private CuBotAIState _aiState = CuBotAIState.ChasingPanoharra;
@@ -65,14 +66,25 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
         if (_Agent == null)
             Debug.LogError($"[Mb_CuBotController] No NavMeshAgent found on {gameObject.name}.");
+
+        if (Stats != null)
+        {
+            Stats.OnStatsChanged -= RefreshAgentMoveSpeed;
+            Stats.OnStatsChanged += RefreshAgentMoveSpeed;
+        }
     }
 
     private void Start()
     {
         FindTargets();
 
-        if (_Agent != null)
-            _Agent.speed = Stats.MoveSpeed.GetValue();
+        RefreshAgentMoveSpeed();
+    }
+
+    private void OnDestroy()
+    {
+        if (Stats != null)
+            Stats.OnStatsChanged -= RefreshAgentMoveSpeed;
     }
 
     private void Update()
@@ -216,6 +228,8 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     /// </summary>
     private bool IsPathReachable(Vector3 targetPosition)
     {
+        if (_Agent == null || !_Agent.enabled || !_Agent.isOnNavMesh) return false;
+
         NavMeshPath path = new NavMeshPath();
         _Agent.CalculatePath(targetPosition, path);
         return path.status == NavMeshPathStatus.PathComplete;
@@ -229,6 +243,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     private void UpdateMovement()
     {
         if (_CurrentTarget == null || _Agent == null) return;
+        if (!EnsureAgentOnNavMesh()) return;
 
         float attackRange = _CuBotTemplate != null ? _CuBotTemplate.AttackRange : 2f;
 
@@ -237,6 +252,17 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
         if (distToTarget <= attackRange)
         {
+            if (RequiresLineOfSightToAttack && !HasLineOfSightToCurrentTarget())
+            {
+                if (_aiState == CuBotAIState.AttackingPanoharra)
+                    _aiState = CuBotAIState.ChasingPanoharra;
+
+                _Agent.isStopped = false;
+                _Agent.stoppingDistance = 0f;
+                _Agent.SetDestination(targetPoint);
+                return;
+            }
+
             _Agent.isStopped = true;
 
             // Track when we're actively attacking the Panoharra so aggro can't interrupt
@@ -277,6 +303,30 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     protected abstract void OnInAttackRange();
     protected abstract void UpdateAnimator();
+
+    protected virtual bool RequiresLineOfSightToAttack => false;
+
+    protected virtual Transform AttackLineOfSightOrigin => transform;
+
+    protected bool HasLineOfSightToCurrentTarget(float targetHeightOffset = 1.0f)
+    {
+        if (_CurrentTarget == null) return false;
+
+        Transform originTransform = AttackLineOfSightOrigin != null
+            ? AttackLineOfSightOrigin
+            : transform;
+
+        Vector3 origin = originTransform.position;
+        Vector3 targetPosition = _CurrentTarget.position + Vector3.up * targetHeightOffset;
+        Vector3 direction = (targetPosition - origin).normalized;
+        float distance = Vector3.Distance(origin, targetPosition);
+
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance))
+            return hit.transform.IsChildOf(_CurrentTarget) || hit.transform == _CurrentTarget;
+
+        return true;
+    }
+
     protected virtual void OnTargetChanged(Transform newTarget)
     {
         // Only react when aggro switches TO the player — not when falling back to Panoharra.
@@ -297,6 +347,36 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     }
     protected virtual void OnControllerReset() { }
 
+    private bool EnsureAgentOnNavMesh()
+    {
+        if (_Agent == null) return false;
+
+        if (!_Agent.enabled)
+            _Agent.enabled = true;
+
+        if (_Agent.isOnNavMesh)
+            return true;
+
+        if (NavMesh.SamplePosition(
+            transform.position,
+            out NavMeshHit hit,
+            NAVMESH_SPAWN_SAMPLE_RADIUS,
+            NavMesh.AllAreas))
+        {
+            return _Agent.Warp(hit.position);
+        }
+
+        Debug.LogWarning($"[Mb_CuBotController] {gameObject.name} could not be placed on a NavMesh near {transform.position}.");
+        return false;
+    }
+
+    private void RefreshAgentMoveSpeed()
+    {
+        if (_Agent == null || Stats == null || Stats.MoveSpeed == null) return;
+
+        _Agent.speed = Mathf.Max(0f, Stats.MoveSpeed.GetValue());
+    }
+
 
     // -------------------------------------------------------------------------
     // Pool Reset
@@ -314,8 +394,10 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
         if (_Agent != null && _CuBotTemplate != null)
         {
+            if (!EnsureAgentOnNavMesh()) return;
+
             _Agent.isStopped = false;
-            _Agent.speed = Stats.MoveSpeed.GetValue();
+            RefreshAgentMoveSpeed();
             _Agent.ResetPath();
         }
 

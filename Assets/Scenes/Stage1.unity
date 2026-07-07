@@ -831,7 +831,7 @@ MonoBehaviour:
   - {fileID: 1899236633}
   - {fileID: 427870273}
   CuBotPool: {fileID: 2041594070}
-  PreparationDuration: 7
+  PreparationDuration: 3
   ResolutionDuration: 1.5
   SpawnInterval: 0.75
   SpawnTypeSeparatorInterval: 1.5
@@ -5024,7 +5024,7 @@ PrefabInstance:
     - target: {fileID: 155499765321002750, guid: 9913abcdb9cb2774e93aad2e2bd2f2d8, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: f24c8a06fdfc67149a1a74455b211329, type: 2}
+      objectReference: {fileID: 23800000, guid: d9cf9498e174ba545922a95ff10adee6, type: 2}
     - target: {fileID: 194664443186082394, guid: 9913abcdb9cb2774e93aad2e2bd2f2d8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125

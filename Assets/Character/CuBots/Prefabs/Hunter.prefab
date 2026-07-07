@@ -265,8 +265,10 @@ MonoBehaviour:
   _MariLaserBeam: {fileID: 0}
   _MariDotHitVFX: {fileID: 0}
   _RajahFeatherProjectile: {fileID: 0}
+  _RajahSkyRendShield: {fileID: 0}
   _HunterBulletProjectile: {fileID: 531380711534864579, guid: 3b9d98612919391408afd6e7f94914b5, type: 3}
   _TrapperTrapProjectile: {fileID: 0}
+  _TrapperProximityTrap: {fileID: 0}
   _ToxionSludgeProjectile: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
 --- !u!114 &2011742260094740264

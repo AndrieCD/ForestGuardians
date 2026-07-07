@@ -1153,7 +1153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d81f21fba3218fe4190a89ced9f695e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StageUnlockManager
-  MaxAvailableStage: 1
+  MaxAvailableStage: 2
 --- !u!1 &1896054563
 GameObject:
   m_ObjectHideFlags: 0

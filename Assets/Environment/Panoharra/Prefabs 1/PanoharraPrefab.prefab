@@ -15,8 +15,9 @@ GameObject:
   - component: {fileID: 2497478342936133300}
   - component: {fileID: 8451291784978902330}
   - component: {fileID: 7245830215993166795}
+  - component: {fileID: 2076460808392603769}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: PanoharraCore
   m_TagString: Panoharra
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,6 +155,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000001, y: 1, z: 1.0000001}
   m_Center: {x: 0, y: 0, z: 0.0000009536743}
+--- !u!65 &2076460808392603769
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3065563049279863768}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 4, z: 1.0000002}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4160492998418686100
 GameObject:
   m_ObjectHideFlags: 0

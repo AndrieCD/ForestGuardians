@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4590886850813583617}
   - component: {fileID: 8757379104239048257}
   - component: {fileID: 34780633919336618}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: RajahSlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4848,7 +4848,7 @@ GameObject:
   - component: {fileID: 4100069916384349543}
   - component: {fileID: 6524829321576187907}
   - component: {fileID: 2776665960722424505}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: slash_add
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9742,7 +9742,7 @@ GameObject:
   - component: {fileID: 7762693034625622171}
   - component: {fileID: 2569174921515748107}
   - component: {fileID: 2075240948155302175}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: slash_alp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14636,7 +14636,7 @@ GameObject:
   - component: {fileID: 5624079692276597157}
   - component: {fileID: 2266698608036861750}
   - component: {fileID: 5420922502311830304}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: fx
   m_TagString: Untagged
   m_Icon: {fileID: 0}

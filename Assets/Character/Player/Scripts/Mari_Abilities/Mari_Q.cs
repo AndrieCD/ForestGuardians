@@ -1,21 +1,19 @@
 ﻿// Mari_Q.cs
-// [Q] Mindspikes — Mari erupts psychic spikes in a rectangular field in front of her.
+// [Q] Mindspikes — Mari erupts psychic spikes as ground-projected tiles in front of her.
 //
 // BEHAVIOR:
-//   On cast, a rectangular trigger zone is created starting at Mari's feet and
-//   stretching forward along her facing direction. Enemies inside the zone are
-//   damaged every DAMAGE_TICK_INTERVAL seconds and slowed for SLOW_DURATION seconds.
-//   The zone persists for SPIKE_DURATION seconds, then deactivates itself.
+//   On cast, Mari samples a rectangle in front of her, raycasts each sample down
+//   onto valid ground, and spawns one small trigger tile per successful ground hit.
+//   Each tile follows its local ground normal, so cliffs and steep terrain do not
+//   get bridged by one large flat collider. Enemies inside any tile are damaged
+//   every DAMAGE_TICK_INTERVAL seconds and slowed for SLOW_DURATION seconds.
 //
-// RECTANGLE DIMENSIONS (normal):
-//   Length  = SpikeLength  (forward, Z axis of the spawned GO)
-//   Width   = SpikeWidth   (lateral, X axis of the spawned GO)
-//   Height  = SpikeHeight  (fixed, Y axis — enough to catch all enemies on terrain)
-//
-//   The GO is positioned so its back edge starts at Mari's feet:
-//     spawnPos = Mari.position + Mari.forward * (SpikeLength / 2f)
-//   This means the center of the box sits (SpikeLength / 2) ahead of Mari,
-//   making the back edge flush with her position.
+// TILE DIMENSIONS:
+//   Tile length/width are target sizes. The final tile count is resolved from
+//   the total field size, then each tile is resized so the projected grid fills
+//   the full final length and width evenly.
+//   Tile height is intentionally short and starts at the local ground surface.
+//   Tiles are skipped when no ground is found or the surface is too steep.
 //
 // OVERCHARGE (from Mari_Passive.IsOvercharged):
 //   - Damage per tick × OverchargeDamageMultiplier     (default 2x)
@@ -29,7 +27,8 @@
 //   OnTriggerStay fires every physics step. A per-enemy cooldown dictionary
 //   (_tickTimers) ensures each enemy takes damage at most once per
 //   DAMAGE_TICK_INTERVAL seconds, not every physics frame.
-//   The dictionary is cleared when the spike zone deactivates.
+//   All tiles from the same cast share the same tick dictionary so standing on
+//   tile seams does not multiply damage.
 //
 // SLOW APPLICATION:
 //   Applied as a timed Sc_Modifier via ApplyToEnemy() each time an enemy takes
@@ -39,10 +38,9 @@
 //         prevent re-applying before the previous slow expires.
 //
 // VISUAL COMPONENTS:
-//   The spike zone GO has two visual layers:
-//   1. A child mesh (e.g. a flat tiled spike mesh or plane) that scales with
-//      the box collider dimensions — assigned as SpikeVisualRoot in Inspector
-//      on the prefab. Leo scales this to match collider size on the prefab.
+//   Each tile GO has two visual layers:
+//   1. A child mesh (e.g. a flat spike patch or plane) that scales with the
+//      tile collider dimensions.
 //   2. "MindspikesCastVFX" — a burst particle system on Mari's prefab that plays
 //      at cast time (e.g. ground crack / energy surge emanating from Mari).
 //   3. "MindspikesFieldVFX" — a looping particle system on the spike zone prefab
@@ -51,17 +49,22 @@
 //
 // PREFAB SETUP (for Leo/Angel):
 //   Create a prefab with:
-//   - A BoxCollider (isTrigger = true) — sized to (SpikeWidth, SpikeHeight, SpikeLength)
-//   - A child mesh GO for the visual spike field (flat plane with spike material/shader)
+//   - A BoxCollider (isTrigger = true) — one small tile, resized at runtime
+//   - A Rigidbody (isKinematic = true, useGravity = false)
+//   - A child mesh GO for the visual spike tile (flat plane with spike material/shader)
 //   - A child ParticleSystem named "MindspikesFieldVFX" (looping crackling effect)
 //   - Attach Mb_MindspikesZone (the inner trigger handler class below) to the root
-//   Assign this prefab to Mari_Q.SpikeZonePrefab in the Inspector on Mari's prefab.
+//   Assign this prefab to the Mari_MindspikesZone slot in Mb_AbilityPrefabRegistry.
 //
 // INSPECTOR SETUP (on Mari_Q SO or Mari prefab — assigned via Mari_Q fields):
 //   SpikeZonePrefab           — the rectangle trigger GO prefab (see above)
-//   SpikeLength               — forward extent in world units     (default 6f)
-//   SpikeWidth                — lateral extent in world units     (default 2.5f)
-//   SpikeHeight               — vertical extent in world units    (default 2f)
+//   SpikeLength               — total forward extent in world units
+//   SpikeWidth                — total lateral extent in world units
+//   SpikeHeight               — per-tile trigger height above local ground
+//   TileLength                — target forward size of each spawned tile
+//   TileWidth                 — target lateral size of each spawned tile
+//   Min/MaxLengthTiles        — lower/upper bound for forward tile count
+//   Min/MaxWidthTiles         — lower/upper bound for lateral tile count
 //   SpikeDuration             — how long the field lasts          (default 3f)
 //   DamageTickInterval        — seconds between damage ticks      (default 0.5f)
 //   SlowPercent               — movement speed reduction %        (default 30f)
@@ -71,7 +74,6 @@
 //   OverchargeLengthMultiplier — length multiplier when overcharged (default 1.5f)
 //   OverchargeWidthMultiplier  — width multiplier when overcharged  (default 1.5f)
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -83,24 +85,33 @@ public class Mari_Q : Sc_BaseAbility
     // a wrapper SO. For prototype, sensible defaults are provided here.
     // -------------------------------------------------------------------------
 
-    // The prefab for the spike field zone GO.
+    // The prefab for one spike field tile GO.
     // Must have: BoxCollider (isTrigger), Mb_MindspikesZone component,
     // child mesh for visuals, child ParticleSystem named "MindspikesFieldVFX".
-    // TODO: Assign in Mari's prefab Inspector once Leo builds the asset.
     private GameObject _spikeZonePrefab;
 
     [Header("Zone Dimensions")]
-    // TODO: Tune these once the visual asset exists and feel is established.
-    [SerializeField] private float _SpikeLength = 6f;   // Forward extent
-    [SerializeField] private float _SpikeWidth = 2.5f; // Lateral extent
-    [SerializeField] private float _SpikeHeight = 2f;   // Fixed vertical extent
+    [SerializeField] private float _SpikeLength = 15;   // Forward extent
+    [SerializeField] private float _SpikeWidth = 4.0f; // Lateral extent
+    [SerializeField] private float _SpikeHeight = 1.75f;   // Per-tile vertical extent
+
+    [Header("Tile Projection")]
+    [SerializeField] private float _TileLength = 1.5f;
+    [SerializeField] private float _TileWidth = 1.5f;
+    [SerializeField] private int _MinLengthTiles = 4;
+    [SerializeField] private int _MaxLengthTiles = 16;
+    [SerializeField] private int _MinWidthTiles = 2;
+    [SerializeField] private int _MaxWidthTiles = 6;
+    [SerializeField] private float _GroundProbeHeight = 8f;
+    [SerializeField] private float _GroundProbeDistance = 24f;
+    [SerializeField] private float _GroundSurfaceOffset = 0.03f;
+    [SerializeField] private float _MaxGroundAngle = 65f;
 
     [Header("Timing")]
-    [SerializeField] private float _SpikeDuration = 3f;   // Field lifetime (seconds)
+    [SerializeField] private float _SpikeDuration = 5f;   // Field lifetime (seconds)
     [SerializeField] private float _DamageTickInterval = 0.5f; // Seconds between damage ticks
 
     [Header("Slow")]
-    //[SerializeField] private float _SlowPercent = 30f;  // Movement speed reduction %
     [SerializeField] private float _SlowDuration = 1.0f; // Duration of each slow application
 
     [Header("Overcharge Multipliers")]
@@ -213,44 +224,20 @@ public class Mari_Q : Sc_BaseAbility
             ? slowValue * _OverchargeSlowMultiplier
             : slowValue;
 
-        // --- Spawn position ---
-        // Back edge of the rectangle starts at Mari's feet.
-        // Center the GO at (SpikeLength / 2) ahead so the BoxCollider
-        // extends from Mari's position forward to (SpikeLength) ahead.
-        Vector3 spawnPos = user.transform.position
-                         + user.transform.forward * (finalLength / 2f);
-
-        // Rotate the GO to match Mari's facing direction
-        Quaternion spawnRot = user.transform.rotation;
-
-        // --- Instantiate spike zone ---
-        GameObject zoneGO = GameObject.Instantiate(
-            _spikeZonePrefab,
-            spawnPos,
-            spawnRot
+        int spawnedTileCount = SpawnGroundTiles(
+            user,
+            finalLength,
+            finalWidth,
+            finalDamage,
+            finalSlowPercent,
+            isOvercharged
         );
 
-        // --- Configure the zone via its handler component ---
-        Mb_MindspikesZone zone = zoneGO.GetComponent<Mb_MindspikesZone>();
-        if (zone == null)
+        if (spawnedTileCount == 0)
         {
-            Debug.LogError("[Mari_Q] SpikeZonePrefab is missing Mb_MindspikesZone component.");
-            GameObject.Destroy(zoneGO);
+            Debug.LogWarning("[Mari_Q] Mindspikes found no valid ground tiles.");
             return;
         }
-
-        zone.Initialize(
-            owner: user,
-            damage: finalDamage,
-            tickInterval: _DamageTickInterval,
-            slowPercent: finalSlowPercent,
-            slowDuration: _SlowDuration,
-            length: finalLength,
-            width: finalWidth,
-            height: _SpikeHeight,
-            duration: _SpikeDuration,
-            isOvercharged: isOvercharged
-        );
 
         // --- Cast VFX ---
         _castVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -259,6 +246,176 @@ public class Mari_Q : Sc_BaseAbility
         TriggerAbilityAnimation(user);
 
         StartCooldown(user, GetAbilityCooldown(user));
+    }
+
+
+    // -------------------------------------------------------------------------
+    // Ground Tile Projection
+    // -------------------------------------------------------------------------
+
+    private int SpawnGroundTiles(
+        Mb_CharacterBase user,
+        float finalLength,
+        float finalWidth,
+        float finalDamage,
+        float finalSlowPercent,
+        bool isOvercharged)
+    {
+        Vector3 forward = user.transform.forward;
+        forward.y = 0f;
+        if (forward.sqrMagnitude <= 0.001f)
+            forward = user.transform.forward;
+        forward.Normalize();
+
+        Vector3 right = user.transform.right;
+        right.y = 0f;
+        if (right.sqrMagnitude <= 0.001f)
+            right = Vector3.Cross(Vector3.up, forward);
+        right.Normalize();
+
+        int lengthSteps = ResolveTileCount(
+            finalLength,
+            _TileLength,
+            _MinLengthTiles,
+            _MaxLengthTiles
+        );
+
+        int widthSteps = ResolveTileCount(
+            finalWidth,
+            _TileWidth,
+            _MinWidthTiles,
+            _MaxWidthTiles
+        );
+
+        float tileLength = finalLength / lengthSteps;
+        float tileWidth = finalWidth / widthSteps;
+        float halfWidth = finalWidth * 0.5f;
+
+        Sc_MindspikesTickTracker sharedTickTracker = new Sc_MindspikesTickTracker();
+        int spawnedTileCount = 0;
+        int groundMask = GetGroundProjectionMask();
+
+        for (int z = 0; z < lengthSteps; z++)
+        {
+            float forwardOffset = (z + 0.5f) * tileLength;
+
+            for (int x = 0; x < widthSteps; x++)
+            {
+                float lateralOffset = -halfWidth + ((x + 0.5f) * tileWidth);
+                Vector3 sampleCenter = user.transform.position
+                                     + forward * forwardOffset
+                                     + right * lateralOffset;
+
+                if (!TryProjectTile(sampleCenter, forward, groundMask, out Vector3 tilePosition, out Quaternion tileRotation))
+                    continue;
+
+                GameObject tileGO = GameObject.Instantiate(
+                    _spikeZonePrefab,
+                    tilePosition,
+                    tileRotation
+                );
+
+                Mb_MindspikesZone zone = tileGO.GetComponent<Mb_MindspikesZone>();
+                if (zone == null)
+                {
+                    Debug.LogError("[Mari_Q] Spike tile prefab is missing Mb_MindspikesZone component.");
+                    GameObject.Destroy(tileGO);
+                    continue;
+                }
+
+                zone.Initialize(
+                    owner: user,
+                    damage: finalDamage,
+                    tickInterval: _DamageTickInterval,
+                    slowPercent: finalSlowPercent,
+                    slowDuration: _SlowDuration,
+                    length: tileLength,
+                    width: tileWidth,
+                    height: _SpikeHeight,
+                    duration: _SpikeDuration,
+                    isOvercharged: isOvercharged,
+                    sharedTickTracker: sharedTickTracker
+                );
+
+                spawnedTileCount++;
+            }
+        }
+
+        return spawnedTileCount;
+    }
+
+
+    private int ResolveTileCount(float totalSize, float targetTileSize, int minTiles, int maxTiles)
+    {
+        float safeTotalSize = Mathf.Max(0.1f, totalSize);
+        float safeTargetTileSize = Mathf.Max(0.1f, targetTileSize);
+        int safeMinTiles = Mathf.Max(1, minTiles);
+        int safeMaxTiles = Mathf.Max(safeMinTiles, maxTiles);
+
+        int resolvedCount = Mathf.CeilToInt(safeTotalSize / safeTargetTileSize);
+        return Mathf.Clamp(resolvedCount, safeMinTiles, safeMaxTiles);
+    }
+
+
+    private bool TryProjectTile(
+        Vector3 sampleCenter,
+        Vector3 fieldForward,
+        int groundMask,
+        out Vector3 tilePosition,
+        out Quaternion tileRotation)
+    {
+        Vector3 rayOrigin = sampleCenter + Vector3.up * _GroundProbeHeight;
+
+        if (!Physics.Raycast(
+                rayOrigin,
+                Vector3.down,
+                out RaycastHit hit,
+                _GroundProbeDistance,
+                groundMask,
+                QueryTriggerInteraction.Ignore))
+        {
+            tilePosition = Vector3.zero;
+            tileRotation = Quaternion.identity;
+            return false;
+        }
+
+        float groundAngle = Vector3.Angle(hit.normal, Vector3.up);
+        if (groundAngle > _MaxGroundAngle)
+        {
+            tilePosition = Vector3.zero;
+            tileRotation = Quaternion.identity;
+            return false;
+        }
+
+        Vector3 projectedForward = Vector3.ProjectOnPlane(fieldForward, hit.normal);
+        if (projectedForward.sqrMagnitude <= 0.001f)
+            projectedForward = Vector3.ProjectOnPlane(Vector3.forward, hit.normal);
+
+        projectedForward.Normalize();
+
+        tilePosition = hit.point + hit.normal * _GroundSurfaceOffset;
+        tileRotation = Quaternion.LookRotation(projectedForward, hit.normal);
+        return true;
+    }
+
+
+    private int GetGroundProjectionMask()
+    {
+        int mask = Physics.DefaultRaycastLayers;
+        ExcludeLayer(ref mask, "Character");
+        ExcludeLayer(ref mask, "Player");
+        ExcludeLayer(ref mask, "CuBot");
+        ExcludeLayer(ref mask, "Panoharra");
+        ExcludeLayer(ref mask, "Ignore Raycast");
+        return mask;
+    }
+
+
+    private void ExcludeLayer(ref int mask, string layerName)
+    {
+        int layer = LayerMask.NameToLayer(layerName);
+        if (layer >= 0)
+            mask &= ~(1 << layer);
     }
 
 

@@ -2,8 +2,8 @@
 // Applies a movement slow to characters inside a river trigger.
 //
 // Responsibilities:
-//   - Apply one Environmental MoveSpeed modifier per character while inside.
-//   - Remove that exact modifier on exit, death, or zone disable.
+//   - Apply one MoveSlow status per character while inside.
+//   - Remove that status on exit, death, or zone disable.
 //   - Clear Burn when a burning character touches the river.
 //
 // Inspector setup:
@@ -21,8 +21,8 @@ public class Mb_RiverZone : MonoBehaviour
     [Tooltip("Fraction of MoveSpeed to remove while inside the river. 0.25 = 25% slower.")]
     private float SlowPercent = 0.25f;
 
-    private readonly Dictionary<Mb_CharacterBase, Sc_Modifier> _activeSlows
-        = new Dictionary<Mb_CharacterBase, Sc_Modifier>();
+    private readonly HashSet<Mb_CharacterBase> _activeSlows
+        = new HashSet<Mb_CharacterBase>();
 
     private readonly Dictionary<Mb_CharacterBase, Action> _deathHandlers
         = new Dictionary<Mb_CharacterBase, Action>();
@@ -31,7 +31,7 @@ public class Mb_RiverZone : MonoBehaviour
     {
         Mb_CharacterBase character = other.GetComponent<Mb_CharacterBase>();
         if (character == null) return;
-        if (_activeSlows.ContainsKey(character)) return;
+        if (_activeSlows.Contains(character)) return;
         if (character.Health.IsDead) return;
 
         RemoveBurn(character);
@@ -48,26 +48,28 @@ public class Mb_RiverZone : MonoBehaviour
 
     private void ApplySlow(Mb_CharacterBase character)
     {
-        Sc_Modifier slowModifier = new Sc_Modifier(
-            "River Slow",
-            ModifierSource.Environmental,
-            new List<Sc_StatEffect>
-            {
-                new Sc_StatEffect(StatType.MoveSpeed, -SlowPercent, StatModType.Percent)
-            }
-        );
+        Mb_StatusEffectController statusController =
+            character.GetComponent<Mb_StatusEffectController>();
 
-        _activeSlows[character] = slowModifier;
-        character.Stats.AddModifier(slowModifier);
+        if (statusController == null)
+        {
+            Debug.LogWarning($"[Mb_RiverZone] {character.name} has no Mb_StatusEffectController. Slow skipped.");
+            return;
+        }
+
+        statusController.Apply(Sc_StatusEffect.MoveSlow(float.PositiveInfinity, SlowPercent));
+        _activeSlows.Add(character);
         SubscribeToDeath(character);
     }
 
     private void RemoveSlow(Mb_CharacterBase character)
     {
-        if (!_activeSlows.TryGetValue(character, out Sc_Modifier modifier)) return;
+        if (!_activeSlows.Remove(character)) return;
 
-        character.Stats.RemoveModifier(modifier);
-        _activeSlows.Remove(character);
+        Mb_StatusEffectController statusController =
+            character.GetComponent<Mb_StatusEffectController>();
+
+        statusController?.Remove(StatusType.MoveSlow);
         UnsubscribeFromDeath(character);
     }
 
@@ -105,7 +107,7 @@ public class Mb_RiverZone : MonoBehaviour
 
     private void OnDisable()
     {
-        var characters = new List<Mb_CharacterBase>(_activeSlows.Keys);
+        var characters = new List<Mb_CharacterBase>(_activeSlows);
         foreach (Mb_CharacterBase character in characters)
             RemoveSlow(character);
 

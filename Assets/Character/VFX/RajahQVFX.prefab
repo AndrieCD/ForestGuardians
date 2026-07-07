@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5501976490415418275}
   - component: {fileID: 4243875148254041658}
   - component: {fileID: 4726772306241759805}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5094,7 +5094,7 @@ GameObject:
   - component: {fileID: 5925520899705421710}
   - component: {fileID: 1494142222968960838}
   - component: {fileID: 8403761579406233076}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Shockwave  (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10194,7 +10194,7 @@ GameObject:
   - component: {fileID: 7225661492623143034}
   - component: {fileID: 5470835969341498058}
   - component: {fileID: 4662971940720089738}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15285,7 +15285,7 @@ GameObject:
   - component: {fileID: 2056693689379228729}
   - component: {fileID: 8573618341362382311}
   - component: {fileID: 1634002582658297625}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Shockwave  (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20385,7 +20385,7 @@ GameObject:
   - component: {fileID: 8764528350505147948}
   - component: {fileID: 6801442501872586406}
   - component: {fileID: 858591176324512015}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: RajahQVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25475,7 +25475,7 @@ GameObject:
   - component: {fileID: 3916713232751805847}
   - component: {fileID: 5002473708525731308}
   - component: {fileID: 827607736649887455}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: 'Shockwave '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30575,7 +30575,7 @@ GameObject:
   - component: {fileID: 3299062031900336101}
   - component: {fileID: 8412714787582391519}
   - component: {fileID: 3989067082116327577}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Spark 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35483,7 +35483,7 @@ GameObject:
   - component: {fileID: 3017957267103353634}
   - component: {fileID: 4948635734040859969}
   - component: {fileID: 903509341407853149}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Flash 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40565,7 +40565,7 @@ GameObject:
   - component: {fileID: 868729891975431691}
   - component: {fileID: 5028385126536395127}
   - component: {fileID: 8301944374174383071}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Shockwave  (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

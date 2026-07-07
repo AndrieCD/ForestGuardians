@@ -20,6 +20,9 @@ GameObject:
   - component: {fileID: 8369047640622771529}
   - component: {fileID: -7812671766110808287}
   - component: {fileID: 4948383895043186556}
+  - component: {fileID: 970892193704853870}
+  - component: {fileID: 75872121076682639}
+  - component: {fileID: 1041942127668783433}
   m_Layer: 6
   m_Name: Trapper
   m_TagString: CuBot
@@ -44,6 +47,7 @@ Transform:
   - {fileID: 8770104530924348078}
   - {fileID: 3541549547958180040}
   - {fileID: 664314589845310130}
+  - {fileID: 1883276504232226207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &6663598237119975471
@@ -221,6 +225,67 @@ MonoBehaviour:
   _Animator: {fileID: 0}
   _SpeedDampTime: 0.1
   _HitDamageThreshold: 0.1
+--- !u!114 &970892193704853870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cdc369238573d4595a314279a29041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_TrapperController
+  _CuBotTemplate: {fileID: 11400000, guid: 9ab02ab377e941d295a0c46d2ffc5835, type: 2}
+  AggroRange: 30
+  DeAggroRange: 40
+  AggroRetryCooldown: 2
+  _FirePoint: {fileID: 1883276504232226207}
+--- !u!114 &75872121076682639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3ebd43c4f9eef45851cb2469c50b87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
+  _GenericProjectile: {fileID: 0}
+  _MariPsychicLeafProjectile: {fileID: 0}
+  _MariPsyshockBoltProjectile: {fileID: 0}
+  _MariMindspikesZone: {fileID: 0}
+  _MariPsychicSlamShockwave: {fileID: 0}
+  _MariBloomZone: {fileID: 0}
+  _MariLaserBeam: {fileID: 0}
+  _MariDotHitVFX: {fileID: 0}
+  _RajahFeatherProjectile: {fileID: 0}
+  _RajahSkyRendShield: {fileID: 0}
+  _HunterBulletProjectile: {fileID: 531380711534864579, guid: 6d34d79d84b11d842bff77b294927fbb, type: 3}
+  _TrapperTrapProjectile: {fileID: 531380711534864579, guid: 6d34d79d84b11d842bff77b294927fbb, type: 3}
+  _TrapperProximityTrap: {fileID: 7564555947421969700, guid: 8623b7cc0ff727b4a8435d1be8da8263, type: 3}
+  _ToxionSludgeProjectile: {fileID: 0}
+  _LuxionBulletProjectile: {fileID: 0}
+--- !u!114 &1041942127668783433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 039bfea7ef966854eb33abff32bb54df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
+  LaunchOrigin: {fileID: 1883276504232226207}
+  AimLayerMask:
+    serializedVersion: 2
+    m_Bits: 65
+  AimRaycastDistance: 100
 --- !u!1 &1190940697236583597
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,6 +530,37 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &3950526454090517186
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1883276504232226207}
+  m_Layer: 6
+  m_Name: ProjectileOrigin (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1883276504232226207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3950526454090517186}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.08, y: 0.89, z: 0.549}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 398177231451683535}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5839370164926260144
 GameObject:
   m_ObjectHideFlags: 0
@@ -851,6 +947,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 398177231451683535}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: a91ac018e3eb77a4e824b4ba880899e1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a91ac018e3eb77a4e824b4ba880899e1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a91ac018e3eb77a4e824b4ba880899e1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a91ac018e3eb77a4e824b4ba880899e1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

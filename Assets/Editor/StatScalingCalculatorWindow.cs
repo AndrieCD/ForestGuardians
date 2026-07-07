@@ -198,7 +198,7 @@ public class StatScalingCalculatorWindow : EditorWindow
             if (entry == null)
                 continue;
 
-            int index = GetSafeScalingIndex(entry, _abilityLevel);
+            int index = Mathf.Max(0, _abilityLevel - 1);
             float baseValue = GetArrayValue(entry.BaseValuePerLevel, index);
             float atkScale = GetArrayValue(entry.ATKScalingPerLevel, index);
             float apScale = GetArrayValue(entry.APScalingPerLevel, index);
@@ -251,22 +251,6 @@ public class StatScalingCalculatorWindow : EditorWindow
 
         int index = Mathf.Clamp(abilityLevel - 1, 0, ability.Cooldown.Count - 1);
         return ability.Cooldown[index];
-    }
-
-    private int GetSafeScalingIndex(Sc_AbilityScalingEntry entry, int abilityLevel)
-    {
-        int length = int.MaxValue;
-        if (entry.BaseValuePerLevel != null && entry.BaseValuePerLevel.Length > 0)
-            length = Mathf.Min(length, entry.BaseValuePerLevel.Length);
-        if (entry.ATKScalingPerLevel != null && entry.ATKScalingPerLevel.Length > 0)
-            length = Mathf.Min(length, entry.ATKScalingPerLevel.Length);
-        if (entry.APScalingPerLevel != null && entry.APScalingPerLevel.Length > 0)
-            length = Mathf.Min(length, entry.APScalingPerLevel.Length);
-
-        if (length == int.MaxValue)
-            return 0;
-
-        return Mathf.Clamp(abilityLevel - 1, 0, Mathf.Max(0, length - 1));
     }
 
     private float GetArrayValue(float[] values, int index)

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b6ff5cb5019b8347b9f38a4df81ace2, type: 3}
+  m_Name: Wave1
+  m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
+  enemyDataList:
+  - enemyType: {fileID: 862477864045349106, guid: e86b6e78a0d60a549a8575be2464f879, type: 3}
+    count: 1
+  - enemyType: {fileID: 4105497819398190046, guid: d8936ec8db4e35e458166d614725d1e0, type: 3}
+    count: 1
+  - enemyType: {fileID: 862477864045349106, guid: d9df83d76ec2c4c4aadc320c9836e09d, type: 3}
+    count: 1
+  - enemyType: {fileID: 862477864045349106, guid: 7aa311498f322954f8fe8255fdd92b35, type: 3}
+    count: 1
+  - enemyType: {fileID: 1513359888028754751, guid: 72bf7665af43ec64eabd89e6aca317bb, type: 3}
+    count: 1
+  WaveReward: 3

@@ -32,10 +32,10 @@ public class Mb_StageUnlockManager : MonoBehaviour
 
     [Header("Build Limits")]
     [Tooltip("Highest stage number currently playable in this build. " +
-             "Set to 1 while only Stage 1 exists — prevents Stage 2/3 from " +
+             "Set to 2 while Stage 1 and Stage 2 exist — prevents Stage 3 from " +
              "ever being unlocked even if HandleStageEnd fires. " +
-             "TODO: Raise to 2, then 3 as those stages are completed.")]
-    [SerializeField] private int MaxAvailableStage = 1;
+             "TODO: Raise to 3 when Stage 3 is completed.")]
+    [SerializeField] private int MaxAvailableStage = 2;
 
 
     // -------------------------------------------------------------------------

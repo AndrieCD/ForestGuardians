@@ -156,13 +156,14 @@ GameObject:
   - component: {fileID: 8952445478976142984}
   - component: {fileID: 5399534365639542494}
   - component: {fileID: 6850765350696035166}
+  - component: {fileID: 4930506115838085217}
   m_Layer: 6
   m_Name: Bernie
   m_TagString: CuBot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7609115405289323359
 Transform:
   m_ObjectHideFlags: 0
@@ -375,6 +376,32 @@ MonoBehaviour:
   DeAggroRange: 40
   AggroRetryCooldown: 2
   _FirePoint: {fileID: 7229587120727501094}
+--- !u!114 &4930506115838085217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5299550594070807008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc5441cfe014d4489edb67b345d96ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_DebugShapeGizmoDrawer
+  DrawGizmos: 1
+  DrawAlwaysVisibleShapes: 1
+  Shapes:
+  - Name: FireZone
+    Enabled: 1
+    DrawOnlyWhenSelected: 0
+    ShapeType: 0
+    Color: {r: 1, g: 0, b: 0, a: 0}
+    OriginOverride: {fileID: 7229587120727501094}
+    LocalOffset: {x: 0, y: 0, z: 0}
+    LocalDirection: {x: 0, y: 0, z: 0}
+    Size: {x: 0, y: 0, z: 0}
+    Radius: 3
+    Distance: 0
 --- !u!1 &5380428942092855077
 GameObject:
   m_ObjectHideFlags: 0

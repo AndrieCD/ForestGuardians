@@ -2,9 +2,10 @@
 // [R] Mind Unbound — Mari's second ultimate branch.
 //
 // PASSIVE — Focused Mind:
-//   Every Psyshock (RMB) hit deals bonus damage equal to AP_BONUS_PERCENT (50%)
-//   of Mari's current AbilityPower as flat bonus damage on the direct hit target.
-//   Additionally, SPLASH_PERCENT (25%) of the total damage dealt (base + AP bonus)
+//   Every Psyshock (RMB) hit deals bonus damage equal to the SO "APBonusPercent"
+//   stat multiplied by Mari's current AbilityPower as flat bonus damage on the
+//   direct hit target. Additionally, the SO "SplashPercent" stat controls how
+//   much of the total damage dealt (base + AP bonus)
 //   is dealt to all OTHER enemies within SPLASH_RADIUS of the hit target.
 //
 //   Subscribes to Mari_Secondary.OnSecondaryFired — this fires before the
@@ -18,8 +19,8 @@
 // ACTIVE — Laser:
 //   On cast, Mari is locked (AllAbilities + AllAttacks disabled) and a
 //   continuous raycast fires from ProjectileOrigin forward every frame for
-//   LASER_DURATION (3s). Every enemy the ray hits per frame takes damage
-//   scaled by Time.deltaTime so total DPS is consistent regardless of framerate.
+//   LASER_DURATION (3s). Every enemy the ray hits per frame takes damage from
+//   the SO "Damage" stat on a fixed 0.5-second tick.
 //   The ray re-evaluates each frame so it tracks Mari's aim as she turns.
 //
 //   LASER VISUALS:
@@ -48,20 +49,20 @@
 //
 // INSPECTOR SETUP:
 //   LaserPrefab            — the laser GO prefab
-//   ApBonusPercent         — bonus AP fraction on direct Psyshock hit  (default 0.5f)
-//   SplashPercent          — fraction of total damage as splash         (default 0.25f)
 //   SplashRadius           — radius of splash around hit point          (default 3f)
 //   LaserDuration          — how long the active laser fires            (default 3f)
-//   LaserDps               — damage per second of the laser beam        (default 200f)
 //   LaserMaxRange          — max raycast distance                       (default 30f)
 //   LaserLayerMask         — layers the laser can hit                   (Enemies + Environment)
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Mari_R_Branch2 : Sc_BaseAbility
 {
+    private const float DAMAGE_TICK_INTERVAL = 0.5f;
+
     // -------------------------------------------------------------------------
     // Inspector-Assigned Fields
     // -------------------------------------------------------------------------
@@ -72,14 +73,6 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     private GameObject _laserPrefab;
 
     [Header("Passive — Focused Mind")]
-    // Fraction of current AbilityPower added as flat bonus damage on direct hit
-    // TODO: Tune — 0.5 = 50% AP bonus on each Psyshock hit
-    [SerializeField] private float _ApBonusPercent = 0.5f;
-
-    // Fraction of total damage (base + AP bonus) applied as splash to nearby enemies
-    // TODO: Tune — 0.25 = 25% splash
-    [SerializeField] private float _SplashPercent = 0.25f;
-
     // Radius of the splash area around the hit target's position
     // TODO: Tune to feel meaningful without being overpowered
     [SerializeField] private float _SplashRadius = 3f;
@@ -88,16 +81,12 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     // How long the laser fires in seconds
     [SerializeField] private float _LaserDuration = 3f;
 
-    // Damage per second dealt by the laser — applied as (DPS * deltaTime) per frame
-    // TODO: Tune — 200f is a starting point for "massive damage" feel
-    [SerializeField] private float _LaserDps = 200f;
-
     // Maximum raycast distance for the laser beam
     [SerializeField] private float _LaserMaxRange = 30f;
 
     // Layer mask for the laser raycast — should include Enemy and Environment layers
     // TODO: Set in Inspector — include "CuBot" and terrain layers, exclude "Player"
-    [SerializeField] private LayerMask _LaserLayerMask;
+    [SerializeField] private LayerMask _LaserLayerMask = Physics.DefaultRaycastLayers;
 
 
     // -------------------------------------------------------------------------
@@ -130,7 +119,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         _laserPrefab = registry?.GetPrefab(AbilityPrefabID.Mari_LaserBeam);
 
         if (_laserPrefab == null)
-            Debug.LogError("[Mari_Q] Mari_LaserBeam prefab not found in registry.");
+            Debug.LogError("[Mari_R_Branch2] Mari_LaserBeam prefab not found in registry.");
 
 
         // Subscribe to Psyshock fired event for passive
@@ -176,75 +165,37 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     private void HandleSecondaryFired(
         Mb_CharacterBase source,
         Vector3 origin,
-        Vector3 direction)
+        Vector3 direction,
+        Mb_Projectile projectile)
     {
         // Filter — only react to this Mari's shots
         if (source != _User) return;
+        if (projectile == null) return;
 
-        // We need access to the actual Mb_Projectile that was just fired.
-        // Mari_Secondary fires it and then immediately raises OnSecondaryFired,
-        // so the projectile is already in flight. We use a targeted find approach:
-        // subscribe to the static Mb_Projectile.OnAnyProjectileHit, filter by
-        // whether the attacker is our owner, then unsubscribe after one hit.
-        //
-        // This is the cleanest approach without modifying Mari_Secondary's
-        // method signature to return the projectile.
-        //
-        // Alternative (cleaner, requires Mari_Secondary change):
-        // Add Mb_Projectile as a 4th parameter to OnSecondaryFired and pass it
-        // from FireProjectile() after _launcher.Fire() returns. This would let
-        // us subscribe to projectile.OnHit directly here without the static event.
-        // TODO: Refactor Mari_Secondary.OnSecondaryFired to pass the projectile
-        //       reference once this is confirmed to work in testing.
-
-        Mb_Projectile.OnAnyProjectileHit += HandlePsyshockHit;
-    }
-
-
-    // Called by the static OnAnyProjectileHit when any projectile hits anything.
-    // We filter to only react when the attacker is our owner, then unsubscribe.
-    private void HandlePsyshockHit(Mb_Projectile projectile, Mb_CharacterBase attacker, Mb_CharacterBase target)
-    {
-        // Unsubscribe immediately — this listener is one-shot per Psyshock fired
-        Mb_Projectile.OnAnyProjectileHit -= HandlePsyshockHit;
-
-        // Filter — only react to this Mari's projectile hits
-        if (attacker != _User) return;
-
-        // Get the direct hit target from the projectile's last hit
-        // OnAnyProjectileHit passes the character that was hit
-        // We need the actual MB_CuBotBase for splash exclusion
-        MB_CuBotBase directHitEnemy = null;
-
-        // The second parameter to OnAnyProjectileHit is Mb_CharacterBase target —
-        // but our delegate only receives (projectile, attacker). We need to
-        // update the static event signature to also pass the hit target.
-        //
-        // REQUIRED CHANGE to Mb_Projectile.cs:
-        // Change: public static event Action<Mb_Projectile, Mb_CharacterBase> OnAnyProjectileHit;
-        // To:     public static event Action<Mb_Projectile, Mb_CharacterBase, Mb_CharacterBase> OnAnyProjectileHit;
-        //                                                   ^^attacker           ^^target
-        // Then invoke as: OnAnyProjectileHit?.Invoke(this, _owner, target);
-        // This is the cleanest path — one small change to Mb_Projectile enables
-        // both this passive and any future hit-reactive system cleanly.
-        //
-        // For now the above is noted as a TODO and the splash is applied at the
-        // projectile's current position using OverlapSphere as a fallback.
-
-        ApplySplashPassive(projectile, directHitEnemy);
+        projectile.OnHit += (target, hitPoint, hitNormal) =>
+        {
+            MB_CuBotBase directHitEnemy = target as MB_CuBotBase;
+            ApplySplashPassive(projectile, directHitEnemy, hitPoint);
+        };
     }
 
 
     // Applies AP bonus to the direct hit (via the projectile data) and
     // splash damage to all nearby enemies excluding the direct hit target.
-    private void ApplySplashPassive(Mb_Projectile projectile, MB_CuBotBase directHit)
+    private void ApplySplashPassive(Mb_Projectile projectile, MB_CuBotBase directHit, Vector3 hitPoint)
     {
         if (projectile == null) return;
 
         // --- AP Bonus on direct hit ---
         // The projectile already carried its base damage and dealt it in OnTriggerEnter.
         // The AP bonus is additional damage applied here on top of that.
-        float apBonus = _User.Stats.AbilityPower.GetValue() * _ApBonusPercent;
+        float apBonusPercent = _AbilityData.GetStat(
+            "APBonusPercent",
+            CurrentLevel,
+            _User.Stats.AttackPower.GetValue(),
+            _User.Stats.AbilityPower.GetValue()
+        );
+        float apBonus = _User.Stats.AbilityPower.GetValue() * apBonusPercent;
 
         if (directHit != null && !directHit.Health.IsDead)
         {
@@ -256,16 +207,24 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         // Total damage for splash calculation = base projectile damage + AP bonus
         float baseDamage = projectile.GetDamageAmount();
         float totalDamage = baseDamage + apBonus;
-        float splashDamage = totalDamage * _SplashPercent;
+        float splashPercent = _AbilityData.GetStat(
+            "SplashPercent",
+            CurrentLevel,
+            _User.Stats.AttackPower.GetValue(),
+            _User.Stats.AbilityPower.GetValue()
+        );
+        float splashDamage = totalDamage * splashPercent;
 
         // --- Splash damage to nearby enemies ---
-        Vector3 splashOrigin = projectile.transform.position;
+        Vector3 splashOrigin = hitPoint;
         Collider[] nearby = Physics.OverlapSphere(splashOrigin, _SplashRadius);
+        HashSet<MB_CuBotBase> damagedSplashTargets = new HashSet<MB_CuBotBase>();
 
         foreach (Collider col in nearby)
         {
-            MB_CuBotBase splashTarget = col.GetComponent<MB_CuBotBase>();
+            MB_CuBotBase splashTarget = col.GetComponentInParent<MB_CuBotBase>();
             if (splashTarget == null) continue;
+            if (!damagedSplashTargets.Add(splashTarget)) continue;
             if (splashTarget.Health == null || splashTarget.Health.IsDead) continue;
 
             // Exclude the directly hit enemy — they already took full damage
@@ -293,6 +252,13 @@ public class Mari_R_Branch2 : Sc_BaseAbility
             return;
         }
 
+        float laserDps = _AbilityData.GetStat(
+            "Damage",
+            CurrentLevel,
+            user.Stats.AttackPower.GetValue(),
+            user.Stats.AbilityPower.GetValue()
+        );
+
         // Spawn the laser GO — it lives for the duration of the beam
         GameObject laserGO = GameObject.Instantiate(
             _laserPrefab,
@@ -311,7 +277,8 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         laser.Initialize(
             owner: user,
             origin: _Guardian.ProjectileOrigin,
-            dps: _LaserDps,
+            dps: laserDps,
+            tickInterval: DAMAGE_TICK_INTERVAL,
             maxRange: _LaserMaxRange,
             layerMask: _LaserLayerMask
         );
@@ -390,180 +357,5 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     {
         if (user is Mb_GuardianBase guardian)
             guardian.GuardianAnimator?.TriggerR2Ability();
-    }
-}
-
-
-// =============================================================================
-// Mb_LaserBeam.cs
-// Attached to the laser prefab. Owns the per-frame raycast, damage application,
-// LineRenderer update, and hit VFX positioning.
-// Kept separate so it can be a prefab component and referenced from the Editor.
-// =============================================================================
-
-public class Mb_LaserBeam : MonoBehaviour
-{
-    // -------------------------------------------------------------------------
-    // Runtime State
-    // -------------------------------------------------------------------------
-
-    private Mb_CharacterBase _owner;
-    private Transform _origin;
-    private float _dps;
-    private float _maxRange;
-    private LayerMask _layerMask;
-
-    // LineRenderer draws the visible beam from origin to hit point each frame
-    private LineRenderer _lineRenderer;
-
-    // Looping impact VFX — repositioned to the hit point each frame
-    // Played when the beam is in contact with an enemy, stopped otherwise
-    private ParticleSystem _hitVFX;
-    private bool _hitVFXPlaying = false;
-
-    private bool _isInitialized = false;
-
-
-    // -------------------------------------------------------------------------
-    // Initialize
-    // Called by Mari_R_Branch2 immediately after Instantiate()
-    // -------------------------------------------------------------------------
-
-    public void Initialize(
-        Mb_CharacterBase owner,
-        Transform origin,
-        float dps,
-        float maxRange,
-        LayerMask layerMask)
-    {
-        _owner = owner;
-        _origin = origin;
-        _dps = dps;
-        _maxRange = maxRange;
-        _layerMask = layerMask;
-
-        // --- LineRenderer setup ---
-        _lineRenderer = GetComponent<LineRenderer>();
-        if (_lineRenderer == null)
-        {
-            Debug.LogError("[Mb_LaserBeam] No LineRenderer found on laser prefab. " +
-                           "Add a LineRenderer component to the root of the laser prefab.");
-        }
-        else
-        {
-            _lineRenderer.positionCount = 2;
-            _lineRenderer.enabled = true;
-        }
-
-        // --- Locate hit VFX ---
-        foreach (ParticleSystem ps in GetComponentsInChildren<ParticleSystem>(true))
-        {
-            if (ps.gameObject.name == "LaserHitVFX")
-            {
-                _hitVFX = ps;
-                break;
-            }
-        }
-
-        _isInitialized = true;
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Per-Frame Fire
-    // Called every frame by LaserRoutine() while the beam is active
-    // -------------------------------------------------------------------------
-
-    public void FireThisFrame()
-    {
-        if (!_isInitialized || _origin == null) return;
-
-        Vector3 rayOrigin = _origin.position;
-        Vector3 rayDirection = _origin.forward;
-        Vector3 endPoint = rayOrigin + rayDirection * _maxRange;
-
-        // Cast a ray forward from ProjectileOrigin each frame
-        // The beam re-aims every frame so turning Mari changes where it hits
-        if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit,
-                            _maxRange, _layerMask))
-        {
-            endPoint = hit.point;
-
-            // Apply damage this frame — DPS scaled by deltaTime for
-            // framerate-independent consistent total damage over the duration
-            MB_CuBotBase enemy = hit.collider.GetComponent<MB_CuBotBase>();
-            if (enemy != null && !enemy.Health.IsDead)
-            {
-                float damageThisFrame = _dps * Time.deltaTime;
-                enemy.Health.TakeDamage(damageThisFrame);
-            }
-
-            // Position and play hit VFX at impact point
-            PositionHitVFX(hit.point, hit.normal);
-        }
-        else
-        {
-            // No hit — stop hit VFX if it was playing
-            StopHitVFX();
-        }
-
-        // Update LineRenderer from origin to end point (hit or max range)
-        UpdateBeamVisual(rayOrigin, endPoint);
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Visual Helpers
-    // -------------------------------------------------------------------------
-
-    private void UpdateBeamVisual(Vector3 from, Vector3 to)
-    {
-        if (_lineRenderer == null) return;
-
-        _lineRenderer.SetPosition(0, from);
-        _lineRenderer.SetPosition(1, to);
-    }
-
-    private void PositionHitVFX(Vector3 position, Vector3 normal)
-    {
-        if (_hitVFX == null) return;
-
-        // Move hit VFX to impact point, oriented along the surface normal
-        _hitVFX.transform.position = position;
-        _hitVFX.transform.rotation = Quaternion.LookRotation(normal);
-
-        if (!_hitVFXPlaying)
-        {
-            _hitVFX.Play();
-            _hitVFXPlaying = true;
-        }
-    }
-
-    private void StopHitVFX()
-    {
-        if (_hitVFX == null || !_hitVFXPlaying) return;
-
-        _hitVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        _hitVFXPlaying = false;
-    }
-
-
-    // -------------------------------------------------------------------------
-    // Deactivation
-    // Called by LaserRoutine() when the duration expires
-    // -------------------------------------------------------------------------
-
-    public void Deactivate()
-    {
-        _isInitialized = false;
-
-        StopHitVFX();
-
-        if (_lineRenderer != null)
-            _lineRenderer.enabled = false;
-
-        // Destroy after a short delay so hit VFX particles finish fading
-        // TODO: Tune delay to match VFX fade duration Leo sets on the prefab
-        Destroy(gameObject, 1.5f);
     }
 }

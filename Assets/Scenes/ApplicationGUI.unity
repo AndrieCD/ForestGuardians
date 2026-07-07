@@ -732,6 +732,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1183429855890008280, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1385453297170866645, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: m_Name
       value: StageSelection_Canvas
@@ -831,7 +835,7 @@ PrefabInstance:
     - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: GemStage2
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 5079446478005434295}
     - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: GemStage3
       value: 
@@ -840,11 +844,26 @@ PrefabInstance:
       propertyPath: MainMenuController
       value: 
       objectReference: {fileID: 440722313}
+    - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
+      propertyPath: StageDetails.Array.data[1].StageName
+      value: The Karsts Retreat
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
+--- !u!114 &5079446478005434295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4555906113466720567, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
+  m_PrefabInstance: {fileID: 5079446478005434294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede60e783ea53f948875719e9ae4b0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_StageGemNode
 --- !u!1001 &5971208327199490175
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -24,8 +24,6 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
 
     // Cached components
     private Mb_HealthComponent _health;
-    private Camera _cam;
-
     // -------------------------------------------------------------------------
     // CONSTRUCTOR
     // -------------------------------------------------------------------------
@@ -33,7 +31,6 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     public Rajah_R_Branch1(SO_Ability abilityData, Mb_CharacterBase user)
         : base(abilityData, user)
     {
-        _cam = Camera.main;
     }
 
     // -------------------------------------------------------------------------
@@ -112,8 +109,6 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     private IEnumerator SovereignsWrathRoutine(Mb_CharacterBase user)
     {
         // --- Setup ---
-        Vector3 forward = GetLockedForwardDirection();
-
         SetUntargetable(true);
         var controller = user as Mb_PlayerController;
         controller?.AddDisable(
@@ -124,7 +119,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         // --- Tick Loop ---
         for (int i = 0; i < TICK_COUNT; i++)
         {
-            PerformAoEHit(user, forward, isFinal: false);
+            PerformAoEHit(user, isFinal: false);
 
             yield return new WaitForSeconds(TICK_INTERVAL);
         }
@@ -133,11 +128,11 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         yield return new WaitForSeconds(FINAL_DELAY);
 
         // --- Final Strike ---
-        PerformAoEHit(user, forward, isFinal: true);
+        PerformAoEHit(user, isFinal: true);
 
         // --- Cleanup ---
         SetUntargetable(false);
-        controller.RemoveDisable(ActionDisableFlags.AllAbilities | ActionDisableFlags.AllAttacks);
+        controller?.RemoveDisable(ActionDisableFlags.AllAbilities | ActionDisableFlags.AllAttacks);
 
         if (user is Mb_GuardianBase guardian)
             guardian.GuardianAnimator?.EndR1Ability();
@@ -147,8 +142,9 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     // DAMAGE LOGIC
     // -------------------------------------------------------------------------
 
-    private void PerformAoEHit(Mb_CharacterBase user, Vector3 forward, bool isFinal)
+    private void PerformAoEHit(Mb_CharacterBase user, bool isFinal)
     {
+        Vector3 forward = GetCurrentForwardDirection(user);
         Vector3 center = user.transform.position + forward * HIT_OFFSET;
 
         Collider[] hits = Physics.OverlapSphere(center, HIT_RADIUS);
@@ -202,16 +198,19 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     // HELPERS
     // -------------------------------------------------------------------------
 
-    private Vector3 GetLockedForwardDirection()
+    private Vector3 GetCurrentForwardDirection(Mb_CharacterBase user)
     {
-        Vector3 dir = _cam.transform.forward;
-        //dir.y = 0f;
-        //dir.Normalize();
+        Camera cam = Camera.main;
+        Vector3 direction = cam != null
+            ? cam.transform.forward
+            : user.transform.forward;
 
-        //if (dir == Vector3.zero)
-            dir = _User.transform.forward;
+        direction.y = 0f;
 
-        return dir;
+        if (direction.sqrMagnitude <= 0.001f)
+            return user.transform.forward;
+
+        return direction.normalized;
     }
 
     // -------------------------------------------------------------------------

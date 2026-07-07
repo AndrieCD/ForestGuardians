@@ -58,8 +58,17 @@ public class Mb_StatBlock : MonoBehaviour
         MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
         HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
 
-        MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
-        AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
+        MoveSpeed = new Sc_Stat(
+            template.MoveSpeed,
+            template.MoveSpeedScaling,
+            useStrongestNegativePercentOnly: true,
+            minimumValue: 1f
+        );
+        AttackSpeed = new Sc_Stat(
+            template.AttackSpeed,
+            template.AttackSpeedScaling,
+            useStrongestNegativePercentOnly: true
+        );
         AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
         AbilityPower = new Sc_Stat(template.AbilityPower, template.AbilityPowerScaling);
         Haste = new Sc_Stat(template.Haste, template.HasteScaling);
@@ -93,8 +102,17 @@ public class Mb_StatBlock : MonoBehaviour
     {
         MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
         HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
-        MoveSpeed = new Sc_Stat(template.MoveSpeed, template.MoveSpeedScaling);
-        AttackSpeed = new Sc_Stat(template.AttackSpeed, template.AttackSpeedScaling);
+        MoveSpeed = new Sc_Stat(
+            template.MoveSpeed,
+            template.MoveSpeedScaling,
+            useStrongestNegativePercentOnly: true,
+            minimumValue: 1f
+        );
+        AttackSpeed = new Sc_Stat(
+            template.AttackSpeed,
+            template.AttackSpeedScaling,
+            useStrongestNegativePercentOnly: true
+        );
         AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
         AbilityPower = new Sc_Stat(template.AbilityPower, template.AbilityPowerScaling);
         Haste = new Sc_Stat(template.Haste, template.HasteScaling);
@@ -103,6 +121,18 @@ public class Mb_StatBlock : MonoBehaviour
         Lifesteal = new Sc_Stat(template.LifeSteal, template.LifeStealScaling);
         //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
         // JumpPower omitted — CuBots don't jump
+
+        MaxHealth.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        HealthRegen.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        MoveSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AttackSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AttackPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        AbilityPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        Haste.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        CriticalChance.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        CriticalDamage.OnStatChanged += _ => OnStatsChanged?.Invoke();
+        Lifesteal.OnStatChanged += _ => OnStatsChanged?.Invoke();
+
         BuildLookup();
     }
 

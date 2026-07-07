@@ -19,6 +19,9 @@ GameObject:
   - component: {fileID: 8687641053665929630}
   - component: {fileID: 8369047640622771529}
   - component: {fileID: -7812671766110808287}
+  - component: {fileID: 5669134545928265019}
+  - component: {fileID: 7943367547114119013}
+  - component: {fileID: 7953623112865226790}
   m_Layer: 6
   m_Name: Shovy
   m_TagString: CuBot
@@ -43,6 +46,7 @@ Transform:
   - {fileID: 8770104530924348078}
   - {fileID: 3541549547958180040}
   - {fileID: 5689047134853070747}
+  - {fileID: 1712472683027532195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &6663598237119975471
@@ -205,6 +209,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatusVFXHandler
   _EnableCameraVFX: 0
+--- !u!114 &5669134545928265019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df4f41f44481254ab8a66a02541dbf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ShovyController
+  _CuBotTemplate: {fileID: 11400000, guid: 38d41f05b883450baceae5dd00e22c98, type: 2}
+  AggroRange: 30
+  DeAggroRange: 35
+  AggroRetryCooldown: 2
+--- !u!114 &7943367547114119013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3ebd43c4f9eef45851cb2469c50b87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
+  _GenericProjectile: {fileID: 0}
+  _MariPsychicLeafProjectile: {fileID: 0}
+  _MariPsyshockBoltProjectile: {fileID: 0}
+  _MariMindspikesZone: {fileID: 0}
+  _MariPsychicSlamShockwave: {fileID: 0}
+  _MariBloomZone: {fileID: 0}
+  _MariLaserBeam: {fileID: 0}
+  _MariDotHitVFX: {fileID: 0}
+  _RajahFeatherProjectile: {fileID: 0}
+  _RajahSkyRendShield: {fileID: 0}
+  _HunterBulletProjectile: {fileID: 531380711534864579, guid: f1779a67f7be0f742ba5fe979b98f1fd, type: 3}
+  _TrapperTrapProjectile: {fileID: 0}
+  _TrapperProximityTrap: {fileID: 0}
+  _ToxionSludgeProjectile: {fileID: 0}
+  _LuxionBulletProjectile: {fileID: 0}
+--- !u!114 &7953623112865226790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862477864045349106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 039bfea7ef966854eb33abff32bb54df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
+  LaunchOrigin: {fileID: 1712472683027532195}
+  AimLayerMask:
+    serializedVersion: 2
+    m_Bits: 65
+  AimRaycastDistance: 100
 --- !u!1 &1190940697236583597
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +513,37 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4415804897249438246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1712472683027532195}
+  m_Layer: 6
+  m_Name: ProjectileOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1712472683027532195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4415804897249438246}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.533, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 398177231451683535}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5839370164926260144
 GameObject:
   m_ObjectHideFlags: 0

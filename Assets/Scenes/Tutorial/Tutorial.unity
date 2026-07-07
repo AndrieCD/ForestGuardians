@@ -4174,7 +4174,7 @@ MonoBehaviour:
   _spawnPoints:
   - {fileID: 8843961953588501091}
   CuBotPool: {fileID: 756790791}
-  PreparationDuration: 3
+  PreparationDuration: 2
   ResolutionDuration: 1.5
   SpawnInterval: 0.75
   SpawnTypeSeparatorInterval: 1.5

@@ -11,7 +11,7 @@
 //
 // USAGE — building a custom effect inline:
 //   var slow = new Sc_StatusEffect(
-//       StatusType.Slow,
+//       StatusType.MoveSlow,
 //       duration: 3f,
 //       tickInterval: 0f,
 //       tickDamage: 0f,
@@ -26,11 +26,12 @@
 //   );
 //
 // USAGE — using a static factory (preferred for common effects):
-//   var slow  = Sc_StatusEffect.Slow(duration: 3f, moveSpeedReduction: 0.30f);
+//   var slow  = Sc_StatusEffect.MoveSlow(duration: 3f, moveSpeedReduction: 0.30f);
 //   var burn  = Sc_StatusEffect.Burn(duration: 5f, damagePerTick: 20f);
 //   var stun  = Sc_StatusEffect.Stun(duration: 1.5f);
 
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Sc_StatusEffect
 {
@@ -99,9 +100,11 @@ public class Sc_StatusEffect
     /// The modifier is built here so the caller only needs to pass gameplay values.
     /// </summary>
     /// <param name="duration">How long the slow lasts.</param>
-    /// <param name="moveSpeedReduction">Fraction to reduce MS by (0.30 = 30% slower).</param>
+    /// <param name="moveSpeedReduction">Fraction or percentage to reduce MS by (0.30 or 30 = 30% slower).</param>
     public static Sc_StatusEffect MoveSlow(float duration, float moveSpeedReduction)
     {
+        float normalizedReduction = NormalizeSlowReduction(moveSpeedReduction);
+
         // Percent modifier with a negative value reduces the stat.
         // Infinite duration on the modifier — the controller removes it when the effect expires.
         var modifier = new Sc_Modifier(
@@ -109,7 +112,7 @@ public class Sc_StatusEffect
             ModifierSource.StatusEffect,
             new List<Sc_StatEffect>
             {
-                new Sc_StatEffect(StatType.MoveSpeed, -moveSpeedReduction, StatModType.Percent)
+                new Sc_StatEffect(StatType.MoveSpeed, -normalizedReduction, StatModType.Percent)
             }
         );
 
@@ -127,9 +130,11 @@ public class Sc_StatusEffect
     /// The modifier is built here so the caller only needs to pass gameplay values.
     /// </summary>
     /// <param name="duration">How long the slow lasts.</param>
-    /// <param name="attackSpeedReduction">Fraction to reduce AS by (0.30 = 30% slower).</param>
+    /// <param name="attackSpeedReduction">Fraction or percentage to reduce AS by (0.30 or 30 = 30% slower).</param>
     public static Sc_StatusEffect AttackSlow(float duration, float attackSpeedReduction)
     {
+        float normalizedReduction = NormalizeSlowReduction(attackSpeedReduction);
+
         // Percent modifier with a negative value reduces the stat.
         // Infinite duration on the modifier — the controller removes it when the effect expires.
         var modifier = new Sc_Modifier(
@@ -137,7 +142,7 @@ public class Sc_StatusEffect
             ModifierSource.StatusEffect,
             new List<Sc_StatEffect>
             {
-                new Sc_StatEffect(StatType.AttackSpeed, -attackSpeedReduction, StatModType.Percent)
+                new Sc_StatEffect(StatType.AttackSpeed, -normalizedReduction, StatModType.Percent)
             }
         );
 
@@ -197,6 +202,29 @@ public class Sc_StatusEffect
 
 
     /// <summary>
+    /// Mari's Psychic Bloom passive DoT.
+    /// Separate status type so it can coexist with Poison and Burn while still
+    /// using the generic DoT controller path.
+    /// </summary>
+    /// <param name="duration">Total effect duration.</param>
+    /// <param name="damagePerTick">Damage dealt each tick.</param>
+    /// <param name="tickInterval">Seconds between ticks. Default 0.5s.</param>
+    public static Sc_StatusEffect PsychicBloom(
+        float duration,
+        float damagePerTick,
+        float tickInterval = 0.5f)
+    {
+        return new Sc_StatusEffect(
+            StatusType.PsychicBloom,
+            duration,
+            tickInterval: tickInterval,
+            tickDamage: damagePerTick,
+            statModifier: null
+        );
+    }
+
+
+    /// <summary>
     /// Blocks all movement and ability use for the duration.
     /// No DoT — pure crowd control.
     ///
@@ -221,5 +249,15 @@ public class Sc_StatusEffect
             tickDamage: 0f,
             statModifier: null
         );
+    }
+
+    private static float NormalizeSlowReduction(float reduction)
+    {
+        float positiveReduction = Mathf.Abs(reduction);
+
+        if (positiveReduction > 1f)
+            positiveReduction /= 100f;
+
+        return Mathf.Clamp01(positiveReduction);
     }
 }

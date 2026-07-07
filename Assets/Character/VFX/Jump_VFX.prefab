@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5963651290120986057}
   - component: {fileID: 8508575524321610254}
   - component: {fileID: 3235584080165229203}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Jump_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

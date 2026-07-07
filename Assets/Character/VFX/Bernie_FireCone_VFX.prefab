@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8792187619456427608}
   - component: {fileID: 3877102516105453961}
   - component: {fileID: 6859528195214783833}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Bernie_FireCone_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4850,7 +4850,7 @@ GameObject:
   - component: {fileID: 1454656102630269025}
   - component: {fileID: 3829556094004260143}
   - component: {fileID: 3249980589618384714}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Small flames
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9627,6 +9627,10 @@ PrefabInstance:
       propertyPath: m_Intensity
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2504214343101900869, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2504214343101900871, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
@@ -9678,6 +9682,14 @@ PrefabInstance:
     - target: {fileID: 2504214343621411470, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
       propertyPath: m_Name
       value: CFXR3 Hit Fire B (Air)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2504214343621411470, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6484188613129301618, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
+      propertyPath: m_Layer
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // =============================================================================
 // Mb_MindspikesZone.cs
-// Attached to the spike zone prefab. Handles trigger detection, damage ticking,
-// slow application, visual scaling, and self-destruction after duration expires.
+// Attached to one Mindspikes tile prefab. Handles trigger detection, damage
+// ticking, slow application, visual scaling, and self-destruction after duration
+// expires.
 //
 // Kept as a separate class (not an inner class) so Unity can serialize it
 // as a prefab component and so Leo can reference it in the Editor.
@@ -26,10 +26,9 @@ public class Mb_MindspikesZone : MonoBehaviour
     private float _duration;
     private bool _isOvercharged;
 
-    // Tracks the last time each enemy was damaged — prevents per-frame ticking
-    // Key: CuBot instance, Value: Time.time of last damage tick
-    private Dictionary<MB_CuBotBase, float> _tickTimers
-        = new Dictionary<MB_CuBotBase, float>();
+    // Shared by every tile from the same cast so overlapping tiles cannot
+    // multiply the damage tick rate.
+    private Sc_MindspikesTickTracker _tickTracker = new Sc_MindspikesTickTracker();
 
     // The BoxCollider on this GO — resized to match final dimensions in Initialize()
     private BoxCollider _collider;
@@ -57,7 +56,8 @@ public class Mb_MindspikesZone : MonoBehaviour
         float width,
         float height,
         float duration,
-        bool isOvercharged)
+        bool isOvercharged,
+        Sc_MindspikesTickTracker sharedTickTracker = null)
     {
         _owner = owner;
         _damage = damage;
@@ -66,15 +66,17 @@ public class Mb_MindspikesZone : MonoBehaviour
         _slowDuration = slowDuration;
         _duration = duration;
         _isOvercharged = isOvercharged;
+        _tickTracker = sharedTickTracker ?? new Sc_MindspikesTickTracker();
 
         // --- Resize BoxCollider to match final resolved dimensions ---
         _collider = GetComponent<BoxCollider>();
         if (_collider != null)
         {
-            // BoxCollider.size is in local space — width=X, height=Y, length=Z
+            _collider.isTrigger = true;
+            // BoxCollider.size is in local space — width=X, height=Y, length=Z.
+            // The tile root's local up follows the ground normal assigned by
+            // Mari_Q, so this height extends away from the local ground surface.
             _collider.size = new Vector3(width, height, length);
-            // Center is at (0, height/2, 0) so the bottom of the box sits at
-            // the GO's origin (which is placed at Mari's foot level)
             _collider.center = new Vector3(0f, height / 2f, 0f);
         }
         else
@@ -82,10 +84,17 @@ public class Mb_MindspikesZone : MonoBehaviour
             Debug.LogError("[Mb_MindspikesZone] No BoxCollider found on spike zone prefab.");
         }
 
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
         // --- Scale visual root to match collider ---
         // SpikeVisualRoot is a child GO whose localScale drives the mesh size.
-        // We scale it to (width, 1, length) — height is intentionally not scaled
-        // so the visual mesh stays flat/ground-level regardless of collider height.
+        // We scale it to (width, 1, length) so the visual stays flat on the
+        // tile's projected ground plane regardless of trigger height.
         _visualRoot = transform.Find("SpikeVisualRoot");
         if (_visualRoot != null)
             _visualRoot.localScale = new Vector3(width, 1f, length);
@@ -129,30 +138,22 @@ public class Mb_MindspikesZone : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
+        if (_owner != null && other.gameObject == _owner.gameObject) return;
+
+        MB_CuBotBase enemy = other.GetComponentInParent<MB_CuBotBase>();
         if (enemy == null) return;
         if (enemy.Health == null || enemy.Health.IsDead) return;
 
-        // Tick gate — only damage this enemy if enough time has passed
-        float now = Time.time;
-        if (_tickTimers.TryGetValue(enemy, out float lastTick))
-        {
-            if (now - lastTick < _tickInterval) return;
-        }
-
-        _tickTimers[enemy] = now;
+        if (!_tickTracker.TryConsumeTick(enemy, _tickInterval)) return;
 
         ApplyDamageAndSlow(enemy);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        // Remove from tick tracker when enemy leaves the zone —
-        // so if they re-enter they can be damaged immediately rather than
-        // waiting out whatever was left of the tick interval
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
-        if (enemy != null)
-            _tickTimers.Remove(enemy);
+        // Do not clear the shared tick tracker here. A CuBot can leave one tile
+        // while still touching another, and clearing on per-tile exit lets
+        // neighboring tiles stack damage before the cast-level interval expires.
     }
 
 
@@ -165,24 +166,10 @@ public class Mb_MindspikesZone : MonoBehaviour
         // --- Damage ---
         enemy.Health.TakeDamage(_damage);
 
-        // --- Slow modifier ---
-        // Built fresh each application — timed removal is handled by Mb_StatBlock
-        // StatModType.Percent with a negative value reduces the stat:
-        // finalMoveSpeed = base * (1 + (-SlowPercent / 100)) = base * (1 - SlowPercent%)
-        Sc_StatEffect slowEffect = new Sc_StatEffect(
-            StatType.MoveSpeed,
-            -_slowPercent,
-            StatModType.Percent
-        );
+        Mb_StatusEffectController statusController =
+            enemy.GetComponent<Mb_StatusEffectController>();
 
-        Sc_Modifier slowModifier = new Sc_Modifier(
-            "Mindspikes Slow",
-            ModifierSource.Ability,
-            new System.Collections.Generic.List<Sc_StatEffect> { slowEffect },
-            _slowDuration
-        );
-
-        enemy.Stats.AddModifier(slowModifier);
+        statusController?.Apply(Sc_StatusEffect.MoveSlow(_slowDuration, _slowPercent));
 
         Debug.Log($"[Mb_MindspikesZone] Hit {enemy.CharacterName} for {_damage} " +
                   $"and applied {_slowPercent}% slow.");
@@ -207,12 +194,9 @@ public class Mb_MindspikesZone : MonoBehaviour
         if (_fieldVFX != null)
             _fieldVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
-        // Clear tick state
-        _tickTimers.Clear();
-
         // Give the VFX a short window to finish emitting before destroying.
         // TODO: Tune this delay to match the VFX fade-out duration Leo sets.
-        StartCoroutine(DestroyAfterDelay(1.5f));
+        StartCoroutine(DestroyAfterDelay(0.2f));
     }
 
 

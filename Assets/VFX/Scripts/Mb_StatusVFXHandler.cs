@@ -274,7 +274,8 @@ public class Mb_StatusVFXHandler : MonoBehaviour
 
             case StatusType.Root:
             case StatusType.Silence:
-                // No body VFX for these CC types in the prototype.
+            case StatusType.PsychicBloom:
+                // No body VFX for these prototype statuses yet.
                 // TODO: Add entries once visual design is confirmed.
                 vfxType = default;
                 return false;
@@ -314,6 +315,7 @@ public class Mb_StatusVFXHandler : MonoBehaviour
 
             case StatusType.Root:
             case StatusType.Silence:
+            case StatusType.PsychicBloom:
                 vfxType = default;
                 return false;
 
