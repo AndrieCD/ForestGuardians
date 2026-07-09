@@ -16,12 +16,12 @@ MonoBehaviour:
   Icon: {fileID: 21300068, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   AbilityDescription: 
   Cooldown:
-  - 9
-  - 9
-  - 9
-  - 7
+  - 8
+  - 8
+  - 8
   - 6
-  - 4
+  - 5
+  - 3
   ProjectileData: {fileID: 11400000, guid: be4f53b5c21d71a4a977bda9d14cd0ca, type: 2}
   MaxLevel: 6
   ScalingStats:
