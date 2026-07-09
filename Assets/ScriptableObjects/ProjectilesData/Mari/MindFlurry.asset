@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_ProjectileData
   LaunchSpeed: 20
   MaxRange: 40
-  IsPiercing: 0
+  IsPiercing: 1
   MaxPierceTargets: 3
   HitEffects: []

@@ -3,7 +3,17 @@ guid: 7360b4afe9912504392b64593598a728
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LuxionMTL
+    second: {fileID: 2100000, guid: a2cb5834d47882f499e65a153cb56a1e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LuxionOpacityMTL
+    second: {fileID: 2100000, guid: 8cbc9999ed4b5cb408a54322aad37b9a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

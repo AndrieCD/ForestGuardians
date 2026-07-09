@@ -106,7 +106,7 @@ Material:
     - _HatchThreshold: 0.68
     - _LineScale: 130
     - _LineSoftness: 0.02
-    - _LineStrength: 0.5
+    - _LineStrength: 0.75
     - _LineThickness: 0.08
     - _MediumLineDensity: 0.55
     - _MediumLineStrength: 0.35
@@ -116,7 +116,7 @@ Material:
     - _Outline: 1
     - _OutlineDepthOffset: 0.002
     - _OutlineEdgeSoftness: 0.18
-    - _OutlineWidth: 0.02
+    - _OutlineWidth: 0.04
     - _Parallax: 0.02
     - _PosterizeSteps: 6
     - _PosterizeStrength: 0.12
