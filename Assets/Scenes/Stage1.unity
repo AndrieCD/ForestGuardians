@@ -6478,34 +6478,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1256339667}
     m_Modifications:
-    - target: {fileID: 913404492282105344, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: GuardianObject
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 928926313726531645, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: PlayerObject
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 937337303274208356, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: GuardianObject
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1081946623214297702, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
       propertyPath: AugmentManager
       value: 
       objectReference: {fileID: 441286177}
-    - target: {fileID: 1307429337598480230, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: MinimapCamera
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1465268425742678018, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: GuardianObject
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2393193789103023104, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
-      propertyPath: GuardianObject
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3008893861332478585, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
       propertyPath: PanoharraHealthObject
       value: 
@@ -6594,6 +6570,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4702367162515863972, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6634,7 +6614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 329486682757116183, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2025181218564915898, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_UiScaleMode

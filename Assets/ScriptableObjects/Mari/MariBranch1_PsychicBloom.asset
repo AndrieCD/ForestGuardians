@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: MariBranch1_PsychicBloom
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Psychic Bloom
-  Icon: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
-  AbilityDescription: 
+  Icon: {fileID: 21300000, guid: c8baa3efb90e0d849b06341ee9a58d57, type: 3}
+  AbilityDescription: 'Passive: Mind Flurry applies 30% bonus damage over time (DoT)
+    with every hit.
+
+    Active: Mari releases psychic energy, creating a blooming
+    field of razor leaves around her for 3 seconds. Enemies within the field take
+    continuous damage and are slowed.'
   Cooldown:
   - 32
   ProjectileData: {fileID: 0}

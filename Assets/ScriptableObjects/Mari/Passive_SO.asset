@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: Passive_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Mental Overflow
-  Icon: {fileID: 21300090, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  Icon: {fileID: 21300000, guid: bd22a1f8fc1e81847b1df5c63068605c, type: 3}
+  AbilityDescription: Each takedown increases Mari's psychic focus, granting bonus
+    Ability Power. At 5 stacks, her next ability becomes Overcharged, greatly increasing
+    its power before consuming all stacks.
   Cooldown:
   - 0
   ProjectileData: {fileID: 0}

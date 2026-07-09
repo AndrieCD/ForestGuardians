@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Guardian
   GuardianID: 1
   CharacterName: Mari
-  icon: {fileID: 0}
-  GuardianPrefab: {fileID: 5918655219564441784, guid: 32b02b4203473904f8dd3879b76ce268, type: 3}
+  icon: {fileID: 21300000, guid: d47a6fe4660a33e459ce9c0268cfb71e, type: 3}
   ModelPrefab: {fileID: 0}
+  GuardianArchetype1: 
+  GuardianArchetype2: 
   MaxHealth: 400
   HealthRegen: 3
   MoveSpeed: 6

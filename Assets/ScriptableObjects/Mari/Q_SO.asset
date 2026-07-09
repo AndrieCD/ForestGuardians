@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Q_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Mind Spikes
-  Icon: {fileID: 21300090, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
-  AbilityDescription: 
+  Icon: {fileID: 21300000, guid: 1ded2e6bfcb9a5442a3ef6a92791dd60, type: 3}
+  AbilityDescription: Mari drives psychic energy into the ground, causing psychic
+    spikes to erupt in an area in front of her. The spikes deal damage and slow all
+    enemies hit.
   Cooldown:
   - 7
   - 7
