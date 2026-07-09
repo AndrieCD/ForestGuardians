@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Secondary_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Psyshock
-  Icon: {fileID: 21300000, guid: 27ac72a49d8b3e042bc3595e013ec94f, type: 3}
+  Icon: {fileID: 21300000, guid: 364ad0cf458a2114f9bcbef5863317da, type: 3}
+  AbilityDescription: Mari launches a concentrated spark of psychic energy, damaging
+    the first enemy hit.
   Cooldown:
   - 1
   ProjectileData: {fileID: 11400000, guid: 3d8e2438526dd2a4987bb5b2629cadfb, type: 2}

@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: MariBranch2_MindUnbound
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Mind Unbound
-  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  AbilityDescription: 
+  Icon: {fileID: 21300000, guid: 53148b80e2e9c264a84bffdfa7d616e0, type: 3}
+  AbilityDescription: 'Passive: Psyshock gains 50% bonus Ability Power scaling and
+    deals 25% splash damage around the target.
+
+    Active: Mari removes her oversized
+    glasses, unleashing a continuous psychic laser beam from her eyes for 3 seconds,
+    dealing massive damage.'
   Cooldown:
   - 32
   ProjectileData: {fileID: 11400000, guid: 02c67bfca3356134ea3567387f61217e, type: 2}

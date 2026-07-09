@@ -13,11 +13,10 @@ MonoBehaviour:
   m_Name: MariBranch2_Display
   m_EditorClassIdentifier: Assembly-CSharp::SO_UltimateBranch
   BranchName: Mind Unbound
-  Description: 'Passive: MB2 deals bonus 50% Ability Power and does 25% splash damage.
+  Description: 'Passive: Psyshock gains 50% bonus Ability Power scaling and deals
+    25% splash damage around the target.
 
-    On
-    cast: Mari removes her oversized glasses, unleashing a continuous psychic laser
-    beam from her eyes for 3 seconds, dealing massive damage.
-
-'
-  Icon: {fileID: 0}
+    Active: Mari removes her oversized
+    glasses, unleashing a continuous psychic laser beam from her eyes for 3 seconds,
+    dealing massive damage.'
+  Icon: {fileID: 21300000, guid: 53148b80e2e9c264a84bffdfa7d616e0, type: 3}
