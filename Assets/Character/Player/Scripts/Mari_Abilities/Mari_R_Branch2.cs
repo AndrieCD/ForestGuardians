@@ -62,7 +62,7 @@ using UnityEngine;
 
 public class Mari_R_Branch2 : Sc_BaseAbility
 {
-    private const float DAMAGE_TICK_INTERVAL = 0.5f;
+    private const float DAMAGE_TICK_INTERVAL = 0.25f;
 
     // -------------------------------------------------------------------------
     // Inspector-Assigned Fields
@@ -86,7 +86,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     [SerializeField] private float _LaserMaxRange = 30f;
 
     // Beam radius used for enemy detection and LineRenderer width.
-    [SerializeField] private float _LaserRadius = 0.75f;
+    [SerializeField] private float _LaserRadius = 1.0f;
 
     // Layer mask for the laser beam — should include Enemy and Environment layers
     // TODO: Set in Inspector — include "CuBot" and terrain layers, exclude "Player"

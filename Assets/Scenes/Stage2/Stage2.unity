@@ -3745,20 +3745,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300804874}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 523023e8447858e4e8052ccc50b1dde1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_EnemyTypeDialogBinder
-  EnemyDialogs:
-  - EnemyPrefabName: Chopper
-    Sequence: {fileID: 11400000, guid: ec207a1274643a344a21da1e39539097, type: 2}
-  - EnemyPrefabName: Hunter
-    Sequence: {fileID: 11400000, guid: 4b32f79eb7e1f40468e6ac275c0efa43, type: 2}
-  - EnemyPrefabName: Minny
-    Sequence: {fileID: 11400000, guid: 497d4536ce20959438156396f1b88089, type: 2}
-  - EnemyPrefabName: Bernie
-    Sequence: {fileID: 11400000, guid: 662b442e621d2924b9ec66d8cc1a9738, type: 2}
+  EnemyDialogs: []
 --- !u!114 &1300804878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3766,7 +3758,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300804874}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6378152782bc02149960a572d086901e, type: 3}
   m_Name: 
@@ -3780,7 +3772,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300804874}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a99f77f016eb9644ebf75b0bd2bd1a73, type: 3}
   m_Name: 
@@ -4942,7 +4934,7 @@ GameObject:
   m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1573632688
 Transform:
   m_ObjectHideFlags: 0

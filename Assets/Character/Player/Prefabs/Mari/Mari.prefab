@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3319310830196139752}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.201, z: 0.75}
+  m_LocalPosition: {x: 0, y: 0.809, z: 0.472}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973f390e0ecdbbb4dbf05242b3238eb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_GuardianAnimator
-  _Animator: {fileID: 0}
+  _Animator: {fileID: 7870540088321353740}
   _SpeedDampTime: 0.1
   _HugeDamageThreshold: 0.01
 --- !u!143 &5186689850193220039
@@ -763,8 +763,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c5bbde4239f748b49862070cb23ef1b6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7870540088321353740}
   m_SourcePrefab: {fileID: 100100000, guid: c5bbde4239f748b49862070cb23ef1b6, type: 3}
+--- !u!1 &5928436503269838342 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c5bbde4239f748b49862070cb23ef1b6, type: 3}
+  m_PrefabInstance: {fileID: 6811518819729060695}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7870540088321353740
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928436503269838342}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6417023889090270396 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c5bbde4239f748b49862070cb23ef1b6, type: 3}

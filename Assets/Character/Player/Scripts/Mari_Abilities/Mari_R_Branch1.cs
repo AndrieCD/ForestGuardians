@@ -58,12 +58,12 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
     [Header("Passive — Blooming DoT")]
     // Total duration of the DoT in seconds
-    [SerializeField] private float _DotDuration = 5f;
+    [SerializeField] private float _DotDuration = 2f;
 
     [Header("Active — Bloom Field")]
     // Radius of the spherical zone in world units
     // TODO: Tune — should feel noticeably larger than Q's rectangle
-    [SerializeField] private float _FieldRadius = 6f;
+    [SerializeField] private float _FieldRadius = 20f;
 
     // How long the field persists in seconds
     [SerializeField] private float _FieldDuration = 4f;
