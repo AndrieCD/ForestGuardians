@@ -18,14 +18,14 @@
 //
 // ACTIVE — Laser:
 //   On cast, Mari is locked (AllAbilities + AllAttacks disabled) and a
-//   continuous raycast fires from ProjectileOrigin forward every frame for
-//   LASER_DURATION (3s). Every enemy the ray hits per frame takes damage from
+//   continuous thick beam fires from ProjectileOrigin forward every frame for
+//   LASER_DURATION (3s). Every enemy inside the beam path takes damage from
 //   the SO "Damage" stat on a fixed 0.5-second tick.
-//   The ray re-evaluates each frame so it tracks Mari's aim as she turns.
+//   The beam re-evaluates each frame so it tracks Mari's aim as she turns.
 //
 //   LASER VISUALS:
 //   A LineRenderer component on the laser GO draws the beam from
-//   ProjectileOrigin to the raycast hit point (or MaxRange if no hit).
+//   ProjectileOrigin to the terrain hit point (or MaxRange if no hit).
 //   A "LaserHitVFX" ParticleSystem plays at the impact point while the
 //   laser is in contact with an enemy — moved to hit position each frame.
 //   A "LaserChargeVFX" burst plays on Mari at cast time (glasses-off moment).
@@ -45,13 +45,14 @@
 //     Set width curve, material (additive psychic beam), and color in the Editor.
 //   - A child ParticleSystem named "LaserHitVFX" (looping sparks at impact point)
 //   - Attach Mb_LaserBeam to the root
-//   The prefab has no Collider or Rigidbody — detection is raycast-only.
+//   The prefab has no Collider or Rigidbody — detection is handled by script.
 //
 // INSPECTOR SETUP:
 //   LaserPrefab            — the laser GO prefab
 //   SplashRadius           — radius of splash around hit point          (default 3f)
 //   LaserDuration          — how long the active laser fires            (default 3f)
 //   LaserMaxRange          — max raycast distance                       (default 30f)
+//   LaserRadius            — beam hit radius and visual half-width      (default 0.75f)
 //   LaserLayerMask         — layers the laser can hit                   (Enemies + Environment)
 
 using System;
@@ -81,10 +82,13 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     // How long the laser fires in seconds
     [SerializeField] private float _LaserDuration = 3f;
 
-    // Maximum raycast distance for the laser beam
+    // Maximum distance for the laser beam
     [SerializeField] private float _LaserMaxRange = 30f;
 
-    // Layer mask for the laser raycast — should include Enemy and Environment layers
+    // Beam radius used for enemy detection and LineRenderer width.
+    [SerializeField] private float _LaserRadius = 0.75f;
+
+    // Layer mask for the laser beam — should include Enemy and Environment layers
     // TODO: Set in Inspector — include "CuBot" and terrain layers, exclude "Player"
     [SerializeField] private LayerMask _LaserLayerMask = Physics.DefaultRaycastLayers;
 
@@ -280,6 +284,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
             dps: laserDps,
             tickInterval: DAMAGE_TICK_INTERVAL,
             maxRange: _LaserMaxRange,
+            radius: _LaserRadius,
             layerMask: _LaserLayerMask
         );
 

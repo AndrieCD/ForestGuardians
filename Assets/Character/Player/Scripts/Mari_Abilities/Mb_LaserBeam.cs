@@ -14,6 +14,7 @@ public class Mb_LaserBeam : MonoBehaviour
     private float _dps;
     private float _tickInterval;
     private float _maxRange;
+    private float _radius;
     private LayerMask _layerMask;
     private float _tickTimer;
 
@@ -30,6 +31,7 @@ public class Mb_LaserBeam : MonoBehaviour
         float dps,
         float tickInterval,
         float maxRange,
+        float radius,
         LayerMask layerMask)
     {
         _owner = owner;
@@ -37,6 +39,7 @@ public class Mb_LaserBeam : MonoBehaviour
         _dps = dps;
         _tickInterval = Mathf.Max(0.01f, tickInterval);
         _maxRange = maxRange;
+        _radius = Mathf.Max(0.01f, radius);
         _layerMask = layerMask.value == 0 ? Physics.DefaultRaycastLayers : layerMask;
         _tickTimer = _tickInterval;
 
@@ -48,6 +51,8 @@ public class Mb_LaserBeam : MonoBehaviour
         else
         {
             _lineRenderer.positionCount = 2;
+            _lineRenderer.startWidth = _radius * 2f;
+            _lineRenderer.endWidth = _radius * 2f;
             _lineRenderer.enabled = true;
         }
 
@@ -75,8 +80,9 @@ public class Mb_LaserBeam : MonoBehaviour
         bool shouldApplyDamage = AdvanceDamageTick();
         _damagedThisFrame.Clear();
 
-        int hitCount = Physics.RaycastNonAlloc(
+        int hitCount = Physics.SphereCastNonAlloc(
             rayOrigin,
+            _radius,
             rayDirection,
             _hitBuffer,
             _maxRange,
