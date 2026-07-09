@@ -911,6 +911,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
+--- !u!1 &313602064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 313602065}
+  - component: {fileID: 313602066}
+  m_Layer: 0
+  m_Name: ArborealSpawnPoint (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &313602065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313602064}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.97894776, z: -0, w: 0.2041109}
+  m_LocalPosition: {x: 119.991, y: 62.942, z: 112.045}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: -156.445, z: 0}
+--- !u!114 &313602066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313602064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 2
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &353334721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1773,6 +1820,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3888179997945390695, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
   m_PrefabInstance: {fileID: 2119571578}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &580208612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 580208613}
+  - component: {fileID: 580208614}
+  m_Layer: 0
+  m_Name: ArborealSpawnPoint (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &580208613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580208612}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.97894776, z: -0, w: 0.2041109}
+  m_LocalPosition: {x: 122.068, y: 63.096, z: 100.268}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: -156.445, z: 0}
+--- !u!114 &580208614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580208612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 2
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!4 &611680822 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3888179997945390695, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
@@ -1855,11 +1949,105 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 644470246}
   m_CullTransparentMesh: 1
+--- !u!1 &649513702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 649513703}
+  - component: {fileID: 649513704}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &649513703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649513702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 110.958, y: 49.117, z: 47.743}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &649513704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649513702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!4 &660816801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3888179997945390695, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
   m_PrefabInstance: {fileID: 270163021}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &685864108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 685864109}
+  - component: {fileID: 685864110}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &685864109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685864108}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9962703, z: -0, w: -0.08628758}
+  m_LocalPosition: {x: 130.109, y: 71.333, z: 111.076}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: 189.9, z: 0}
+--- !u!114 &685864110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685864108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &695553267
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2186,6 +2374,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
+--- !u!1 &816860522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 816860523}
+  - component: {fileID: 816860524}
+  m_Layer: 0
+  m_Name: ArborealSpawnPoint (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &816860523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816860522}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.26038322, z: -0, w: 0.96550536}
+  m_LocalPosition: {x: 138.641, y: 70.925, z: 144.993}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: -30.186, z: 0}
+--- !u!114 &816860524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816860522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 2
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1 &846089409
 GameObject:
   m_ObjectHideFlags: 0
@@ -4956,53 +5191,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
---- !u!1 &1385312532
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1385312533}
-  - component: {fileID: 1385312534}
-  m_Layer: 0
-  m_Name: AerialSpawnPoint (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1385312533
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385312532}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 41.95, y: 30.88, z: 157.31}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1573632688}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1385312534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385312532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
-  HabitatType: 4
-  IsOccupied: 0
-  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &1392180513
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5098,7 +5286,7 @@ Transform:
   m_GameObject: {fileID: 1410850245}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.81, y: 28.05, z: 106.65}
+  m_LocalPosition: {x: 106.533, y: 49.788, z: 22.783}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5899,53 +6087,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1575f3fb0d1d41a4786fae7dce89fcc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_VictoryScreenUI
---- !u!1 &1566938940
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1566938941}
-  - component: {fileID: 1566938942}
-  m_Layer: 0
-  m_Name: AerialSpawnPoint (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1566938941
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1566938940}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37.96, y: 32.94, z: 116.02}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1573632688}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1566938942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1566938940}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
-  HabitatType: 4
-  IsOccupied: 0
-  OccupyingAnimal: {fileID: 0}
 --- !u!1 &1573632687
 GameObject:
   m_ObjectHideFlags: 0
@@ -5981,11 +6122,15 @@ Transform:
   - {fileID: 404232832}
   - {fileID: 1927840462}
   - {fileID: 167503990}
+  - {fileID: 313602065}
+  - {fileID: 580208613}
+  - {fileID: 816860523}
+  - {fileID: 1763589824}
   - {fileID: 1410850246}
-  - {fileID: 1566938941}
-  - {fileID: 1385312533}
-  - {fileID: 2126802621}
-  - {fileID: 1802261248}
+  - {fileID: 649513703}
+  - {fileID: 1618993610}
+  - {fileID: 1595715126}
+  - {fileID: 685864109}
   m_Father: {fileID: 391910451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1595067230
@@ -6057,6 +6202,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
+--- !u!1 &1595715125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1595715126}
+  - component: {fileID: 1595715127}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1595715126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595715125}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9962703, z: -0, w: -0.08628758}
+  m_LocalPosition: {x: 108.923, y: 84.53, z: 138.311}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: 189.9, z: 0}
+--- !u!114 &1595715127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595715125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1 &1604074688
 GameObject:
   m_ObjectHideFlags: 0
@@ -6211,6 +6403,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617990308}
   m_CullTransparentMesh: 1
+--- !u!1 &1618993609
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1618993610}
+  - component: {fileID: 1618993611}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1618993610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618993609}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9471498, z: -0, w: 0.32079172}
+  m_LocalPosition: {x: 57.54, y: 49.698, z: 177.59}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: 142.578, z: 0}
+--- !u!114 &1618993611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618993609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!4 &1623011238 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3888179997945390695, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
@@ -6590,6 +6829,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
+--- !u!1 &1763589823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1763589824}
+  - component: {fileID: 1763589825}
+  m_Layer: 0
+  m_Name: ArborealSpawnPoint (11)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1763589824
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763589823}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9565175, z: -0, w: -0.29167494}
+  m_LocalPosition: {x: 115.899, y: 72.689, z: 157.771}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573632688}
+  m_LocalEulerAnglesHint: {x: 0, y: 213.917, z: 0}
+--- !u!114 &1763589825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763589823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 2
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &1789294402
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6659,53 +6945,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
---- !u!1 &1802261247
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1802261248}
-  - component: {fileID: 1802261249}
-  m_Layer: 0
-  m_Name: AerialSpawnPoint (4)
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1802261248
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1802261247}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.94, y: 28.23, z: 163.13}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1573632688}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1802261249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1802261247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
-  HabitatType: 4
-  IsOccupied: 0
-  OccupyingAnimal: {fileID: 0}
 --- !u!1 &1802662829
 GameObject:
   m_ObjectHideFlags: 0
@@ -7756,53 +7995,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3888179997945390695, guid: bdee6cda28dc3df40a9d5d4f2b37311c, type: 3}
   m_PrefabInstance: {fileID: 2125948938}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2126802620
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2126802621}
-  - component: {fileID: 2126802622}
-  m_Layer: 0
-  m_Name: AerialSpawnPoint (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2126802621
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126802620}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 107.3, y: 27.03, z: 154.06}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1573632688}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2126802622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126802620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
-  HabitatType: 4
-  IsOccupied: 0
-  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &7432916724557553947
 PrefabInstance:
   m_ObjectHideFlags: 0
