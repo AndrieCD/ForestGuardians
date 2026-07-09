@@ -5,15 +5,15 @@
 //   Every Mind Flurry (LMB) hit applies a damage-over-time effect to the enemy
 //   struck. The DoT total damage is sourced from the SO "DoT" stat, then split
 //   across DOT_DURATION by the generic status-effect controller.
-//   Applied fresh on every hit — re-application resets the DoT timer on that
-//   enemy (last hit wins, no stacking).
+//   Applied fresh on every hit. Psychic Bloom is explicitly stackable, so
+//   multiple active DoTs can tick on the same enemy at once.
 //   Subscribes to Mari_Primary.OnPrimaryHit — filters by source so only this
 //   Mari's hits trigger the passive, not a future second player.
 //
 // ACTIVE — Psychic Bloom Field:
-//   A spherical trigger zone is created centered on Mari's position.
+//   A spherical trigger zone is attached to Mari and follows her position.
 //   Enemies inside take damage every FIELD_TICK_INTERVAL seconds and are slowed.
-//   The field persists for FIELD_DURATION seconds, then deactivates.
+//   The field persists for FIELD_DURATION seconds, then deactivates and destroys itself.
 //   Stronger than Q — larger radius, higher damage, Mari is the epicenter.
 //
 // ZONE PATTERN:
@@ -36,7 +36,7 @@
 //   - Attach Mb_BloomZone to the root
 //   - A child ParticleSystem named "BloomFieldVFX" (looping petal/bloom aura)
 //   - A child mesh GO named "BloomVisualRoot" (translucent sphere, bloom shader)
-//     scaled uniformly to match SphereCollider radius
+//     kept at local scale 1; the prefab root is scaled dynamically from FieldRadius
 //   Assign prefab to Mari_R_Branch1.BloomZonePrefab in the Inspector.
 
 using System;
@@ -214,15 +214,11 @@ public class Mari_R_Branch1 : Sc_BaseAbility
             user.Stats.AbilityPower.GetValue()
         );
 
-        // Spawn zone centered exactly on Mari's position
-        // Zone follows Mari's feet — vertically offset by radius so the sphere
-        // center sits at roughly waist height, covering the full play area
-        Vector3 spawnPos = user.transform.position + Vector3.up * _FieldRadius * 0.5f;
-
+        // Spawn zone as a child of Mari. Mb_BloomZone sets local position and scale
+        // from FieldRadius so the collider and visual range stay in sync.
         GameObject zoneGO = GameObject.Instantiate(
             _bloomZonePrefab,
-            spawnPos,
-            Quaternion.identity  // Sphere is omnidirectional — no rotation needed
+            user.transform
         );
 
         Mb_BloomZone zone = zoneGO.GetComponent<Mb_BloomZone>();

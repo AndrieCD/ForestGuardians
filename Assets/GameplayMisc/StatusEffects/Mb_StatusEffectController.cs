@@ -5,7 +5,7 @@
 // RESPONSIBILITIES:
 //   - Apply status effects and their stat modifiers via Mb_StatBlock
 //   - Run DoT tick coroutines that pause with the game
-//   - Enforce the one-effect-per-StatusType rule (reapplication refreshes duration)
+//   - Enforce the one-effect-per-StatusType rule unless an effect is explicitly stackable
 //   - Remove effects cleanly when they expire or are force-cleared
 //   - Self-clear on OnEnable() so CuBot pool reuse starts with a clean slate
 //
@@ -47,7 +47,7 @@ public class Mb_StatusEffectController : MonoBehaviour
     private readonly Dictionary<StatusType, float> _activeEffects
         = new Dictionary<StatusType, float>();
 
-    // Tracks the running coroutine for each active effect so we can stop it
+    // Tracks the running coroutine for each active non-stacking effect so we can stop it
     // on reapplication or forced removal without needing to find it by reference.
     private readonly Dictionary<StatusType, Coroutine> _activeCoroutines
         = new Dictionary<StatusType, Coroutine>();
@@ -56,6 +56,19 @@ public class Mb_StatusEffectController : MonoBehaviour
     // exactly that modifier later — not all StatusEffect modifiers, just this one.
     private readonly Dictionary<StatusType, Sc_Modifier> _appliedModifiers
         = new Dictionary<StatusType, Sc_Modifier>();
+
+    // Stackable effects use unique ids so each application can run its own timer
+    // and DoT ticks without interfering with other instances of the same StatusType.
+    private readonly Dictionary<int, StatusType> _stackedEffectTypes
+        = new Dictionary<int, StatusType>();
+
+    private readonly Dictionary<int, Coroutine> _stackedEffectCoroutines
+        = new Dictionary<int, Coroutine>();
+
+    private readonly Dictionary<int, Sc_Modifier> _stackedEffectModifiers
+        = new Dictionary<int, Sc_Modifier>();
+
+    private int _nextStackedEffectId = 1;
 
     // Pause flag — set by Mb_PauseManager events so coroutines can yield cleanly.
     // Using a local flag instead of polling Mb_PauseManager.IsPaused directly
@@ -133,7 +146,7 @@ public class Mb_StatusEffectController : MonoBehaviour
     ///
     /// REAPPLICATION RULE:
     ///   If the same StatusType is already active, the duration is refreshed
-    ///   and the status modifier is replaced — no double-stacking.
+    ///   and the status modifier is replaced unless the effect is stackable.
     ///   This keeps behavior predictable when abilities hit the same target twice.
     ///
     /// If the character is already dead, the effect is silently ignored.
@@ -142,6 +155,12 @@ public class Mb_StatusEffectController : MonoBehaviour
     {
         // Never apply effects to a dead character — DoT ticks would fire on a corpse
         if (_health != null && _health.IsDead) return;
+
+        if (effect.CanStack)
+        {
+            ApplyStackableEffect(effect);
+            return;
+        }
 
         if (_activeEffects.ContainsKey(effect.Type))
         {
@@ -211,7 +230,15 @@ public class Mb_StatusEffectController : MonoBehaviour
     /// </summary>
     public void Remove(StatusType type)
     {
-        if (!_activeEffects.ContainsKey(type)) return;
+        bool removedAny = RemoveStackableEffectsOfType(type);
+
+        if (!_activeEffects.ContainsKey(type))
+        {
+            if (removedAny)
+                Debug.Log($"[Mb_StatusEffectController] {type} stacks forcibly removed from {gameObject.name}.");
+
+            return;
+        }
 
         StopEffectCoroutine(type);
         RemoveModifierForType(type);
@@ -228,7 +255,7 @@ public class Mb_StatusEffectController : MonoBehaviour
     /// </summary>
     public bool HasStatus(StatusType type)
     {
-        return _activeEffects.ContainsKey(type);
+        return _activeEffects.ContainsKey(type) || _stackedEffectTypes.ContainsValue(type);
     }
 
 
@@ -256,6 +283,26 @@ public class Mb_StatusEffectController : MonoBehaviour
         _activeEffects.Clear();
         _activeCoroutines.Clear();
         _appliedModifiers.Clear();
+
+        foreach (KeyValuePair<int, Coroutine> pair in _stackedEffectCoroutines)
+        {
+            if (pair.Value != null)
+                StopCoroutine(pair.Value);
+        }
+
+        foreach (KeyValuePair<int, Sc_Modifier> pair in _stackedEffectModifiers)
+        {
+            _statBlock?.RemoveModifier(pair.Value);
+        }
+
+        foreach (StatusType type in _stackedEffectTypes.Values)
+        {
+            OnStatusRemoved?.Invoke(type);
+        }
+
+        _stackedEffectTypes.Clear();
+        _stackedEffectCoroutines.Clear();
+        _stackedEffectModifiers.Clear();
     }
 
     #endregion                      //----------------------------------------
@@ -332,6 +379,45 @@ public class Mb_StatusEffectController : MonoBehaviour
 
 
     /// <summary>
+    /// Runs one independent instance of a stackable effect.
+    /// Used for DoTs that should allow multiple active copies on the same target.
+    /// </summary>
+    private IEnumerator StackableEffectRoutine(int instanceId, Sc_StatusEffect effect)
+    {
+        const float TICK_RESOLUTION = 0.1f;
+
+        float remaining = effect.Duration;
+        float timeSinceLastDamageTick = 0f;
+
+        while (remaining > 0f)
+        {
+            if (_isPaused)
+                yield return new WaitUntil(() => !_isPaused);
+
+            yield return new WaitForSeconds(TICK_RESOLUTION);
+
+            remaining -= TICK_RESOLUTION;
+
+            if (effect.TickInterval > 0f && effect.TickDamage > 0f)
+            {
+                timeSinceLastDamageTick += TICK_RESOLUTION;
+
+                if (timeSinceLastDamageTick >= effect.TickInterval)
+                {
+                    timeSinceLastDamageTick = 0f;
+                    ApplyDoTTick(effect.TickDamage);
+
+                    if (_health != null && _health.IsDead)
+                        break;
+                }
+            }
+        }
+
+        RemoveStackableEffectInstance(instanceId, effect.Type);
+    }
+
+
+    /// <summary>
     /// Deals one DoT tick of damage to this character.
     /// Guards against dead characters — the caller also checks IsDead, but this
     /// is a second safety net in case health changes between the check and the call.
@@ -347,6 +433,76 @@ public class Mb_StatusEffectController : MonoBehaviour
 
 
     #region Internal Helpers        //----------------------------------------
+
+    /// <summary>
+    /// Starts a new independent instance of a stackable effect.
+    /// </summary>
+    private void ApplyStackableEffect(Sc_StatusEffect effect)
+    {
+        int instanceId = _nextStackedEffectId++;
+
+        _stackedEffectTypes[instanceId] = effect.Type;
+
+        if (effect.StatModifier != null && _statBlock != null)
+        {
+            _statBlock.AddModifier(effect.StatModifier);
+            _stackedEffectModifiers[instanceId] = effect.StatModifier;
+        }
+
+        Coroutine routine = StartCoroutine(StackableEffectRoutine(instanceId, effect));
+        _stackedEffectCoroutines[instanceId] = routine;
+
+        OnStatusApplied?.Invoke(effect.Type);
+
+        Debug.Log($"[Mb_StatusEffectController] {effect.Type} stack applied to {gameObject.name} " +
+                  $"({effect.Duration}s).");
+    }
+
+
+    /// <summary>
+    /// Removes one stackable effect instance after expiry, death, or forced removal.
+    /// </summary>
+    private void RemoveStackableEffectInstance(int instanceId, StatusType type)
+    {
+        if (_stackedEffectModifiers.TryGetValue(instanceId, out Sc_Modifier modifier))
+        {
+            _statBlock?.RemoveModifier(modifier);
+            _stackedEffectModifiers.Remove(instanceId);
+        }
+
+        _stackedEffectTypes.Remove(instanceId);
+        _stackedEffectCoroutines.Remove(instanceId);
+
+        OnStatusRemoved?.Invoke(type);
+
+        Debug.Log($"[Mb_StatusEffectController] {type} stack expired on {gameObject.name}.");
+    }
+
+
+    /// <summary>
+    /// Removes all stackable instances matching the given status type.
+    /// </summary>
+    private bool RemoveStackableEffectsOfType(StatusType type)
+    {
+        List<int> idsToRemove = new List<int>();
+
+        foreach (KeyValuePair<int, StatusType> pair in _stackedEffectTypes)
+        {
+            if (pair.Value == type)
+                idsToRemove.Add(pair.Key);
+        }
+
+        foreach (int instanceId in idsToRemove)
+        {
+            if (_stackedEffectCoroutines.TryGetValue(instanceId, out Coroutine routine) && routine != null)
+                StopCoroutine(routine);
+
+            RemoveStackableEffectInstance(instanceId, type);
+        }
+
+        return idsToRemove.Count > 0;
+    }
+
 
     /// <summary>
     /// Stops the running coroutine for the given status type, if one exists.

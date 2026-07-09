@@ -9,12 +9,15 @@ using UnityEngine;
 
 public class Mb_BloomZone : MonoBehaviour
 {
+    private const float EXPIRE_DESTROY_DELAY = 1.5f;
+
     private Mb_CharacterBase _owner;
     private float _damage;
     private float _tickInterval;
     private float _slowPercent;
     private float _slowDuration;
     private float _duration;
+    private bool _isDeactivated;
 
     private readonly Dictionary<MB_CuBotBase, float> _tickTimers
         = new Dictionary<MB_CuBotBase, float>();
@@ -37,14 +40,27 @@ public class Mb_BloomZone : MonoBehaviour
         _tickInterval = tickInterval;
         _slowPercent = slowPercent;
         _slowDuration = slowDuration;
-        _duration = duration;
+        _duration = Mathf.Max(0f, duration);
+        _isDeactivated = false;
+
+        float safeRadius = Mathf.Max(0.01f, radius);
+
+        if (_owner != null)
+        {
+            transform.SetParent(_owner.transform, false);
+            transform.localPosition = Vector3.up * (safeRadius * 0.5f);
+            transform.localRotation = Quaternion.identity;
+        }
+
+        transform.localScale = Vector3.one * (safeRadius * 2f);
 
         _collider = GetComponent<SphereCollider>();
         if (_collider != null)
         {
             _collider.isTrigger = true;
-            _collider.radius = radius;
+            _collider.radius = 0.5f;
             _collider.center = Vector3.zero;
+            _collider.enabled = true;
         }
         else
         {
@@ -60,7 +76,7 @@ public class Mb_BloomZone : MonoBehaviour
 
         _visualRoot = transform.Find("BloomVisualRoot");
         if (_visualRoot != null)
-            _visualRoot.localScale = Vector3.one * (radius * 2f);
+            _visualRoot.localScale = Vector3.one;
 
         foreach (ParticleSystem ps in GetComponentsInChildren<ParticleSystem>(true))
         {
@@ -77,9 +93,10 @@ public class Mb_BloomZone : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (_isDeactivated) return;
         if (_owner != null && other.gameObject == _owner.gameObject) return;
 
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
+        MB_CuBotBase enemy = other.GetComponentInParent<MB_CuBotBase>();
         if (enemy == null) return;
         if (enemy.Health == null || enemy.Health.IsDead) return;
 
@@ -95,7 +112,7 @@ public class Mb_BloomZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
+        MB_CuBotBase enemy = other.GetComponentInParent<MB_CuBotBase>();
         if (enemy != null)
             _tickTimers.Remove(enemy);
     }
@@ -121,19 +138,17 @@ public class Mb_BloomZone : MonoBehaviour
 
     private void DeactivateZone()
     {
+        if (_isDeactivated) return;
+
+        _isDeactivated = true;
+
+        if (_collider != null)
+            _collider.enabled = false;
+
         if (_fieldVFX != null)
             _fieldVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
         _tickTimers.Clear();
-        StartCoroutine(DestroyAfterDelay(1.5f));
-    }
-
-    private IEnumerator DestroyAfterDelay(float delay)
-    {
-        if (_collider != null)
-            _collider.enabled = false;
-
-        yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
+        Destroy(gameObject, EXPIRE_DESTROY_DELAY);
     }
 }

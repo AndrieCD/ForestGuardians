@@ -61,6 +61,10 @@ public class Sc_StatusEffect
     // MUST use float.PositiveInfinity as its duration — see file header comment.
     public readonly Sc_Modifier StatModifier;
 
+    // If true, each application runs as its own independent instance instead of
+    // refreshing an existing StatusType. Keep false for slows and crowd control.
+    public readonly bool CanStack;
+
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -81,13 +85,15 @@ public class Sc_StatusEffect
         float duration,
         float tickInterval = 0f,
         float tickDamage = 0f,
-        Sc_Modifier statModifier = null)
+        Sc_Modifier statModifier = null,
+        bool canStack = false)
     {
         Type = type;
         Duration = duration;
         TickInterval = tickInterval;
         TickDamage = tickDamage;
         StatModifier = statModifier;
+        CanStack = canStack;
     }
 
 
@@ -219,7 +225,8 @@ public class Sc_StatusEffect
             duration,
             tickInterval: tickInterval,
             tickDamage: damagePerTick,
-            statModifier: null
+            statModifier: null,
+            canStack: true
         );
     }
 

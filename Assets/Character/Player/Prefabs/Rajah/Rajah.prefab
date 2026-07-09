@@ -388,7 +388,7 @@ MonoBehaviour:
   LaunchOrigin: {fileID: 5440143148272402519}
   AimLayerMask:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1
   AimRaycastDistance: 100
 --- !u!114 &-6060868747167272313
 MonoBehaviour:
@@ -414,6 +414,7 @@ MonoBehaviour:
   _RajahSkyRendShield: {fileID: 0}
   _HunterBulletProjectile: {fileID: 0}
   _TrapperTrapProjectile: {fileID: 0}
+  _TrapperProximityTrap: {fileID: 0}
   _ToxionSludgeProjectile: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
 --- !u!114 &-696240802371983792

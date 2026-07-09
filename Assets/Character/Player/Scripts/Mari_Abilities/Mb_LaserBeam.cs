@@ -44,11 +44,7 @@ public class Mb_LaserBeam : MonoBehaviour
         _tickTimer = _tickInterval;
 
         _lineRenderer = GetComponent<LineRenderer>();
-        if (_lineRenderer == null)
-        {
-            Debug.LogError("[Mb_LaserBeam] No LineRenderer found on laser prefab.");
-        }
-        else
+        if (_lineRenderer != null)
         {
             _lineRenderer.positionCount = 2;
             _lineRenderer.startWidth = _radius * 2f;

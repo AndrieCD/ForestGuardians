@@ -527,7 +527,7 @@ MonoBehaviour:
   LaunchOrigin: {fileID: 5299518965919639933}
   AimLayerMask:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1
   AimRaycastDistance: 100
 --- !u!114 &1774799198732743584
 MonoBehaviour:
