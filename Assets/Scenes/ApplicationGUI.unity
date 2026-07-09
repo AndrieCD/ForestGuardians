@@ -740,30 +740,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1640602223806040461, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1786273164084194988, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1887237212279213136, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2563782844909846700, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_Color.a
-      value: 0.39607844
-      objectReference: {fileID: 0}
-    - target: {fileID: 2563782844909846700, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4699072515958789422, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_fontSize
-      value: 51.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5087692314766438550, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -843,30 +819,6 @@ PrefabInstance:
     - target: {fileID: 5087692314766438550, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5265738890176161305, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 27.9348
-      objectReference: {fileID: 0}
-    - target: {fileID: 5265738890176161305, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 37.3094
-      objectReference: {fileID: 0}
-    - target: {fileID: 5265738890176161305, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -1.3574982
-      objectReference: {fileID: 0}
-    - target: {fileID: 5265738890176161305, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 5.6653996
-      objectReference: {fileID: 0}
-    - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: GemStage2
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: GemStage3
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: MainMenuController

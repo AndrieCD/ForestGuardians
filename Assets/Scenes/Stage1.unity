@@ -6568,6 +6568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD_Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4041607627270859877, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4347244177226938432, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -6648,6 +6652,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4778866687057195481, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2805686
+      objectReference: {fileID: 0}
+    - target: {fileID: 4778866687057195481, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 4778866687057195481, guid: f8b71b7480e541642b40ba59d0e501f3, type: 3}
+      propertyPath: m_Color.r
+      value: 0.1372549
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6688,7 +6704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 329486682757116183, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2025181218564915898, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_UiScaleMode
