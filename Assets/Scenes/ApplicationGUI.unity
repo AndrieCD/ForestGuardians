@@ -820,10 +820,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5709467491787310461, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -2.3265076
-      objectReference: {fileID: 0}
     - target: {fileID: 8600213088874868658, guid: ec3bf4eb5db21ce49a38e9a23253b691, type: 3}
       propertyPath: MainMenuController
       value: 
@@ -956,14 +952,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GuardianSelection_Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 150099786490384852, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3794999166111805486, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -30.964844
-      objectReference: {fileID: 0}
     - target: {fileID: 5106661044021233921, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1048,10 +1036,6 @@ PrefabInstance:
       propertyPath: MainMenuController
       value: 
       objectReference: {fileID: 440722313}
-    - target: {fileID: 5589839348919007732, guid: 73c3ea4b4e72bb547bb462076502557d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -11.014282
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
