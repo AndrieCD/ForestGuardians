@@ -26,10 +26,10 @@ public class Mb_PsychicSlamProjectile : MonoBehaviour
     // Travel config for this ability-owned projectile.
     [Header("Travel")]
     [Tooltip("How fast the projectile moves forward in world units per second.")]
-    [SerializeField] private float _TravelSpeed = 30f;
+    [SerializeField] private float _TravelSpeed = 40f;
 
     [Tooltip("How far the projectile travels before deactivating.")]
-    [SerializeField] private float _MaxRange = 35f;
+    [SerializeField] private float _MaxRange = 50f;
 
     // Distance traveled so far — compared against MaxRange each Update
     private float _distanceTraveled = 0f;

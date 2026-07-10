@@ -91,7 +91,7 @@ public class Mari_Q : Sc_BaseAbility
     private GameObject _spikeZonePrefab;
 
     [Header("Zone Dimensions")]
-    [SerializeField] private float _SpikeLength = 15;   // Forward extent
+    [SerializeField] private float _SpikeLength = 18;   // Forward extent
     [SerializeField] private float _SpikeWidth = 4.0f; // Lateral extent
     [SerializeField] private float _SpikeHeight = 1.75f;   // Per-tile vertical extent
 

@@ -236,7 +236,7 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
     private void UpdateMaxHealth(float newValue)
     {
         if (MaxHPText != null)
-            MaxHPText.text = newValue.ToString();
+            MaxHPText.text = Mathf.CeilToInt(newValue).ToString();
     }
 
     #endregion                  //----------------------------------------

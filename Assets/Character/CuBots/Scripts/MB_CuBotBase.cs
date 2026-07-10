@@ -18,8 +18,8 @@ public class MB_CuBotBase : Mb_CharacterBase
     [SerializeField] protected SO_CuBots _CuBotTemplate;
 
     private const float STAGE_1_STAT_MULTIPLIER = 1.00f;
-    private const float STAGE_2_STAT_MULTIPLIER = 1.40f;
-    private const float STAGE_3_STAT_MULTIPLIER = 1.75f;
+    private const float STAGE_2_STAT_MULTIPLIER = 1.25f;
+    private const float STAGE_3_STAT_MULTIPLIER = 1.3f;
 
     // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
     private bool _isInitialized = false;

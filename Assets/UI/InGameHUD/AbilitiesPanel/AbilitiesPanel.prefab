@@ -336,7 +336,7 @@ MonoBehaviour:
   PipEmptySprite: {fileID: 21300000, guid: d77cca61c174f034ab2045c4836374d2, type: 3}
   LockedIcon: {fileID: 0}
   DefaultOpacity: 0.9
-  CooldownOpacity: 0.5
+  CooldownOpacity: 0.9
   ActiveOpacity: 1
   OverlayColor: {r: 0, g: 0, b: 0, a: 0.6}
 --- !u!222 &6692893154556195875
