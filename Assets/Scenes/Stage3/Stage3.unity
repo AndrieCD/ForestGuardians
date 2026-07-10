@@ -1134,6 +1134,53 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 106682601}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &115024071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 115024072}
+  - component: {fileID: 115024073}
+  m_Layer: 0
+  m_Name: AquaticSpawnPoint (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &115024072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115024071}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.37824935, z: -0, w: 0.92570376}
+  m_LocalPosition: {x: 42.505, y: 0.678, z: 166.839}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 44.451, z: 0}
+--- !u!114 &115024073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115024071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 8
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &118780400
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3062,6 +3109,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3864763623527249289, guid: f806b7a4dea06ac41abd1fcdb33de529, type: 3}
   m_PrefabInstance: {fileID: 344727281}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &355468652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355468653}
+  - component: {fileID: 355468654}
+  m_Layer: 0
+  m_Name: AquaticSpawnPoint (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &355468653
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355468652}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9578025, z: -0, w: 0.28742722}
+  m_LocalPosition: {x: 171.098, y: 0.678, z: 93.439}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 146.592, z: 0}
+--- !u!114 &355468654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355468652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 8
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1 &361084511
 GameObject:
   m_ObjectHideFlags: 0
@@ -3919,6 +4013,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5984158860631457365, guid: 09d2bc4cc4e632f49b59b147258a95f4, type: 3}
   m_PrefabInstance: {fileID: 504434684}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &536729565
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 536729566}
+  - component: {fileID: 536729567}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &536729566
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536729565}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.999899, z: -0, w: 0.014212672}
+  m_LocalPosition: {x: 107.548, y: 13.84, z: 98.796}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 178.371, z: 0}
+--- !u!114 &536729567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536729565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &537898089
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4582,7 +4723,27 @@ MonoBehaviour:
   CurrentStageNumber: 1
   FillFraction: 0.5
   QuestSlotCount: 3
-  AllSpawnPoints: []
+  AllSpawnPoints:
+  - {fileID: 185964806}
+  - {fileID: 258245522}
+  - {fileID: 1447360550}
+  - {fileID: 1416997796}
+  - {fileID: 1210451296}
+  - {fileID: 2081080959}
+  - {fileID: 941754544}
+  - {fileID: 908049819}
+  - {fileID: 1973931286}
+  - {fileID: 642773667}
+  - {fileID: 713281180}
+  - {fileID: 1091089411}
+  - {fileID: 536729567}
+  - {fileID: 1510996547}
+  - {fileID: 1332456593}
+  - {fileID: 782888611}
+  - {fileID: 355468654}
+  - {fileID: 1017018995}
+  - {fileID: 115024073}
+  - {fileID: 974599674}
   CriticallyEndangeredWeight: 0.25
   EndangeredWeight: 0.5
   NearThreatenedWeight: 1
@@ -5516,13 +5677,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713281178}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.81, y: 28.05, z: 106.65}
+  m_LocalRotation: {x: -0, y: 0.58068144, z: -0, w: 0.81413084}
+  m_LocalPosition: {x: 73.247, y: 11.852, z: 106.628}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1573245994}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 70.997, z: 0}
 --- !u!114 &713281180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6388,7 +6549,7 @@ Transform:
   m_GameObject: {fileID: 782888609}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.16, y: 10, z: 42.21}
+  m_LocalPosition: {x: 8.16, y: 0.687, z: 105.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7359,6 +7520,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &974599672
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 974599673}
+  - component: {fileID: 974599674}
+  m_Layer: 0
+  m_Name: AquaticSpawnPoint (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &974599673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974599672}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.3003986, z: -0, w: 0.9538138}
+  m_LocalPosition: {x: 138.06, y: 0.678, z: 54.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: -34.963, z: 0}
+--- !u!114 &974599674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974599672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 8
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &994064350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8262,6 +8470,53 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014591036}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1017018993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1017018994}
+  - component: {fileID: 1017018995}
+  m_Layer: 0
+  m_Name: AquaticSpawnPoint (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1017018994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017018993}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.37824935, z: -0, w: 0.92570376}
+  m_LocalPosition: {x: 32.42, y: 0.678, z: 119.31}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 44.451, z: 0}
+--- !u!114 &1017018995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017018993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 8
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &1020933468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8523,6 +8778,53 @@ Transform:
   - {fileID: 732494581}
   m_Father: {fileID: 39684223}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1091089409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1091089410}
+  - component: {fileID: 1091089411}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1091089410
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091089409}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.999899, z: -0, w: 0.014212672}
+  m_LocalPosition: {x: 105.823, y: 12.548, z: 121.435}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 178.371, z: 0}
+--- !u!114 &1091089411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091089409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1 &1117848107
 GameObject:
   m_ObjectHideFlags: 0
@@ -9717,6 +10019,53 @@ Transform:
   - {fileID: 2078758173}
   m_Father: {fileID: 1987263823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1332456591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1332456592}
+  - component: {fileID: 1332456593}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1332456592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332456591}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.9980703, z: -0, w: -0.062095396}
+  m_LocalPosition: {x: 87.797, y: 17.438, z: 96.543}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 187.12, z: 0}
+--- !u!114 &1332456593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332456591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1 &1337060260
 GameObject:
   m_ObjectHideFlags: 0
@@ -10805,6 +11154,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1510996545
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1510996546}
+  - component: {fileID: 1510996547}
+  m_Layer: 0
+  m_Name: AerialSpawnPoint (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1510996546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510996545}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.6905418, z: -0, w: -0.72329247}
+  m_LocalPosition: {x: 102.151, y: 12.548, z: 83.002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1573245994}
+  m_LocalEulerAnglesHint: {x: 0, y: 272.654, z: 0}
+--- !u!114 &1510996547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510996545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c2460f3ea22c34cbe468a03aa05bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_WildlifeSpawnPoint
+  HabitatType: 4
+  IsOccupied: 0
+  OccupyingAnimal: {fileID: 0}
 --- !u!1001 &1513488724
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11125,7 +11521,15 @@ Transform:
   - {fileID: 1973931285}
   - {fileID: 642773666}
   - {fileID: 713281179}
+  - {fileID: 1091089410}
+  - {fileID: 536729566}
+  - {fileID: 1510996546}
+  - {fileID: 1332456592}
   - {fileID: 782888610}
+  - {fileID: 355468653}
+  - {fileID: 1017018994}
+  - {fileID: 115024072}
+  - {fileID: 974599673}
   m_Father: {fileID: 1707717534}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1583798686
