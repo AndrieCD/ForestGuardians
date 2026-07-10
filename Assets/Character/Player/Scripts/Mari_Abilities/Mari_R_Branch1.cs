@@ -256,6 +256,6 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
     {
         if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerR1Ability();
+            guardian.GuardianAnimator?.TriggerR1CastAbility();
     }
 }

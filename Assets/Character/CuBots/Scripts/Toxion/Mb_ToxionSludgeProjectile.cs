@@ -13,6 +13,7 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
     private float _zoneDuration;
     private float _zoneRadius;
     private float _tickInterval;
+    private GameObject _sludgeZonePrefab;
     private bool _hasImpacted;
 
     public void Initialize(
@@ -23,7 +24,8 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
         float zoneDuration,
         float zoneRadius,
         float tickInterval,
-        float projectileLifetime)
+        float projectileLifetime,
+        GameObject sludgeZonePrefab)
     {
         _owner = owner;
         _impactDamage = impactDamage;
@@ -32,6 +34,7 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
         _zoneDuration = zoneDuration;
         _zoneRadius = zoneRadius;
         _tickInterval = tickInterval;
+        _sludgeZonePrefab = sludgeZonePrefab;
         _hasImpacted = false;
 
         StartCoroutine(LifetimeFallback(projectileLifetime));
@@ -66,20 +69,33 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
     {
         _hasImpacted = true;
 
-        GameObject zone = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        zone.name = "Toxion Sludge Zone";
-        zone.transform.position = position + Vector3.up * 0.05f;
-        zone.transform.localScale = new Vector3(_zoneRadius * 2.0f, 0.05f, _zoneRadius * 2.0f);
+        if (_sludgeZonePrefab == null)
+        {
+            Debug.LogError("[Mb_ToxionSludgeProjectile] Cannot spawn sludge zone because no Toxion_SludgeZone prefab was assigned.");
+            Destroy(gameObject);
+            return;
+        }
 
-        Collider zoneCollider = zone.GetComponent<Collider>();
+        GameObject zone = Instantiate(_sludgeZonePrefab);
+        zone.name = "Toxion Sludge Zone";
+        zone.transform.position = position;
+        zone.transform.localScale = new Vector3(_zoneRadius * 2.0f, 0.1f, _zoneRadius * 2.0f);
+
+        Collider zoneCollider = zone.GetComponentInChildren<Collider>();
         if (zoneCollider != null)
             zoneCollider.isTrigger = true;
 
-        Rigidbody zoneBody = zone.AddComponent<Rigidbody>();
+        Rigidbody zoneBody = zone.GetComponent<Rigidbody>();
+        if (zoneBody == null)
+            zoneBody = zone.AddComponent<Rigidbody>();
+
         zoneBody.isKinematic = true;
         zoneBody.useGravity = false;
 
-        Mb_ToxionSludgeZone sludgeZone = zone.AddComponent<Mb_ToxionSludgeZone>();
+        Mb_ToxionSludgeZone sludgeZone = zone.GetComponent<Mb_ToxionSludgeZone>();
+        if (sludgeZone == null)
+            sludgeZone = zone.AddComponent<Mb_ToxionSludgeZone>();
+
         sludgeZone.Initialize(
             _sludgeDamagePerTick,
             _slowPercent,

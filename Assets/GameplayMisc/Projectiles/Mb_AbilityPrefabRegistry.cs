@@ -61,6 +61,7 @@ public enum AbilityPrefabID
     Trapper_TrapProjectile,           // Trapper's trap projectile
     Trapper_ProximityTrap,            // Trapper's ground proximity trap
     Toxion_SludgeProjectile,     // Toxion's poison cloud projectile
+    Toxion_SludgeZone,           // Toxion's poison cloud ground zone
     Luxion_BulletProjectile            // Luxion's laser projectile
 }
 
@@ -130,6 +131,9 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
     [Tooltip("Toxion's poison cloud projectile. Must have Mb_Projectile, Rigidbody, Collider.")]
     [SerializeField] private GameObject _ToxionSludgeProjectile;
 
+    [Tooltip("Toxion's poison cloud ground zone. Must have Mb_ToxionSludgeZone and a trigger Collider.")]
+    [SerializeField] private GameObject _ToxionSludgeZone;
+
     [Tooltip("Luxion's laser projectile. Must have Mb_Projectile, Rigidbody, Collider.")]
     [SerializeField] private GameObject _LuxionBulletProjectile;
 
@@ -164,6 +168,7 @@ public class Mb_AbilityPrefabRegistry : MonoBehaviour
             AbilityPrefabID.Trapper_TrapProjectile => _TrapperTrapProjectile,
             AbilityPrefabID.Trapper_ProximityTrap => _TrapperProximityTrap,
             AbilityPrefabID.Toxion_SludgeProjectile => _ToxionSludgeProjectile,
+            AbilityPrefabID.Toxion_SludgeZone => _ToxionSludgeZone,
             AbilityPrefabID.Luxion_BulletProjectile => _LuxionBulletProjectile,
 
 

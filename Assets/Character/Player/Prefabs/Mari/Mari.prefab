@@ -542,8 +542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_AbilityPrefabRegistry
   _GenericProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
-  _MariPsychicLeafProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
-  _MariPsyshockBoltProjectile: {fileID: 5890465821898768578, guid: 0d3a0240fb305d54389eaf293aa40b88, type: 3}
+  _MariPsychicLeafProjectile: {fileID: 5890465821898768578, guid: e948d4f84d1e8cf4fa5d7dfe9fc5a0d3, type: 3}
+  _MariPsyshockBoltProjectile: {fileID: 5890465821898768578, guid: 38072b71081c66746b0fa72404147e62, type: 3}
   _MariMindspikesZone: {fileID: 305272131102240570, guid: a9d4ddf90e5a2dd46967edb0ff36c916, type: 3}
   _MariPsychicSlamShockwave: {fileID: 5852090260040347908, guid: 085b472713f8b2945b6ce50fc542b172, type: 3}
   _MariBloomZone: {fileID: 5571114826960639448, guid: 35d4cd11f59324a45830b4c9a6e59957, type: 3}
@@ -783,7 +783,7 @@ Animator:
   m_GameObject: {fileID: 5928436503269838342}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 116a0ae58559e64428cb553217b70494, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

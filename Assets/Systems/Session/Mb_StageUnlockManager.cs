@@ -32,10 +32,10 @@ public class Mb_StageUnlockManager : MonoBehaviour
 
     [Header("Build Limits")]
     [Tooltip("Highest stage number currently playable in this build. " +
-             "Set to 2 while Stage 1 and Stage 2 exist — prevents Stage 3 from " +
-             "ever being unlocked even if HandleStageEnd fires. " +
-             "TODO: Raise to 3 when Stage 3 is completed.")]
-    [SerializeField] private int MaxAvailableStage = 2;
+             "Final defense demo temporarily enables Stage 1 through Stage 3.")]
+    [SerializeField] private int MaxAvailableStage = 3;
+
+    private static readonly bool DEMO_UNLOCK_ALL_STAGES = true;
 
 
     // -------------------------------------------------------------------------
@@ -85,6 +85,7 @@ public class Mb_StageUnlockManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         _saveData = Sc_StageSaveData.Load();
+        ApplyDemoUnlocks();
 
         Debug.Log($"[Mb_StageUnlockManager] Initialized. " +
                   $"S1:{_saveData.Stage1Unlocked} " +
@@ -121,6 +122,10 @@ public class Mb_StageUnlockManager : MonoBehaviour
     /// </summary>
     public bool IsUnlocked(int stageNumber)
     {
+        if (DEMO_UNLOCK_ALL_STAGES)
+            return stageNumber >= Sc_RunSession.STAGE_1
+                && stageNumber <= Sc_RunSession.TUTORIAL_STAGE;
+
         // Tutorial (stage 4) is not part of the sequential unlock chain —
         // it's always available regardless of MaxAvailableStage.
         if (stageNumber == Sc_RunSession.TUTORIAL_STAGE) return _saveData.IsUnlocked(stageNumber);
@@ -228,6 +233,24 @@ public class Mb_StageUnlockManager : MonoBehaviour
     // -------------------------------------------------------------------------
     // Debug Utility
     // -------------------------------------------------------------------------
+
+    private void ApplyDemoUnlocks()
+    {
+        if (!DEMO_UNLOCK_ALL_STAGES) return;
+
+        bool changed = !_saveData.Stage1Unlocked
+            || !_saveData.Stage2Unlocked
+            || !_saveData.Stage3Unlocked
+            || !_saveData.TutorialUnlocked;
+
+        _saveData.Stage1Unlocked = true;
+        _saveData.Stage2Unlocked = true;
+        _saveData.Stage3Unlocked = true;
+        _saveData.TutorialUnlocked = true;
+
+        if (changed)
+            Sc_StageSaveData.Save(_saveData);
+    }
 
     /// <summary>
     /// Resets all stage unlock progress. Editor/debug use only.

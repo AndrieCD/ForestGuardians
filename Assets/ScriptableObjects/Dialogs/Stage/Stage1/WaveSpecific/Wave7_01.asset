@@ -16,6 +16,6 @@ MonoBehaviour:
   SpeakerName: Diya
   DialogText: "Guardian\u2014 remember to seek out the missing animals of Talihaya.
     Just hold your gaze on them to let them know you mean no harm"
-  VoiceClip: {fileID: 8300000, guid: e859fece0a2513947933ee5b60786433, type: 3}
+  VoiceClip: {fileID: 8300000, guid: fe8256553fbd41b45ba77a8b3312d61f, type: 3}
   IsTutorialInstruction: 0
   CompletionEventKey: 

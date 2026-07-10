@@ -6,7 +6,7 @@ using UnityEngine;
 public class Sc_ToxionSludgeShot : Sc_BaseAbility
 {
     private const float AIM_HEIGHT_OFFSET = 1.0f;
-    private const float UPWARD_AIM_ANGLE = 14.0f;
+    private const float UPWARD_AIM_ANGLE = 18.0f;
     private const float PROJECTILE_SPEED = 18.0f;
     private const float PROJECTILE_LIFETIME = 4.0f;
     private const float SLUDGE_ZONE_DURATION = 3.0f;
@@ -15,6 +15,7 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
 
     private readonly System.Func<Transform> _getCurrentTarget;
     private GameObject _projectilePrefab;
+    private GameObject _sludgeZonePrefab;
 
     public Sc_ToxionSludgeShot(
         SO_Ability abilityData,
@@ -26,12 +27,16 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
 
         Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
         _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Toxion_SludgeProjectile);
+        _sludgeZonePrefab = registry?.GetPrefab(AbilityPrefabID.Toxion_SludgeZone);
 
         if (_projectilePrefab == null)
             _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Hunter_BulletProjectile);
 
         if (_projectilePrefab == null)
             _projectilePrefab = registry?.GetPrefab(AbilityPrefabID.Generic_Projectile);
+
+        if (_sludgeZonePrefab == null)
+            Debug.LogError($"[Sc_ToxionSludgeShot] Toxion_SludgeZone prefab is not assigned on {user.gameObject.name}.");
     }
 
     public override void Activate(Mb_CharacterBase user)
@@ -135,7 +140,8 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
             SLUDGE_ZONE_DURATION,
             SLUDGE_ZONE_RADIUS,
             SLUDGE_TICK_INTERVAL,
-            PROJECTILE_LIFETIME
+            PROJECTILE_LIFETIME,
+            _sludgeZonePrefab
         );
 
         projectileBody.linearVelocity = fireDirection.normalized * PROJECTILE_SPEED;
