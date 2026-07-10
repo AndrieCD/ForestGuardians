@@ -3,7 +3,17 @@ guid: 318d1d96e0f3b9e4b9878f2531a9f180
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MangroveBark1
+    second: {fileID: 2100000, guid: badd1aa78ce40734e9930748f875b9d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MangroveLeaves1
+    second: {fileID: 2100000, guid: 150c7209fc6794e4d9afb154ca9be121, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

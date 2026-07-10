@@ -126,7 +126,7 @@ public class Rajah_E_Ability : Sc_BaseAbility
         // Guard: if the aim target is behind or at the ProjectileOrigin (e.g. origin
         // is inside an obstacle), fall back to the Guardian's body forward direction.
         Vector3 toTarget = aimTarget - _Guardian.ProjectileOrigin.position;
-        Vector3 centerDir = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
+        Vector3 centerDir = Vector3.Dot(_Guardian.transform.forward, toTarget.normalized) >= Mb_ProjectileLauncher.MIN_FORWARD_AIM_DOT
             ? toTarget.normalized
             : _Guardian.transform.forward;
 
@@ -183,7 +183,12 @@ public class Rajah_E_Ability : Sc_BaseAbility
         Camera cam = Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        return Physics.Raycast(ray, out RaycastHit hit, 1000f)
+        return Physics.Raycast(
+            ray,
+            out RaycastHit hit,
+            1000f,
+            Mb_ProjectileLauncher.DefaultAimLayerMask,
+            QueryTriggerInteraction.Ignore)
             ? hit.point
             : ray.origin + ray.direction * 100f;
     }

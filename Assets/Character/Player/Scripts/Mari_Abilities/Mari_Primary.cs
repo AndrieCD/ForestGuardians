@@ -210,8 +210,10 @@ public class Mari_Primary : Sc_BaseAbility
 
         var spawnPosition = _Guardian.ProjectileOrigin.position + spawnOffset;
 
-        Vector3 fireDir =
-            (aimTarget - spawnPosition).normalized;
+        Vector3 toTarget = aimTarget - spawnPosition;
+        Vector3 fireDir = Vector3.Dot(_Guardian.transform.forward, toTarget.normalized) >= Mb_ProjectileLauncher.MIN_FORWARD_AIM_DOT
+            ? toTarget.normalized
+            : _Guardian.transform.forward;
 
         Mb_Projectile projectile = _launcher.FireToward(_projectilePrefab,
             _projectileData,
@@ -247,7 +249,12 @@ public class Mari_Primary : Sc_BaseAbility
         Camera cam = Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        return Physics.Raycast(ray, out RaycastHit hit, 1000f)
+        return Physics.Raycast(
+            ray,
+            out RaycastHit hit,
+            1000f,
+            Mb_ProjectileLauncher.DefaultAimLayerMask,
+            QueryTriggerInteraction.Ignore)
             ? hit.point
             : ray.origin + ray.direction * 100f;
     }

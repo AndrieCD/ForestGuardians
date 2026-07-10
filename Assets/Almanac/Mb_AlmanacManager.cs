@@ -31,6 +31,8 @@ using UnityEngine;
 
 public class Mb_AlmanacManager : MonoBehaviour
 {
+    private const int DEBUG_FILL_COMPLETION_COUNT = 5;
+
     // -------------------------------------------------------------------------
     // Singleton
     // -------------------------------------------------------------------------
@@ -219,7 +221,8 @@ public class Mb_AlmanacManager : MonoBehaviour
 
 
     /// <summary>
-    /// Unlocks every configured almanac entry once. Admin/demo use only.
+    /// Unlocks every configured almanac entry with debug repeat completion stacks.
+    /// Admin/demo use only.
     /// </summary>
     public void FillAllEntriesForDebug()
     {
@@ -231,7 +234,7 @@ public class Mb_AlmanacManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(entry.CommonName)) continue;
 
             _saveData.UnlockedEntries.Add(entry.CommonName);
-            _saveData.SetCount(entry.CommonName, 1);
+            _saveData.SetCount(entry.CommonName, DEBUG_FILL_COMPLETION_COUNT);
         }
 
         Sc_AlmanacSaveData.Save(_saveData);
@@ -242,7 +245,8 @@ public class Mb_AlmanacManager : MonoBehaviour
         OnAlmanacProgressChanged?.Invoke();
 
         Debug.Log($"[Mb_AlmanacManager] Debug filled almanac. " +
-                  $"Unlocked entries: {_saveData.UnlockedEntries.Count}/{AllEntries.Count}");
+                  $"Unlocked entries: {_saveData.UnlockedEntries.Count}/{AllEntries.Count}, " +
+                  $"completion count per entry: {DEBUG_FILL_COMPLETION_COUNT}");
     }
 
 

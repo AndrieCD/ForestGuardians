@@ -331,15 +331,17 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        int aimMask = (1 << LayerMask.NameToLayer("Default")) |
-                      (1 << LayerMask.NameToLayer("Character"));
-
-        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit, 1000f, aimMask)
+        Vector3 targetPoint = Physics.Raycast(
+            ray,
+            out RaycastHit hit,
+            1000f,
+            Mb_ProjectileLauncher.DefaultAimLayerMask,
+            QueryTriggerInteraction.Ignore)
             ? hit.point
             : ray.origin + ray.direction * 100f;
 
         Vector3 toTarget = targetPoint - origin;
-        direction = Vector3.Dot(_Guardian.transform.forward, toTarget) > 0f
+        direction = Vector3.Dot(_Guardian.transform.forward, toTarget.normalized) >= Mb_ProjectileLauncher.MIN_FORWARD_AIM_DOT
             ? toTarget.normalized
             : _Guardian.transform.forward;
 

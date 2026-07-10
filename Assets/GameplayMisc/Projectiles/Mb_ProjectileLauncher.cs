@@ -47,6 +47,8 @@ using UnityEngine;
 
 public class Mb_ProjectileLauncher : MonoBehaviour
 {
+    public const float MIN_FORWARD_AIM_DOT = 0.25f;
+
     #region Inspector Fields    //----------------------------------------
 
     [Header("Spawn Point")]
@@ -75,6 +77,16 @@ public class Mb_ProjectileLauncher : MonoBehaviour
     #endregion                  //----------------------------------------
 
 
+    public static int DefaultAimLayerMask
+    {
+        get
+        {
+            int defaultLayer = LayerMask.NameToLayer("Default");
+            return defaultLayer >= 0 ? 1 << defaultLayer : Physics.DefaultRaycastLayers;
+        }
+    }
+
+
     #region Unity Lifecycle     //----------------------------------------
 
     private void Awake()
@@ -93,6 +105,13 @@ public class Mb_ProjectileLauncher : MonoBehaviour
             LaunchOrigin = transform;
             Debug.LogWarning($"[Mb_ProjectileLauncher] No LaunchOrigin assigned on " +
                              $"{gameObject.name}. Falling back to root transform.");
+        }
+
+        if (AimLayerMask.value != DefaultAimLayerMask)
+        {
+            Debug.LogWarning($"[Mb_ProjectileLauncher] AimLayerMask on {gameObject.name} " +
+                             $"was not Default-only. Forcing Default-only projectile aim.");
+            AimLayerMask = DefaultAimLayerMask;
         }
     }
 
@@ -186,7 +205,7 @@ public class Mb_ProjectileLauncher : MonoBehaviour
                 );
 
                 Vector3 aimTarget = Physics.Raycast(aimRay, out RaycastHit hit,
-                    AimRaycastDistance, AimLayerMask)
+                    AimRaycastDistance, DefaultAimLayerMask, QueryTriggerInteraction.Ignore)
                     ? hit.point
                     : aimRay.GetPoint(AimRaycastDistance);
 
@@ -301,7 +320,7 @@ public class Mb_ProjectileLauncher : MonoBehaviour
         // Using _guardianBase.transform.forward rather than LaunchOrigin.forward
         // because the Guardian's body always faces the intended fire direction —
         // LaunchOrigin may be a child Transform with a different local rotation.
-        if (Vector3.Dot(_guardianBase.transform.forward, direction) <= 0f)
+        if (Vector3.Dot(_guardianBase.transform.forward, direction.normalized) < MIN_FORWARD_AIM_DOT)
             return _guardianBase.transform.forward;
 
         return direction.normalized;

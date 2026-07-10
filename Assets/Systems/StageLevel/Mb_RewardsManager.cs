@@ -61,6 +61,7 @@ public class Mb_RewardsManager : MonoBehaviour
     private Mb_AugmentManager _augmentManager;
     private Mb_AbilityController _abilityController;
     private Mb_GuardianBase _guardian;
+    private Mb_HealthComponent _playerHealth;
 
     private HashSet<SO_Augment> _offeredAugments = new HashSet<SO_Augment>();
     private bool _branchSelected = false;
@@ -74,6 +75,8 @@ public class Mb_RewardsManager : MonoBehaviour
     // Flipped to true when the player (or auto-select) makes a choice —
     // stops the timer coroutine from applying a reward a second time
     private bool _choiceMade = false;
+    private bool _rewardUntargetableApplied = false;
+    private bool _previousPlayerUntargetable = false;
 
     #endregion                      //----------------------------------------
 
@@ -111,6 +114,8 @@ public class Mb_RewardsManager : MonoBehaviour
     {
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
         Mb_GuardianBase.OnActiveGuardianChanged -= BindGuardian;
+
+        RestorePlayerTargetability();
     }
 
     #endregion                      //----------------------------------------
@@ -176,6 +181,7 @@ public class Mb_RewardsManager : MonoBehaviour
         }
 
         _choiceMade = false;
+        ApplyRewardsUntargetable();
 
         // Subscribe to the panel's fade-complete event before showing —
         // this is how we know when to clean up game state
@@ -198,6 +204,7 @@ public class Mb_RewardsManager : MonoBehaviour
     {
         _RewardsPanelUI.OnPanelFadeComplete -= HandlePanelFadeComplete;
 
+        RestorePlayerTargetability();
         OnRewardsPanelClosed?.Invoke();
         GameManager.Instance.ChangeState(GameState.Playing);
     }
@@ -215,6 +222,7 @@ public class Mb_RewardsManager : MonoBehaviour
         _RewardsPanelUI.OnPanelFadeComplete -= HandlePanelFadeComplete;
         _RewardsPanelUI.Hide();
 
+        RestorePlayerTargetability();
         OnRewardsPanelClosed?.Invoke();
         GameManager.Instance.ChangeState(GameState.Playing);
     }
@@ -470,10 +478,47 @@ public class Mb_RewardsManager : MonoBehaviour
 
     private void BindGuardian(Mb_GuardianBase guardian)
     {
+        bool shouldReapplyUntargetable = _rewardUntargetableApplied;
+
+        if (_rewardUntargetableApplied && _playerHealth != null)
+            RestorePlayerTargetability();
+
         _guardian = guardian;
         _abilityController = guardian != null
             ? guardian.GetComponent<Mb_AbilityController>()
             : null;
+        _playerHealth = guardian != null
+            ? guardian.GetComponent<Mb_HealthComponent>()
+            : null;
+
+        if (shouldReapplyUntargetable)
+            ApplyRewardsUntargetable();
+    }
+
+    private void ApplyRewardsUntargetable()
+    {
+        if (_playerHealth == null)
+        {
+            Debug.LogWarning("[Mb_RewardsManager] Cannot make player untargetable during rewards because no Mb_HealthComponent is bound.");
+            return;
+        }
+
+        if (_rewardUntargetableApplied) return;
+
+        _previousPlayerUntargetable = _playerHealth.IsUntargetable;
+        _playerHealth.IsUntargetable = true;
+        _rewardUntargetableApplied = true;
+    }
+
+    private void RestorePlayerTargetability()
+    {
+        if (!_rewardUntargetableApplied) return;
+
+        if (_playerHealth != null)
+            _playerHealth.IsUntargetable = _previousPlayerUntargetable;
+
+        _rewardUntargetableApplied = false;
+        _previousPlayerUntargetable = false;
     }
 
     #endregion                      //----------------------------------------

@@ -15,6 +15,4 @@ MonoBehaviour:
   enemyDataList:
   - enemyType: {fileID: 4105497819398190046, guid: d8936ec8db4e35e458166d614725d1e0, type: 3}
     count: 6
-  - enemyType: {fileID: 4105497819398190046, guid: 2d2c3f8783ba5a244837e02d65fd7bec, type: 3}
-    count: 1
   WaveReward: 2

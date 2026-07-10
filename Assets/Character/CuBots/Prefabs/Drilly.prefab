@@ -725,9 +725,9 @@ MonoBehaviour:
   AggroRetryCooldown: 2
   _VisualRoot: {fileID: 7189528384571188290}
   _BurrowedVisualYOffset: -0.4
-  _WindupDuration: 0.75
-  _LaunchDuration: 0.35
-  _ImpactRadius: 1.5
+  _WindupDuration: 0.7
+  _LaunchDuration: 0.5
+  _ImpactRadius: 1.7
 --- !u!1 &6813430728635059545
 GameObject:
   m_ObjectHideFlags: 0
@@ -997,15 +997,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 242d994ca10104f4e82129661b643462, type: 2}
     - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.0695
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2.0695
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.0695
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1046,6 +1046,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 0ca3808da6ec6674c83db97ace4db129, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

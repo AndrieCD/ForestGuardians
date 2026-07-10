@@ -240,20 +240,19 @@ public class Mari_E : Sc_BaseAbility
         }
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        int layerMask = ~(1 << LayerMask.NameToLayer("Character"));
 
         Vector3 aimTarget = Physics.Raycast(
             ray,
             out RaycastHit hit,
             _AimRaycastDistance,
-            layerMask,
+            Mb_ProjectileLauncher.DefaultAimLayerMask,
             QueryTriggerInteraction.Ignore)
             ? hit.point
             : ray.GetPoint(_AimRaycastDistance);
 
         Vector3 direction = aimTarget - spawnPosition;
 
-        if (Vector3.Dot(user.transform.forward, direction) <= 0f)
+        if (Vector3.Dot(user.transform.forward, direction.normalized) < Mb_ProjectileLauncher.MIN_FORWARD_AIM_DOT)
             return user.transform.forward;
 
         if (direction.sqrMagnitude <= 0.001f)

@@ -32,8 +32,12 @@ public class Mb_ToxionController : Mb_CuBotController
     {
         if (_BasicCuBotAnimator == null) return;
 
-        float normalizedSpeed = _CuBotTemplate.MoveSpeed > 0f
-            ? _Agent.velocity.magnitude / _CuBotTemplate.MoveSpeed
+        float moveSpeed = Stats != null && Stats.MoveSpeed != null
+            ? Stats.MoveSpeed.GetValue()
+            : _CuBotTemplate.MoveSpeed;
+
+        float normalizedSpeed = moveSpeed > 0f
+            ? _Agent.velocity.magnitude / moveSpeed
             : _Agent.velocity.magnitude;
 
         _BasicCuBotAnimator.SetSpeed(normalizedSpeed);

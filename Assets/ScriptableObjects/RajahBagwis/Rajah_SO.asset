@@ -19,7 +19,7 @@ MonoBehaviour:
   ModelPrefab: {fileID: 0}
   GuardianArchetype1: Melee Duelist
   GuardianArchetype2: Ranged Sharpshooter
-  MaxHealth: 500
+  MaxHealth: 800
   HealthRegen: 5
   MoveSpeed: 7
   AttackSpeed: 1

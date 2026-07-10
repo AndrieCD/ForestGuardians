@@ -100,7 +100,18 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void BuildFromTemplate(SO_CuBots template)
     {
-        MaxHealth = new Sc_Stat(template.MaxHealth, template.MaxHealthScaling);
+        BuildFromTemplate(template, 1f);
+    }
+
+    /// <summary>
+    /// Builds CuBot stats from ScriptableObject base values with a stage combat multiplier.
+    /// Use this during pool reset so reused enemies start from clean base stats.
+    /// </summary>
+    public void BuildFromTemplate(SO_CuBots template, float baseStatMultiplier)
+    {
+        baseStatMultiplier = Mathf.Max(0f, baseStatMultiplier);
+
+        MaxHealth = new Sc_Stat(template.MaxHealth * baseStatMultiplier, template.MaxHealthScaling);
         HealthRegen = new Sc_Stat(template.HealthRegen, template.HealthRegenScaling);
         MoveSpeed = new Sc_Stat(
             template.MoveSpeed,
@@ -113,8 +124,8 @@ public class Mb_StatBlock : MonoBehaviour
             template.AttackSpeedScaling,
             useStrongestNegativePercentOnly: true
         );
-        AttackPower = new Sc_Stat(template.AttackPower, template.AttackPowerScaling);
-        AbilityPower = new Sc_Stat(template.AbilityPower, template.AbilityPowerScaling);
+        AttackPower = new Sc_Stat(template.AttackPower * baseStatMultiplier, template.AttackPowerScaling);
+        AbilityPower = new Sc_Stat(template.AbilityPower * baseStatMultiplier, template.AbilityPowerScaling);
         Haste = new Sc_Stat(template.Haste, template.HasteScaling);
         CriticalChance = new Sc_Stat(template.CriticalChance, template.CriticalChanceScaling);
         CriticalDamage = new Sc_Stat(template.CriticalDamage, template.CriticalDamageScaling);

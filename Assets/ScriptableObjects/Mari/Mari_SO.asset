@@ -19,7 +19,7 @@ MonoBehaviour:
   ModelPrefab: {fileID: 0}
   GuardianArchetype1: 
   GuardianArchetype2: 
-  MaxHealth: 400
+  MaxHealth: 700
   HealthRegen: 3
   MoveSpeed: 6
   AttackSpeed: 1

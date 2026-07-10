@@ -73,7 +73,14 @@ public class Mb_BernieController : Mb_CuBotController
 
         // Drive locomotion blend — speed normalised against move speed stat
         // so the blend tree threshold of 1.0 = full run regardless of actual speed value
-        float normalizedSpeed = _Agent.velocity.magnitude / _CuBotTemplate.MoveSpeed;
+        float moveSpeed = Stats != null && Stats.MoveSpeed != null
+            ? Stats.MoveSpeed.GetValue()
+            : _CuBotTemplate.MoveSpeed;
+
+        float normalizedSpeed = moveSpeed > 0f
+            ? _Agent.velocity.magnitude / moveSpeed
+            : _Agent.velocity.magnitude;
+
         _BasicCuBotAnimator.SetSpeed(normalizedSpeed);
 
         // TODO: Trigger fire cone animation once Bernie's Animator Controller is set up.

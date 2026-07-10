@@ -13,7 +13,8 @@
 //
 //   COMBAT:
 //     Increments wave index, fires OnWaveStart, spawns all CuBots with configurable
-//     delays. Waits until all active enemies are dead, then transitions to Resolution.
+//     delays. Waits until all planned spawns are complete and all active enemies
+//     are dead, then transitions to Resolution.
 //
 //   RESOLUTION:
 //     Fires OnWaveResolution so TopBar can display "WAVE X COMPLETE".
@@ -121,8 +122,11 @@ public class Mb_WaveManager : MonoBehaviour
     // All CuBots currently alive this wave — removed on death
     private List<GameObject> _activeEnemies = new List<GameObject>();
 
-    // Set true while enemies are alive — guards EndWave from firing twice
+    // Set true while combat is active — guards EndWave from firing twice
     private bool _isWaveActive = false;
+
+    // Set true after the full wave spawn plan completes.
+    private bool _waveSpawningComplete = false;
 
     private const float SPAWN_NAVMESH_SAMPLE_RADIUS = 5.0f;
 
@@ -212,16 +216,17 @@ public class Mb_WaveManager : MonoBehaviour
         // Advance to the next wave
         CurrentWaveIndex++;
         _isWaveActive = true;
+        _waveSpawningComplete = false;
         _activeEnemies.Clear();
 
         OnWaveStart?.Invoke(CurrentWaveIndex);
 
         yield return StartCoroutine(SpawnWaveRoutine());
 
-        // Spawning is done — now just wait for all enemies to die.
-        // HandleCuBotDeath calls EndWave() which transitions to Resolution.
-        // If enemies were already all dead before spawning finished (edge case
-        // on very small waves), EndWave checks _isWaveActive so it's safe.
+        // Spawning is done. If all spawned enemies died before the final spawn
+        // delay finished, the wave can now safely transition to Resolution.
+        _waveSpawningComplete = true;
+        TryEndWave();
     }
 
 
@@ -297,11 +302,21 @@ public class Mb_WaveManager : MonoBehaviour
 
     private void HandleCuBotDeath(GameObject deadEnemy)
     {
-        _activeEnemies.Remove(deadEnemy);
+        if (!_activeEnemies.Remove(deadEnemy)) return;
+
         Debug.Log($"[Mb_WaveManager] CuBot died. Remaining: {_activeEnemies.Count}");
 
-        if (_activeEnemies.Count == 0 && _isWaveActive)
-            EndWave();
+        TryEndWave();
+    }
+
+
+    private void TryEndWave()
+    {
+        if (!_isWaveActive) return;
+        if (!_waveSpawningComplete) return;
+        if (_activeEnemies.Count > 0) return;
+
+        EndWave();
     }
 
 
@@ -332,6 +347,7 @@ public class Mb_WaveManager : MonoBehaviour
 
         // Clear the active enemy list so EndWave() doesn't re-trigger on a stale count
         _activeEnemies.Clear();
+        _waveSpawningComplete = true;
         EndWave();
     }
 

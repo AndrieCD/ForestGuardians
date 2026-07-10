@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Drilly_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Drilly
-  AttackRange: 3
+  AttackRange: 4
   MaxHealth: 50
   HealthRegen: 0
-  MoveSpeed: 8
+  MoveSpeed: 9
   AttackSpeed: 0
-  AttackPower: 120
+  AttackPower: 150
   AbilityPower: 0
   Haste: 0
   CriticalChance: 0

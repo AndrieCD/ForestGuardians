@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Base class for all CuBot enemy types.
@@ -15,6 +16,10 @@ public class MB_CuBotBase : Mb_CharacterBase
 {
     [Header("CuBot Template")]
     [SerializeField] protected SO_CuBots _CuBotTemplate;
+
+    private const float STAGE_1_STAT_MULTIPLIER = 1.00f;
+    private const float STAGE_2_STAT_MULTIPLIER = 1.40f;
+    private const float STAGE_3_STAT_MULTIPLIER = 1.75f;
 
     // Tracks whether Awake has completed so OnEnable knows if it's safe to Reset()
     private bool _isInitialized = false;
@@ -57,7 +62,7 @@ public class MB_CuBotBase : Mb_CharacterBase
         _CharacterName = _CuBotTemplate.CharacterName;
 
         Stats.RemoveAllModifiers();
-        Stats.BuildFromTemplate(_CuBotTemplate);
+        Stats.BuildFromTemplate(_CuBotTemplate, GetCurrentStageStatMultiplier());
 
         // Resolve player level before initializing health so MaxHealth is
         // fully scaled before Health.Initialize() snapshots it as CurrentHealth.
@@ -93,6 +98,45 @@ public class MB_CuBotBase : Mb_CharacterBase
 
 
     protected virtual void AssignAbilities() { }
+
+
+    private float GetCurrentStageStatMultiplier()
+    {
+        return GetStageStatMultiplier(GetCurrentStageNumber());
+    }
+
+
+    private static float GetStageStatMultiplier(int stageNumber)
+    {
+        return stageNumber switch
+        {
+            Sc_RunSession.STAGE_2 => STAGE_2_STAT_MULTIPLIER,
+            Sc_RunSession.STAGE_3 => STAGE_3_STAT_MULTIPLIER,
+            _ => STAGE_1_STAT_MULTIPLIER
+        };
+    }
+
+
+    private static int GetCurrentStageNumber()
+    {
+        int selectedStageNumber = Sc_RunSession.SelectedStageNumber;
+
+        if (selectedStageNumber >= Sc_RunSession.STAGE_1 &&
+            selectedStageNumber <= Sc_RunSession.STAGE_3)
+        {
+            return selectedStageNumber;
+        }
+
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        if (sceneName.Contains("Stage3", StringComparison.OrdinalIgnoreCase))
+            return Sc_RunSession.STAGE_3;
+
+        if (sceneName.Contains("Stage2", StringComparison.OrdinalIgnoreCase))
+            return Sc_RunSession.STAGE_2;
+
+        return Sc_RunSession.STAGE_1;
+    }
 
 
     protected virtual void Reset()
