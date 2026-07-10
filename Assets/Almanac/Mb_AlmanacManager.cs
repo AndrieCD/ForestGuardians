@@ -31,7 +31,7 @@ using UnityEngine;
 
 public class Mb_AlmanacManager : MonoBehaviour
 {
-    private const int DEBUG_FILL_COMPLETION_COUNT = 5;
+    private const int DEBUG_FILL_COMPLETION_COUNT = 10;
 
     // -------------------------------------------------------------------------
     // Singleton
