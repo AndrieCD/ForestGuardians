@@ -319,7 +319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2517176067206500985
 RectTransform:
   m_ObjectHideFlags: 0
@@ -685,7 +685,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 692620683098194099}
         m_TargetAssemblyTypeName: Mb_DefeatScreenUI, Assembly-CSharp
-        m_MethodName: OnMainMenuClicked
+        m_MethodName: OnPlayAgainClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -1,19 +1,4 @@
 ﻿// Mb_TutorialGateManager.cs
-// Manages progressive action unlocking during the tutorial stage.
-// Lives on the Stage GameObject alongside Mb_StageManager.
-//
-// HOW IT WORKS:
-//   - On stage start, ALL player actions are disabled via ActionDisableFlags.
-//   - Each gate follows this strict order:
-//       1. Enable the action(s) for this gate
-//       2. Enqueue the dialog sequence for this gate
-//       3. Wait for dialog to fully finish
-//       4. THEN arm the listener for the player action
-//   - This prevents the player from accidentally advancing a gate by
-//     performing an action during the dialog before the instruction line plays.
-//   - Once all pre-wave gates clear, HoldWaves is set to false on Mb_WaveManager
-//     so the wave system takes over naturally.
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,11 +8,7 @@ public class Mb_TutorialGateManager : MonoBehaviour
     #region Inspector Fields        //----------------------------------------
 
     [Header("References")]
-    [Tooltip("Drag the Guardian (Player) GameObject here.")]
-    [SerializeField] private GameObject _PlayerObject;
-
-    [Tooltip("Drag the Mb_WaveManager component here. " +
-             "HoldWaves will be released when all pre-wave gates complete.")]
+    [Tooltip("Drag the Mb_WaveManager component here.")]
     [SerializeField] private Mb_WaveManager _WaveManager;
 
     [Header("Dialog Sequences — Gates")]
@@ -37,8 +18,9 @@ public class Mb_TutorialGateManager : MonoBehaviour
     [SerializeField] private SO_DialogSequence AttackSequence;
     [SerializeField] private SO_DialogSequence AbilitySequence;
     [SerializeField] private SO_DialogSequence WaveReadySequence;
+
     [Tooltip("Diya explains the Almanac and Wildlife Discovery. " +
-         "Plays after all waves clear, before the closing sequence.")]
+             "Plays after all waves clear, before the closing sequence.")]
     [SerializeField] private SO_DialogSequence WildlifeSequence;
     [SerializeField] private SO_DialogSequence ClosingSequence;
 
@@ -48,30 +30,31 @@ public class Mb_TutorialGateManager : MonoBehaviour
     private List<SO_DialogSequence> PostRewardSequences
         = new List<SO_DialogSequence>();
 
+    [Header("Wave 4 Practice")]
+    [Tooltip("How long the player practices with the 3 dummies before closing dialog plays.")]
+    [SerializeField] private float Wave4PracticeDuration = 30f;
+
     #endregion                      //----------------------------------------
 
 
     #region Private State           //----------------------------------------
 
+    // Resolved dynamically via OnActiveGuardianChanged — not an Inspector field
     private Mb_PlayerController _playerController;
 
-    // Which gate we are currently on — for logging and safety checks
     private int _currentGate = 0;
 
-    // Armed by each gate AFTER dialog finishes.
-    // The relevant event handler checks this before doing anything.
     private bool _listeningForJump = false;
     private bool _listeningForPrimary = false;
     private bool _listeningForAbility = false;
 
-    // Tracks waves cleared for PostRewardSequences indexing
     private int _wavesCleared = 0;
-
-    // True once pre-wave gates are all done
     private bool _combatGatesActive = false;
-
-    // True once closing sequence has been triggered
     private bool _closingStarted = false;
+
+    // Gate sequence coroutine is started on stage start but needs the
+    // guardian to be bound first — this flag lets us re-check on bind
+    private bool _gateSequenceStarted = false;
 
     #endregion                      //----------------------------------------
 
@@ -80,32 +63,32 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
     private void Awake()
     {
-        if (_PlayerObject != null)
-            _playerController = _PlayerObject.GetComponent<Mb_PlayerController>();
-
-        if (_playerController == null)
-            Debug.LogError("[Mb_TutorialGateManager] Could not find Mb_PlayerController " +
-                           "on PlayerObject.");
-
         if (_WaveManager == null)
-            Debug.LogError("[Mb_TutorialGateManager] WaveManager is not assigned. " +
-                           "Drag the Mb_WaveManager component into the Inspector.");
+            Debug.LogError("[Mb_TutorialGateManager] WaveManager is not assigned.");
     }
 
 
     private void OnEnable()
     {
+        Mb_GuardianBase.OnActiveGuardianChanged += HandleActiveGuardianChanged;
         Mb_StageManager.OnStageStart += HandleStageStart;
+        Mb_WaveManager.OnWaveStart += HandleWaveStart;
         Mb_WaveManager.OnWaveEnd += HandleWaveEnd;
         Mb_Movement.OnLanded += HandlePlayerLanded;
         Mb_AbilityController.OnAnyAbilityActivated += HandleAbilityActivated;
         Mb_RewardsManager.OnRewardsPanelClosed += HandleRewardsPanelClosed;
+
+        // Bind immediately if a guardian is already active when this enables
+        if (Mb_GuardianBase.CurrentGuardian != null)
+            BindGuardian(Mb_GuardianBase.CurrentGuardian);
     }
 
 
     private void OnDisable()
     {
+        Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
         Mb_StageManager.OnStageStart -= HandleStageStart;
+        Mb_WaveManager.OnWaveStart -= HandleWaveStart;
         Mb_WaveManager.OnWaveEnd -= HandleWaveEnd;
         Mb_Movement.OnLanded -= HandlePlayerLanded;
         Mb_AbilityController.OnAnyAbilityActivated -= HandleAbilityActivated;
@@ -115,46 +98,77 @@ public class Mb_TutorialGateManager : MonoBehaviour
     #endregion                      //----------------------------------------
 
 
+    #region Guardian Binding        //----------------------------------------
+
+    private void HandleActiveGuardianChanged(Mb_GuardianBase guardian)
+    {
+        BindGuardian(guardian);
+    }
+
+
+    private void BindGuardian(Mb_GuardianBase guardian)
+    {
+        _playerController = null;
+
+        if (guardian == null)
+        {
+            Debug.LogWarning("[Mb_TutorialGateManager] BindGuardian called with null guardian.");
+            return;
+        }
+
+        _playerController = guardian.GetComponent<Mb_PlayerController>();
+
+        if (_playerController == null)
+            Debug.LogError($"[Mb_TutorialGateManager] No Mb_PlayerController found on " +
+                           $"{guardian.gameObject.name}.");
+        else
+            Debug.Log($"[Mb_TutorialGateManager] Guardian bound: {guardian.gameObject.name}");
+    }
+
+    #endregion                      //----------------------------------------
+
+
     #region Gate Sequence           //----------------------------------------
 
     private void HandleStageStart()
     {
-        // Lock everything — player watches intro frozen
+        // If guardian isn't bound yet, wait — OnActiveGuardianChanged will
+        // fire shortly after and _playerController will be set.
+        // We start the coroutine regardless; SetAllActionsDisabled guards against null.
         SetAllActionsDisabled(true);
         _currentGate = 0;
+        _gateSequenceStarted = true;
         StartCoroutine(RunGateSequence());
     }
 
 
-    // Master coroutine that runs all pre-wave gates in strict order.
-    // Each gate waits for dialog to finish BEFORE arming its listener.
     private IEnumerator RunGateSequence()
     {
+        // Wait until guardian is bound before proceeding —
+        // stage start may fire before OnActiveGuardianChanged in some load orders
+        yield return new WaitUntil(() => _playerController != null);
 
+        // Re-apply disable flags now that we have the controller
+        SetAllActionsDisabled(true);
 
         // ── Gate 0: Intro ──────────────────────────────────────────────────
-        // All actions disabled. Diya speaks. Auto-advances when dialog ends.
         _currentGate = 0;
         yield return StartCoroutine(PlaySequenceAndWait(IntroSequence));
 
         // ── Gate 1: Movement ───────────────────────────────────────────────
-        // Enable movement and rotation. Dudong explains WASD. Auto-advances.
         _currentGate = 1;
         _playerController?.RemoveDisable(ActionDisableFlags.Movement);
         _playerController?.RemoveDisable(ActionDisableFlags.Rotation);
         yield return StartCoroutine(PlaySequenceAndWait(MovementSequence));
 
         // ── Gate 2: Jump ───────────────────────────────────────────────────
-        // Enable jump. Dudong explains. Dialog finishes. THEN we listen.
         _currentGate = 2;
         _playerController?.RemoveDisable(ActionDisableFlags.Jump);
         yield return StartCoroutine(PlaySequenceAndWait(JumpSequence));
-        // Dialog is done — now arm the listener
         _listeningForJump = true;
         yield return new WaitUntil(() => !_listeningForJump);
 
         // ── Gate 3: Basic Attacks ──────────────────────────────────────────
-        // Enable primary and secondary. Dudong explains. Dialog finishes. THEN listen.
         _currentGate = 3;
         _playerController?.RemoveDisable(ActionDisableFlags.PrimaryAttack);
         _playerController?.RemoveDisable(ActionDisableFlags.SecondaryAttack);
@@ -163,22 +177,19 @@ public class Mb_TutorialGateManager : MonoBehaviour
         yield return new WaitUntil(() => !_listeningForPrimary);
 
         // ── Gate 4: Abilities ──────────────────────────────────────────────
-        // Enable Q and E. Dudong explains. Dialog finishes. THEN listen.
         _currentGate = 4;
         _playerController?.RemoveDisable(ActionDisableFlags.AbilityQ);
         _playerController?.RemoveDisable(ActionDisableFlags.AbilityE);
+        _playerController?.RemoveDisable(ActionDisableFlags.Dash);
         yield return StartCoroutine(PlaySequenceAndWait(AbilitySequence));
         _listeningForAbility = true;
         yield return new WaitUntil(() => !_listeningForAbility);
 
         // ── Gate 5: Wave Ready ─────────────────────────────────────────────
-        // All actions unlocked. Dudong says waves are coming.
-        // Release HoldWaves so Mb_WaveManager starts its preparation countdown.
         _currentGate = 5;
         SetAllActionsDisabled(false);
         yield return StartCoroutine(PlaySequenceAndWait(WaveReadySequence));
 
-        // Release wave manager — it takes over from here
         _combatGatesActive = true;
         if (_WaveManager != null)
             _WaveManager.HoldWaves = false;
@@ -188,8 +199,6 @@ public class Mb_TutorialGateManager : MonoBehaviour
     }
 
 
-    // Plays a dialog sequence and polls until it finishes.
-    // Safe to call with a null sequence — just returns immediately.
     private IEnumerator PlaySequenceAndWait(SO_DialogSequence sequence)
     {
         Debug.Log($"[Mb_TutorialGateManager] Playing Gate {_currentGate} sequence: " +
@@ -200,8 +209,6 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
         Mb_DialogManager.Instance.EnqueueSequence(sequence);
 
-        // Brief buffer so IsDialogActive has time to become true
-        // before we start polling
         yield return new WaitForSeconds(0.3f);
 
         while (Mb_DialogManager.Instance.IsDialogActive)
@@ -215,11 +222,7 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
     private void HandlePlayerLanded()
     {
-        Debug.Log($"[Mb_TutorialGateManager] Player landed. " +
-                  $"Listening for jump: {_listeningForJump}");
-        // Only respond if Gate 2 has armed this listener
         if (!_listeningForJump) return;
-
         _listeningForJump = false;
         Debug.Log("[Mb_TutorialGateManager] Gate 2 complete — player jumped.");
     }
@@ -227,10 +230,6 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
     private void HandleAbilityActivated(string slotName)
     {
-        Debug.Log($"[Mb_TutorialGateManager] Player activated ability in slot {slotName}. " +
-                  $"Listening for primary: {_listeningForPrimary}, " +
-                  $"Listening for ability: {_listeningForAbility}");
-        // Gate 3 — waiting for primary attack
         if (_listeningForPrimary && slotName == "Primary")
         {
             _listeningForPrimary = false;
@@ -238,12 +237,23 @@ public class Mb_TutorialGateManager : MonoBehaviour
             return;
         }
 
-        // Gate 4 — waiting for Q or E
         if (_listeningForAbility && (slotName == "Q" || slotName == "E"))
         {
             _listeningForAbility = false;
             Debug.Log("[Mb_TutorialGateManager] Gate 4 complete — player used ability.");
         }
+    }
+
+
+    private void HandleWaveStart(int waveIndex)
+    {
+        // Wave 4 (index 3) ends on a timer, not on kills,
+        // because the practice dummies revive indefinitely
+        if (waveIndex != 3) return;
+        if (!_combatGatesActive) return;
+
+        Debug.Log("[TutorialGate] Wave 4 started — beginning practice timer.");
+        StartCoroutine(Wave4PracticeTimer());
     }
 
 
@@ -254,12 +264,8 @@ public class Mb_TutorialGateManager : MonoBehaviour
 
         _wavesCleared++;
 
-        // Wave 4 (index 3) is the last — trigger closing sequence
-        if (completedWaveIndex >= 3)
-        {
-            _closingStarted = true;
-            StartCoroutine(PlayClosingAndEndStage());
-        }
+        Debug.Log($"[TutorialGate] HandleWaveEnd fired — index={completedWaveIndex}, " +
+                  $"_wavesCleared={_wavesCleared}");
     }
 
 
@@ -267,10 +273,9 @@ public class Mb_TutorialGateManager : MonoBehaviour
     {
         if (!_combatGatesActive) return;
 
-        // _wavesCleared is incremented in HandleWaveEnd which fires before
-        // the panel opens, so at this point it correctly reflects which
-        // reward just closed (1 = ability upgrade, 2 = augment, 3 = ult branch)
         int rewardIndex = _wavesCleared - 1;
+
+        Debug.Log($"[TutorialGate] RewardsPanelClosed — rewardIndex={rewardIndex}");
 
         if (rewardIndex >= 0
             && rewardIndex < PostRewardSequences.Count
@@ -283,25 +288,34 @@ public class Mb_TutorialGateManager : MonoBehaviour
     }
 
 
-    private IEnumerator PlayClosingAndEndStage()
+    private IEnumerator Wave4PracticeTimer()
     {
-        // Hold victory until both wildlife and closing sequences finish
+        yield return new WaitForSeconds(Wave4PracticeDuration);
+
+        if (_closingStarted) yield break;
+        _closingStarted = true;
+
+        // Set synchronously before ForceEndCurrentWave so ResolutionRoutine
+        // cannot race past the HoldFinalResolution check
         if (_WaveManager != null)
             _WaveManager.HoldFinalResolution = true;
 
-        // Short pause so the last wave's resolution feels clean
+        _WaveManager?.ForceEndCurrentWave();
+
+        StartCoroutine(PlayClosingAndEndStage());
+    }
+
+
+    private IEnumerator PlayClosingAndEndStage()
+    {
         yield return new WaitForSeconds(1.5f);
 
-        // Diya speaks about the Almanac and wildlife
         yield return StartCoroutine(PlaySequenceAndWait(WildlifeSequence));
 
-        // Brief breath between Diya's wildlife lines and the closing
         yield return new WaitForSeconds(0.5f);
 
-        // Dudong and Diya closing
         yield return StartCoroutine(PlaySequenceAndWait(ClosingSequence));
 
-        // All dialog done — release victory
         if (_WaveManager != null)
             _WaveManager.HoldFinalResolution = false;
     }

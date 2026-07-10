@@ -152,6 +152,28 @@ public class Mb_DefeatScreenUI : Mb_EndScreenUI
     #region Button Handler              //----------------------------------------
 
     /// <summary>
+    /// Called by the Play Again button's OnClick event (wire in Inspector).
+    /// Reloads the current stage without clearing Sc_RunSession so the selected
+    /// Guardian and stage are reused for the retry.
+    /// </summary>
+    public void OnPlayAgainClicked()
+    {
+        Time.timeScale = 1f;
+
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.ReloadCurrentScene();
+            return;
+        }
+
+        Debug.LogWarning("[Mb_DefeatScreenUI] SceneLoader.Instance is missing. " +
+                         "Reloading the current scene directly.");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.Instance.ChangeState(GameState.LoadingStage);
+    }
+
+
+    /// <summary>
     /// Called by the Main Menu button's OnClick event (wire in Inspector).
     /// Resets timeScale as a safety measure before the scene transition — covers
     /// any edge case where it wasn't fully restored upstream.

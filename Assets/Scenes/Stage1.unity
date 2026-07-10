@@ -4889,10 +4889,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: VictoryScreenCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4682771139423572835, guid: a2845d733158c5a449f7262ad3386a97, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7873027204557874192, guid: a2845d733158c5a449f7262ad3386a97, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -5558,10 +5554,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DefeatScreenCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4533394058575447176, guid: 8860fae3f5eb43c4288c2fd701ebf928, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5711,7 +5703,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 329486682757116183, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2025181218564915898, guid: f5724451a1deb25409d4be457caedc98, type: 3}
       propertyPath: m_UiScaleMode
