@@ -29,7 +29,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &398177231451683535
 Transform:
   m_ObjectHideFlags: 0
@@ -268,6 +268,7 @@ MonoBehaviour:
   _TrapperTrapProjectile: {fileID: 531380711534864579, guid: 6d34d79d84b11d842bff77b294927fbb, type: 3}
   _TrapperProximityTrap: {fileID: 7564555947421969700, guid: 8623b7cc0ff727b4a8435d1be8da8263, type: 3}
   _ToxionSludgeProjectile: {fileID: 0}
+  _ToxionSludgeZone: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
 --- !u!114 &1041942127668783433
 MonoBehaviour:

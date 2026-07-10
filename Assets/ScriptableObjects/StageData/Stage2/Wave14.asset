@@ -13,16 +13,14 @@ MonoBehaviour:
   m_Name: Wave14
   m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
   enemyDataList:
-  - enemyType: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-    count: 1
-  - enemyType: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
+  - enemyType: {fileID: 4105497819398190046, guid: 2d2c3f8783ba5a244837e02d65fd7bec, type: 3}
     count: 2
   - enemyType: {fileID: 862477864045349106, guid: d9b91bb275af7a7408a5e1c8afe8056c, type: 3}
-    count: 5
-  - enemyType: {fileID: 1513359888028754751, guid: 72bf7665af43ec64eabd89e6aca317bb, type: 3}
-    count: 3
-  - enemyType: {fileID: 862477864045349106, guid: d9b91bb275af7a7408a5e1c8afe8056c, type: 3}
-    count: 5
-  - enemyType: {fileID: 1513359888028754751, guid: 72bf7665af43ec64eabd89e6aca317bb, type: 3}
-    count: 3
+    count: 8
+  - enemyType: {fileID: 862477864045349106, guid: 7aa311498f322954f8fe8255fdd92b35, type: 3}
+    count: 4
+  - enemyType: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
+    count: 1
+  - enemyType: {fileID: 8080076912440207996, guid: 85745457f4e004e499d13ba0f8b0c030, type: 3}
+    count: 1
   WaveReward: 0

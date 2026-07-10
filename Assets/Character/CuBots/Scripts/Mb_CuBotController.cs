@@ -245,6 +245,13 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         if (_CurrentTarget == null || _Agent == null) return;
         if (!EnsureAgentOnNavMesh()) return;
 
+        if (ShouldHoldMovement)
+        {
+            _Agent.isStopped = true;
+            _Agent.ResetPath();
+            return;
+        }
+
         float attackRange = _CuBotTemplate != null ? _CuBotTemplate.AttackRange : 2f;
 
         Vector3 targetPoint = GetTargetPoint();
@@ -303,6 +310,8 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
     protected abstract void OnInAttackRange();
     protected abstract void UpdateAnimator();
+
+    protected virtual bool ShouldHoldMovement => false;
 
     protected virtual bool RequiresLineOfSightToAttack => false;
 

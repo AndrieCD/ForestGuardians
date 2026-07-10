@@ -58,8 +58,11 @@ public class Mb_DrillyController : Mb_CuBotController
         if (_CurrentTarget != null)
             transform.LookAt(_CurrentTarget);
 
-        if (_Agent != null)
+        if (_Agent != null && _Agent.enabled && _Agent.isOnNavMesh)
+        {
             _Agent.isStopped = true;
+            _Agent.ResetPath();
+        }
 
         TryUsePrimaryAttack();
     }
@@ -76,6 +79,8 @@ public class Mb_DrillyController : Mb_CuBotController
         _hasTriggeredAttack = false;
         SetBurrowedState(true);
     }
+
+    protected override bool ShouldHoldMovement => _hasTriggeredAttack;
 
     private void SurfaceForAttack()
     {

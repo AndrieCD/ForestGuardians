@@ -4778,7 +4778,7 @@ MonoBehaviour:
   SawyerPoolSize: 10
   TrapperPrefab: {fileID: 862477864045349106, guid: e86b6e78a0d60a549a8575be2464f879, type: 3}
   TrapperPoolSize: 10
-  DrillyPrefab: {fileID: 0}
+  DrillyPrefab: {fileID: 4105497819398190046, guid: 2d2c3f8783ba5a244837e02d65fd7bec, type: 3}
   DrillyPoolSize: 10
   ShovyPrefab: {fileID: 862477864045349106, guid: 7aa311498f322954f8fe8255fdd92b35, type: 3}
   ShovyPoolSize: 10

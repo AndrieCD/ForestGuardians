@@ -4289,7 +4289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0539ec5296a3b534d98295c897624e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_RewardsManager
-  _StageData: {fileID: 11400000, guid: 3ed55b01fc84b6f46bb11d788070e11a, type: 2}
+  _StageData: {fileID: 11400000, guid: 72e0c6af506041eab62e2039ba8734fd, type: 2}
   RewardsTimeLimit: 10
   _AugmentPool:
   - {fileID: 11400000, guid: d9c0bdc4dcbd25b4ab515ecf05ba7e7f, type: 2}
@@ -4316,7 +4316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd1dd28dc80b384297541f765add6bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _CurrentStageData: {fileID: 11400000, guid: 3ed55b01fc84b6f46bb11d788070e11a, type: 2}
+  _CurrentStageData: {fileID: 11400000, guid: 72e0c6af506041eab62e2039ba8734fd, type: 2}
 --- !u!114 &572119143
 MonoBehaviour:
   m_ObjectHideFlags: 0

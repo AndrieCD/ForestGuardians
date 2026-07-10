@@ -32,7 +32,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: a04b1134c95806b488a5396702713472, type: 3}
+        m_Texture: {fileID: 2800000, guid: a7a879e7fdedb404b9b236e4518898af, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -116,7 +116,7 @@ Material:
     - _Outline: 1
     - _OutlineDepthOffset: 0.002
     - _OutlineEdgeSoftness: 0.18
-    - _OutlineWidth: 0.08
+    - _OutlineWidth: 0.02
     - _Parallax: 0.02
     - _PosterizeSteps: 6
     - _PosterizeStrength: 0.12
