@@ -802,7 +802,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_PlayerFloatingTextManager
   AnchorZone: {fileID: 302478296032530541}
-  PlayerObject: {fileID: 0}
   FloatingTextPrefab: {fileID: 7168061999458785390, guid: f03e881cbbd888645bf559c532c4abd7, type: 3}
   InitialPoolSize: 10
   FloatSpeed: 80
@@ -1146,7 +1145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 758863763a9d9724aa217cd57e4a3cce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_StatsDisplayUI
-  GuardianObject: {fileID: 0}
   ATKText: {fileID: 2017175276829112437}
   APText: {fileID: 7987658700185965076}
   CRIText: {fileID: 3698717745268416466}
@@ -2427,7 +2425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5488643102192021128, guid: 5d2703e2c9780e344b9189b86e16e130, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8432129487801211452, guid: 5d2703e2c9780e344b9189b86e16e130, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2686,8 +2684,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4066102581181281709, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 15.2569
+      objectReference: {fileID: 0}
+    - target: {fileID: 4066102581181281709, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 116.194626
+      objectReference: {fileID: 0}
+    - target: {fileID: 4066102581181281709, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 30.273
+      value: 18.300064
       objectReference: {fileID: 0}
     - target: {fileID: 4661395602774596015, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2701,6 +2707,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a26aa3529bbac56488e652667ac12d71, type: 3}
+    - target: {fileID: 6328902102517309271, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 15.2569
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328902102517309271, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -110.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328902102517309271, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 18.3
+      objectReference: {fileID: 0}
     - target: {fileID: 7928121721287979150, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2708,6 +2726,18 @@ PrefabInstance:
     - target: {fileID: 9046236653606069887, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -0.46865845
+      objectReference: {fileID: 0}
+    - target: {fileID: 9208055919363215382, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 15.2569
+      objectReference: {fileID: 0}
+    - target: {fileID: 9208055919363215382, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.9501953
+      objectReference: {fileID: 0}
+    - target: {fileID: 9208055919363215382, guid: 4675acbe760594f41bf077e9cbff27b8, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 18.299973
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
