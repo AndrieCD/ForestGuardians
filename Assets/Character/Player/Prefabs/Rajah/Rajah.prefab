@@ -352,10 +352,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e65da45eaf7dbf4dad10a88cbac2b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_FootstepVFXEmitter
-  _GroundStepVFX: 57
-  _WaterStepVFX: 56
-  _JumpVFX: 58
-  _LandVFX: 59
+  _GroundStepVFX: 7020
+  _WaterStepVFX: 7010
+  _JumpVFX: 7100
+  _LandVFX: 7110
   _JumpLandHeightOffset: 0.1
   _BaseStepInterval: 0.4
   _SurfaceCheckDistance: 1.2
@@ -416,6 +416,7 @@ MonoBehaviour:
   _TrapperTrapProjectile: {fileID: 0}
   _TrapperProximityTrap: {fileID: 0}
   _ToxionSludgeProjectile: {fileID: 0}
+  _ToxionSludgeZone: {fileID: 0}
   _LuxionBulletProjectile: {fileID: 0}
 --- !u!114 &-696240802371983792
 MonoBehaviour:
@@ -492,8 +493,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: -10
-  far clip plane: 5
+  near clip plane: -5
+  far clip plane: 20
   field of view: 80
   orthographic: 1
   orthographic size: 60

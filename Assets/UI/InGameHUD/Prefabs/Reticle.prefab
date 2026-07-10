@@ -420,7 +420,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd63e10d75e76c24485532b00953271b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_ReticleUI
-  GuardianObject: {fileID: 0}
   ReticleImage: {fileID: 1751329521282462078}
   LMBIcon: {fileID: 21992868016297487}
   RMBIcon: {fileID: 1441430638263251848}

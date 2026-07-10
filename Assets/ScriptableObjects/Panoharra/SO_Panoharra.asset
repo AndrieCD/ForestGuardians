@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Panoharra
   CharacterName: Panoharra
   MaxHealth: 20000
-  HealthRegen: 5
+  HealthRegen: 20

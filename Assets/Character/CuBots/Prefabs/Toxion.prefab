@@ -825,7 +825,7 @@ GameObject:
   - component: {fileID: 6633434328982023468}
   - component: {fileID: 6889407734765485266}
   - component: {fileID: 7938228709008176023}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: MinimapIcon (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
