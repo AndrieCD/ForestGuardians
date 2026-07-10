@@ -2199,6 +2199,18 @@ PrefabInstance:
       propertyPath: PanoharraWarningColor.r
       value: 0.7433963
       objectReference: {fileID: 0}
+    - target: {fileID: 5347731369007555014, guid: d2884fc6766c57748a0a02fd312f2734, type: 3}
+      propertyPath: m_fontSize
+      value: 16.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347731369007555014, guid: d2884fc6766c57748a0a02fd312f2734, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 19.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347731369007555014, guid: d2884fc6766c57748a0a02fd312f2734, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 16.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6480397266395674603, guid: d2884fc6766c57748a0a02fd312f2734, type: 3}
       propertyPath: m_Name
       value: Topbar
