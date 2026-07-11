@@ -100,6 +100,9 @@ public class Mari_R_Branch2 : Sc_BaseAbility
     // VFX on Mari — located by name in OnEquip
     private ParticleSystem _chargeVFX;
     private ParticleSystem _eyeGlowVFX;
+    private Mb_HealthComponent _health;
+    private Mb_PlayerController _activeController;
+    private Mb_LaserBeam _activeLaser;
 
     // Handle to the running laser coroutine so we can cancel on unequip
     private Coroutine _laserRoutine;
@@ -119,6 +122,8 @@ public class Mari_R_Branch2 : Sc_BaseAbility
 
     public override void OnEquip(Mb_CharacterBase user)
     {
+        _health = user.GetComponent<Mb_HealthComponent>();
+
         Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
         _laserPrefab = registry?.GetPrefab(AbilityPrefabID.Mari_LaserBeam);
 
@@ -151,6 +156,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         {
             user.StopCoroutine(_laserRoutine);
             _laserRoutine = null;
+            CleanupLaserUltimate(user);
         }
 
         _eyeGlowVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -289,11 +295,15 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         );
 
         // Lock input for the laser duration
-        var controller = user as Mb_PlayerController;
-        controller?.AddDisable(
+        _activeController = user as Mb_PlayerController;
+        _activeLaser = laser;
+
+        _activeController?.AddDisable(
             ActionDisableFlags.AllAbilities |
             ActionDisableFlags.AllAttacks
         );
+
+        SetInvulnerable(true);
 
         // Charge VFX — glasses-off moment
         _chargeVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -306,7 +316,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         TriggerAbilityAnimation(user);
 
         _laserRoutine = user.StartCoroutine(
-            LaserRoutine(user, controller, laser)
+            LaserRoutine(user, laser)
         );
 
         StartCooldown(user, GetAbilityCooldown(user));
@@ -319,7 +329,6 @@ public class Mari_R_Branch2 : Sc_BaseAbility
 
     private IEnumerator LaserRoutine(
         Mb_CharacterBase user,
-        Mb_PlayerController controller,
         Mb_LaserBeam laser)
     {
         float elapsed = 0f;
@@ -335,22 +344,39 @@ public class Mari_R_Branch2 : Sc_BaseAbility
             yield return null;
         }
 
-        // --- Cleanup ---
-        laser.Deactivate();
+        CleanupLaserUltimate(user);
 
-        controller?.RemoveDisable(
+        _laserRoutine = null;
+
+        Debug.Log("[Mind Unbound] Laser ended.");
+    }
+
+
+    private void CleanupLaserUltimate(Mb_CharacterBase user)
+    {
+        _activeLaser?.Deactivate();
+        _activeLaser = null;
+
+        _activeController?.RemoveDisable(
             ActionDisableFlags.AllAbilities |
             ActionDisableFlags.AllAttacks
         );
+        _activeController = null;
+
+        SetInvulnerable(false);
 
         _eyeGlowVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         if (user is Mb_GuardianBase guardian)
             guardian.GuardianAnimator?.EndR2Ability();
+    }
 
-        _laserRoutine = null;
 
-        Debug.Log("[Mind Unbound] Laser ended.");
+    private void SetInvulnerable(bool state)
+    {
+        if (_health == null) return;
+
+        _health.IsInvulnerable = state;
     }
 
 

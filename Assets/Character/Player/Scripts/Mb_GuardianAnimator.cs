@@ -24,8 +24,6 @@
 /// </summary>
 public class Mb_GuardianAnimator : MonoBehaviour
 {
-    private const float R1_CAST_BOOL_RESET_DELAY = 0.15f;
-
     // -------------------------------------------------------------------------
     // Animator Parameter Hashes
     // Using hashed integers instead of raw strings — faster and typo-proof.
@@ -84,8 +82,6 @@ public class Mb_GuardianAnimator : MonoBehaviour
 
     private bool _lastPrimaryWasFirst = false;
     private bool _lastSecondaryWasFirst = false;
-
-    private Coroutine _r1CastResetRoutine;
 
     private Mb_HealthComponent _health;
 
@@ -202,29 +198,8 @@ public class Mb_GuardianAnimator : MonoBehaviour
         _Animator.SetBool(_R1AbilityHash, true);
     }
 
-    /// <summary>Plays the R Branch 1 animation as a one-shot cast.</summary>
-    public void TriggerR1CastAbility()
-    {
-        Debug.Log("Triggering R1 cast animation.");
-        _Animator.SetBool(_R1AbilityHash, true);
-
-        if (_r1CastResetRoutine != null)
-            StopCoroutine(_r1CastResetRoutine);
-
-        _r1CastResetRoutine = StartCoroutine(ResetR1CastBoolAfterDelay());
-    }
-
     /// <summary>Disables the R Branch 1 animation state.</summary>
-    public void EndR1Ability()
-    {
-        if (_r1CastResetRoutine != null)
-        {
-            StopCoroutine(_r1CastResetRoutine);
-            _r1CastResetRoutine = null;
-        }
-
-        _Animator.SetBool(_R1AbilityHash, false);
-    }
+    public void EndR1Ability() => _Animator.SetBool(_R1AbilityHash, false);
 
     /// <summary>Enables the R Branch 2 animation state.</summary>
     public void TriggerR2Ability()
@@ -240,15 +215,6 @@ public class Mb_GuardianAnimator : MonoBehaviour
         _Animator.SetBool(_R2AbilityHash, false);
     }
     #endregion                      //----------------------------------------
-
-
-    private System.Collections.IEnumerator ResetR1CastBoolAfterDelay()
-    {
-        yield return new WaitForSeconds(R1_CAST_BOOL_RESET_DELAY);
-
-        _Animator.SetBool(_R1AbilityHash, false);
-        _r1CastResetRoutine = null;
-    }
 
 
     // -------------------------------------------------------------------------

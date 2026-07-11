@@ -42,7 +42,7 @@ public class Mb_DrillyController : Mb_CuBotController
             _CuBotTemplate.PrimaryAttack,
             this,
             getCurrentTarget: () => _CurrentTarget,
-            onSurface: SurfaceForAttack,
+            onSurface: BeginAttackVulnerableState,
             windupDuration: _WindupDuration,
             launchDuration: _LaunchDuration,
             impactRadius: _ImpactRadius
@@ -82,7 +82,7 @@ public class Mb_DrillyController : Mb_CuBotController
 
     protected override bool ShouldHoldMovement => _hasTriggeredAttack;
 
-    private void SurfaceForAttack()
+    private void BeginAttackVulnerableState()
     {
         SetBurrowedState(false);
     }

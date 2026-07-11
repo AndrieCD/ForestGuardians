@@ -141,7 +141,7 @@ Material:
     - _LightTint: {r: 1, g: 1, b: 1, a: 1}
     - _LineColor: {r: 0, g: 0, b: 0, a: 1}
     - _LineDirection: {r: 1, g: 1, b: 0, a: 0}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 1, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
     - _ShadowTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

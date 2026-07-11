@@ -40,6 +40,7 @@
 //   Assign prefab to Mari_R_Branch1.BloomZonePrefab in the Inspector.
 
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Mari_R_Branch1 : Sc_BaseAbility
@@ -79,6 +80,9 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
     // Cast burst VFX on Mari — located by name in OnEquip
     private ParticleSystem _castVFX;
+    private Mb_HealthComponent _health;
+    private Coroutine _bloomRoutine;
+    private Mb_PlayerController _activeController;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -94,6 +98,8 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
     public override void OnEquip(Mb_CharacterBase user)
     {
+        _health = user.GetComponent<Mb_HealthComponent>();
+
         Mb_AbilityPrefabRegistry registry = user.GetComponent<Mb_AbilityPrefabRegistry>();
         _bloomZonePrefab = registry?.GetPrefab(AbilityPrefabID.Mari_BloomZone);
 
@@ -122,6 +128,13 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     public override void OnUnequip(Mb_CharacterBase user)
     {
         Mari_Primary.OnPrimaryHit -= HandlePrimaryHit;
+
+        if (_bloomRoutine != null)
+        {
+            user.StopCoroutine(_bloomRoutine);
+            _bloomRoutine = null;
+            CleanupUltimate(user);
+        }
 
         Debug.Log("[Psychic Bloom] Unequipped.");
     }
@@ -243,9 +256,52 @@ public class Mari_R_Branch1 : Sc_BaseAbility
         _castVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         _castVFX?.Play();
 
+        _activeController = user as Mb_PlayerController;
+
         TriggerAbilityAnimation(user);
 
+        _bloomRoutine = user.StartCoroutine(BloomRoutine(user));
+
         StartCooldown(user, GetAbilityCooldown(user));
+    }
+
+
+    private IEnumerator BloomRoutine(Mb_CharacterBase user)
+    {
+        SetInvulnerable(true);
+
+        _activeController?.AddDisable(
+            ActionDisableFlags.AllAbilities |
+            ActionDisableFlags.AllAttacks
+        );
+
+        yield return new WaitForSeconds(_FieldDuration);
+
+        CleanupUltimate(user);
+        _bloomRoutine = null;
+    }
+
+
+    private void CleanupUltimate(Mb_CharacterBase user)
+    {
+        SetInvulnerable(false);
+
+        _activeController?.RemoveDisable(
+            ActionDisableFlags.AllAbilities |
+            ActionDisableFlags.AllAttacks
+        );
+        _activeController = null;
+
+        if (user is Mb_GuardianBase guardian)
+            guardian.GuardianAnimator?.EndR1Ability();
+    }
+
+
+    private void SetInvulnerable(bool state)
+    {
+        if (_health == null) return;
+
+        _health.IsInvulnerable = state;
     }
 
 
@@ -256,6 +312,6 @@ public class Mari_R_Branch1 : Sc_BaseAbility
     protected override void TriggerAbilityAnimation(Mb_CharacterBase user)
     {
         if (user is Mb_GuardianBase guardian)
-            guardian.GuardianAnimator?.TriggerR1CastAbility();
+            guardian.GuardianAnimator?.TriggerR1Ability();
     }
 }

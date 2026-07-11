@@ -61,6 +61,9 @@ public class Mb_AbilitySlotUI : MonoBehaviour
     private float _defaultOpacity;
     private float _cooldownOpacity;
     private float _activeOpacity;
+    private float _readyPulseScale = 1.12f;
+    private float _readyPulseDuration = 0.65f;
+    private Vector3 _baseIconScale = Vector3.one;
 
     // Cooldown tracking
     private bool _isOnCooldown = false;
@@ -70,6 +73,9 @@ public class Mb_AbilitySlotUI : MonoBehaviour
 
     // Activation flash coroutine handle
     private Coroutine _flashCoroutine;
+
+    // Ready scale coroutine handle
+    private Coroutine _readyScaleCoroutine;
 
     #endregion                  //----------------------------------------
 
@@ -100,20 +106,31 @@ public class Mb_AbilitySlotUI : MonoBehaviour
     Sprite pipFilled,
     Sprite pipEmpty,
     float defaultOpacity,
+    float cooldownOpacity,
+    float activeOpacity,
     Color overlayColor,
+    float readyPulseScale,
+    float readyPulseDuration,
     bool showPips = true)   // ← add this
     {
+        StopActivationFlash();
+        StopReadyScale();
+
         _pipFilledSprite = pipFilled;
         _pipEmptySprite = pipEmpty;
         _defaultOpacity = defaultOpacity;
-        _cooldownOpacity = 0.50f;
-        _activeOpacity = 1.00f;
+        _cooldownOpacity = cooldownOpacity;
+        _activeOpacity = activeOpacity;
+        _readyPulseScale = Mathf.Max(1f, readyPulseScale);
+        _readyPulseDuration = Mathf.Max(0.01f, readyPulseDuration);
 
         if (SlotIcon != null)
         {
+            _baseIconScale = SlotIcon.rectTransform.localScale;
             SlotIcon.sprite = icon;
             SlotIcon.enabled = icon != null;
             SetOpacity(SlotIcon, _defaultOpacity);
+            SetIconScale(_baseIconScale);
         }
 
         if (CooldownOverlay != null)
@@ -139,6 +156,8 @@ public class Mb_AbilitySlotUI : MonoBehaviour
         _cooldownTotal = 0f;
         _cooldownRemaining = 0f;
         _prevCooldownValue = 0f;
+
+        TriggerReadyScale();
     }
 
 
@@ -148,14 +167,19 @@ public class Mb_AbilitySlotUI : MonoBehaviour
     /// </summary>
     public void ShowLocked(Sprite lockedIcon, Color overlayColor)
     {
+        StopActivationFlash();
+        StopReadyScale();
+
         if (SlotIcon != null)
         {
+            _baseIconScale = SlotIcon.rectTransform.localScale;
             SlotIcon.sprite = lockedIcon;
             SlotIcon.enabled = lockedIcon != null;
 
             // Locked state uses a dimmed opacity so it reads as unavailable
             // TODO: Tune this value — 0.4 is visibly greyed out without being invisible.
             SetOpacity(SlotIcon, 0.4f);
+            SetIconScale(_baseIconScale);
         }
 
         if (CooldownOverlay != null)
@@ -177,34 +201,37 @@ public class Mb_AbilitySlotUI : MonoBehaviour
     /// </summary>
     public void HandleCooldownChanged(float remaining)
     {
-        _cooldownRemaining = remaining;
+        float clampedRemaining = Mathf.Max(0f, remaining);
+        _cooldownRemaining = clampedRemaining;
 
         // Detect cooldown start — same pattern as Mb_ReticleUI
-        if (remaining > _prevCooldownValue + 0.05f)
+        if (clampedRemaining > 0f && clampedRemaining > _prevCooldownValue + 0.05f)
         {
-            _cooldownTotal = remaining;
+            _cooldownTotal = clampedRemaining;
             _isOnCooldown = true;
 
+            StopReadyScale();
             SetOpacity(SlotIcon, _cooldownOpacity);
 
             // Brief activation flash before settling into cooldown opacity
-            if (_flashCoroutine != null)
-                StopCoroutine(_flashCoroutine);
+            StopActivationFlash();
             _flashCoroutine = StartCoroutine(ActivationFlashRoutine());
         }
 
         // Cooldown finished
-        if (remaining <= 0f && _isOnCooldown)
+        if (clampedRemaining <= 0f && _isOnCooldown)
         {
             _isOnCooldown = false;
+            StopActivationFlash();
 
             if (CooldownOverlay != null)
                 CooldownOverlay.fillAmount = 0f;
 
             SetOpacity(SlotIcon, _defaultOpacity);
+            TriggerReadyScale();
         }
 
-        _prevCooldownValue = remaining;
+        _prevCooldownValue = clampedRemaining;
     }
 
 
@@ -298,9 +325,37 @@ public class Mb_AbilitySlotUI : MonoBehaviour
         // TODO: Tune flash hold — 0.1s is a quick pulse; raise to 0.2 for more visibility.
         yield return new WaitForSeconds(0.10f);
 
-        // Settle to cooldown opacity (ability is now on cooldown)
-        SetOpacity(SlotIcon, _cooldownOpacity);
+        SetOpacity(SlotIcon, _isOnCooldown ? _cooldownOpacity : _defaultOpacity);
         _flashCoroutine = null;
+    }
+
+
+    private IEnumerator ReadyScaleRoutine()
+    {
+        while (!_isOnCooldown)
+        {
+            yield return ScaleIconRoutine(_baseIconScale, _baseIconScale * _readyPulseScale, _readyPulseDuration);
+            yield return ScaleIconRoutine(_baseIconScale * _readyPulseScale, _baseIconScale, _readyPulseDuration);
+        }
+
+        SetIconScale(_baseIconScale);
+        _readyScaleCoroutine = null;
+    }
+
+
+    private IEnumerator ScaleIconRoutine(Vector3 fromScale, Vector3 toScale, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            SetIconScale(Vector3.Lerp(fromScale, toScale, EaseInOutSine(t)));
+            yield return null;
+        }
+
+        SetIconScale(toScale);
     }
 
     #endregion                  //----------------------------------------
@@ -308,12 +363,55 @@ public class Mb_AbilitySlotUI : MonoBehaviour
 
     #region Helpers             //----------------------------------------
 
+    private void StopActivationFlash()
+    {
+        if (_flashCoroutine == null) return;
+
+        StopCoroutine(_flashCoroutine);
+        _flashCoroutine = null;
+    }
+
+
+    private void TriggerReadyScale()
+    {
+        if (SlotIcon == null || _readyScaleCoroutine != null)
+            return;
+
+        _readyScaleCoroutine = StartCoroutine(ReadyScaleRoutine());
+    }
+
+
+    private void StopReadyScale()
+    {
+        if (_readyScaleCoroutine == null) return;
+
+        StopCoroutine(_readyScaleCoroutine);
+        _readyScaleCoroutine = null;
+
+        if (SlotIcon != null)
+            SetIconScale(_baseIconScale);
+    }
+
     private void SetOpacity(Image image, float alpha)
     {
         if (image == null) return;
         Color c = image.color;
         c.a = alpha;
         image.color = c;
+    }
+
+
+    private void SetIconScale(Vector3 scale)
+    {
+        if (SlotIcon == null) return;
+
+        SlotIcon.rectTransform.localScale = scale;
+    }
+
+
+    private float EaseInOutSine(float t)
+    {
+        return -(Mathf.Cos(Mathf.PI * t) - 1f) * 0.5f;
     }
 
     #endregion                  //----------------------------------------

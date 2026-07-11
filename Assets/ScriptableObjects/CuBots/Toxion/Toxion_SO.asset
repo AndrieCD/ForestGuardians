@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Toxion_SO
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Toxion
-  AttackRange: 20
-  MaxHealth: 400
+  AttackRange: 25
+  MaxHealth: 500
   HealthRegen: 0
   MoveSpeed: 4
-  AttackSpeed: 1.7
+  AttackSpeed: 1.5
   AttackPower: 200
   AbilityPower: 50
   Haste: 15

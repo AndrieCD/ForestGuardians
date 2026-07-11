@@ -27,6 +27,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     public float CurrentHealth { get; private set; }
     private List<Sc_ShieldInstance> _shields = new List<Sc_ShieldInstance>();
     public bool IsUntargetable = false;
+    public bool IsInvulnerable = false;
     public float CurrentShield
     {
         get
@@ -145,7 +146,7 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
     {
         if (IsDead) return;
         if (PlayerGodModeEnabled && gameObject.CompareTag("Player")) return;
-        if (IsUntargetable) return;
+        if (IsUntargetable || IsInvulnerable) return;
 
         float remainingDamage = AbsorbWithShields(amount);
 

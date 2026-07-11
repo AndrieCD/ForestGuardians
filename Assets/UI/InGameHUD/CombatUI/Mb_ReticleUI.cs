@@ -498,6 +498,30 @@ public class Mb_ReticleUI : MonoBehaviour
             Debug.Log($"[Mb_ReticleUI] Secondary ability fetched: " +
                       $"{(_secondaryAbility != null ? _secondaryAbility.GetType().Name : "NULL")}");
         }
+
+        // Push the current Guardian's icons onto the LMB/RMB Images.
+        // Without this, the icons stay whatever was set in the Inspector regardless
+        // of which Guardian is actually active (e.g. Rajah's icon showing for Mari).
+        ApplyAbilityIcon(LMBIcon, _primaryAbility);
+        ApplyAbilityIcon(RMBIcon, _secondaryAbility);
+    }
+
+    private void ApplyAbilityIcon(Image icon, Sc_BaseAbility ability)
+    {
+        if (icon == null) return;
+
+        Sprite sprite = ability?.GetAbilityData()?.Icon;
+
+        if (sprite == null)
+        {
+            Debug.LogWarning("[Mb_ReticleUI] No icon assigned on SO_Ability for " +
+                             $"{(ability != null ? ability.GetType().Name : "null ability")}.");
+            icon.enabled = false;
+            return;
+        }
+
+        icon.enabled = true;
+        icon.sprite = sprite;
     }
 
     #endregion                  //----------------------------------------

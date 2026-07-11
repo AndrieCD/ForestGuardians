@@ -231,6 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_HealthComponent
   IsUntargetable: 0
+  IsInvulnerable: 0
 --- !u!114 &1851480446270280524
 MonoBehaviour:
   m_ObjectHideFlags: 0

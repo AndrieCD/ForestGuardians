@@ -72,8 +72,8 @@ public class Mari_E : Sc_BaseAbility
 
     [Header("Knockback")]
     // TODO: Tune knockback feel in playtesting once enemy move speeds are final.
-    [SerializeField] private float _KnockbackForce = 15f;
-    [SerializeField] private float _KnockbackDuration = 0.3f;
+    [SerializeField] private float _KnockbackForce = 30f;
+    [SerializeField] private float _KnockbackDuration = 0.4f;
 
     [Header("Overcharge Multipliers")]
     [SerializeField] private float _OverchargeDamageMultiplier = 2f;

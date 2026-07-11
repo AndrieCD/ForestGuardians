@@ -109,7 +109,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     private IEnumerator SovereignsWrathRoutine(Mb_CharacterBase user)
     {
         // --- Setup ---
-        SetUntargetable(true);
+        SetInvulnerable(true);
         var controller = user as Mb_PlayerController;
         controller?.AddDisable(
             ActionDisableFlags.AllAbilities |
@@ -131,7 +131,7 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
         PerformAoEHit(user, isFinal: true);
 
         // --- Cleanup ---
-        SetUntargetable(false);
+        SetInvulnerable(false);
         controller?.RemoveDisable(ActionDisableFlags.AllAbilities | ActionDisableFlags.AllAttacks);
 
         if (user is Mb_GuardianBase guardian)
@@ -191,6 +191,9 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
             if (enemy == null) continue;
 
             enemy.Health.TakeDamage(damage);
+
+            float healAmount = damage * _lifesteal;
+            _health.Heal(healAmount);
         }
     }
 
@@ -217,13 +220,11 @@ public class Rajah_R_Branch1 : Sc_BaseAbility
     // SYSTEM STUBS (IMPLEMENT OR CONNECT)
     // -------------------------------------------------------------------------
 
-    private void SetUntargetable(bool state)
+    private void SetInvulnerable(bool state)
     {
         if (_health == null) return;
 
-        // ✅ REQUIRED IMPLEMENTATION IN Mb_HealthComponent:
-        // public bool IsUntargetable;
-        _health.IsUntargetable = state;
+        _health.IsInvulnerable = state;
     }
 
     //private void SetMovementEnabled(Mb_CharacterBase user, bool enabled)

@@ -233,8 +233,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startSpeed.minScalar

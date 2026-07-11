@@ -16,5 +16,5 @@ MonoBehaviour:
   - enemyType: {fileID: 4105497819398190046, guid: d8936ec8db4e35e458166d614725d1e0, type: 3}
     count: 6
   - enemyType: {fileID: 1513359888028754751, guid: 72bf7665af43ec64eabd89e6aca317bb, type: 3}
-    count: 3
+    count: 4
   WaveReward: 2

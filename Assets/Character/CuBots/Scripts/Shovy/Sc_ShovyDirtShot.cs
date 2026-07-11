@@ -2,11 +2,15 @@ using UnityEngine;
 
 /// <summary>
 /// Shovy's dirt shot - fires a single arcing projectile that slows on hit.
+///
+/// ARC FIX: previously used a fixed UPWARD_AIM_ANGLE (22 degrees), which only
+/// lands correctly at one specific distance. Now uses Sc_ProjectileArcSolver
+/// to calculate the exact angle needed to hit the target at the projectile's
+/// fixed LaunchSpeed, given the real horizontal/vertical distance each shot.
 /// </summary>
 public class Sc_ShovyDirtShot : Sc_BaseAbility
 {
     private const float AIM_HEIGHT_OFFSET = 1.0f;
-    private const float UPWARD_AIM_ANGLE = 22.0f;
 
     private readonly SO_ProjectileData _projectileData;
     private readonly Mb_ProjectileLauncher _launcher;
@@ -55,17 +59,29 @@ public class Sc_ShovyDirtShot : Sc_BaseAbility
         Transform currentTarget = _getCurrentTarget?.Invoke();
         if (currentTarget == null) return;
 
+        // Muzzle position — matches where FireToward() will actually spawn the
+        // projectile (LaunchOrigin on the launcher), so the solve is accurate.
+        // We approximate it here with the user's position + a small forward/up
+        // offset since the launcher's exact LaunchOrigin isn't exposed publicly.
+        Vector3 muzzlePosition = user.transform.position + Vector3.up * AIM_HEIGHT_OFFSET;
         Vector3 targetPosition = currentTarget.position + Vector3.up * AIM_HEIGHT_OFFSET;
-        Vector3 flatDirection = targetPosition - user.transform.position;
-        flatDirection.y = 0f;
 
-        if (flatDirection.sqrMagnitude <= 0.01f)
-            flatDirection = user.transform.forward;
+        bool solved = Sc_ProjectileArcSolver.TrySolveAngle(
+            muzzlePosition,
+            targetPosition,
+            _projectileData.LaunchSpeed,
+            out Vector3 fireDirection
+        );
 
-        Vector3 fireDirection = Quaternion.AngleAxis(
-            -UPWARD_AIM_ANGLE,
-            user.transform.right
-        ) * flatDirection.normalized;
+        if (!solved)
+        {
+            // Target is out of range for this projectile's LaunchSpeed — the
+            // solver already gave us the best-effort 45-degree shot, but it
+            // will land short. Log so this is easy to notice during playtesting.
+            Debug.LogWarning($"[Sc_ShovyDirtShot] Target out of range for LaunchSpeed " +
+                             $"{_projectileData.LaunchSpeed}. Consider raising LaunchSpeed " +
+                             $"on the ProjectileData asset.");
+        }
 
         float damage = _AbilityData.GetStat(
             "Damage",

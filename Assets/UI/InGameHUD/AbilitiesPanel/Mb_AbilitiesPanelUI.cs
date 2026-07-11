@@ -65,6 +65,13 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
     [Header("Overlay Color")]
     [SerializeField] private Color OverlayColor = new Color(0f, 0f, 0f, 0.4f);
 
+    [Header("Ready Feedback")]
+    [Tooltip("Icon scale multiplier applied while the ability is available.")]
+    [SerializeField] private float ReadyPulseScale = 1.12f;
+
+    [Tooltip("Seconds for one half of the available-state scale pulse.")]
+    [SerializeField] private float ReadyPulseDuration = 0.65f;
+
     #endregion                  //----------------------------------------
 
 
@@ -81,6 +88,13 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
 
 
     #region Unity Lifecycle     //----------------------------------------
+
+    private void OnValidate()
+    {
+        ReadyPulseScale = Mathf.Max(1f, ReadyPulseScale);
+        ReadyPulseDuration = Mathf.Max(0.01f, ReadyPulseDuration);
+    }
+
 
     private void OnEnable()
     {
@@ -179,7 +193,11 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
             PipFilledSprite,
             PipEmptySprite,
             DefaultOpacity,
+            CooldownOpacity,
+            ActiveOpacity,
             OverlayColor,
+            ReadyPulseScale,
+            ReadyPulseDuration,
             showPips        // ← pass through
         );
 

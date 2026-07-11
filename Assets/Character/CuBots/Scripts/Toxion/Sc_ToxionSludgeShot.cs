@@ -2,11 +2,15 @@ using UnityEngine;
 
 /// <summary>
 /// Toxion's sludge shot - lobs a toxic projectile that creates a damaging sludge zone.
+///
+/// ARC FIX: previously used a fixed UPWARD_AIM_ANGLE (18 degrees), which only
+/// lands correctly at one specific distance. Now uses Sc_ProjectileArcSolver
+/// to calculate the exact angle needed to hit the target at PROJECTILE_SPEED,
+/// given the real horizontal/vertical distance for each shot.
 /// </summary>
 public class Sc_ToxionSludgeShot : Sc_BaseAbility
 {
     private const float AIM_HEIGHT_OFFSET = 1.0f;
-    private const float UPWARD_AIM_ANGLE = 18.0f;
     private const float PROJECTILE_SPEED = 18.0f;
     private const float PROJECTILE_LIFETIME = 4.0f;
     private const float SLUDGE_ZONE_DURATION = 3.0f;
@@ -55,17 +59,24 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
         Transform currentTarget = _getCurrentTarget?.Invoke();
         if (currentTarget == null) return;
 
+        Vector3 muzzlePosition = user.transform.position + Vector3.up * 1.0f + user.transform.forward * 0.6f;
         Vector3 targetPosition = currentTarget.position + Vector3.up * AIM_HEIGHT_OFFSET;
-        Vector3 flatDirection = targetPosition - user.transform.position;
-        flatDirection.y = 0f;
 
-        if (flatDirection.sqrMagnitude <= 0.01f)
-            flatDirection = user.transform.forward;
+        bool solved = Sc_ProjectileArcSolver.TrySolveAngle(
+            muzzlePosition,
+            targetPosition,
+            PROJECTILE_SPEED,
+            out Vector3 fireDirection
+        );
 
-        Vector3 fireDirection = Quaternion.AngleAxis(
-            -UPWARD_AIM_ANGLE,
-            user.transform.right
-        ) * flatDirection.normalized;
+        if (!solved)
+        {
+            // Target out of range for PROJECTILE_SPEED — best-effort 45-degree
+            // shot was used, but it will fall short. Raise PROJECTILE_SPEED if
+            // this is happening a lot during playtesting.
+            Debug.LogWarning($"[Sc_ToxionSludgeShot] Target out of range for " +
+                             $"PROJECTILE_SPEED {PROJECTILE_SPEED}. Consider raising it.");
+        }
 
         float impactDamage = _AbilityData.GetStat(
             "ImpactDamage",
@@ -88,6 +99,7 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
 
         SpawnProjectile(
             user,
+            muzzlePosition,
             fireDirection,
             impactDamage,
             sludgeDamagePerTick,
@@ -97,6 +109,7 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
 
     private void SpawnProjectile(
         Mb_CharacterBase user,
+        Vector3 muzzlePosition,
         Vector3 fireDirection,
         float impactDamage,
         float sludgeDamagePerTick,
@@ -108,7 +121,7 @@ public class Sc_ToxionSludgeShot : Sc_BaseAbility
 
         projectileObject.name = "Toxion Sludge Projectile";
         projectileObject.transform.SetPositionAndRotation(
-            user.transform.position + Vector3.up * 1.0f + user.transform.forward * 0.6f,
+            muzzlePosition,
             Quaternion.LookRotation(fireDirection)
         );
 

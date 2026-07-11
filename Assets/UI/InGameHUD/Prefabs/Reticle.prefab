@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 3401555957714520581}
   - component: {fileID: 1441430638263251848}
   - component: {fileID: 8898239508377842720}
+  - component: {fileID: 5768739741080643567}
   m_Layer: 5
   m_Name: RMB
   m_TagString: Untagged
@@ -165,6 +166,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &5768739741080643567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020176202784691087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &4500427211356008941
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,6 +193,7 @@ GameObject:
   - component: {fileID: 1117946345502524827}
   - component: {fileID: 21992868016297487}
   - component: {fileID: 3969263532386524315}
+  - component: {fileID: 8065407292237255305}
   m_Layer: 5
   m_Name: LMB
   m_TagString: Untagged
@@ -255,6 +272,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &8065407292237255305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4500427211356008941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6530663467169246783
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,6 +374,7 @@ GameObject:
   - component: {fileID: 4779876973793077079}
   - component: {fileID: 1751329521282462078}
   - component: {fileID: 6742143703327949016}
+  - component: {fileID: 770287705326583456}
   m_Layer: 5
   m_Name: Reticle
   m_TagString: Untagged
@@ -434,3 +467,18 @@ MonoBehaviour:
   ActivatedMoveDistance: 12
   AnimLerpSpeed: 36
   OverlayColor: {r: 0, g: 0, b: 0, a: 0.6}
+--- !u!114 &770287705326583456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810552957649552712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1

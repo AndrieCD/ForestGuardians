@@ -192,7 +192,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
 
     private IEnumerator ActiveRoutine(Mb_CharacterBase user, Mb_PlayerController controller)
     {
-        SetUntargetable(true);
+        SetInvulnerable(true);
 
 
         float elapsed = 0f;
@@ -209,7 +209,7 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
             ActionDisableFlags.AllAttacks
         );
 
-        SetUntargetable(false);
+        SetInvulnerable(false);
 
         if (user is Mb_GuardianBase guardian)
             guardian.GuardianAnimator?.EndR2Ability();
@@ -348,13 +348,11 @@ public class Rajah_R_Branch2 : Sc_BaseAbility
         return true;
     }
 
-    private void SetUntargetable(bool state)
+    private void SetInvulnerable(bool state)
     {
         if (_health == null) return;
 
-        // ✅ REQUIRED IMPLEMENTATION IN Mb_HealthComponent:
-        // public bool IsUntargetable;
-        _health.IsUntargetable = state;
+        _health.IsInvulnerable = state;
     }
 
 

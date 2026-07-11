@@ -245,10 +245,6 @@ public class Mb_Projectile : MonoBehaviour
             return;
         }
 
-        // Register the hit so this collider cannot be hit again this flight.
-        _hitColliders.Add(other);
-        _hitCount++;
-
         Vector3 hitPoint = other.ClosestPoint(transform.position);
         Vector3 hitNormal = (transform.position - hitPoint).normalized;
 
@@ -256,6 +252,13 @@ public class Mb_Projectile : MonoBehaviour
         // Panoharra has no Mb_CharacterBase so target will be null for it — that is fine,
         // the damage path below runs regardless.
         Mb_CharacterBase target = other.GetComponent<Mb_CharacterBase>();
+
+        if (target != null && target.Health != null && target.Health.IsUntargetable)
+            return;
+
+        // Register the hit so this collider cannot be hit again this flight.
+        _hitColliders.Add(other);
+        _hitCount++;
 
         // Credit the kill to the correct attacker BEFORE calling TakeDamage().
         // Only relevant for CuBots — Panoharra does not use the kill-credit system.

@@ -31,7 +31,8 @@ using UnityEngine;
 
 public class Mb_AlmanacManager : MonoBehaviour
 {
-    private const int DEBUG_FILL_COMPLETION_COUNT = 10;
+    private const int DEBUG_FILL_COMPLETION_COUNT = 2;
+    private const float REPEAT_UNLOCK_STAT_MODIFIER = 0.25f;    // 25%
 
     // -------------------------------------------------------------------------
     // Singleton
@@ -213,7 +214,7 @@ public class Mb_AlmanacManager : MonoBehaviour
 
         OnRepeatCompleted?.Invoke(entry);
 
-        float repeatBonusValue = entry.StatBonus.Value * 0.05f;
+        float repeatBonusValue = entry.StatBonus.Value * REPEAT_UNLOCK_STAT_MODIFIER;
         Debug.Log($"[Mb_AlmanacManager] '{entry.CommonName}' completed again " +
                   $"(x{newCount}). Repeat bonus: {entry.StatBonus.TargetStat} " +
                   $"+{repeatBonusValue} (5% of {entry.StatBonus.Value})");
