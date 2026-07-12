@@ -1049,6 +1049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7804da8d1b10614d94ee1e40e0189d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInitializer
+  PlayPrologueCutsceneOnStart: 1
 --- !u!114 &1765798524
 MonoBehaviour:
   m_ObjectHideFlags: 0

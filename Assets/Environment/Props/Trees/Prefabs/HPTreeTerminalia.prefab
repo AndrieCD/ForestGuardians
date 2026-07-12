@@ -170,6 +170,14 @@ PrefabInstance:
       value: HPTreeTerminalia
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a995282c63f133d47a4319320703dba4, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a995282c63f133d47a4319320703dba4, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a995282c63f133d47a4319320703dba4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125
       objectReference: {fileID: 0}
@@ -316,6 +324,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c2ceceab46176c9499ef16de1fc9e5a6, type: 3}
       propertyPath: m_Name
       value: LPTreeTerminalia
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c2ceceab46176c9499ef16de1fc9e5a6, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c2ceceab46176c9499ef16de1fc9e5a6, type: 3}
       propertyPath: m_StaticEditorFlags

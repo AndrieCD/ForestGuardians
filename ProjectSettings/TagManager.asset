@@ -9,6 +9,7 @@ TagManager:
   - Guardian
   - FxTemporaire
   - Water
+  - CameraFade
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Minimap
   - Wildlife
   - ModelViewer
-  - 
+  - CameraFade
   - 
   - 
   - 

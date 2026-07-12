@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 public class GameInitializer : MonoBehaviour
 {
     public static GameInitializer Instance { get; private set; }
+
+    [Header("Startup Cutscene")]
+    [SerializeField] private bool PlayPrologueCutsceneOnStart = true;
+
     void Awake( )
     {
         Debug.Log("GameInitializer Awake - setting up logging and initializing core systems.");
@@ -33,7 +37,12 @@ public class GameInitializer : MonoBehaviour
         GameManager.Instance.Initialize( );
         UIManager.Instance.Initialize( );
 
-        // Load main menu
+        if (PlayPrologueCutsceneOnStart)
+        {
+            SceneLoader.Instance.LoadCutscene(E_CutsceneId.Prologue, E_CutsceneDestination.MainMenu);
+            return;
+        }
+
         SceneLoader.Instance.LoadMainMenu();
     }
 }

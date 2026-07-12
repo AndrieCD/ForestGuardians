@@ -65,13 +65,18 @@ public class Mb_StageSelectionUI : MonoBehaviour
 
     [Header("Gem Nodes — Cutscene")]
     [Tooltip("Cutscene node between Stage 1 and Stage 2. " +
-             "No Button component — greyed out, non-interactive. " +
-             "// TODO: Wire to cutscene playback once cutscenes are implemented.")]
+             "Selects Cutscene 2, then routes to Stage 2 after Guardian Selection.")]
     [SerializeField] private Image CutsceneGem1;
 
+    [Tooltip("Button on the CutsceneGem1 object.")]
+    [SerializeField] private Button CutsceneGem1Button;
+
     [Tooltip("Cutscene node between Stage 2 and Stage 3. " +
-             "// TODO: Wire to cutscene playback once cutscenes are implemented.")]
+             "Selects Cutscene 3, then routes to Stage 3 after Guardian Selection.")]
     [SerializeField] private Image CutsceneGem2;
+
+    [Tooltip("Button on the CutsceneGem2 object.")]
+    [SerializeField] private Button CutsceneGem2Button;
 
     [Header("Detail Panel")]
     [Tooltip("TMP_Text that shows the selected stage's name.")]
@@ -96,6 +101,10 @@ public class Mb_StageSelectionUI : MonoBehaviour
     [Tooltip("Display data for each stage. Index 0 = Stage 1, 1 = Stage 2, 2 = Stage 3.")]
     [SerializeField] private StageDisplayData[] StageDetails = new StageDisplayData[3];
 
+    [Header("Cutscene Details")]
+    [Tooltip("Display data for cutscene gems. Index 0 = Cutscene 2, 1 = Cutscene 3.")]
+    [SerializeField] private CutsceneDisplayData[] CutsceneDetails = new CutsceneDisplayData[2];
+
     [Header("Gem Colors")]
     [Tooltip("Color applied to an unlocked, unselected gem.")]
     [SerializeField] private Color UnlockedColor = new Color(0.9f, 0.8f, 0.4f, 1f);   // Gold
@@ -109,6 +118,9 @@ public class Mb_StageSelectionUI : MonoBehaviour
     [Tooltip("Color applied to cutscene nodes — greyed out, non-interactive.")]
     [SerializeField] private Color CutsceneColor = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Translucent grey
 
+    [Tooltip("Color applied to the selected cutscene node.")]
+    [SerializeField] private Color SelectedCutsceneColor = new Color(0.4f, 1f, 0.6f, 1f);
+
     #endregion                      //----------------------------------------
 
 
@@ -121,6 +133,8 @@ public class Mb_StageSelectionUI : MonoBehaviour
     // The stage number currently highlighted by the player (1, 2, 3, or 4 for tutorial).
     // 0 means nothing is selected yet — SelectStageButton stays disabled.
     private int _selectedStageNumber = 0;
+
+    private E_CutsceneId _selectedCutsceneId = E_CutsceneId.None;
 
     // Cached array of the three stage gem nodes for indexed access.
     // Built in Awake so RefreshGems() and OnGemClicked() can iterate them.
@@ -174,6 +188,16 @@ public class Mb_StageSelectionUI : MonoBehaviour
 
         BackButton?.onClick.RemoveAllListeners();
         BackButton?.onClick.AddListener(OnBackClicked);
+
+        Button cutsceneGem1ResolvedButton = ResolveCutsceneButton(CutsceneGem1Button, CutsceneGem1);
+        cutsceneGem1ResolvedButton?.onClick.RemoveAllListeners();
+        cutsceneGem1ResolvedButton?.onClick.AddListener(
+            () => OnCutsceneGemClicked(E_CutsceneId.KarstsRetreat, Sc_RunSession.STAGE_2));
+
+        Button cutsceneGem2ResolvedButton = ResolveCutsceneButton(CutsceneGem2Button, CutsceneGem2);
+        cutsceneGem2ResolvedButton?.onClick.RemoveAllListeners();
+        cutsceneGem2ResolvedButton?.onClick.AddListener(
+            () => OnCutsceneGemClicked(E_CutsceneId.RuinsOfWar, Sc_RunSession.STAGE_3));
 
         // Wire gem click callbacks
         for (int i = 0; i < _stageGems.Length; i++)
@@ -241,9 +265,15 @@ public class Mb_StageSelectionUI : MonoBehaviour
             _stageGems[i].SetVisualState(isUnlocked, isSelected, gemColor);
         }
 
-        // Cutscene nodes are always greyed out — no unlock state involved
-        if (CutsceneGem1 != null) CutsceneGem1.color = CutsceneColor;
-        if (CutsceneGem2 != null) CutsceneGem2.color = CutsceneColor;
+        if (CutsceneGem1 != null)
+            CutsceneGem1.color = _selectedCutsceneId == E_CutsceneId.KarstsRetreat
+                ? SelectedCutsceneColor
+                : CutsceneColor;
+
+        if (CutsceneGem2 != null)
+            CutsceneGem2.color = _selectedCutsceneId == E_CutsceneId.RuinsOfWar
+                ? SelectedCutsceneColor
+                : CutsceneColor;
 
         //// Show stage details of selected stage when going back from Guardian selection
         //if (Sc_RunSession.SelectedStageNumber != 0)
@@ -280,8 +310,30 @@ public class Mb_StageSelectionUI : MonoBehaviour
 
         // Select this stage — update state and refresh all gem visuals
         _selectedStageNumber = stageNumber;
+        _selectedCutsceneId = E_CutsceneId.None;
+        Sc_CutsceneSession.ClearPendingCutscene();
         RefreshGems();
         ShowStageDetail(stageNumber);
+    }
+
+
+    private void OnCutsceneGemClicked(E_CutsceneId cutsceneId, int targetStageNumber)
+    {
+        if (Mb_StageUnlockManager.Instance == null) return;
+
+        bool isUnlocked = Mb_StageUnlockManager.Instance.IsUnlocked(targetStageNumber);
+
+        if (!isUnlocked)
+        {
+            ShowLockedDetail();
+            return;
+        }
+
+        _selectedStageNumber = targetStageNumber;
+        _selectedCutsceneId = cutsceneId;
+
+        RefreshGems();
+        ShowCutsceneDetail(cutsceneId);
     }
 
     #endregion                      //----------------------------------------
@@ -306,7 +358,12 @@ public class Mb_StageSelectionUI : MonoBehaviour
         // and the stage scene can both read it
         Sc_RunSession.SelectedStageNumber = _selectedStageNumber;
 
-        Debug.Log($"[Mb_StageSelectionUI] Stage {_selectedStageNumber} confirmed. " +
+        if (_selectedCutsceneId != E_CutsceneId.None)
+            Sc_CutsceneSession.SetPendingStageCutscene(_selectedCutsceneId, _selectedStageNumber);
+        else
+            Sc_CutsceneSession.ClearPendingCutscene();
+
+        Debug.Log($"[Mb_StageSelectionUI] Stage {_selectedStageNumber} route confirmed. " +
                   "Advancing to Guardian Selection.");
 
         MainMenuController?.ShowGuardianSelection();
@@ -317,6 +374,8 @@ public class Mb_StageSelectionUI : MonoBehaviour
     {
         // Clear selection state when leaving so the screen resets on next open
         _selectedStageNumber = 0;
+        _selectedCutsceneId = E_CutsceneId.None;
+        Sc_CutsceneSession.ClearPendingCutscene();
         ClearDetailPanel();
 
         MainMenuController?.ShowMainMenu();
@@ -361,6 +420,28 @@ public class Mb_StageSelectionUI : MonoBehaviour
     }
 
 
+    private void ShowCutsceneDetail(E_CutsceneId cutsceneId)
+    {
+        int index = cutsceneId == E_CutsceneId.KarstsRetreat
+            ? 0
+            : cutsceneId == E_CutsceneId.RuinsOfWar
+                ? 1
+                : -1;
+
+        if (index < 0 || index >= CutsceneDetails.Length)
+        {
+            Debug.LogWarning($"[Mb_StageSelectionUI] No CutsceneDetails entry for {cutsceneId}.");
+            return;
+        }
+
+        if (StageNameText != null)
+            StageNameText.text = CutsceneDetails[index].CutsceneName;
+
+        if (StageDescriptionText != null)
+            StageDescriptionText.text = CutsceneDetails[index].CutsceneDescription;
+    }
+
+
     private void ClearDetailPanel()
     {
         if (StageNameText != null)
@@ -389,6 +470,15 @@ public class Mb_StageSelectionUI : MonoBehaviour
             && Mb_StageUnlockManager.Instance.IsUnlocked(_selectedStageNumber);
 
         SelectStageButton.interactable = canConfirm;
+    }
+
+
+    private Button ResolveCutsceneButton(Button assignedButton, Image cutsceneImage)
+    {
+        if (assignedButton != null)
+            return assignedButton;
+
+        return cutsceneImage != null ? cutsceneImage.GetComponent<Button>() : null;
     }
 
 
@@ -425,4 +515,20 @@ public class StageDisplayData
              "across the river valleys of Panoharra.'")]
     [TextArea(2, 4)]
     public string StageDescription;
+}
+
+
+/// <summary>
+/// Display data for one cutscene gem shown in the detail panel.
+/// Fill these in the Inspector on Mb_StageSelectionUI.
+/// </summary>
+[Serializable]
+public class CutsceneDisplayData
+{
+    [Tooltip("Name shown in the detail panel when this cutscene is selected.")]
+    public string CutsceneName;
+
+    [Tooltip("Short description shown in the detail panel.")]
+    [TextArea(2, 4)]
+    public string CutsceneDescription;
 }

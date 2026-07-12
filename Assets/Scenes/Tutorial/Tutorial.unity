@@ -1396,6 +1396,7 @@ GameObject:
   - component: {fileID: 463870300}
   - component: {fileID: 463870299}
   - component: {fileID: 463870298}
+  - component: {fileID: 463870302}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1570,6 +1571,27 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &463870302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463870296}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88035861e4b702499807fd1b622f6ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_CameraProximityFade
+  FadeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  FadeTag: CameraFade
+  FadeRadius: 1
+  CheckInterval: 0.05
+  ColliderBufferSize: 64
+  MinimumOpacity: 0.25
+  FadeSpeed: 8
 --- !u!1 &489370889
 GameObject:
   m_ObjectHideFlags: 0

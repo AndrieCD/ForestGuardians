@@ -16,6 +16,8 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance { get; private set; }
 
+    private const string CUTSCENE_PLAYER_SCENE_NAME = "CutscenePlayer";
+
     [Header("Loading Screen")]
     // Assign a simple canvas with a spinner or progress bar in the Inspector.
     // Leave null if you don't have one yet — it's guarded below.
@@ -85,7 +87,41 @@ public class SceneLoader : MonoBehaviour
     public void LoadCutscene(string cutsceneName)
     {
         // Cutscene scenes follow the convention "Cutscene_Intro", "Cutscene_Stage2", etc.
-        Load(cutsceneName, GameState.LoadingStage);
+        Load(cutsceneName, GameState.Cutscene);
+    }
+
+    /// <summary>Loads the reusable cutscene player scene.</summary>
+    public void LoadCutscene()
+    {
+        Load(CUTSCENE_PLAYER_SCENE_NAME, GameState.Cutscene);
+    }
+
+    /// <summary>Sets the active cutscene route, then loads the reusable cutscene player scene.</summary>
+    public void LoadCutscene(
+        E_CutsceneId cutsceneId,
+        E_CutsceneDestination continueDestination,
+        int continueStageNumber = 0,
+        string continueSceneName = "")
+    {
+        Sc_CutsceneSession.SetActiveCutscene(
+            cutsceneId,
+            continueDestination,
+            continueStageNumber,
+            continueSceneName);
+
+        LoadCutscene();
+    }
+
+    /// <summary>Loads the credits scene by name.</summary>
+    public void LoadCredits(string creditsSceneName)
+    {
+        if (string.IsNullOrWhiteSpace(creditsSceneName))
+        {
+            Debug.LogError("[SceneLoader] Cannot load credits with an empty scene name.");
+            return;
+        }
+
+        Load(creditsSceneName, GameState.MainMenu);
     }
 
     /// <summary>Reloads the current scene — useful for a retry button after defeat.</summary>

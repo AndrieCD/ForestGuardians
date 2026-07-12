@@ -441,8 +441,15 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
 
         Debug.Log($"[Mb_GuardianSelectionUI] Confirmed — " +
                   $"Guardian: {guardian.CharacterName}, " +
-                  $"Stage: {Sc_RunSession.SelectedStageNumber}. Loading stage.");
+                  $"Stage: {Sc_RunSession.SelectedStageNumber}. Loading route.");
 
+        gameObject.SetActive(false);
+
+        if (Sc_CutsceneSession.ConsumePendingStageCutscene())
+        {
+            SceneLoader.Instance.LoadCutscene();
+            return;
+        }
 
         if (Sc_RunSession.SelectedStageNumber == Sc_RunSession.TUTORIAL_STAGE)
         {
@@ -459,6 +466,7 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
         // Clear only the guardian — stage number stays set since the
         // player is only going back one screen, not all the way to the menu
         Sc_RunSession.SelectedGuardian = null;
+        Sc_CutsceneSession.ClearPendingCutscene();
 
         MainMenuController?.ShowStageSelection();
     }

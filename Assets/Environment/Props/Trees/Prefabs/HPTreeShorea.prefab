@@ -190,6 +190,10 @@ PrefabInstance:
       value: LPTreeShorea
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c024ca095bef13049b37c7826ec08fde, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c024ca095bef13049b37c7826ec08fde, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125
       objectReference: {fileID: 0}
@@ -263,6 +267,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c505bf8af300f924fac965920054d57f, type: 3}
       propertyPath: m_Name
       value: HPTreeShorea
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c505bf8af300f924fac965920054d57f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c505bf8af300f924fac965920054d57f, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c505bf8af300f924fac965920054d57f, type: 3}
       propertyPath: m_StaticEditorFlags

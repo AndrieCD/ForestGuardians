@@ -90,6 +90,9 @@ public class Mb_MainMenuController : MonoBehaviour
     /// </summary>
     public void ShowMainMenu()
     {
+        Sc_CutsceneSession.ClearAll();
+        Sc_RunSession.Clear();
+
         SetAllCanvasesInactive();
         SetActive(MainMenuCanvas, true);
         GameManager.Instance.ChangeState(GameState.MainMenu);

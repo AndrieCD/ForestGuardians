@@ -190,6 +190,10 @@ PrefabInstance:
       value: LPTreeQuercus
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 60d009770684a4f4fb7318865465fb1c, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 60d009770684a4f4fb7318865465fb1c, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125
       objectReference: {fileID: 0}
@@ -263,6 +267,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1851f12df390c2c4d9ec4a6ef73e2dd8, type: 3}
       propertyPath: m_Name
       value: HPTreeQuercus
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1851f12df390c2c4d9ec4a6ef73e2dd8, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1851f12df390c2c4d9ec4a6ef73e2dd8, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1851f12df390c2c4d9ec4a6ef73e2dd8, type: 3}
       propertyPath: m_StaticEditorFlags

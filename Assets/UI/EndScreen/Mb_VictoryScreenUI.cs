@@ -38,7 +38,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Mb_VictoryScreenUI : Mb_EndScreenUI
@@ -68,14 +67,8 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
              "Slightly longer than defeat (default 1.5f) for a more triumphant feel.")]
     [SerializeField] private float _FadeDuration = 1.5f;
 
-    [Tooltip("Main menu scene name. Must match an entry in File > Build Settings.")]
-    [SerializeField] private string _MainMenuSceneName = "MainMenu";
-    // TODO: Update "MainMenu" to match your actual scene name in Build Settings.
-
-    [Tooltip("Scene name for the next stage. Leave blank if this is the final stage — " +
-             "the Continue button will be hidden automatically.")]
-    [SerializeField] private string _NextStageName = "";
-    // TODO: Populate once Stage 2's scene name is finalized.
+    [Tooltip("Credits scene name loaded after the final restoration cutscene.")]
+    [SerializeField] private string _CreditsSceneName = "Credits";
 
     #endregion                          //----------------------------------------
 
@@ -111,10 +104,8 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
         // prevents text from appearing over the gameplay view mid-fade.
         SetTextVisibility(false);
 
-        // Hide the Continue button if no next stage is configured.
-        // This avoids showing a button that leads nowhere on the final stage.
         if (_ContinueButton != null)
-            _ContinueButton.gameObject.SetActive(!string.IsNullOrEmpty(_NextStageName));
+            _ContinueButton.gameObject.SetActive(HasContinueRoute());
 
         StartCoroutine(FadeInRoutine());
     }
@@ -165,15 +156,28 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
 
     /// <summary>
     /// Called by the Continue button's OnClick event.
-    /// Loads the next stage scene. Only shown when NextStageName is populated.
+    /// Loads the next story cutscene, then that cutscene continues to its destination.
     /// </summary>
     public void OnContinueClicked()
     {
         // Safety reset — ensures timeScale is normal before any scene transition.
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(_NextStageName);
-        GameManager.Instance.ChangeState(GameState.Playing);
+        if (!TryGetContinueRoute(
+            out E_CutsceneId cutsceneId,
+            out E_CutsceneDestination destination,
+            out int targetStageNumber,
+            out string destinationSceneName))
+        {
+            Debug.LogWarning("[Mb_VictoryScreenUI] Continue clicked with no valid route.");
+            return;
+        }
+
+        SceneLoader.Instance.LoadCutscene(
+            cutsceneId,
+            destination,
+            targetStageNumber,
+            destinationSceneName);
     }
 
 
@@ -185,8 +189,74 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
         // Safety reset — same rationale as Mb_DefeatScreenUI.
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(_MainMenuSceneName);
-        GameManager.Instance.ChangeState(GameState.MainMenu);
+        Sc_CutsceneSession.ClearAll();
+        Sc_RunSession.Clear();
+
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.LoadMainMenu();
+            return;
+        }
+
+        Debug.LogError("[Mb_VictoryScreenUI] SceneLoader.Instance is missing. Cannot return to main menu.");
+    }
+
+    #endregion                          //----------------------------------------
+
+
+    #region Continue Route              //----------------------------------------
+
+    private bool HasContinueRoute()
+    {
+        return TryGetContinueRoute(
+            out E_CutsceneId cutsceneId,
+            out E_CutsceneDestination destination,
+            out int targetStageNumber,
+            out string destinationSceneName)
+            && cutsceneId != E_CutsceneId.None
+            && destination != E_CutsceneDestination.None;
+    }
+
+
+    private bool TryGetContinueRoute(
+        out E_CutsceneId cutsceneId,
+        out E_CutsceneDestination destination,
+        out int targetStageNumber,
+        out string destinationSceneName)
+    {
+        cutsceneId = E_CutsceneId.None;
+        destination = E_CutsceneDestination.None;
+        targetStageNumber = 0;
+        destinationSceneName = string.Empty;
+
+        switch (Sc_RunSession.SelectedStageNumber)
+        {
+            case Sc_RunSession.TUTORIAL_STAGE:
+                cutsceneId = E_CutsceneId.Awakening;
+                destination = E_CutsceneDestination.Stage;
+                targetStageNumber = Sc_RunSession.STAGE_1;
+                return true;
+
+            case Sc_RunSession.STAGE_1:
+                cutsceneId = E_CutsceneId.KarstsRetreat;
+                destination = E_CutsceneDestination.Stage;
+                targetStageNumber = Sc_RunSession.STAGE_2;
+                return true;
+
+            case Sc_RunSession.STAGE_2:
+                cutsceneId = E_CutsceneId.RuinsOfWar;
+                destination = E_CutsceneDestination.Stage;
+                targetStageNumber = Sc_RunSession.STAGE_3;
+                return true;
+
+            case Sc_RunSession.STAGE_3:
+                cutsceneId = E_CutsceneId.Restoration;
+                destination = E_CutsceneDestination.Credits;
+                destinationSceneName = _CreditsSceneName;
+                return true;
+        }
+
+        return false;
     }
 
     #endregion                          //----------------------------------------

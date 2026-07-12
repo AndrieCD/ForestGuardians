@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 82968497115994477}
   m_Layer: 0
   m_Name: BBTreeHorea
-  m_TagString: Untagged
+  m_TagString: CameraFade
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 125
@@ -190,6 +190,14 @@ PrefabInstance:
       value: LPTreeHorea
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a0a1ae9aa46328945bc8be2481237273, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a0a1ae9aa46328945bc8be2481237273, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a0a1ae9aa46328945bc8be2481237273, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125
       objectReference: {fileID: 0}
@@ -218,15 +226,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 27.74753
+      value: 35.68062
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.760404
+      value: 12.760412
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 146.49239
+      value: 140.94162
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -263,6 +271,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_Name
       value: HPTreeHorea
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c7e14aa4c9260da4b9f25f6d7d07c9d1, type: 3}
       propertyPath: m_StaticEditorFlags

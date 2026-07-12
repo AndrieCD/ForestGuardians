@@ -178,6 +178,14 @@ PrefabInstance:
       value: HPTreeSyzygium
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f21e5132658675f4594c68d1e20ac93a, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f21e5132658675f4594c68d1e20ac93a, type: 3}
+      propertyPath: m_TagString
+      value: CameraFade
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f21e5132658675f4594c68d1e20ac93a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 125
       objectReference: {fileID: 0}
@@ -336,6 +344,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 68528b3e2f8a64941a83ac0ccbef03ca, type: 3}
       propertyPath: m_Name
       value: LPTreeSyzygium
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 68528b3e2f8a64941a83ac0ccbef03ca, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 68528b3e2f8a64941a83ac0ccbef03ca, type: 3}
       propertyPath: m_IsActive

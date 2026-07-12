@@ -224,9 +224,7 @@ public class Mb_StageUnlockManager : MonoBehaviour
 
         UnlockStage(nextStage);
 
-        // Clear run session after the unlock is saved so nothing downstream
-        // accidentally reads a stale stage number
-        Sc_RunSession.Clear();
+        Debug.Log("[Mb_StageUnlockManager] Stage unlock saved. Run session preserved for cutscene continuation.");
     }
 
 

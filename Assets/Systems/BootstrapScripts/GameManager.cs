@@ -8,6 +8,7 @@ public enum GameState
     Playing,
     RewardsPanel,
     Paused,
+    Cutscene,
     Victory,
     Defeat
 }
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
         {
             case GameState.MainMenu:
             case GameState.RewardsPanel:
+            case GameState.Cutscene:
             case GameState.Victory:
             case GameState.Defeat:
             case GameState.Paused:
