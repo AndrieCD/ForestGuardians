@@ -863,10 +863,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10da5c230aa6e3947a3e5f7f431b13aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_UIAudioTrigger
-  _OnClickSFX: 7
-  _OnHoverSFX: 3
+  _OnClickSFX: 8210
+  _OnHoverSFX: 8220
   _HasOpenSound: 0
-  _OnOpenSFX: 6
+  _OnOpenSFX: 8200
 --- !u!1 &5060273369640457653
 GameObject:
   m_ObjectHideFlags: 0
@@ -1457,10 +1457,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10da5c230aa6e3947a3e5f7f431b13aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_UIAudioTrigger
-  _OnClickSFX: 7
-  _OnHoverSFX: 3
+  _OnClickSFX: 8210
+  _OnHoverSFX: 8220
   _HasOpenSound: 0
-  _OnOpenSFX: 6
+  _OnOpenSFX: 8200
 --- !u!1 &8840931209563145444
 GameObject:
   m_ObjectHideFlags: 0

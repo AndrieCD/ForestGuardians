@@ -162,7 +162,7 @@ public class Mb_PsychicSlamProjectile : MonoBehaviour
 
         MB_CuBotBase enemy = other.GetComponent<MB_CuBotBase>();
         if (enemy == null) return;
-        if (enemy.Health == null || enemy.Health.IsDead) return;
+        if (enemy.Health == null || enemy.Health.IsDead || enemy.Health.IsUntargetable) return;
 
         // Each enemy is hit exactly once per shockwave pass
         if (_hitEnemies.Contains(enemy)) return;
