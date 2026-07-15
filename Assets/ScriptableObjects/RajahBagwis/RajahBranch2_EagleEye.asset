@@ -26,8 +26,8 @@ MonoBehaviour:
   ScalingStats:
   - StatName: Damage
     BaseValuePerLevel:
-    - 50
+    - 80
     ATKScalingPerLevel:
     - 0.85
     APScalingPerLevel:
-    - 0
+    - 0.2

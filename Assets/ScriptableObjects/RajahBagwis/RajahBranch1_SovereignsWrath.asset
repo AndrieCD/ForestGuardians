@@ -30,7 +30,7 @@ MonoBehaviour:
     ATKScalingPerLevel:
     - 0.5
     APScalingPerLevel:
-    - 0
+    - 0.5
   - StatName: Lifesteal
     BaseValuePerLevel:
     - 0.02
