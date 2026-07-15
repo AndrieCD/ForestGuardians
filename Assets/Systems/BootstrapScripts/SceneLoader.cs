@@ -23,6 +23,10 @@ public class SceneLoader : MonoBehaviour
     // Leave null if you don't have one yet — it's guarded below.
     [SerializeField] private GameObject _LoadingScreen;
 
+    [Header("Cutscenes")]
+    [Tooltip("Cutscene video assets available in this build. If a route requests a missing asset or an asset with no VideoClip, the route skips directly to its destination.")]
+    [SerializeField] private SO_CutsceneVideo[] Cutscenes;
+
     // Prevents double-loads if something calls LoadX twice quickly
     private bool _isLoading = false;
 
@@ -93,6 +97,20 @@ public class SceneLoader : MonoBehaviour
     /// <summary>Loads the reusable cutscene player scene.</summary>
     public void LoadCutscene()
     {
+        if (!Sc_CutsceneSession.HasActiveCutscene)
+        {
+            Debug.LogError("[SceneLoader] Cannot load CutscenePlayer because no active cutscene route is set.");
+            return;
+        }
+
+        if (!IsCutscenePlayable(Sc_CutsceneSession.ActiveCutsceneId))
+        {
+            Debug.LogWarning($"[SceneLoader] Cutscene {Sc_CutsceneSession.ActiveCutsceneId} is missing or has no video. " +
+                             "Skipping directly to the configured destination.");
+            ContinueFromActiveCutscene();
+            return;
+        }
+
         Load(CUTSCENE_PLAYER_SCENE_NAME, GameState.Cutscene);
     }
 
@@ -112,16 +130,62 @@ public class SceneLoader : MonoBehaviour
         LoadCutscene();
     }
 
-    /// <summary>Loads the credits scene by name.</summary>
+    /// <summary>Credits are disabled for the current build; return to the main menu instead.</summary>
     public void LoadCredits(string creditsSceneName)
     {
-        if (string.IsNullOrWhiteSpace(creditsSceneName))
+        Debug.LogWarning("[SceneLoader] Credits scene loading is disabled for this build. Returning to main menu.");
+        Sc_CutsceneSession.ClearAll();
+        Sc_RunSession.Clear();
+        LoadMainMenu();
+    }
+
+    /// <summary>Continues from the active cutscene route without playing a video.</summary>
+    public void ContinueFromActiveCutscene()
+    {
+        E_CutsceneDestination destination = Sc_CutsceneSession.ContinueDestination;
+        int stageNumber = Sc_CutsceneSession.ContinueStageNumber;
+        string sceneName = Sc_CutsceneSession.ContinueSceneName;
+
+        Sc_CutsceneSession.ClearActiveCutscene();
+
+        switch (destination)
         {
-            Debug.LogError("[SceneLoader] Cannot load credits with an empty scene name.");
-            return;
+            case E_CutsceneDestination.MainMenu:
+                Sc_RunSession.Clear();
+                LoadMainMenu();
+                break;
+
+            case E_CutsceneDestination.Stage:
+                LoadStageAfterCutscene(stageNumber);
+                break;
+
+            case E_CutsceneDestination.Credits:
+                LoadCredits(sceneName);
+                break;
+
+            default:
+                Debug.LogWarning("[SceneLoader] Active cutscene route has no valid destination.");
+                break;
+        }
+    }
+
+    /// <summary>Returns a cutscene asset only if it exists and has a VideoClip assigned.</summary>
+    public SO_CutsceneVideo GetPlayableCutscene(E_CutsceneId cutsceneId)
+    {
+        if (cutsceneId == E_CutsceneId.None || Cutscenes == null)
+            return null;
+
+        for (int i = 0; i < Cutscenes.Length; i++)
+        {
+            if (Cutscenes[i] != null &&
+                Cutscenes[i].CutsceneId == cutsceneId &&
+                Cutscenes[i].VideoClip != null)
+            {
+                return Cutscenes[i];
+            }
         }
 
-        Load(creditsSceneName, GameState.MainMenu);
+        return null;
     }
 
     /// <summary>Reloads the current scene — useful for a retry button after defeat.</summary>
@@ -190,5 +254,35 @@ public class SceneLoader : MonoBehaviour
     {
         if (_LoadingScreen != null)
             _LoadingScreen.SetActive(visible);
+    }
+
+
+    private bool IsCutscenePlayable(E_CutsceneId cutsceneId)
+    {
+        return GetPlayableCutscene(cutsceneId) != null;
+    }
+
+
+    private void LoadStageAfterCutscene(int stageNumber)
+    {
+        if (stageNumber <= 0)
+            stageNumber = Sc_RunSession.SelectedStageNumber;
+
+        Sc_RunSession.SelectedStageNumber = stageNumber;
+
+        if (!Sc_RunSession.IsValid())
+        {
+            Debug.LogError("[SceneLoader] Cannot continue to stage because Sc_RunSession is invalid.");
+            LoadMainMenu();
+            return;
+        }
+
+        if (stageNumber == Sc_RunSession.TUTORIAL_STAGE)
+        {
+            LoadTutorial();
+            return;
+        }
+
+        LoadStage(stageNumber);
     }
 }

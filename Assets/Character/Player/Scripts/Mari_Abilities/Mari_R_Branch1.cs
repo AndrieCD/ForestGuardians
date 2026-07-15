@@ -258,7 +258,7 @@ public class Mari_R_Branch1 : Sc_BaseAbility
 
         _activeController = user as Mb_PlayerController;
 
-        TriggerAbilityAnimation(user);
+        //TriggerAbilityAnimation(user);
 
         _bloomRoutine = user.StartCoroutine(BloomRoutine(user));
 

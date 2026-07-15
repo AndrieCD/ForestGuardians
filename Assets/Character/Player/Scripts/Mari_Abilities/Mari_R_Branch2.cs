@@ -313,7 +313,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         _eyeGlowVFX?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         _eyeGlowVFX?.Play();
 
-        TriggerAbilityAnimation(user);
+        //TriggerAbilityAnimation(user);
 
         _laserRoutine = user.StartCoroutine(
             LaserRoutine(user, laser)

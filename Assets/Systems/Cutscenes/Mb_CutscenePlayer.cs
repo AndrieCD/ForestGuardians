@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -21,9 +23,6 @@ public class Mb_CutscenePlayer : MonoBehaviour
     [SerializeField] private Button BackToMainMenuButton;
     [SerializeField] private Button SkipButton;
 
-    [Header("Scene Routing")]
-    [SerializeField] private string CreditsSceneName = "Credits";
-
     private bool _hasFinished;
 
     private void Awake()
@@ -33,6 +32,9 @@ public class Mb_CutscenePlayer : MonoBehaviour
 
         if (CutsceneAudioSource == null)
             Debug.LogError("[Mb_CutscenePlayer] CutsceneAudioSource is not assigned.");
+
+        EnsureEventSystem();
+        EnsureVideoDoesNotBlockControls();
     }
 
     private void OnEnable()
@@ -75,7 +77,7 @@ public class Mb_CutscenePlayer : MonoBehaviour
         if (!Sc_CutsceneSession.HasActiveCutscene)
         {
             Debug.LogError("[Mb_CutscenePlayer] No active cutscene was set before loading CutscenePlayer.");
-            ShowCompletedControls();
+            SceneLoader.Instance.LoadMainMenu();
             return;
         }
 
@@ -83,8 +85,8 @@ public class Mb_CutscenePlayer : MonoBehaviour
         if (cutscene == null || cutscene.VideoClip == null)
         {
             Debug.LogError($"[Mb_CutscenePlayer] Missing video clip for cutscene " +
-                           $"{Sc_CutsceneSession.ActiveCutsceneId}.");
-            ShowCompletedControls();
+                           $"{Sc_CutsceneSession.ActiveCutsceneId}. Continuing to the configured destination.");
+            SceneLoader.Instance.ContinueFromActiveCutscene();
             return;
         }
 
@@ -119,12 +121,23 @@ public class Mb_CutscenePlayer : MonoBehaviour
 
     private SO_CutsceneVideo GetCutscene(E_CutsceneId cutsceneId)
     {
+        SO_CutsceneVideo sceneLoaderCutscene = SceneLoader.Instance != null
+            ? SceneLoader.Instance.GetPlayableCutscene(cutsceneId)
+            : null;
+
+        if (sceneLoaderCutscene != null)
+            return sceneLoaderCutscene;
+
         if (Cutscenes == null) return null;
 
         for (int i = 0; i < Cutscenes.Length; i++)
         {
-            if (Cutscenes[i] != null && Cutscenes[i].CutsceneId == cutsceneId)
+            if (Cutscenes[i] != null &&
+                Cutscenes[i].CutsceneId == cutsceneId &&
+                Cutscenes[i].VideoClip != null)
+            {
                 return Cutscenes[i];
+            }
         }
 
         return null;
@@ -182,6 +195,30 @@ public class Mb_CutscenePlayer : MonoBehaviour
     }
 
 
+    private void EnsureEventSystem()
+    {
+        EventSystem eventSystem = EventSystem.current;
+
+        if (eventSystem == null)
+        {
+            GameObject eventSystemObject = new GameObject("EventSystem");
+            eventSystemObject.AddComponent<EventSystem>();
+            eventSystemObject.AddComponent<InputSystemUIInputModule>();
+            return;
+        }
+
+        if (eventSystem.GetComponent<BaseInputModule>() == null)
+            eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
+    }
+
+
+    private void EnsureVideoDoesNotBlockControls()
+    {
+        if (VideoDisplay != null)
+            VideoDisplay.raycastTarget = false;
+    }
+
+
     private bool IsPrologueCutscene()
     {
         return Sc_CutsceneSession.ActiveCutsceneId == E_CutsceneId.Prologue;
@@ -204,32 +241,7 @@ public class Mb_CutscenePlayer : MonoBehaviour
     public void OnContinueClicked()
     {
         Time.timeScale = 1f;
-
-        E_CutsceneDestination destination = Sc_CutsceneSession.ContinueDestination;
-        int stageNumber = Sc_CutsceneSession.ContinueStageNumber;
-        string sceneName = Sc_CutsceneSession.ContinueSceneName;
-
-        Sc_CutsceneSession.ClearActiveCutscene();
-
-        switch (destination)
-        {
-            case E_CutsceneDestination.MainMenu:
-                Sc_RunSession.Clear();
-                SceneLoader.Instance.LoadMainMenu();
-                break;
-
-            case E_CutsceneDestination.Stage:
-                LoadStageAfterCutscene(stageNumber);
-                break;
-
-            case E_CutsceneDestination.Credits:
-                SceneLoader.Instance.LoadCredits(string.IsNullOrWhiteSpace(sceneName) ? CreditsSceneName : sceneName);
-                break;
-
-            default:
-                Debug.LogWarning("[Mb_CutscenePlayer] Continue clicked with no valid destination.");
-                break;
-        }
+        SceneLoader.Instance.ContinueFromActiveCutscene();
     }
 
     public void OnBackToMainMenuClicked()
@@ -240,26 +252,4 @@ public class Mb_CutscenePlayer : MonoBehaviour
         SceneLoader.Instance.LoadMainMenu();
     }
 
-    private void LoadStageAfterCutscene(int stageNumber)
-    {
-        if (stageNumber <= 0)
-            stageNumber = Sc_RunSession.SelectedStageNumber;
-
-        Sc_RunSession.SelectedStageNumber = stageNumber;
-
-        if (!Sc_RunSession.IsValid())
-        {
-            Debug.LogError("[Mb_CutscenePlayer] Cannot continue to stage because Sc_RunSession is invalid.");
-            SceneLoader.Instance.LoadMainMenu();
-            return;
-        }
-
-        if (stageNumber == Sc_RunSession.TUTORIAL_STAGE)
-        {
-            SceneLoader.Instance.LoadTutorial();
-            return;
-        }
-
-        SceneLoader.Instance.LoadStage(stageNumber);
-    }
 }

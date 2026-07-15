@@ -45,6 +45,8 @@
 //   ProjectileDepth           — forward trigger thickness
 //   KnockbackForce            — push speed in units/second        (default 12f)
 //   KnockbackDuration         — push duration in seconds          (default 0.3f)
+//   ProjectileSpeed           — projectile movement speed
+//   ProjectileRange           — projectile travel distance
 //   OverchargeDamageMultiplier    — (default 2f)
 //   OverchargeKnockbackMultiplier — (default 2f)
 
@@ -69,6 +71,10 @@ public class Mari_E : Sc_BaseAbility
 
     [Header("Aim")]
     [SerializeField] private float _AimRaycastDistance = 100f;
+
+    [Header("Travel")]
+    [SerializeField] private float _ProjectileSpeed = 40f;
+    [SerializeField] private float _ProjectileRange = 60f;
 
     [Header("Knockback")]
     // TODO: Tune knockback feel in playtesting once enemy move speeds are final.
@@ -202,6 +208,8 @@ public class Mari_E : Sc_BaseAbility
             width: _ProjectileWidth,
             height: _ProjectileHeight,
             depth: _ProjectileDepth,
+            travelSpeed: _ProjectileSpeed,
+            maxRange: _ProjectileRange,
             isOvercharged: isOvercharged
         );
 

@@ -67,9 +67,6 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
              "Slightly longer than defeat (default 1.5f) for a more triumphant feel.")]
     [SerializeField] private float _FadeDuration = 1.5f;
 
-    [Tooltip("Credits scene name loaded after the final restoration cutscene.")]
-    [SerializeField] private string _CreditsSceneName = "Credits";
-
     #endregion                          //----------------------------------------
 
 
@@ -251,8 +248,7 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
 
             case Sc_RunSession.STAGE_3:
                 cutsceneId = E_CutsceneId.Restoration;
-                destination = E_CutsceneDestination.Credits;
-                destinationSceneName = _CreditsSceneName;
+                destination = E_CutsceneDestination.MainMenu;
                 return true;
         }
 

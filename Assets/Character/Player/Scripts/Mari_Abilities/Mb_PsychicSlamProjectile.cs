@@ -64,12 +64,16 @@ public class Mb_PsychicSlamProjectile : MonoBehaviour
         float width,
         float height,
         float depth,
+        float travelSpeed,
+        float maxRange,
         bool isOvercharged)
     {
         _owner = owner;
         _damage = damage;
         _knockbackForce = knockbackForce;
         _knockbackDuration = knockbackDuration;
+        _TravelSpeed = Mathf.Max(0.01f, travelSpeed);
+        _MaxRange = Mathf.Max(0.01f, maxRange);
         _isOvercharged = isOvercharged;
 
         // --- Resize BoxCollider ---

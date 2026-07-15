@@ -8,15 +8,21 @@ using UnityEngine.InputSystem;
 public class Mb_MainMenuAdminCheatSystem : MonoBehaviour
 {
     private const int MAX_COMMAND_LENGTH = 64;
-    private const string LOAD_COMMAND_PREFIX = "load ";
+    private const string TEST_1_COMMAND = "test1";
+    private const string TEST_2_COMMAND = "test2";
     private const string TEST_STAGE_1_COMMAND = "TestStage1";
     private const string TEST_STAGE_2_COMMAND = "TestStage2";
-    private const string FILL_ALMANAC_COMMAND = "fill almanac";
-    private const string UNFILL_ALMANAC_COMMAND = "unfill almanac";
+    private const string RAJAH_GUARDIAN_COMMAND = "rajah";
+    private const string MARI_GUARDIAN_COMMAND = "mari";
+    private const string FILL_ALMANAC_COMMAND = "fill";
+    private const string UNFILL_ALMANAC_COMMAND = "unfill";
 
-    [Header("Default Demo Selection")]
-    [Tooltip("Guardian selected by demo load commands. Assign Rajah.")]
+    [Header("Demo Guardian Selection")]
+    [Tooltip("Default guardian selected by demo load commands. Assign Rajah.")]
     [SerializeField] private SO_Guardian RajahGuardian;
+
+    [Tooltip("Optional guardian selected by demo load commands. Assign Mari.")]
+    [SerializeField] private SO_Guardian MariGuardian;
 
     [Header("Command Rules")]
     [Tooltip("When enabled, commands only work while GameManager is in MainMenu state.")]
@@ -101,9 +107,9 @@ public class Mb_MainMenuAdminCheatSystem : MonoBehaviour
             return;
         }
 
-        if (TryGetTestStageSceneName(command, out string sceneName))
+        if (TryGetTestStageCommand(command, out string sceneName, out SO_Guardian guardian))
         {
-            LoadDemoStage(sceneName);
+            LoadDemoStage(sceneName, guardian);
             return;
         }
 
@@ -130,35 +136,59 @@ public class Mb_MainMenuAdminCheatSystem : MonoBehaviour
         return false;
     }
 
-    private bool TryGetTestStageSceneName(string command, out string sceneName)
+    private bool TryGetTestStageCommand(string command, out string sceneName, out SO_Guardian guardian)
     {
         sceneName = string.Empty;
+        guardian = null;
 
-        if (!command.StartsWith(LOAD_COMMAND_PREFIX, System.StringComparison.OrdinalIgnoreCase))
+        string[] tokens = command.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+        if (tokens.Length < 1 || tokens.Length > 2)
             return false;
 
-        string stageToken = command.Substring(LOAD_COMMAND_PREFIX.Length).Trim();
-
-        if (string.Equals(stageToken, TEST_STAGE_1_COMMAND, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(tokens[0], TEST_1_COMMAND, System.StringComparison.OrdinalIgnoreCase))
         {
             sceneName = TEST_STAGE_1_COMMAND;
-            return true;
         }
-
-        if (string.Equals(stageToken, TEST_STAGE_2_COMMAND, System.StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(tokens[0], TEST_2_COMMAND, System.StringComparison.OrdinalIgnoreCase))
         {
             sceneName = TEST_STAGE_2_COMMAND;
+        }
+        else
+        {
+            return false;
+        }
+
+        return TryGetGuardian(tokens, out guardian);
+    }
+
+    private bool TryGetGuardian(string[] tokens, out SO_Guardian guardian)
+    {
+        guardian = RajahGuardian;
+
+        if (tokens.Length == 1)
+            return true;
+
+        if (string.Equals(tokens[1], RAJAH_GUARDIAN_COMMAND, System.StringComparison.OrdinalIgnoreCase))
+        {
+            guardian = RajahGuardian;
             return true;
         }
 
+        if (string.Equals(tokens[1], MARI_GUARDIAN_COMMAND, System.StringComparison.OrdinalIgnoreCase))
+        {
+            guardian = MariGuardian;
+            return true;
+        }
+
+        LogWarning($"Unknown guardian token: {tokens[1]}");
         return false;
     }
 
-    private void LoadDemoStage(string sceneName)
+    private void LoadDemoStage(string sceneName, SO_Guardian guardian)
     {
-        if (RajahGuardian == null)
+        if (guardian == null)
         {
-            Debug.LogError("[Mb_MainMenuAdminCheatSystem] RajahGuardian is not assigned.");
+            Debug.LogError("[Mb_MainMenuAdminCheatSystem] Selected demo guardian is not assigned.");
             return;
         }
 
@@ -169,9 +199,9 @@ public class Mb_MainMenuAdminCheatSystem : MonoBehaviour
         }
 
         Sc_RunSession.SelectedStageNumber = 0;
-        Sc_RunSession.SelectedGuardian = RajahGuardian;
+        Sc_RunSession.SelectedGuardian = guardian;
 
-        Log($"Loading {sceneName} with {RajahGuardian.CharacterName}.");
+        Log($"Loading {sceneName} with {guardian.CharacterName}.");
         SceneLoader.Instance.LoadTestStage(sceneName);
     }
 

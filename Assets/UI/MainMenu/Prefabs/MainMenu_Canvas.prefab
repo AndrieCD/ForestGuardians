@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RajahGuardian: {fileID: 11400000, guid: e699f250d20f164498237d7ce13073ae, type: 2}
+  MariGuardian: {fileID: 11400000, guid: 8347e816eaefc774cb2abc1a4925537a, type: 2}
   RequireMainMenuState: 1
   LogCommandFeedback: 1
 --- !u!1 &2599875241679571511
