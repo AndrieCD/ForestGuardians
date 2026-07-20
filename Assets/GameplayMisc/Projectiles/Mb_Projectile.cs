@@ -49,6 +49,9 @@ using UnityEngine;
 
 public class Mb_Projectile : MonoBehaviour
 {
+    private const string AREA_EFFECT_LAYER_NAME = "AreaEffect";
+    private const string DEFAULT_LAYER_NAME = "Default";
+
     // -------------------------------------------------------------------------
     // Events
     // -------------------------------------------------------------------------
@@ -227,19 +230,20 @@ public class Mb_Projectile : MonoBehaviour
         if (_isPaused) return;
 
         if (_hitColliders.Contains(other)) return;
+        if (IsIgnoredGameplayLayer(other.gameObject.layer)) return;
 
         // Skip friendly-fire — owner tag: "Player" for Guardians, "CuBot" for CuBot projectiles.
         if (_owner != null && other.gameObject.CompareTag(_owner.tag)) return;
 
         // Skip Player-Panoharra friendly-fire
-        if (_owner.CompareTag("Player") && other.gameObject.CompareTag("Panoharra")) return;
+        if (_owner != null && _owner.CompareTag("Player") && other.gameObject.CompareTag("Panoharra")) return;
 
         // Must be damageable — environment colliders (walls, floor) have no I_Damageable.
         // Gravity-enabled projectiles are thrown objects, so they should expire when they land.
         I_Damageable damageable = other.GetComponent<I_Damageable>();
         if (damageable == null)
         {
-            if (_rb != null && _rb.useGravity)
+            if (ShouldBlockProjectile(other))
                 Deactivate();
 
             return;
@@ -347,6 +351,23 @@ public class Mb_Projectile : MonoBehaviour
 
         Destroy(gameObject); // Temporary until pooling is implemented — destroy to prevent clutter during testing)
     }
+
+    private bool ShouldBlockProjectile(Collider other)
+    {
+        if (other == null) return false;
+        if (_rb != null && _rb.useGravity) return true;
+
+        int defaultLayer = LayerMask.NameToLayer(DEFAULT_LAYER_NAME);
+        return defaultLayer >= 0 && other.gameObject.layer == defaultLayer;
+    }
+
+
+    private bool IsIgnoredGameplayLayer(int layer)
+    {
+        int areaEffectLayer = LayerMask.NameToLayer(AREA_EFFECT_LAYER_NAME);
+        return areaEffectLayer >= 0 && layer == areaEffectLayer;
+    }
+
 
     #endregion                  //----------------------------------------
 

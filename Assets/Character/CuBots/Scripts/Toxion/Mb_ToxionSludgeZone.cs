@@ -7,12 +7,21 @@ using UnityEngine;
 /// </summary>
 public class Mb_ToxionSludgeZone : MonoBehaviour
 {
+    public const string AREA_EFFECT_LAYER_NAME = "AreaEffect";
+
     private readonly Dictionary<Mb_CharacterBase, Coroutine> _activeTargets = new();
 
     private float _damagePerTick;
     private float _slowPercent;
     private float _duration;
     private float _tickInterval;
+
+    private void Awake()
+    {
+        int areaEffectLayer = LayerMask.NameToLayer(AREA_EFFECT_LAYER_NAME);
+        if (areaEffectLayer >= 0)
+            gameObject.layer = areaEffectLayer;
+    }
 
     public void Initialize(
         float damagePerTick,

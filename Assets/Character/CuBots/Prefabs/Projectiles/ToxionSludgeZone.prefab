@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2747540879551715508}
   - component: {fileID: 5984640941021227960}
   - component: {fileID: 7832724012219983471}
-  m_Layer: 3
+  m_Layer: 11
   m_Name: ToxionSludgeZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

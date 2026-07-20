@@ -7,10 +7,9 @@
 //   clears. Set it to None to skip the panel entirely.
 //
 // REWARDS TIMER:
-//   When the panel opens, a countdown coroutine starts. If the player does not choose
-//   before RewardsTimeLimit seconds, the best available option is auto-selected:
-//   left card if not maxed, right card otherwise. The timer is surfaced to
-//   Mb_RewardsPanelUI via OnRewardsTimerTick so the panel can display a countdown.
+//   Currently disabled. The rewards panel stays open until the player chooses.
+//   The timer coroutine is kept in this class so the old auto-select behavior
+//   can be restored without rebuilding the reward flow.
 
 using System;
 using System.Collections;
@@ -19,6 +18,8 @@ using UnityEngine;
 
 public class Mb_RewardsManager : MonoBehaviour
 {
+    private const bool REWARDS_TIMER_ENABLED = false;
+
     #region Events                  //----------------------------------------
 
     public static event Action<RewardType> OnRewardsPanelOpened;
@@ -193,7 +194,9 @@ public class Mb_RewardsManager : MonoBehaviour
         if (_rewardsTimerCoroutine != null)
             StopCoroutine(_rewardsTimerCoroutine);
 
-        _rewardsTimerCoroutine = StartCoroutine(RewardsTimerRoutine());
+        _rewardsTimerCoroutine = REWARDS_TIMER_ENABLED
+            ? StartCoroutine(RewardsTimerRoutine())
+            : null;
     }
 
 

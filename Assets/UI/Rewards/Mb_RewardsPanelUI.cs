@@ -4,7 +4,7 @@
 // SELECTION FEEDBACK FLOW (same for both manual and auto-select):
 //   1. Mb_RewardsManager calls ShowSelectionFeedback(side) after applying the reward
 //   2. Unchosen card is immediately hidden (SetActive false)
-//   3. Timer label is immediately hidden
+//   3. Timer label stays hidden while rewards timer is disabled
 //   4. Chosen card stays visible for CardHoldDuration seconds
 //   5. Entire panel fades out over FadeOutDuration seconds
 //   6. OnPanelFadeComplete fires — Mb_RewardsManager handles state cleanup there
@@ -18,7 +18,7 @@
 // LAYOUT (set up in the Inspector / Unity Editor):
 //   Rewards_Canvas (this GameObject — has CanvasGroup)
 //   ├── Overlay
-//   ├── TimerText      (TMP_Text — countdown label)
+//   ├── TimerText      (TMP_Text — countdown label, currently hidden)
 //   ├── LeftCard       (Button)
 //   │   ├── Icon       (Image)
 //   │   ├── Name       (TMP_Text)
@@ -68,7 +68,7 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text _RightDescription;
 
     [Header("Timer")]
-    [Tooltip("TMP_Text label showing the rewards countdown. Hidden when a card is chosen.")]
+    [Tooltip("TMP_Text label showing the rewards countdown. Currently hidden while rewards timer is disabled.")]
     [SerializeField] private TMP_Text _TimerText;
 
     [Header("References")]
@@ -143,7 +143,7 @@ public class Mb_RewardsPanelUI : MonoBehaviour
 
 
         if (_TimerText != null)
-            _TimerText.gameObject.SetActive(true);
+            _TimerText.gameObject.SetActive(false);
 
         gameObject.SetActive(true);
 

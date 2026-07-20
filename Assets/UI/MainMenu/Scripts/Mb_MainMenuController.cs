@@ -57,6 +57,9 @@ public class Mb_MainMenuController : MonoBehaviour
              "// TODO: Implement Characters canvas content — currently a stub.")]
     [SerializeField] private GameObject CharactersCanvas;
 
+    [Tooltip("Settings canvas. Opens as an overlay on top of the main menu.")]
+    [SerializeField] private GameObject SettingsCanvas;
+
     #endregion                      //----------------------------------------
 
 
@@ -166,6 +169,18 @@ public class Mb_MainMenuController : MonoBehaviour
         GameManager.Instance.ChangeState(GameState.MainMenu);
     }
 
+
+    /// <summary>
+    /// Shows the Settings canvas over the root main menu canvas.
+    /// </summary>
+    public void ShowSettings()
+    {
+        SetAllCanvasesInactive();
+        SetActive(MainMenuCanvas, true);
+        SetActive(SettingsCanvas, true);
+        GameManager.Instance.ChangeState(GameState.MainMenu);
+    }
+
     #endregion                      //----------------------------------------
 
 
@@ -206,6 +221,12 @@ public class Mb_MainMenuController : MonoBehaviour
         Debug.Log("[Mb_MainMenuController] Almanac clicked — opening Almanac canvas.");
     }
 
+    public void OnSettingsClicked()
+    {
+        ShowSettings();
+        Debug.Log("[Mb_MainMenuController] Settings clicked - opening Settings canvas.");
+    }
+
     public void OnTutorialClicked()
     {
         SceneLoader.Instance.LoadTutorial();
@@ -242,6 +263,7 @@ public class Mb_MainMenuController : MonoBehaviour
         SetActive(GuardianSelectionCanvas, false);
         SetActive(AlmanacCanvas, false);
         SetActive(CharactersCanvas, false);
+        SetActive(SettingsCanvas, false);
     }
 
 

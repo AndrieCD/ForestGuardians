@@ -41,6 +41,34 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     private Vector3 _lastDestination;
     private const float DESTINATION_UPDATE_THRESHOLD = 0.5f;
     private const float NAVMESH_SPAWN_SAMPLE_RADIUS = 5.0f;
+    private const float SCATTER_REFRESH_MIN_INTERVAL = 2.0f;
+    private const float SCATTER_REFRESH_MAX_INTERVAL = 4.0f;
+    private const float SCATTER_INITIAL_FAILED_RETRY_INTERVAL = 0.25f;
+    private const float SCATTER_SAMPLE_MIN_RADIUS = 3.5f;
+    private const float SCATTER_SAMPLE_RADIUS = 10.0f;
+    private const float SCATTER_NAVMESH_SAMPLE_RADIUS = 3.0f;
+    private const float SCATTER_MIN_TARGET_DISTANCE = 4.0f;
+    private const float SCATTER_DIRECT_APPROACH_BUFFER = 5.0f;
+    private const float SCATTER_LOOKAHEAD_DISTANCE = 10.0f;
+    private const float SCATTER_REACHED_DISTANCE = 1.5f;
+    private const float SCATTER_MIN_FORWARD_PROGRESS = 1.0f;
+    private const int SCATTER_SAMPLE_ATTEMPTS = 24;
+    private const float MIN_AGENT_AVOIDANCE_RADIUS = 0.35f;
+    private const float OFFSET_EDGE_CLEARANCE_PADDING = 0.2f;
+    private const float STUCK_CHECK_MIN_REMAINING_DISTANCE = 1.25f;
+    private const float STUCK_MIN_MOVE_DISTANCE = 0.08f;
+    private const float STUCK_TIME_THRESHOLD = 0.8f;
+    private const float DIRECT_PURSUIT_RECOVERY_DURATION = 1.25f;
+
+    private Vector3 _scatterDestination = Vector3.zero;
+    private Vector3 _lastProgressPosition = Vector3.zero;
+    private float _nextScatterRefreshTime = 0f;
+    private float _stuckTimer = 0f;
+    private float _directPursuitUntilTime = 0f;
+    private Transform _scatterTarget;
+    private bool _hasScatterDestination = false;
+    private NavMeshPath _pursuitPath;
+    private NavMeshPath _reachabilityPath;
 
     // Aggro state
     private CuBotAIState _aiState = CuBotAIState.ChasingPanoharra;
@@ -63,9 +91,13 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         _Agent = GetComponent<NavMeshAgent>();
         _Animator = GetComponent<Animator>();
         _BasicCuBotAnimator = GetComponent<Mb_CuBotAnimator>();
+        _pursuitPath = new NavMeshPath();
+        _reachabilityPath = new NavMeshPath();
 
         if (_Agent == null)
             Debug.LogError($"[Mb_CuBotController] No NavMeshAgent found on {gameObject.name}.");
+        else
+            ConfigureAgentAvoidance();
 
         if (Stats != null)
         {
@@ -122,6 +154,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         // Direct assign bypasses the SetTarget equality guard on first assignment
         _CurrentTarget = _PanoharraTarget;
         CacheTargetCollider(_PanoharraTarget);
+        ResetScatterDestination();
     }
 
 
@@ -201,6 +234,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
 
         _CurrentTarget = newTarget;
         _lastDestination = Vector3.zero; // Force immediate re-path to new target
+        ResetScatterDestination();
 
         CacheTargetCollider(newTarget);
         OnTargetChanged(_CurrentTarget);
@@ -229,10 +263,11 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     private bool IsPathReachable(Vector3 targetPosition)
     {
         if (_Agent == null || !_Agent.enabled || !_Agent.isOnNavMesh) return false;
+        if (_reachabilityPath == null)
+            _reachabilityPath = new NavMeshPath();
 
-        NavMeshPath path = new NavMeshPath();
-        _Agent.CalculatePath(targetPosition, path);
-        return path.status == NavMeshPathStatus.PathComplete;
+        _Agent.CalculatePath(targetPosition, _reachabilityPath);
+        return _reachabilityPath.status == NavMeshPathStatus.PathComplete;
     }
 
 
@@ -255,6 +290,9 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         float attackRange = _CuBotTemplate != null ? _CuBotTemplate.AttackRange : 2f;
 
         Vector3 targetPoint = GetTargetPoint();
+        UpdateStuckRecovery(targetPoint);
+
+        Vector3 movementDestination = GetMovementDestination(targetPoint, attackRange);
         float distToTarget = Vector3.Distance(transform.position, targetPoint);
 
         if (distToTarget <= attackRange)
@@ -284,13 +322,14 @@ public abstract class Mb_CuBotController : MB_CuBotBase
             if (_aiState == CuBotAIState.AttackingPanoharra)
                 _aiState = CuBotAIState.ChasingPanoharra;
 
-            // Only re-path if target has moved far enough — prevents per-frame path thrash
-            if (Vector3.Distance(targetPoint, _lastDestination) > DESTINATION_UPDATE_THRESHOLD)
+            // Always resume if the agent was previously stopped in attack range.
+            // Otherwise, only re-path if the destination moved far enough to avoid path thrash.
+            if (_Agent.isStopped || Vector3.Distance(movementDestination, _lastDestination) > DESTINATION_UPDATE_THRESHOLD)
             {
-                _lastDestination = targetPoint;
+                _lastDestination = movementDestination;
                 _Agent.isStopped = false;
                 _Agent.stoppingDistance = 0f;
-                _Agent.SetDestination(targetPoint);
+                _Agent.SetDestination(movementDestination);
             }
         }
     }
@@ -301,6 +340,292 @@ public abstract class Mb_CuBotController : MB_CuBotBase
             return _CurrentTargetCollider.ClosestPoint(transform.position);
 
         return _CurrentTarget.position;
+    }
+
+    private Vector3 GetMovementDestination(Vector3 targetPoint, float attackRange)
+    {
+        if (_CurrentTarget == null) return targetPoint;
+        if (!UsesScatterMovement || _aiState == CuBotAIState.ChasingPlayer) return targetPoint;
+        if (Time.time < _directPursuitUntilTime) return targetPoint;
+
+        float distanceToTarget = Vector3.Distance(transform.position, targetPoint);
+        if (distanceToTarget <= Mathf.Max(
+            SCATTER_MIN_TARGET_DISTANCE,
+            attackRange + SCATTER_DIRECT_APPROACH_BUFFER))
+        {
+            return targetPoint;
+        }
+
+        if (_hasScatterDestination &&
+            Time.time < _nextScatterRefreshTime &&
+            Vector3.Distance(transform.position, _scatterDestination) <= SCATTER_REACHED_DISTANCE)
+        {
+            HoldDirectPursuitUntilNextScatterRefresh(targetPoint);
+            return targetPoint;
+        }
+
+        if (!_hasScatterDestination && Time.time < _nextScatterRefreshTime)
+            return targetPoint;
+
+        bool isInitialScatterRefresh = !_hasScatterDestination || _scatterTarget != _CurrentTarget;
+        bool shouldRefreshDestination = !_hasScatterDestination ||
+            _scatterTarget != _CurrentTarget ||
+            Time.time >= _nextScatterRefreshTime;
+
+        if (!shouldRefreshDestination)
+            return _scatterDestination;
+
+        return TryRefreshScatterDestination(
+                targetPoint,
+                isInitialScatterRefresh,
+                out Vector3 scatterDestination)
+            ? scatterDestination
+            : targetPoint;
+    }
+
+    private bool TryRefreshScatterDestination(
+        Vector3 targetPoint,
+        bool isInitialScatterRefresh,
+        out Vector3 scatterDestination)
+    {
+        scatterDestination = Vector3.zero;
+
+        Vector3 scatterCenter = GetScatterCenter(targetPoint);
+        float currentTargetDistance = Vector3.Distance(transform.position, targetPoint);
+        Vector3 selectedDestination = Vector3.zero;
+        int validCandidateCount = 0;
+
+        for (int i = 0; i < SCATTER_SAMPLE_ATTEMPTS; i++)
+        {
+            Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized;
+            if (randomDirection.sqrMagnitude <= 0.001f)
+                randomDirection = Vector2.right;
+
+            float scatterDistance = UnityEngine.Random.Range(
+                SCATTER_SAMPLE_MIN_RADIUS,
+                SCATTER_SAMPLE_RADIUS);
+
+            Vector2 randomCircle = randomDirection * scatterDistance;
+            Vector3 desiredDestination = scatterCenter + new Vector3(randomCircle.x, 0f, randomCircle.y);
+
+            if (!TryResolveScatterCandidate(
+                desiredDestination,
+                scatterCenter,
+                targetPoint,
+                currentTargetDistance,
+                out Vector3 candidate))
+            {
+                continue;
+            }
+
+            validCandidateCount++;
+
+            if (UnityEngine.Random.Range(0, validCandidateCount) == 0)
+                selectedDestination = candidate;
+        }
+
+        if (validCandidateCount == 0)
+        {
+            if (isInitialScatterRefresh)
+                _nextScatterRefreshTime = Time.time + SCATTER_INITIAL_FAILED_RETRY_INTERVAL;
+            else
+                HoldDirectPursuitForScatterInterval(targetPoint);
+
+            return false;
+        }
+
+        _scatterDestination = selectedDestination;
+        _scatterTarget = _CurrentTarget;
+        _nextScatterRefreshTime = Time.time + GetRandomScatterRefreshInterval();
+        _hasScatterDestination = true;
+
+        scatterDestination = _scatterDestination;
+        return true;
+    }
+
+    private void HoldDirectPursuitUntilNextScatterRefresh(Vector3 targetPoint)
+    {
+        float directUntilTime = _nextScatterRefreshTime > Time.time
+            ? _nextScatterRefreshTime
+            : Time.time + GetRandomScatterRefreshInterval();
+
+        HoldDirectPursuit(targetPoint, directUntilTime);
+    }
+
+    private void HoldDirectPursuitForScatterInterval(Vector3 targetPoint)
+    {
+        HoldDirectPursuit(targetPoint, Time.time + GetRandomScatterRefreshInterval());
+    }
+
+    private void HoldDirectPursuit(Vector3 targetPoint, float directUntilTime)
+    {
+        _scatterDestination = targetPoint;
+        _scatterTarget = _CurrentTarget;
+        _nextScatterRefreshTime = directUntilTime;
+        _directPursuitUntilTime = directUntilTime;
+        _hasScatterDestination = true;
+        _lastDestination = Vector3.zero;
+    }
+
+    private float GetRandomScatterRefreshInterval()
+    {
+        return UnityEngine.Random.Range(
+            SCATTER_REFRESH_MIN_INTERVAL,
+            SCATTER_REFRESH_MAX_INTERVAL
+        );
+    }
+
+    private bool TryResolveScatterCandidate(
+        Vector3 desiredDestination,
+        Vector3 scatterCenter,
+        Vector3 targetPoint,
+        float currentTargetDistance,
+        out Vector3 candidate)
+    {
+        candidate = Vector3.zero;
+
+        if (!NavMesh.SamplePosition(
+            desiredDestination,
+            out NavMeshHit hit,
+            SCATTER_NAVMESH_SAMPLE_RADIUS,
+            NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        if (Vector3.Distance(hit.position, scatterCenter) < SCATTER_SAMPLE_MIN_RADIUS)
+            return false;
+
+        if (!HasEnoughNavMeshClearance(hit.position))
+            return false;
+
+        if (_pursuitPath == null)
+            _pursuitPath = new NavMeshPath();
+
+        _Agent.CalculatePath(hit.position, _pursuitPath);
+        if (_pursuitPath.status != NavMeshPathStatus.PathComplete)
+            return false;
+
+        float candidateTargetDistance = Vector3.Distance(hit.position, targetPoint);
+        if (candidateTargetDistance > currentTargetDistance - SCATTER_MIN_FORWARD_PROGRESS)
+            return false;
+
+        Vector3 currentToTarget = targetPoint - transform.position;
+        Vector3 currentToCandidate = hit.position - transform.position;
+        currentToTarget.y = 0f;
+        currentToCandidate.y = 0f;
+
+        if (currentToTarget.sqrMagnitude <= 0.001f ||
+            currentToCandidate.sqrMagnitude <= 0.001f)
+        {
+            return false;
+        }
+
+        float forwardDot = Vector3.Dot(currentToTarget.normalized, currentToCandidate.normalized);
+        if (forwardDot <= 0.15f)
+            return false;
+
+        candidate = hit.position;
+        return true;
+    }
+
+    private bool HasEnoughNavMeshClearance(Vector3 position)
+    {
+        if (_Agent == null) return false;
+
+        if (!NavMesh.FindClosestEdge(
+            position,
+            out NavMeshHit edgeHit,
+            NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        return edgeHit.distance >= _Agent.radius + OFFSET_EDGE_CLEARANCE_PADDING;
+    }
+
+    private Vector3 GetScatterCenter(Vector3 targetPoint)
+    {
+        if (_Agent == null || !_Agent.enabled || !_Agent.isOnNavMesh)
+            return targetPoint;
+
+        if (_pursuitPath == null)
+            _pursuitPath = new NavMeshPath();
+
+        _Agent.CalculatePath(targetPoint, _pursuitPath);
+        if (_pursuitPath.status != NavMeshPathStatus.PathComplete ||
+            _pursuitPath.corners == null ||
+            _pursuitPath.corners.Length < 2)
+        {
+            return targetPoint;
+        }
+
+        Vector3 previousCorner = transform.position;
+        float travelledDistance = 0f;
+
+        for (int i = 1; i < _pursuitPath.corners.Length; i++)
+        {
+            Vector3 corner = _pursuitPath.corners[i];
+            float segmentDistance = Vector3.Distance(previousCorner, corner);
+
+            if (travelledDistance + segmentDistance >= SCATTER_LOOKAHEAD_DISTANCE)
+            {
+                float segmentT = Mathf.Clamp01((SCATTER_LOOKAHEAD_DISTANCE - travelledDistance) / segmentDistance);
+                return Vector3.Lerp(previousCorner, corner, segmentT);
+            }
+
+            travelledDistance += segmentDistance;
+            previousCorner = corner;
+        }
+
+        return previousCorner;
+    }
+
+    private void ResetScatterDestination()
+    {
+        _scatterDestination = Vector3.zero;
+        _lastProgressPosition = transform.position;
+        _stuckTimer = 0f;
+        _directPursuitUntilTime = 0f;
+        _scatterTarget = null;
+        _nextScatterRefreshTime = 0f;
+        _hasScatterDestination = false;
+    }
+
+    private void UpdateStuckRecovery(Vector3 targetPoint)
+    {
+        if (_Agent == null || !_Agent.enabled || !_Agent.isOnNavMesh) return;
+
+        if (_Agent.isStopped ||
+            _Agent.pathPending ||
+            !_Agent.hasPath ||
+            Vector3.Distance(transform.position, targetPoint) <= STUCK_CHECK_MIN_REMAINING_DISTANCE)
+        {
+            ResetStuckTimer();
+            return;
+        }
+
+        float movedDistance = Vector3.Distance(transform.position, _lastProgressPosition);
+        if (movedDistance >= STUCK_MIN_MOVE_DISTANCE)
+        {
+            ResetStuckTimer();
+            return;
+        }
+
+        _stuckTimer += Time.deltaTime;
+
+        if (_stuckTimer < STUCK_TIME_THRESHOLD) return;
+
+        _directPursuitUntilTime = Time.time + DIRECT_PURSUIT_RECOVERY_DURATION;
+        _lastDestination = Vector3.zero;
+        _scatterDestination = targetPoint;
+        _stuckTimer = 0f;
+    }
+
+    private void ResetStuckTimer()
+    {
+        _stuckTimer = 0f;
+        _lastProgressPosition = transform.position;
     }
 
 
@@ -314,6 +639,8 @@ public abstract class Mb_CuBotController : MB_CuBotBase
     protected virtual bool ShouldHoldMovement => false;
 
     protected virtual bool RequiresLineOfSightToAttack => false;
+
+    protected virtual bool UsesScatterMovement => true;
 
     protected virtual Transform AttackLineOfSightOrigin => transform;
 
@@ -386,6 +713,17 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         _Agent.speed = Mathf.Max(0f, Stats.MoveSpeed.GetValue());
     }
 
+    private void ConfigureAgentAvoidance()
+    {
+        if (_Agent == null) return;
+
+        if (_Agent.radius < MIN_AGENT_AVOIDANCE_RADIUS)
+            _Agent.radius = MIN_AGENT_AVOIDANCE_RADIUS;
+
+        _Agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        _Agent.avoidancePriority = UnityEngine.Random.Range(30, 71);
+    }
+
 
     // -------------------------------------------------------------------------
     // Pool Reset
@@ -398,6 +736,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
         _aiState = CuBotAIState.ChasingPanoharra;
         _lastDestination = Vector3.zero;
         _aggroRetryTimer = 0f;
+        ResetScatterDestination();
 
         FindTargets();
 
@@ -406,6 +745,7 @@ public abstract class Mb_CuBotController : MB_CuBotBase
             if (!EnsureAgentOnNavMesh()) return;
 
             _Agent.isStopped = false;
+            ConfigureAgentAvoidance();
             RefreshAgentMoveSpeed();
             _Agent.ResetPath();
         }

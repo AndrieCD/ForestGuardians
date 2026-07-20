@@ -82,6 +82,8 @@ public class Mb_DrillyController : Mb_CuBotController
 
     protected override bool ShouldHoldMovement => _hasTriggeredAttack;
 
+    protected override bool UsesScatterMovement => false;
+
     private void BeginAttackVulnerableState()
     {
         SetBurrowedState(false);

@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public class Mb_ToxionSludgeProjectile : MonoBehaviour
 {
+    private const float SLUDGE_OVERLAP_CHECK_HEIGHT = 1.0f;
+
     private Mb_CharacterBase _owner;
     private float _impactDamage;
     private float _sludgeDamagePerTick;
@@ -45,6 +47,7 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
         if (_hasImpacted) return;
         if (_owner != null && other.gameObject == _owner.gameObject) return;
         if (other.CompareTag("CuBot")) return;
+        if (IsAreaEffect(other.gameObject)) return;
 
         Vector3 impactPoint = other.ClosestPoint(transform.position);
         if (impactPoint == Vector3.zero)
@@ -76,10 +79,20 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
             return;
         }
 
+        if (IsOverlappingSludgeZone(position))
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         GameObject zone = Instantiate(_sludgeZonePrefab);
         zone.name = "Toxion Sludge Zone";
         zone.transform.position = position;
         zone.transform.localScale = new Vector3(_zoneRadius * 2.0f, 0.1f, _zoneRadius * 2.0f);
+
+        int areaEffectLayer = LayerMask.NameToLayer(Mb_ToxionSludgeZone.AREA_EFFECT_LAYER_NAME);
+        if (areaEffectLayer >= 0)
+            zone.layer = areaEffectLayer;
 
         Collider zoneCollider = zone.GetComponentInChildren<Collider>();
         if (zoneCollider != null)
@@ -104,5 +117,34 @@ public class Mb_ToxionSludgeProjectile : MonoBehaviour
         );
 
         Destroy(gameObject);
+    }
+
+    private bool IsOverlappingSludgeZone(Vector3 position)
+    {
+        int areaEffectLayer = LayerMask.NameToLayer(Mb_ToxionSludgeZone.AREA_EFFECT_LAYER_NAME);
+        if (areaEffectLayer < 0) return false;
+
+        int areaEffectMask = 1 << areaEffectLayer;
+        Collider[] overlaps = Physics.OverlapBox(
+            position,
+            new Vector3(_zoneRadius, SLUDGE_OVERLAP_CHECK_HEIGHT * 0.5f, _zoneRadius),
+            Quaternion.identity,
+            areaEffectMask,
+            QueryTriggerInteraction.Collide
+        );
+
+        foreach (Collider overlap in overlaps)
+        {
+            if (overlap != null && overlap.GetComponentInParent<Mb_ToxionSludgeZone>() != null)
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool IsAreaEffect(GameObject target)
+    {
+        int areaEffectLayer = LayerMask.NameToLayer(Mb_ToxionSludgeZone.AREA_EFFECT_LAYER_NAME);
+        return areaEffectLayer >= 0 && target.layer == areaEffectLayer;
     }
 }
