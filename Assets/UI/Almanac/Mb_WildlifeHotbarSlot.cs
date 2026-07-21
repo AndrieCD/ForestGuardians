@@ -32,6 +32,40 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
     [SerializeField] private Color LockedIconTint = Color.white;
     [SerializeField] private Color UnlockedIconTint = Color.white;
 
+    [Header("Discovery Feedback")]
+    [SerializeField] private float FeedbackDuration = 1.25f;
+    [SerializeField] private float FeedbackPulseSpeed = 8f;
+    [SerializeField] private float FeedbackMinimumAlpha = 0.35f;
+    [SerializeField] private float FeedbackScale = 1.12f;
+
+    #endregion                          //----------------------------------------
+
+
+    #region Runtime State               //----------------------------------------
+
+    private Coroutine _feedbackCoroutine;
+    private Color _feedbackBaseColor;
+    private Vector3 _feedbackBaseScale = Vector3.one;
+    private bool _hasFeedbackBaseState;
+
+    #endregion                          //----------------------------------------
+
+
+    #region Unity Lifecycle             //----------------------------------------
+
+    private void OnDisable()
+    {
+        StopDiscoveryFeedback();
+    }
+
+    private void OnValidate()
+    {
+        FeedbackDuration = Mathf.Max(0f, FeedbackDuration);
+        FeedbackPulseSpeed = Mathf.Max(0.01f, FeedbackPulseSpeed);
+        FeedbackMinimumAlpha = Mathf.Clamp01(FeedbackMinimumAlpha);
+        FeedbackScale = Mathf.Max(1f, FeedbackScale);
+    }
+
     #endregion                          //----------------------------------------
 
 
@@ -46,12 +80,15 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
     /// </summary>
     public void InitializeLocked(SO_WildlifeEntry entry)
     {
+        StopDiscoveryFeedback();
+
         // Show silhouette while the species is not yet unlocked
         if (Icon != null)
         {
             Icon.sprite = entry.SilhouetteIcon;
             Icon.gameObject.SetActive(entry.SilhouetteIcon != null);
             Icon.color = LockedIconTint;
+            Icon.rectTransform.localScale = Vector3.one;
         }
 
         if (SpeciesNameText != null)
@@ -85,6 +122,8 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
     /// </summary>
     public void MarkComplete(SO_WildlifeEntry entry)
     {
+        StopDiscoveryFeedback();
+
         if (Icon != null)
         {
             // Swap to the full unlocked icon on completion
@@ -93,6 +132,7 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
                 : entry.SilhouetteIcon; // Fallback if unlocked icon not yet assigned
 
             Icon.color = UnlockedIconTint;
+            Icon.rectTransform.localScale = Vector3.one;
 
             Icon.gameObject.SetActive(true);
         }
@@ -105,6 +145,66 @@ public class Mb_WildlifeHotbarSlot : MonoBehaviour
 
         if (CompletionOverlay != null)
             CompletionOverlay.SetActive(true);
+    }
+
+    #endregion                          //----------------------------------------
+
+
+    #region Discovery Feedback          //----------------------------------------
+
+    public void PlayDiscoveryFeedback()
+    {
+        if (Icon == null || !gameObject.activeInHierarchy)
+            return;
+
+        StopDiscoveryFeedback();
+
+        _feedbackBaseColor = Icon.color;
+        _feedbackBaseScale = Icon.rectTransform.localScale;
+        _hasFeedbackBaseState = true;
+        _feedbackCoroutine = StartCoroutine(DiscoveryFeedbackRoutine());
+    }
+
+    private IEnumerator DiscoveryFeedbackRoutine()
+    {
+        float elapsed = 0f;
+        Color fadedColor = _feedbackBaseColor;
+        fadedColor.a = Mathf.Min(_feedbackBaseColor.a, FeedbackMinimumAlpha);
+        Vector3 targetScale = _feedbackBaseScale * FeedbackScale;
+
+        while (elapsed < FeedbackDuration)
+        {
+            float pulse = Mathf.PingPong(elapsed * FeedbackPulseSpeed, 1f);
+            Icon.color = Color.Lerp(_feedbackBaseColor, fadedColor, pulse);
+            Icon.rectTransform.localScale = Vector3.Lerp(_feedbackBaseScale, targetScale, pulse);
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        RestoreFeedbackBaseState();
+        _feedbackCoroutine = null;
+    }
+
+    private void StopDiscoveryFeedback()
+    {
+        if (_feedbackCoroutine != null)
+        {
+            StopCoroutine(_feedbackCoroutine);
+            _feedbackCoroutine = null;
+        }
+
+        RestoreFeedbackBaseState();
+    }
+
+    private void RestoreFeedbackBaseState()
+    {
+        if (!_hasFeedbackBaseState || Icon == null)
+            return;
+
+        Icon.color = _feedbackBaseColor;
+        Icon.rectTransform.localScale = _feedbackBaseScale;
+        _hasFeedbackBaseState = false;
     }
 
     #endregion                          //----------------------------------------

@@ -115,6 +115,7 @@ public class Mb_WildlifeHotbarUI : MonoBehaviour
     {
         if (!_slotMap.TryGetValue(entry, out Mb_WildlifeHotbarSlot slot)) return;
         slot.UpdateCounter(found, required);
+        slot.PlayDiscoveryFeedback();
     }
 
 
@@ -122,11 +123,7 @@ public class Mb_WildlifeHotbarUI : MonoBehaviour
     {
         if (!_slotMap.TryGetValue(entry, out Mb_WildlifeHotbarSlot slot)) return;
         slot.MarkComplete(entry);
-
-        // TODO: Play a brief slot completion animation here
-        // Suggested: slot.PlayCompleteAnimation() once animator is set up
-        // TODO: Play completion SFX
-        // Suggested: Mb_AudioManager.Instance.PlaySFX("HotbarSlotComplete")
+        slot.PlayDiscoveryFeedback();
     }
 
     #endregion                          //----------------------------------------

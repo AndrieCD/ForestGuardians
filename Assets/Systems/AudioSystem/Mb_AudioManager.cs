@@ -28,7 +28,7 @@
 //        - UI Mixer Group       → the "UI" group
 //        - SFX Pool Size        → default 10 is fine for prototype
 //        - Crossfade Duration   → default 1.5s feels natural
-//        - Current Stage Index  → set to 1, 2, or 3 per scene
+//        - Fallback Stage Music → used only if a stage cannot be resolved
 //   3. The AudioMixer asset must expose three float parameters named exactly:
 //        "MusicVolume", "SFXVolume", "UIVolume"
 //      (Right-click each group's Volume in the Mixer → Expose Parameter, then rename it.)
@@ -36,6 +36,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class Mb_AudioManager : MonoBehaviour
 {
@@ -67,12 +68,9 @@ public class Mb_AudioManager : MonoBehaviour
     [Header("SFX Pool")]
     [SerializeField] private int _SFXPoolSize = 10;
 
-    [Header("Stage Index")]
-    // Set this in the Inspector for each stage scene.
-    // 1 = Stage 1 (Combat_Stage1), 2 = Stage 2, 3 = Stage 3.
-    // Mb_AudioManager has no direct reference to Mb_StageManager, so this field
-    // is the explicit, rename-safe way to tell the audio manager which track to play.
-    [SerializeField] private int _CurrentStageIndex = 1;
+    [Header("Stage Music Fallback")]
+    [Tooltip("Used only when no run-session stage or recognizable stage scene is available.")]
+    [SerializeField] private MusicTrack _FallbackStageMusic = MusicTrack.Combat_Stage1;
 
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -518,24 +516,44 @@ public class Mb_AudioManager : MonoBehaviour
 
     private void HandleStageStart()
     {
-        // Convert the Inspector-assigned stage index to the correct music enum value.
-        // This is the one place where _CurrentStageIndex drives the music decision.
-        MusicTrack stageTrack = _CurrentStageIndex switch
+        PlayMusicInternal(ResolveStageMusicTrack(), crossfade: true);
+    }
+
+
+    private MusicTrack ResolveStageMusicTrack()
+    {
+        MusicTrack sessionTrack = Sc_RunSession.SelectedStageNumber switch
         {
             1 => MusicTrack.Combat_Stage1,
             2 => MusicTrack.Combat_Stage2,
             3 => MusicTrack.Combat_Stage3,
-            _ => MusicTrack.Combat_Stage1 // Fallback — log a warning below
+            4 => MusicTrack.Tutorial,
+            _ => MusicTrack.None
         };
 
-        if (_CurrentStageIndex < 1 || _CurrentStageIndex > 3)
+        if (sessionTrack != MusicTrack.None)
+            return sessionTrack;
+
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        if (sceneName == "Tutorial")
+            return MusicTrack.Tutorial;
+
+        if (sceneName.Contains("Stage3"))
+            return MusicTrack.Combat_Stage3;
+
+        if (sceneName.Contains("Stage2"))
+            return MusicTrack.Combat_Stage2;
+
+        if (sceneName.Contains("Stage1"))
+            return MusicTrack.Combat_Stage1;
+
+        if (_FallbackStageMusic == MusicTrack.None)
         {
-            Debug.LogWarning($"[Mb_AudioManager] _CurrentStageIndex is {_CurrentStageIndex} — " +
-                             "expected 1, 2, or 3. Defaulting to Combat_Stage1. " +
-                             "Set the correct index in the Inspector.");
+            Debug.LogWarning("[Mb_AudioManager] No stage music could be resolved and fallback is None.");
         }
 
-        PlayMusicInternal(stageTrack, crossfade: true);
+        return _FallbackStageMusic;
     }
 
 
