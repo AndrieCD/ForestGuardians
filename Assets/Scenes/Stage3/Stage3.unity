@@ -6699,8 +6699,8 @@ MonoBehaviour:
   BerniePoolSize: 8
   ToxionPrefab: {fileID: 8080076912440207996, guid: 85745457f4e004e499d13ba0f8b0c030, type: 3}
   ToxionPoolSize: 8
-  LuxionPrefab: {fileID: 0}
-  LuxionPoolSize: 2
+  LuxionPrefab: {fileID: 6209814387459858816, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
+  LuxionPoolSize: 1
 --- !u!4 &1484057492
 Transform:
   m_ObjectHideFlags: 0

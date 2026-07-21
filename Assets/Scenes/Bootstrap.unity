@@ -945,7 +945,7 @@ MonoBehaviour:
   _UIMixerGroup: {fileID: 8631432654437336921, guid: de00b9282edd1d64eac1159d6e7c11bc, type: 2}
   _CrossfadeDuration: 1.5
   _SFXPoolSize: 10
-  _CurrentStageIndex: 1
+  _FallbackStageMusic: 200
 --- !u!1 &1698070824
 GameObject:
   m_ObjectHideFlags: 0

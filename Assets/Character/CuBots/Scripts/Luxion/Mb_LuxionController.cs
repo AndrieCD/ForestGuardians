@@ -16,6 +16,7 @@ public class Mb_LuxionController : MB_CuBotBase
     [SerializeField] private float _PhaseTransitionDuration = 1.0f;
 
     [Header("Targeting")]
+    [SerializeField] private Transform _ProjectileOrigin;
     [SerializeField] private float _TargetHeightOffset = 1.0f;
     [SerializeField] private LayerMask _LineOfSightMask = Physics.DefaultRaycastLayers;
 
@@ -57,6 +58,7 @@ public class Mb_LuxionController : MB_CuBotBase
     [SerializeField] private float _CrackedAreaTickInterval = 0.5f;
 
     [Header("Flash Photography")]
+    [SerializeField] private bool _EnableFlashPhotography = false;
     [SerializeField] private float _EyeContactRequiredDuration = 1.0f;
     [SerializeField] private float _FlashRange = 22f;
     [SerializeField] private float _FlashWindupDuration = 0.8f;
@@ -65,6 +67,7 @@ public class Mb_LuxionController : MB_CuBotBase
 
     private NavMeshAgent _agent;
     private Mb_CuBotAnimator _cuBotAnimator;
+    private Mb_LuxionAnimator _luxionAnimator;
     private Mb_ProjectileLauncher _projectileLauncher;
     private GameObject _projectilePrefab;
 
@@ -91,6 +94,7 @@ public class Mb_LuxionController : MB_CuBotBase
 
         _agent = GetComponent<NavMeshAgent>();
         _cuBotAnimator = GetComponent<Mb_CuBotAnimator>();
+        _luxionAnimator = GetComponent<Mb_LuxionAnimator>();
         _projectileLauncher = GetComponent<Mb_ProjectileLauncher>();
 
         if (_agent == null)
@@ -147,11 +151,17 @@ public class Mb_LuxionController : MB_CuBotBase
         // Luxion's boss actions are controlled directly by this controller.
     }
 
+    protected override void OnHitReceived()
+    {
+        ClampHealthToCurrentPhaseFloor();
+    }
+
     protected override void Reset()
     {
         base.Reset();
 
         _currentPhase = LuxionPhase.Extraction;
+        _luxionAnimator?.SetPhase(_currentPhase);
         _isCasting = false;
         _isTransitioning = false;
         _flashUsedThisPhase = false;
@@ -259,6 +269,7 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator AxeSlashRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerAxeSlash();
         yield return new WaitForSeconds(0.35f);
 
         DealArcDamage(
@@ -275,6 +286,7 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator SpinHarvestRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerSpinHarvest();
 
         float elapsed = 0f;
         float damageTimer = 0f;
@@ -298,7 +310,7 @@ public class Mb_LuxionController : MB_CuBotBase
             if (damageTimer <= 0f)
             {
                 damagedThisTick.Clear();
-                DealRadiusDamage(_CuBotTemplate.AbilityQ, _SpinHarvestRadius, 0.45f, damagedThisTick);
+                DealRadiusDamage(_CuBotTemplate.AbilityQ, _SpinHarvestRadius, 0.35f, damagedThisTick);
                 damageTimer = _SpinHarvestDamageInterval;
             }
 
@@ -312,9 +324,10 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator RifleShotRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerRifleShot();
         yield return new WaitForSeconds(0.2f);
 
-        FireProjectileAt(target, _CuBotTemplate.SecondaryAttack, 1.0f);
+        FireProjectileAt(target, _CuBotTemplate.SecondaryAttack, 1.3f);
 
         _rifleShotCooldownRemaining = _RifleShotCooldown;
         EndCast();
@@ -323,6 +336,7 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator BulletRainRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerBulletRain();
 
         Vector3 aimDirection = GetDirectionToTarget(target);
 
@@ -339,6 +353,7 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator PickaxeSlamRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerPickaxeSlam();
         yield return new WaitForSeconds(0.45f);
 
         DealRadiusDamage(_CuBotTemplate.PrimaryAttack, _PickaxeSlamRadius, 1.15f);
@@ -350,6 +365,7 @@ public class Mb_LuxionController : MB_CuBotBase
     private IEnumerator EarthBreakerRoutine(Transform target)
     {
         BeginCast(target);
+        _luxionAnimator?.TriggerEarthBreaker();
 
         Vector3 start = transform.position;
         Vector3 end = target != null ? target.position : start + transform.forward * _EarthBreakerRange;
@@ -394,9 +410,13 @@ public class Mb_LuxionController : MB_CuBotBase
         if (Health != null)
             Health.IsUntargetable = true;
 
+        _luxionAnimator?.CancelLuxionTriggers();
+        _luxionAnimator?.TriggerPhaseTransition(nextPhase);
+
         yield return new WaitForSeconds(_PhaseTransitionDuration);
 
         _currentPhase = nextPhase;
+        _luxionAnimator?.SetPhase(_currentPhase);
         _flashUsedThisPhase = false;
         _eyeContactTimer = 0f;
         ApplyPhaseModifiers(nextPhase);
@@ -478,7 +498,8 @@ public class Mb_LuxionController : MB_CuBotBase
         if (projectileData == null) return;
 
         int projectileCount = Mathf.Max(1, _BulletRainProjectilesPerVolley);
-        float damage = GetDamage(abilityData, 0.55f);
+        float damage = GetDamage(abilityData, 0.45f);
+        Vector3 spawnPosition = GetProjectileOriginPosition();
 
         for (int i = 0; i < projectileCount; i++)
         {
@@ -491,6 +512,7 @@ public class Mb_LuxionController : MB_CuBotBase
                 projectileData,
                 this,
                 damage,
+                spawnPosition,
                 direction
             );
         }
@@ -542,6 +564,25 @@ public class Mb_LuxionController : MB_CuBotBase
         return LuxionPhase.Extraction;
     }
 
+    private void ClampHealthToCurrentPhaseFloor()
+    {
+        if (Health == null || Health.IsDead) return;
+
+        float maxHealth = Health.GetMaxHealth();
+        if (maxHealth <= 0f) return;
+
+        float minimumHealth = _currentPhase switch
+        {
+            LuxionPhase.Extraction => maxHealth * _AcquisitionHealthThreshold,
+            LuxionPhase.Acquisition => maxHealth * _ConsumptionHealthThreshold,
+            _ => 0f
+        };
+
+        if (minimumHealth <= 0f) return;
+
+        Health.ClampCurrentHealthMinimum(minimumHealth);
+    }
+
     private void ApplyPhaseModifiers(LuxionPhase phase)
     {
         ClearConsumptionModifier();
@@ -571,7 +612,8 @@ public class Mb_LuxionController : MB_CuBotBase
 
     private bool CanUseFlashPhotography(Transform target)
     {
-        return !_flashUsedThisPhase &&
+        return _EnableFlashPhotography &&
+               !_flashUsedThisPhase &&
                target != null &&
                _eyeContactTimer >= _EyeContactRequiredDuration &&
                IsPlayerInFlashRange() &&
@@ -580,6 +622,12 @@ public class Mb_LuxionController : MB_CuBotBase
 
     private void UpdateFlashEyeContact()
     {
+        if (!_EnableFlashPhotography)
+        {
+            _eyeContactTimer = 0f;
+            return;
+        }
+
         if (_flashUsedThisPhase || _playerTarget == null)
         {
             _eyeContactTimer = 0f;
@@ -649,8 +697,13 @@ public class Mb_LuxionController : MB_CuBotBase
         if (target == null) return transform.forward;
 
         Vector3 targetPosition = target.position + Vector3.up * _TargetHeightOffset;
-        Vector3 direction = targetPosition - transform.position;
+        Vector3 direction = targetPosition - GetProjectileOriginPosition();
         return direction.sqrMagnitude > 0.001f ? direction.normalized : transform.forward;
+    }
+
+    private Vector3 GetProjectileOriginPosition()
+    {
+        return _ProjectileOrigin != null ? _ProjectileOrigin.position : transform.position;
     }
 
     private SO_ProjectileData ResolveProjectileData(SO_Ability abilityData)
@@ -689,7 +742,8 @@ public class Mb_LuxionController : MB_CuBotBase
         if (target != null)
             FaceTarget(target);
 
-        _cuBotAnimator?.TriggerAttack();
+        if (_luxionAnimator == null)
+            _cuBotAnimator?.TriggerAttack();
     }
 
     private void EndCast()

@@ -193,6 +193,20 @@ public class Mb_HealthComponent : MonoBehaviour, I_Damageable
         OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
     }
 
+
+    /// <summary>
+    /// Raises current health to a minimum value without firing heal events.
+    /// Intended for boss phase gates that prevent threshold skips after burst damage.
+    /// </summary>
+    public void ClampCurrentHealthMinimum(float minimumHealth)
+    {
+        if (IsDead || _statBlock == null || _statBlock.MaxHealth == null) return;
+        if (CurrentHealth >= minimumHealth) return;
+
+        CurrentHealth = Mathf.Min(minimumHealth, _statBlock.MaxHealth.GetValue());
+        OnHealthChanged?.Invoke(CurrentHealth, _statBlock.MaxHealth.GetValue());
+    }
+
     #endregion          //----------------------------------------  
 
 
