@@ -27,6 +27,7 @@ public enum MusicTrack
     Combat_Stage1 = 200,
     Combat_Stage2 = 210,
     Combat_Stage3 = 220,
+    Tutorial = 230,
     Victory = 300,
     Defeat = 310
 }
