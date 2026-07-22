@@ -221,67 +221,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3864763623527249289, guid: f806b7a4dea06ac41abd1fcdb33de529, type: 3}
   m_PrefabInstance: {fileID: 11488827}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &23447568
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_Name
-      value: Bernie
-      objectReference: {fileID: 0}
-    - target: {fileID: 5299550594070807008, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 100.85845
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.9990258
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 100.656044
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7609115405289323359, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e6ab7c71efb7aeb4d827a90a74ed6e45, type: 3}
 --- !u!1 &59211446
 GameObject:
   m_ObjectHideFlags: 0
@@ -2723,68 +2662,6 @@ Transform:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1545615721260755432, guid: 1f5ce54666c16a84395c7c1c9ab52286, type: 3}
   m_PrefabInstance: {fileID: 2271719725610146632}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &582548787
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 98.9163
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.9990263
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 103.959206
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082613754371217407, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6209814387459858816, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-      propertyPath: m_Name
-      value: Luxion
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
---- !u!1 &582548788 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6209814387459858816, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
-  m_PrefabInstance: {fileID: 582548787}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &627779667
 PrefabInstance:
@@ -6822,7 +6699,7 @@ MonoBehaviour:
   BerniePoolSize: 8
   ToxionPrefab: {fileID: 8080076912440207996, guid: 85745457f4e004e499d13ba0f8b0c030, type: 3}
   ToxionPoolSize: 8
-  LuxionPrefab: {fileID: 582548788}
+  LuxionPrefab: {fileID: 6209814387459858816, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
   LuxionPoolSize: 2
 --- !u!4 &1484057492
 Transform:
@@ -9047,5 +8924,3 @@ SceneRoots:
   - {fileID: 1707717534}
   - {fileID: 82635314}
   - {fileID: 1455098973}
-  - {fileID: 582548787}
-  - {fileID: 23447568}

@@ -170,6 +170,8 @@ public class Mb_VictoryScreenUI : Mb_EndScreenUI
             return;
         }
 
+        Mb_AudioManager.StopMusic(); 
+
         SceneLoader.Instance.LoadCutscene(
             cutsceneId,
             destination,

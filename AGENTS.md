@@ -213,7 +213,7 @@ Before implementing, also read **PROJECT_CONTEXT.md** for project-specific infor
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Projectile, Water, UI, Character, Minimap, Wildlife, ModelViewer, CameraFade, AreaEffect
 - Active game object:
-  - Name: Luxion
-  - Tag: CuBot
-  - Layer: Character
+  - Name: GuardianSpawner
+  - Tag: Untagged
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
