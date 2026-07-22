@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LuxionDraftMTL_BaseColor
+  m_Name: LuxionWeaponsDraftMTL_BaseColor
   m_Shader: {fileID: 4800000, guid: edb73fdd67aefe949abae90ba298f852, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
