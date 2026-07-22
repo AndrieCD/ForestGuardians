@@ -6823,7 +6823,7 @@ MonoBehaviour:
   ToxionPrefab: {fileID: 8080076912440207996, guid: 85745457f4e004e499d13ba0f8b0c030, type: 3}
   ToxionPoolSize: 8
   LuxionPrefab: {fileID: 582548788}
-  LuxionPoolSize: 3
+  LuxionPoolSize: 2
 --- !u!4 &1484057492
 Transform:
   m_ObjectHideFlags: 0

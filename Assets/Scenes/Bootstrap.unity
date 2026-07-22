@@ -1112,6 +1112,7 @@ MonoBehaviour:
   _LoadingScreen: {fileID: 973868448}
   Cutscenes:
   - {fileID: 11400000, guid: 98f14616727537e43b4808b21ee99b3e, type: 2}
+  - {fileID: 11400000, guid: 394c84a74f207a941b53fafb69f1f928, type: 2}
 --- !u!1 &1887397638
 GameObject:
   m_ObjectHideFlags: 0
