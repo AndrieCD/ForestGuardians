@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_StageData
   WaveDataList:
   - {fileID: 11400000, guid: 694cb3c190114c11a8700f5b27e998ad, type: 2}
+  - {fileID: 11400000, guid: 221c8525a05341b499532602a03dcce2, type: 2}
+  - {fileID: 11400000, guid: 9e8243307e904122946f7dc7ea362c57, type: 2}

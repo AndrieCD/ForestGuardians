@@ -19,6 +19,6 @@ MonoBehaviour:
     count: 1
   - enemyType: {fileID: 862477864045349106, guid: d9b91bb275af7a7408a5e1c8afe8056c, type: 3}
     count: 1
-  - enemyType: {fileID: 862477864045349106, guid: d9df83d76ec2c4c4aadc320c9836e09d, type: 3}
+  - enemyType: {fileID: 6209814387459858816, guid: aad8e93a3a395694c9ca9f65482dcce1, type: 3}
     count: 1
   WaveReward: 0
