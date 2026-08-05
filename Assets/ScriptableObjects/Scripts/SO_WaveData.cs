@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EliteAuraType
+{
+    Random,
+    Commander,
+    Guardian
+}
+
 [CreateAssetMenu(fileName = "NewWaveData_SO", menuName = "Stage/Wave_SO")]
 public class SO_WaveData : ScriptableObject
 {
@@ -16,5 +23,11 @@ public class SO_WaveData : ScriptableObject
     [Tooltip("The reward offered to the player after this wave clears. None = no panel shown.")]
     public RewardType WaveReward = RewardType.None;
 
+    [Header("Elite CuBot")]
+    [Tooltip("If true, one eligible CuBot in this wave can spawn as an Elite.")]
+    public bool CanSpawnElite = false;
+
+    [Tooltip("Aura used by the Elite. Random chooses Commander or Guardian when the Elite is spawned.")]
+    public EliteAuraType EliteAura = EliteAuraType.Random;
 
 }

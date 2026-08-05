@@ -48,6 +48,20 @@ public class Mb_RewardsManager : MonoBehaviour
     [Header("Augment Pool")]
     [SerializeField] private List<SO_Augment> _AugmentPool;
 
+    [Header("Forest Fruit Rewards")]
+    [Tooltip("Minor permanent run buffs offered when a Forest Fruit is collected. " +
+             "At least two enabled entries with different TargetStat values are required.")]
+    [SerializeField] private List<Sc_ForestFruitStatReward> _ForestFruitRewards = new List<Sc_ForestFruitStatReward>
+    {
+        new Sc_ForestFruitStatReward(StatType.AttackPower, 20f, "ATK", false),
+        new Sc_ForestFruitStatReward(StatType.AbilityPower, 20f, "AP", false),
+        new Sc_ForestFruitStatReward(StatType.MaxHealth, 100f, "Max HP", false),
+        new Sc_ForestFruitStatReward(StatType.AttackSpeed, 0.05f, "AS", true),
+        new Sc_ForestFruitStatReward(StatType.Haste, 10f, "HST", true),
+        new Sc_ForestFruitStatReward(StatType.HealthRegen, 2f, "HP Regen", false),
+        new Sc_ForestFruitStatReward(StatType.CriticalChance, 0.05f, "CRT%", true),
+    };
+
     [Header("UI")]
     [SerializeField] private Mb_RewardsPanelUI _RewardsPanelUI;
 
@@ -167,7 +181,33 @@ public class Mb_RewardsManager : MonoBehaviour
 
     #region Panel Control           //----------------------------------------
 
+    public bool TryOpenForestFruitRewards()
+    {
+        if (_RewardsPanelUI == null)
+        {
+            Debug.LogError("[Mb_RewardsManager] Cannot open Forest Fruit rewards because no Rewards Panel UI is assigned.");
+            return false;
+        }
+
+        if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing)
+            return false;
+
+        Mb_CharacterBase player = GetPlayerCharacter();
+        if (player == null)
+        {
+            Debug.LogError("[Mb_RewardsManager] Cannot apply Forest Fruit reward because no active Guardian is bound.");
+            return false;
+        }
+
+        return TryOpenRewardsPanel(RewardType.ForestFruit);
+    }
+
     private void OpenRewardsPanel(RewardType rewardType)
+    {
+        TryOpenRewardsPanel(rewardType);
+    }
+
+    private bool TryOpenRewardsPanel(RewardType rewardType)
     {
         OnRewardsPanelOpened?.Invoke(rewardType);
 
@@ -178,7 +218,7 @@ public class Mb_RewardsManager : MonoBehaviour
             Debug.LogWarning($"[Mb_RewardsManager] Could not build options for {rewardType}. Skipping.");
             // Fire closed immediately so WaveManager doesn't wait forever
             OnRewardsPanelClosed?.Invoke();
-            return;
+            return false;
         }
 
         _choiceMade = false;
@@ -197,6 +237,8 @@ public class Mb_RewardsManager : MonoBehaviour
         _rewardsTimerCoroutine = REWARDS_TIMER_ENABLED
             ? StartCoroutine(RewardsTimerRoutine())
             : null;
+
+        return true;
     }
 
 
@@ -284,6 +326,7 @@ public class Mb_RewardsManager : MonoBehaviour
             RewardType.AugmentSelection => TryBuildAugmentOptions(out left, out right),
             RewardType.AbilityUpgrade => TryBuildAbilityUpgradeOptions(out left, out right),
             RewardType.UltimateBranch => TryBuildUltimateBranchOptions(out left, out right),
+            RewardType.ForestFruit => TryBuildForestFruitOptions(out left, out right),
             _ => false
         };
     }
@@ -315,6 +358,41 @@ public class Mb_RewardsManager : MonoBehaviour
 
         left = RewardOption.FromAugment(leftData);
         right = RewardOption.FromAugment(rightData);
+        return true;
+    }
+
+
+    private bool TryBuildForestFruitOptions(out RewardOption left, out RewardOption right)
+    {
+        left = default;
+        right = default;
+
+        List<Sc_ForestFruitStatReward> available = new List<Sc_ForestFruitStatReward>();
+        HashSet<StatType> includedStats = new HashSet<StatType>();
+
+        foreach (Sc_ForestFruitStatReward reward in _ForestFruitRewards)
+        {
+            if (reward == null || !reward.Enabled) continue;
+            if (!includedStats.Add(reward.TargetStat)) continue;
+
+            available.Add(reward);
+        }
+
+        if (available.Count < 2)
+        {
+            Debug.LogWarning("[Mb_RewardsManager] Not enough Forest Fruit stat rewards to fill the panel. " +
+                             "Add at least two enabled entries with different TargetStat values.");
+            return false;
+        }
+
+        int leftIndex = UnityEngine.Random.Range(0, available.Count);
+        Sc_ForestFruitStatReward leftReward = available[leftIndex];
+        available.RemoveAt(leftIndex);
+
+        Sc_ForestFruitStatReward rightReward = available[UnityEngine.Random.Range(0, available.Count)];
+
+        left = RewardOption.FromForestFruit(leftReward);
+        right = RewardOption.FromForestFruit(rightReward);
         return true;
     }
 
@@ -464,7 +542,45 @@ public class Mb_RewardsManager : MonoBehaviour
                 _branchSelected = true;
                 Debug.Log($"[Mb_RewardsManager] Branch selected: {option.BranchOption.DisplayData.BranchName}");
                 break;
+
+            case RewardType.ForestFruit:
+                ApplyForestFruitReward(option);
+                break;
         }
+    }
+
+
+    private void ApplyForestFruitReward(RewardOption option)
+    {
+        Mb_CharacterBase player = GetPlayerCharacter();
+        if (player == null || player.Stats == null)
+        {
+            Debug.LogError("[Mb_RewardsManager] Cannot apply Forest Fruit reward because no active Guardian stats are bound.");
+            return;
+        }
+
+        Sc_ForestFruitStatReward fruitReward = option.ForestFruitReward;
+        if (fruitReward == null)
+        {
+            Debug.LogError("[Mb_RewardsManager] Forest Fruit reward option has no reward data.");
+            return;
+        }
+
+        Sc_Modifier modifier = new Sc_Modifier(
+            $"Forest Fruit - {fruitReward.GetDisplayStatName()}",
+            ModifierSource.ForestFruit,
+            new List<Sc_StatEffect>
+            {
+                new Sc_StatEffect(fruitReward.TargetStat, fruitReward.BonusAmount, fruitReward.ModifierType)
+            }
+        );
+
+        player.Stats.AddModifier(modifier);
+
+        if (fruitReward.TargetStat == StatType.MaxHealth && fruitReward.ModifierType == StatModType.Flat)
+            player.Health?.Heal(fruitReward.BonusAmount);
+
+        Debug.Log($"[Mb_RewardsManager] Forest Fruit reward applied: {fruitReward.BuildTitle()}.");
     }
 
     #endregion                      //----------------------------------------
@@ -537,7 +653,8 @@ public enum RewardType
     None,
     AugmentSelection,
     AbilityUpgrade,
-    UltimateBranch
+    UltimateBranch,
+    ForestFruit
 }
 
 
@@ -557,6 +674,9 @@ public struct RewardOption
 
     // UltimateBranch
     public Sc_BranchOption BranchOption;
+
+    // ForestFruit
+    public Sc_ForestFruitStatReward ForestFruitReward;
 
 
     public static RewardOption FromAugment(SO_Augment data)
@@ -611,6 +731,18 @@ public struct RewardOption
             Description = branch.DisplayData.Description,
             Icon = branch.DisplayData.Icon,
             BranchOption = branch,
+        };
+    }
+
+    public static RewardOption FromForestFruit(Sc_ForestFruitStatReward reward)
+    {
+        return new RewardOption
+        {
+            Type = RewardType.ForestFruit,
+            Name = reward.BuildTitle(),
+            Description = reward.BuildDescription(),
+            Icon = reward.Icon,
+            ForestFruitReward = reward,
         };
     }
 }

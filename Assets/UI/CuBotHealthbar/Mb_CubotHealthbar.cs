@@ -51,6 +51,10 @@ public class Mb_CuBotHealthBar : MonoBehaviour
     // Cached camera reference — fetched once in Awake, never per-frame
     private Camera _mainCamera;
 
+    private Mb_EliteCuBot _eliteCuBot;
+    private Color _normalHealthColor = Color.white;
+    private bool _hasNormalHealthColor;
+
     #endregion                  //----------------------------------------
 
 
@@ -60,12 +64,19 @@ public class Mb_CuBotHealthBar : MonoBehaviour
     {
         _mainCamera = Camera.main;
         _health = GetComponent<Mb_HealthComponent>();
+        _eliteCuBot = GetComponent<Mb_EliteCuBot>();
 
         if (_health == null)
             Debug.LogError($"[Mb_CuBotHealthBar] No Mb_HealthComponent found on {gameObject.name}.");
 
         if (_HealthBarCanvas == null)
             Debug.LogError($"[Mb_CuBotHealthBar] HealthBarCanvas is not assigned on {gameObject.name}.");
+
+        if (_HealthFillImage != null)
+        {
+            _normalHealthColor = _HealthFillImage.color;
+            _hasNormalHealthColor = true;
+        }
 
         // Apply the configured bar size to the canvas's RectTransform
         if (_HealthBarCanvas != null)
@@ -115,6 +126,7 @@ public class Mb_CuBotHealthBar : MonoBehaviour
 
         // Reset both bars to full so a pool-reused CuBot starts looking healthy
         ResetBars();
+        RefreshEliteState();
     }
 
 
@@ -193,6 +205,22 @@ public class Mb_CuBotHealthBar : MonoBehaviour
 
         if (_ShieldFillImage != null)
             _ShieldFillImage.fillAmount = 0f; // No shield on fresh spawn
+    }
+
+    public void RefreshEliteState()
+    {
+        if (_HealthFillImage == null) return;
+
+        _eliteCuBot = GetComponent<Mb_EliteCuBot>();
+
+        if (_eliteCuBot != null && _eliteCuBot.IsElite)
+        {
+            _HealthFillImage.color = _eliteCuBot.EliteColor;
+            return;
+        }
+
+        if (_hasNormalHealthColor)
+            _HealthFillImage.color = _normalHealthColor;
     }
 
     #endregion                  //----------------------------------------

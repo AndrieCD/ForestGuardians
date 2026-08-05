@@ -507,6 +507,10 @@ public class Mb_AudioManager : MonoBehaviour
                 PlayMusicInternal(MusicTrack.Defeat, crossfade: false);
                 break;
 
+            case GameState.Cutscene:
+                StopMusicInternal();
+                break;
+
                 // LoadingStage, Playing, RewardsPanel, Paused:
                 // Music is handled by HandleStageStart and HandlePaused/HandleResumed below.
                 // We intentionally do nothing here for those states to avoid double-switching.

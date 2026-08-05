@@ -68,6 +68,10 @@ public class Mb_WaveManager : MonoBehaviour
     [Tooltip("Extra delay in seconds between finishing one CuBot type and starting the next.")]
     [SerializeField] private float SpawnTypeSeparatorInterval = 0.5f;
 
+    [Header("Elite CuBots")]
+    [Tooltip("Global Elite stat, visual, and aura settings used by every Elite CuBot.")]
+    [SerializeField] private Mb_EliteCuBot.EliteConfig EliteConfig = new Mb_EliteCuBot.EliteConfig();
+
     [Header("Tutorial")]
     [Tooltip("If true, wave preparation will not begin until this is set to false. " +
          "Used by Mb_TutorialGateManager to hold waves until gates are complete. " +
@@ -127,6 +131,11 @@ public class Mb_WaveManager : MonoBehaviour
 
     // Set true after the full wave spawn plan completes.
     private bool _waveSpawningComplete = false;
+
+    private GameObject _selectedEliteEnemyType;
+    private int _selectedEliteSpawnOrdinal = -1;
+    private int _currentEliteSpawnOrdinal = -1;
+    private EliteAuraType _currentEliteAura = EliteAuraType.Random;
 
     private const float SPAWN_NAVMESH_SAMPLE_RADIUS = 5.0f;
 
@@ -233,6 +242,7 @@ public class Mb_WaveManager : MonoBehaviour
     private IEnumerator SpawnWaveRoutine()
     {
         var currentWaveData = _stageData.WaveDataList[CurrentWaveIndex];
+        SelectEliteForWave(currentWaveData);
 
         foreach (var entry in currentWaveData.enemyDataList)
         {
@@ -292,11 +302,91 @@ public class Mb_WaveManager : MonoBehaviour
                 child.rotation = spawnPoint.rotation;
                 child.gameObject.SetActive(true);
 
+                TryApplyElite(child.gameObject, enemyType);
+
                 OnEnemySpawned?.Invoke(child.gameObject);
                 _activeEnemies.Add(child.gameObject);
                 break;
             }
         }
+    }
+
+
+    private void SelectEliteForWave(SO_WaveData waveData)
+    {
+        _selectedEliteEnemyType = null;
+        _selectedEliteSpawnOrdinal = -1;
+        _currentEliteSpawnOrdinal = -1;
+        _currentEliteAura = EliteAuraType.Random;
+
+        if (waveData == null || !waveData.CanSpawnElite) return;
+
+        List<GameObject> eligibleSpawnPlan = new List<GameObject>();
+
+        foreach (EnemyWaveEntry entry in waveData.enemyDataList)
+        {
+            if (entry == null || entry.enemyType == null || entry.count <= 0) continue;
+            if (!IsEligibleEliteEnemy(entry.enemyType)) continue;
+
+            for (int i = 0; i < entry.count; i++)
+                eligibleSpawnPlan.Add(entry.enemyType);
+        }
+
+        if (eligibleSpawnPlan.Count == 0)
+        {
+            Debug.LogWarning($"[Mb_WaveManager] Wave {CurrentWaveIndex + 1} is configured for an Elite, but has no eligible CuBots.");
+            return;
+        }
+
+        _selectedEliteSpawnOrdinal = UnityEngine.Random.Range(0, eligibleSpawnPlan.Count);
+        _selectedEliteEnemyType = eligibleSpawnPlan[_selectedEliteSpawnOrdinal];
+        _currentEliteAura = ResolveEliteAura(waveData.EliteAura);
+    }
+
+
+    private bool IsEligibleEliteEnemy(GameObject enemyType)
+    {
+        if (enemyType == null) return false;
+
+        string enemyName = enemyType.name;
+
+        return enemyName.Contains("Chopper", StringComparison.OrdinalIgnoreCase) ||
+               enemyName.Contains("Hunter", StringComparison.OrdinalIgnoreCase) ||
+               enemyName.Contains("Minny", StringComparison.OrdinalIgnoreCase) ||
+               enemyName.Contains("Sawyer", StringComparison.OrdinalIgnoreCase) ||
+               enemyName.Contains("Shovy", StringComparison.OrdinalIgnoreCase) ||
+               enemyName.Contains("Trapper", StringComparison.OrdinalIgnoreCase);
+    }
+
+
+    private EliteAuraType ResolveEliteAura(EliteAuraType configuredAura)
+    {
+        if (configuredAura != EliteAuraType.Random)
+            return configuredAura;
+
+        return UnityEngine.Random.value < 0.5f
+            ? EliteAuraType.Commander
+            : EliteAuraType.Guardian;
+    }
+
+
+    private void TryApplyElite(GameObject spawnedEnemy, GameObject enemyType)
+    {
+        if (spawnedEnemy == null || enemyType == null) return;
+        if (_selectedEliteEnemyType == null) return;
+        if (!IsEligibleEliteEnemy(enemyType)) return;
+
+        _currentEliteSpawnOrdinal++;
+
+        if (_currentEliteSpawnOrdinal != _selectedEliteSpawnOrdinal) return;
+
+        Mb_EliteCuBot eliteCuBot = spawnedEnemy.GetComponent<Mb_EliteCuBot>();
+        if (eliteCuBot == null)
+            eliteCuBot = spawnedEnemy.AddComponent<Mb_EliteCuBot>();
+
+        eliteCuBot.ApplyElite(_currentEliteAura, EliteConfig);
+
+        Debug.Log($"[Mb_WaveManager] Spawned Elite {spawnedEnemy.name} with {_currentEliteAura} aura on wave {CurrentWaveIndex + 1}.");
     }
 
 

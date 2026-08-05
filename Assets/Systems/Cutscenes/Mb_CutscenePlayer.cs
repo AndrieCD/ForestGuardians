@@ -155,7 +155,7 @@ public class Mb_CutscenePlayer : MonoBehaviour
         _hasFinished = true;
         StopPlayback();
 
-        if (IsPrologueCutscene())
+        if (IsAutoContinueCutscene())
         {
             OnContinueClicked();
             return;
@@ -175,11 +175,11 @@ public class Mb_CutscenePlayer : MonoBehaviour
         if (ContinueButton != null)
             ContinueButton.gameObject.SetActive(
                 visible &&
-                !IsPrologueCutscene() &&
+                !IsAutoContinueCutscene() &&
                 Sc_CutsceneSession.ContinueDestination != E_CutsceneDestination.None);
 
         if (BackToMainMenuButton != null)
-            BackToMainMenuButton.gameObject.SetActive(visible && !IsPrologueCutscene());
+            BackToMainMenuButton.gameObject.SetActive(visible && !IsAutoContinueCutscene());
 
         if (SkipButton != null)
             SkipButton.gameObject.SetActive(showSkip);
@@ -219,9 +219,10 @@ public class Mb_CutscenePlayer : MonoBehaviour
     }
 
 
-    private bool IsPrologueCutscene()
+    private bool IsAutoContinueCutscene()
     {
-        return Sc_CutsceneSession.ActiveCutsceneId == E_CutsceneId.Prologue;
+        return Sc_CutsceneSession.ActiveCutsceneId == E_CutsceneId.Prologue ||
+            Sc_CutsceneSession.ActiveCutsceneId == E_CutsceneId.Restoration;
     }
 
 
