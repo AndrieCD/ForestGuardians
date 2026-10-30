@@ -59,8 +59,8 @@ public class Mb_DialogManager : MonoBehaviour
 
     // Requests remain intact in this queue. Dialogs are advanced within their
     // owning request instead of being flattened into one unrelated queue.
-    private readonly Queue<DialogPlaybackRequest> _queue
-        = new Queue<DialogPlaybackRequest>();
+    private readonly List<DialogPlaybackRequest> _queue
+        = new List<DialogPlaybackRequest>();
 
     private DialogPlaybackRequest _activeRequest;
     private int _nextRequestId = 1;
@@ -212,9 +212,12 @@ public class Mb_DialogManager : MonoBehaviour
             return;
         }
 
-        EnqueueRequest(
-            new List<SO_Dialog> { dialog },
-            "Compatibility.EnqueueDialog");
+        RequestDialog(
+            dialog,
+            new Sc_DialogPlaybackOptions
+            {
+                Source = "Compatibility.EnqueueDialog"
+            });
     }
 
 
@@ -236,13 +239,59 @@ public class Mb_DialogManager : MonoBehaviour
             return;
         }
 
+        RequestSequence(
+            sequence,
+            new Sc_DialogPlaybackOptions
+            {
+                Source = $"Compatibility.EnqueueSequence:{sequence.name}"
+            });
+    }
+
+
+    /// <summary>
+    /// Creates a request for one dialog and returns its lifecycle handle.
+    /// </summary>
+    public Sc_DialogPlaybackHandle RequestDialog(
+        SO_Dialog dialog,
+        Sc_DialogPlaybackOptions options = null)
+    {
+        if (dialog == null)
+        {
+            Debug.LogWarning("[Mb_DialogManager] Rejected dialog request: dialog is null.");
+            return null;
+        }
+
+        return EnqueueRequest(new List<SO_Dialog> { dialog }, options, null);
+    }
+
+
+    /// <summary>
+    /// Creates an owned request for a complete sequence and returns its lifecycle handle.
+    /// </summary>
+    public Sc_DialogPlaybackHandle RequestSequence(
+        SO_DialogSequence sequence,
+        Sc_DialogPlaybackOptions options = null)
+    {
+        if (sequence == null)
+        {
+            Debug.LogWarning("[Mb_DialogManager] Rejected sequence request: sequence is null.");
+            return null;
+        }
+
+        if (sequence.Dialogs == null || sequence.Dialogs.Count == 0)
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Rejected sequence request: " +
+                             $"sequence '{sequence.name}' has no dialogs.");
+            return null;
+        }
+
         List<SO_Dialog> dialogs = new List<SO_Dialog>(sequence.Dialogs.Count);
 
         foreach (SO_Dialog dialog in sequence.Dialogs)
         {
             if (dialog == null)
             {
-                Debug.LogWarning($"[Mb_DialogManager] Request for sequence '{sequence.name}' " +
+                Debug.LogWarning($"[Mb_DialogManager] Sequence '{sequence.name}' " +
                                  "contains a null dialog entry; skipping it.");
                 continue;
             }
@@ -250,7 +299,7 @@ public class Mb_DialogManager : MonoBehaviour
             dialogs.Add(dialog);
         }
 
-        EnqueueRequest(dialogs, $"Compatibility.EnqueueSequence:{sequence.name}", sequence);
+        return EnqueueRequest(dialogs, options, sequence);
     }
 
 
@@ -261,13 +310,35 @@ public class Mb_DialogManager : MonoBehaviour
     /// </summary>
     public void CompleteInstruction(string eventKey)
     {
-        if (!_waitingForCompletion) return;
-        if (_activeDialog == null) return;
+        CompleteInstruction(_activeRequest?.Handle, eventKey);
+    }
 
-        if (_activeDialog.CompletionEventKey == eventKey)
+
+    /// <summary>
+    /// Completes a tutorial instruction only when the supplied request owns it.
+    /// </summary>
+    public bool CompleteInstruction(
+        Sc_DialogPlaybackHandle handle,
+        string eventKey)
+    {
+        if (handle == null || _activeRequest == null ||
+            _activeRequest.Handle != handle || !_waitingForCompletion ||
+            _activeDialog == null)
         {
-            DismissActive();
+            Debug.LogWarning("[Mb_DialogManager] Rejected tutorial completion: " +
+                             "the supplied request is not the active waiting request.");
+            return false;
         }
+
+        if (_activeDialog.CompletionEventKey != eventKey)
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Rejected tutorial completion for " +
+                             $"request #{handle.RequestId}: event key did not match.");
+            return false;
+        }
+
+        DismissActive();
+        return true;
     }
 
 
@@ -293,30 +364,45 @@ public class Mb_DialogManager : MonoBehaviour
 
         if (_queue.Count == 0) return;
 
-        _activeRequest = _queue.Dequeue();
+        _activeRequest = _queue[0];
+        _queue.RemoveAt(0);
+        _activeRequest.Handle.MarkPlaying();
         PlayNextDialogInActiveRequest();
     }
 
 
-    private void EnqueueRequest(
+    private Sc_DialogPlaybackHandle EnqueueRequest(
         List<SO_Dialog> dialogs,
-        string source,
+        Sc_DialogPlaybackOptions options,
         SO_DialogSequence sequence = null)
     {
         if (dialogs == null || dialogs.Count == 0)
         {
-            Debug.LogWarning($"[Mb_DialogManager] Rejected request from '{source}': " +
+            Debug.LogWarning("[Mb_DialogManager] Rejected request: " +
                              "it contains no valid dialogs.");
-            return;
+            return null;
         }
 
-        DialogPlaybackRequest request = new DialogPlaybackRequest(
-            _nextRequestId++, source, sequence, dialogs);
+        Sc_DialogPlaybackOptions requestOptions = options ?? new Sc_DialogPlaybackOptions();
+        string source = string.IsNullOrWhiteSpace(requestOptions.Source)
+            ? "Unknown"
+            : requestOptions.Source;
 
-        _queue.Enqueue(request);
+        DialogPlaybackRequest request = null;
+        Sc_DialogPlaybackHandle handle = new Sc_DialogPlaybackHandle(
+            _nextRequestId,
+            source,
+            () => CancelRequest(request),
+            () => SkipCurrentDialog(request));
+
+        request = new DialogPlaybackRequest(
+            _nextRequestId++, source, sequence, dialogs, requestOptions, handle);
+
+        _queue.Add(request);
         Debug.Log($"[Mb_DialogManager] Accepted request #{request.Id} from " +
                   $"'{request.Source}' with {request.Dialogs.Count} dialog(s).");
         TryPlayNext();
+        return handle;
     }
 
 
@@ -437,6 +523,13 @@ public class Mb_DialogManager : MonoBehaviour
         {
             Debug.Log($"[Mb_DialogManager] Completed request #{_activeRequest.Id} " +
                       $"from '{_activeRequest.Source}'.");
+            _activeRequest.Handle.Complete(
+                _activeRequest.WasSkipped
+                    ? E_DialogPlaybackStatus.Skipped
+                    : E_DialogPlaybackStatus.Completed,
+                _activeRequest.WasSkipped
+                    ? "One or more dialogs were skipped."
+                    : "Sequence playback completed.");
         }
 
         _activeRequest = null;
@@ -459,13 +552,16 @@ public class Mb_DialogManager : MonoBehaviour
         {
             Debug.LogWarning($"[Mb_DialogManager] Cancelled request #{_activeRequest.Id} " +
                              $"from '{_activeRequest.Source}': {reason}.");
+            _activeRequest.Handle.Complete(E_DialogPlaybackStatus.Cancelled, reason);
         }
 
         while (_queue.Count > 0)
         {
-            DialogPlaybackRequest request = _queue.Dequeue();
+            DialogPlaybackRequest request = _queue[0];
+            _queue.RemoveAt(0);
             Debug.LogWarning($"[Mb_DialogManager] Cancelled queued request #{request.Id} " +
                              $"from '{request.Source}': {reason}.");
+            request.Handle.Complete(E_DialogPlaybackStatus.Cancelled, reason);
         }
 
         _activeRequest = null;
@@ -476,6 +572,65 @@ public class Mb_DialogManager : MonoBehaviour
         _fallbackTimer = 0f;
         _audioPausedByManager = false;
 
+        _audioSource?.Stop();
+        _DialogUI?.Hide();
+    }
+
+
+    private bool CancelRequest(DialogPlaybackRequest request)
+    {
+        if (request == null || request.Handle.IsCompleted)
+            return false;
+
+        if (_activeRequest == request)
+        {
+            string reason = "cancelled by request owner";
+            Debug.LogWarning($"[Mb_DialogManager] Cancelled active request #{request.Id} " +
+                             $"from '{request.Source}': {reason}.");
+            request.Handle.Complete(E_DialogPlaybackStatus.Cancelled, reason);
+            StopActivePlayback();
+            _activeRequest = null;
+            TryPlayNext();
+            return true;
+        }
+
+        if (_queue.Remove(request))
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Cancelled queued request #{request.Id} " +
+                             $"from '{request.Source}': cancelled by request owner.");
+            request.Handle.Complete(
+                E_DialogPlaybackStatus.Cancelled,
+                "Cancelled before playback started.");
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private bool SkipCurrentDialog(DialogPlaybackRequest request)
+    {
+        if (request == null || _activeRequest != request ||
+            !request.Options.AllowSkipping || !_dialogActive)
+        {
+            return false;
+        }
+
+        request.WasSkipped = true;
+        Debug.Log($"[Mb_DialogManager] Skipping current dialog for request #{request.Id}.");
+        DismissActive();
+        return true;
+    }
+
+
+    private void StopActivePlayback()
+    {
+        _activeDialog = null;
+        _dialogActive = false;
+        _waitingForCompletion = false;
+        _usingFallbackTimer = false;
+        _fallbackTimer = 0f;
+        _audioPausedByManager = false;
         _audioSource?.Stop();
         _DialogUI?.Hide();
     }
@@ -535,19 +690,27 @@ public class Mb_DialogManager : MonoBehaviour
         public readonly string Source;
         public readonly SO_DialogSequence Sequence;
         public readonly List<SO_Dialog> Dialogs;
+        public readonly Sc_DialogPlaybackOptions Options;
+        public readonly Sc_DialogPlaybackHandle Handle;
         public int NextDialogIndex;
+        public bool WasSkipped;
 
         public DialogPlaybackRequest(
             int id,
             string source,
             SO_DialogSequence sequence,
-            List<SO_Dialog> dialogs)
+            List<SO_Dialog> dialogs,
+            Sc_DialogPlaybackOptions options,
+            Sc_DialogPlaybackHandle handle)
         {
             Id = id;
             Source = source;
             Sequence = sequence;
             Dialogs = dialogs;
+            Options = options;
+            Handle = handle;
             NextDialogIndex = 0;
+            WasSkipped = false;
         }
     }
 

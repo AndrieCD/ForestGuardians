@@ -207,12 +207,28 @@ public class Mb_TutorialGateManager : MonoBehaviour
         if (sequence == null) yield break;
         if (Mb_DialogManager.Instance == null) yield break;
 
-        Mb_DialogManager.Instance.EnqueueSequence(sequence);
+        Sc_DialogPlaybackHandle handle = Mb_DialogManager.Instance.RequestSequence(
+            sequence,
+            new Sc_DialogPlaybackOptions
+            {
+                Source = $"TutorialGate.Gate{_currentGate}"
+            });
 
-        yield return new WaitForSeconds(0.3f);
+        if (handle == null)
+        {
+            Debug.LogWarning($"[Mb_TutorialGateManager] Gate {_currentGate} sequence " +
+                             "was rejected by the dialogue manager.");
+            yield break;
+        }
 
-        while (Mb_DialogManager.Instance.IsDialogActive)
-            yield return new WaitForSeconds(0.1f);
+        yield return new WaitUntil(() => handle.IsCompleted);
+
+        if (!handle.Result.Succeeded)
+        {
+            Debug.LogWarning($"[Mb_TutorialGateManager] Gate {_currentGate} sequence " +
+                             $"finished with status {handle.Result.Status}: " +
+                             handle.Result.Reason);
+        }
     }
 
     #endregion                      //----------------------------------------
