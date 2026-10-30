@@ -38,4 +38,17 @@ public class Sc_StatEffect
         Type = type;
         Duration = duration;
     }
+
+    /// <summary>
+    /// Creates an independent runtime copy of this effect.
+    /// Authored ScriptableObject data remains untouched when the copy is used
+    /// by an active modifier.
+    /// </summary>
+    public Sc_StatEffect Clone()
+    {
+        if (this == null)
+            return null;
+
+        return new Sc_StatEffect(TargetStat, Value, Type, Duration);
+    }
 }

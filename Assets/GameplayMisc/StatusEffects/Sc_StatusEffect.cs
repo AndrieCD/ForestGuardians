@@ -96,6 +96,46 @@ public class Sc_StatusEffect
         CanStack = canStack;
     }
 
+    /// <summary>
+    /// Validates runtime configuration without changing any authored values.
+    /// </summary>
+    public bool TryValidate(out string validationMessage)
+    {
+        if (float.IsNaN(Duration) || Duration < 0f)
+        {
+            validationMessage = $"Duration must be non-negative or positive infinity, but was {Duration}.";
+            return false;
+        }
+
+        if (float.IsNaN(TickInterval) || TickInterval < 0f)
+        {
+            validationMessage = $"TickInterval must be non-negative, but was {TickInterval}.";
+            return false;
+        }
+
+        if (float.IsNaN(TickDamage) || TickDamage < 0f)
+        {
+            validationMessage = $"TickDamage must be non-negative, but was {TickDamage}.";
+            return false;
+        }
+
+        if (StatModifier != null && StatModifier.Source != ModifierSource.StatusEffect)
+        {
+            validationMessage = $"Stat modifier source should be StatusEffect, but was {StatModifier.Source}.";
+            return false;
+        }
+
+        if (StatModifier != null && StatModifier.Duration != float.PositiveInfinity)
+        {
+            validationMessage = "Status-effect stat modifiers must use positive infinity duration; " +
+                                "the status controller owns their lifetime.";
+            return false;
+        }
+
+        validationMessage = null;
+        return true;
+    }
+
 
     // -------------------------------------------------------------------------
     // Static Factories — use these in ability scripts for common effects

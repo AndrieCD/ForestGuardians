@@ -153,6 +153,19 @@ public class Mb_StatusEffectController : MonoBehaviour
     /// </summary>
     public void Apply(Sc_StatusEffect effect)
     {
+        if (effect == null)
+        {
+            Debug.LogWarning($"[Mb_StatusEffectController] Ignored null status effect on {gameObject.name}.");
+            return;
+        }
+
+        if (!effect.TryValidate(out string validationMessage))
+        {
+            Debug.LogWarning($"[Mb_StatusEffectController] Ignored invalid {effect.Type} on " +
+                             $"{gameObject.name}: {validationMessage}");
+            return;
+        }
+
         // Never apply effects to a dead character — DoT ticks would fire on a corpse
         if (_health != null && _health.IsDead) return;
 

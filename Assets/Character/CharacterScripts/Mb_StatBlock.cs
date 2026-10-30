@@ -36,6 +36,13 @@ public class Mb_StatBlock : MonoBehaviour
 
     // Active modifier list — source of truth for everything currently applied
     private readonly List<Sc_Modifier> _activeModifiers = new();
+    private readonly Dictionary<long, Sc_Modifier> _activeModifiersById = new();
+    private readonly Dictionary<long, Coroutine> _modifierCoroutines = new();
+
+    /// <summary>
+    /// Read-only view of all modifiers currently applied to this character.
+    /// </summary>
+    public IReadOnlyList<Sc_Modifier> ActiveModifiers => _activeModifiers;
 
 
     // Maps StatType enum to the actual Sc_Stat instance — built after BuildFromTemplate()
@@ -45,6 +52,11 @@ public class Mb_StatBlock : MonoBehaviour
 
     // Event fired whenever any stat changes — UI or ability scripts can subscribe
     public event Action OnStatsChanged;
+
+    // Nested batches allow one logical operation to update several stats while
+    // publishing only one block-level notification.
+    private int _statChangeBatchDepth;
+    private bool _statChangePending;
 
 
     #region Build From Template         //----------------------------------------
@@ -78,18 +90,7 @@ public class Mb_StatBlock : MonoBehaviour
         //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
         JumpPower = new Sc_Stat(template.JumpPower, 0f);
 
-        MaxHealth.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        HealthRegen.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        MoveSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AttackSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AttackPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AbilityPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        Haste.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        CriticalChance.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        CriticalDamage.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        Lifesteal.OnStatChanged += _ => OnStatsChanged?.Invoke();
-
-
+        SubscribeToStatChanges();
         BuildLookup();
     }
 
@@ -133,17 +134,7 @@ public class Mb_StatBlock : MonoBehaviour
         //Shielding = new Sc_Stat(template.Shielding, template.ShieldingScaling);
         // JumpPower omitted — CuBots don't jump
 
-        MaxHealth.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        HealthRegen.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        MoveSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AttackSpeed.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AttackPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        AbilityPower.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        Haste.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        CriticalChance.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        CriticalDamage.OnStatChanged += _ => OnStatsChanged?.Invoke();
-        Lifesteal.OnStatChanged += _ => OnStatsChanged?.Invoke();
-
+        SubscribeToStatChanges();
         BuildLookup();
     }
 
@@ -163,20 +154,81 @@ public class Mb_StatBlock : MonoBehaviour
     // so modifiers can look up any stat by enum value
     private void BuildLookup()
     {
-        _statLookup = new Dictionary<StatType, Sc_Stat>
+        _statLookup = new Dictionary<StatType, Sc_Stat>();
+        RegisterStat(StatType.MaxHealth, MaxHealth);
+        RegisterStat(StatType.HealthRegen, HealthRegen);
+        RegisterStat(StatType.MoveSpeed, MoveSpeed);
+        RegisterStat(StatType.AttackSpeed, AttackSpeed);
+        RegisterStat(StatType.AttackPower, AttackPower);
+        RegisterStat(StatType.AbilityPower, AbilityPower);
+        RegisterStat(StatType.Haste, Haste);
+        RegisterStat(StatType.CriticalChance, CriticalChance);
+        RegisterStat(StatType.CriticalDamage, CriticalDamage);
+        RegisterStat(StatType.Lifesteal, Lifesteal);
+    }
+
+    private void RegisterStat(StatType statType, Sc_Stat stat)
+    {
+        if (stat != null)
+            _statLookup[statType] = stat;
+    }
+
+    private void SubscribeToStatChanges()
+    {
+        SubscribeToStat(MaxHealth);
+        SubscribeToStat(HealthRegen);
+        SubscribeToStat(MoveSpeed);
+        SubscribeToStat(AttackSpeed);
+        SubscribeToStat(AttackPower);
+        SubscribeToStat(AbilityPower);
+        SubscribeToStat(Haste);
+        SubscribeToStat(CriticalChance);
+        SubscribeToStat(CriticalDamage);
+        SubscribeToStat(Lifesteal);
+    }
+
+    private void SubscribeToStat(Sc_Stat stat)
+    {
+        if (stat != null)
+            stat.OnStatChanged += HandleStatChanged;
+    }
+
+    private void HandleStatChanged(float _)
+    {
+        if (_statChangeBatchDepth > 0)
         {
-            { StatType.MaxHealth,         MaxHealth         },
-            { StatType.HealthRegen,       HealthRegen       },
-            { StatType.MoveSpeed,         MoveSpeed         },
-            { StatType.AttackSpeed,       AttackSpeed       },
-            { StatType.AttackPower,       AttackPower       },
-            { StatType.AbilityPower,      AbilityPower      },
-            { StatType.Haste,             Haste             },
-            { StatType.CriticalChance,    CriticalChance    },
-            { StatType.CriticalDamage,    CriticalDamage    },
-            { StatType.Lifesteal,         Lifesteal         },
-            //{ StatType.Shielding,         Shielding         },
-        };
+            _statChangePending = true;
+            return;
+        }
+
+        OnStatsChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Gets a runtime stat by its enum value without exposing the lookup dictionary.
+    /// </summary>
+    public bool TryGetStat(StatType statType, out Sc_Stat stat)
+    {
+        if (_statLookup != null && _statLookup.TryGetValue(statType, out stat) && stat != null)
+            return true;
+
+        stat = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Returns a read-only computed breakdown for the requested stat.
+    /// </summary>
+    public bool TryGetStatBreakdown(StatType statType, out Sc_StatBreakdown breakdown)
+    {
+        if (TryGetStat(statType, out Sc_Stat stat))
+        {
+            breakdown = stat.GetBreakdown();
+            return true;
+        }
+
+        breakdown = default;
+        return false;
     }
 
     #endregion                  //----------------------------------------
@@ -195,22 +247,28 @@ public class Mb_StatBlock : MonoBehaviour
     {
         float oldMaxHP = MaxHealth.GetValue();
 
-        // Each stat recalculates its BaseValue from its own original value + scaling.
-        // Because SetLevel always reads from _originalBaseValue inside Sc_Stat,
-        // calling this at level 5 gives the same result as calling it 4 times in a row.
-        MaxHealth.SetLevel(level);
-        HealthRegen.SetLevel(level);
-        MoveSpeed.SetLevel(level);
-        AttackSpeed.SetLevel(level);
-        AttackPower.SetLevel(level);
-        AbilityPower.SetLevel(level);
-        Haste.SetLevel(level);
-        CriticalChance.SetLevel(level);
-        CriticalDamage.SetLevel(level);
-        Lifesteal.SetLevel(level);
-        // JumpPower and Shielding intentionally excluded — they don't scale with level
-
-        OnStatsChanged?.Invoke();
+        BeginStatChangeBatch();
+        try
+        {
+            // Each stat recalculates its BaseValue from its own original value + scaling.
+            // Because SetLevel always reads from _originalBaseValue inside Sc_Stat,
+            // calling this at level 5 gives the same result as calling it 4 times in a row.
+            MaxHealth.SetLevel(level);
+            HealthRegen.SetLevel(level);
+            MoveSpeed.SetLevel(level);
+            AttackSpeed.SetLevel(level);
+            AttackPower.SetLevel(level);
+            AbilityPower.SetLevel(level);
+            Haste.SetLevel(level);
+            CriticalChance.SetLevel(level);
+            CriticalDamage.SetLevel(level);
+            Lifesteal.SetLevel(level);
+            // JumpPower and Shielding intentionally excluded — they don't scale with level
+        }
+        finally
+        {
+            EndStatChangeBatch();
+        }
 
         // Return how much MaxHealth grew so the caller can top up HP by the same amount
         return MaxHealth.GetValue() - oldMaxHP;
@@ -227,29 +285,72 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void AddModifier(Sc_Modifier modifier)
     {
+        ApplyModifier(modifier);
+    }
+
+    /// <summary>
+    /// Applies a modifier and returns the identity of this exact runtime instance.
+    /// Use the returned handle when a caller may hold multiple otherwise-identical
+    /// modifiers and needs to remove only one of them.
+    /// </summary>
+    public Sc_ModifierHandle ApplyModifier(Sc_Modifier modifier)
+    {
         if (modifier == null)
         {
             Debug.LogWarning("[Mb_StatBlock] AddModifier received null modifier.");
-            return;
+            return default;
         }
 
-        _activeModifiers.Add(modifier);
-        ApplyEffects(modifier);
-
-        if (modifier.Duration != float.PositiveInfinity)
+        if (_statLookup == null)
         {
-            // Guard: modifiers from StatusEffect source must always be infinite-duration.
-            // The StatusEffectController owns their timer.
-            if (modifier.Source == ModifierSource.StatusEffect)
-                Debug.LogWarning($"[Mb_StatBlock] Modifier '{modifier.ModifierName}' from StatusEffect " +
-                                 $"source has a finite duration — this will race with Mb_StatusEffectController. " +
-                                 $"Set duration to float.PositiveInfinity.");
-            else
-                StartCoroutine(RemoveAfterDuration(modifier));
+            Debug.LogWarning($"[Mb_StatBlock] Cannot apply {modifier}: stats have not been built.");
+            return default;
         }
 
-        OnModifierAdded?.Invoke(modifier);
-        OnStatsChanged?.Invoke();
+        if (_activeModifiersById.ContainsKey(modifier.RuntimeId))
+        {
+            Debug.LogWarning($"[Mb_StatBlock] Ignored duplicate application of {modifier} on {name}.");
+            return default;
+        }
+
+        if (!ValidateModifierDuration(modifier))
+            return default;
+
+        BeginStatChangeBatch();
+        try
+        {
+            int appliedEffectCount = ApplyEffects(modifier);
+            if (appliedEffectCount == 0)
+            {
+                Debug.LogWarning($"[Mb_StatBlock] Ignored {modifier} because it contains no supported effects.");
+                return default;
+            }
+
+            _activeModifiers.Add(modifier);
+            _activeModifiersById.Add(modifier.RuntimeId, modifier);
+
+            if (modifier.Duration != float.PositiveInfinity)
+            {
+                // Modifiers from StatusEffect source are expected to be infinite-duration.
+                // The StatusEffectController owns their timer.
+                if (modifier.Source == ModifierSource.StatusEffect)
+                    Debug.LogWarning($"[Mb_StatBlock] Modifier '{modifier.ModifierName}' from StatusEffect " +
+                                     $"source has a finite duration — Mb_StatusEffectController owns this lifetime. " +
+                                     $"Set duration to float.PositiveInfinity.");
+                else
+                {
+                    Coroutine routine = StartCoroutine(RemoveAfterDuration(new Sc_ModifierHandle(modifier.RuntimeId)));
+                    _modifierCoroutines[modifier.RuntimeId] = routine;
+                }
+            }
+
+            OnModifierAdded?.Invoke(modifier);
+            return new Sc_ModifierHandle(modifier.RuntimeId);
+        }
+        finally
+        {
+            EndStatChangeBatch();
+        }
     }
 
 
@@ -258,9 +359,68 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void RemoveModifier(Sc_Modifier modifier)
     {
-        if (!_activeModifiers.Remove(modifier)) return; // If it wasn't in the list, do nothing
+        if (modifier == null) return;
+        RemoveModifier(new Sc_ModifierHandle(modifier.RuntimeId));
+    }
+
+    /// <summary>
+    /// Removes the exact modifier associated with a runtime handle.
+    /// Returns false when the handle is invalid, stale, or already removed.
+    /// </summary>
+    public bool RemoveModifier(Sc_ModifierHandle handle)
+    {
+        if (!handle.IsValid || !_activeModifiersById.TryGetValue(handle.RuntimeId, out Sc_Modifier modifier))
+            return false;
+
+        BeginStatChangeBatch();
+        try
+        {
+            RemoveModifierInternal(handle, modifier);
+            return true;
+        }
+        finally
+        {
+            EndStatChangeBatch();
+        }
+    }
+
+    /// <summary>
+    /// Resolves an active modifier handle for diagnostics or ownership tracking.
+    /// </summary>
+    public bool TryGetModifier(Sc_ModifierHandle handle, out Sc_Modifier modifier)
+    {
+        if (handle.IsValid && _activeModifiersById.TryGetValue(handle.RuntimeId, out modifier))
+            return true;
+
+        modifier = null;
+        return false;
+    }
+
+    private void RemoveModifierInternal(Sc_ModifierHandle handle, Sc_Modifier modifier)
+    {
+        _activeModifiersById.Remove(handle.RuntimeId);
+        _activeModifiers.Remove(modifier);
+        StopModifierCoroutine(handle.RuntimeId);
         RemoveEffects(modifier);
         OnModifierRemoved?.Invoke(modifier);
+    }
+
+    private void BeginStatChangeBatch()
+    {
+        _statChangeBatchDepth++;
+    }
+
+    private void EndStatChangeBatch()
+    {
+        _statChangeBatchDepth--;
+        if (_statChangeBatchDepth > 0)
+            return;
+
+        _statChangeBatchDepth = 0;
+        if (!_statChangePending)
+            return;
+
+        _statChangePending = false;
         OnStatsChanged?.Invoke();
     }
 
@@ -280,16 +440,20 @@ public class Mb_StatBlock : MonoBehaviour
                 toRemove.Add(modifier);
         }
 
-        // Now remove each modifier in the removal list and its effects
-        foreach (var modifier in toRemove)
+        BeginStatChangeBatch();
+        try
         {
-            _activeModifiers.Remove(modifier);
-            RemoveEffects(modifier);
+            // Now remove each modifier in the removal list and its effects
+            foreach (var modifier in toRemove)
+            {
+                if (_activeModifiersById.TryGetValue(modifier.RuntimeId, out Sc_Modifier activeModifier))
+                    RemoveModifierInternal(new Sc_ModifierHandle(modifier.RuntimeId), activeModifier);
+            }
         }
-
-        // Invoke change event if we removed anything — avoids unnecessary UI updates
-        if (toRemove.Count > 0)
-            OnStatsChanged?.Invoke();
+        finally
+        {
+            EndStatChangeBatch();
+        }
     }
 
 
@@ -299,23 +463,20 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void RemoveAllModifiers()
     {
-        _activeModifiers.Clear();
-
-        // Clear effects directly from each stat — safe since we cleared the modifier list too
-        MaxHealth?.Effects.Clear();
-        HealthRegen?.Effects.Clear();
-        MoveSpeed?.Effects.Clear();
-        AttackSpeed?.Effects.Clear();
-        AttackPower?.Effects.Clear();
-        AbilityPower?.Effects.Clear();
-        Haste?.Effects.Clear();
-        CriticalChance?.Effects.Clear();
-        CriticalDamage?.Effects.Clear();
-        Lifesteal?.Effects.Clear();
-        //Shielding?.Effects.Clear();
-        JumpPower?.Effects.Clear();
-
-        OnStatsChanged?.Invoke();
+        var toRemove = new List<Sc_Modifier>(_activeModifiers);
+        BeginStatChangeBatch();
+        try
+        {
+            foreach (Sc_Modifier modifier in toRemove)
+            {
+                if (_activeModifiersById.TryGetValue(modifier.RuntimeId, out Sc_Modifier activeModifier))
+                    RemoveModifierInternal(new Sc_ModifierHandle(modifier.RuntimeId), activeModifier);
+            }
+        }
+        finally
+        {
+            EndStatChangeBatch();
+        }
     }
 
     #endregion              //----------------------------------------
@@ -327,14 +488,22 @@ public class Mb_StatBlock : MonoBehaviour
     /// Applies all effects from the specified modifier to their corresponding target stat.
     /// </summary>
     /// <param name="modifier">The modifier containing the collection of effects to apply. Cannot be null.</param>
-    private void ApplyEffects(Sc_Modifier modifier)
+    private int ApplyEffects(Sc_Modifier modifier)
     {
+        int appliedEffectCount = 0;
         foreach (var effect in modifier.Effects)
         {
-            if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
+            if (effect == null)
             {
-                stat.Effects.Add(effect);
+                Debug.LogWarning($"[Mb_StatBlock] {modifier} contains a null effect. Skipped.");
+                continue;
+            }
+
+            if (TryGetStat(effect.TargetStat, out var stat))
+            {
+                stat.AddEffect(effect);
                 stat.NotifyChanged(); // stat-level event fires here
+                appliedEffectCount++;
             }
             else
             {
@@ -342,6 +511,8 @@ public class Mb_StatBlock : MonoBehaviour
             }
 
         }
+
+        return appliedEffectCount;
     }
 
 
@@ -352,19 +523,50 @@ public class Mb_StatBlock : MonoBehaviour
     {
         foreach (var effect in modifier.Effects)
         {
-            if (_statLookup.TryGetValue(effect.TargetStat, out var stat))
+            if (effect != null && TryGetStat(effect.TargetStat, out var stat))
             {
-                stat.Effects.Remove(effect);
+                stat.RemoveEffect(effect);
                 stat.NotifyChanged(); // stat-level event fires here
             }
         }
     }
 
-
-    private IEnumerator RemoveAfterDuration(Sc_Modifier modifier)
+    private bool ValidateModifierDuration(Sc_Modifier modifier)
     {
+        if (float.IsNaN(modifier.Duration) || modifier.Duration < 0f)
+        {
+            Debug.LogWarning($"[Mb_StatBlock] Ignored {modifier} because its duration is invalid: {modifier.Duration}.");
+            return false;
+        }
+
+        if (modifier.Source == ModifierSource.StatusEffect && modifier.Duration != float.PositiveInfinity)
+        {
+            Debug.LogWarning($"[Mb_StatBlock] {modifier} has a finite StatusEffect duration. " +
+                             "Mb_StatusEffectController must own the status lifetime.");
+        }
+
+        return true;
+    }
+
+    private void StopModifierCoroutine(long runtimeId)
+    {
+        if (_modifierCoroutines.TryGetValue(runtimeId, out Coroutine routine))
+        {
+            if (routine != null)
+                StopCoroutine(routine);
+
+            _modifierCoroutines.Remove(runtimeId);
+        }
+    }
+
+
+    private IEnumerator RemoveAfterDuration(Sc_ModifierHandle handle)
+    {
+        if (!TryGetModifier(handle, out Sc_Modifier modifier))
+            yield break;
+
         yield return new WaitForSeconds(modifier.Duration);
-        RemoveModifier(modifier);
+        RemoveModifier(handle);
     }
 
     #endregion          //----------------------------------------
@@ -375,6 +577,12 @@ public class Mb_StatBlock : MonoBehaviour
     /// </summary>
     public void NotifyStatsChanged()
     {
+        if (_statChangeBatchDepth > 0)
+        {
+            _statChangePending = true;
+            return;
+        }
+
         OnStatsChanged?.Invoke();
     }
 }

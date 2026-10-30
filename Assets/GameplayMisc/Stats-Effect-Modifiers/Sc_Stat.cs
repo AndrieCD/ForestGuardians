@@ -29,7 +29,13 @@ public class Sc_Stat
 
     // Effects currently applied to this stat. Written exclusively by Mb_StatBlock.
     // Do not write to this list from anywhere else.
-    public List<Sc_StatEffect> Effects = new List<Sc_StatEffect>();
+    private readonly List<Sc_StatEffect> _effects = new List<Sc_StatEffect>();
+
+    /// <summary>
+    /// Read-only view of the effects currently applied to this stat.
+    /// Runtime mutations are owned by Mb_StatBlock.
+    /// </summary>
+    public IReadOnlyList<Sc_StatEffect> Effects => _effects;
 
     private readonly bool _useStrongestNegativePercentOnly;
     private readonly float _minimumValue;
@@ -89,7 +95,7 @@ public class Sc_Stat
         float finalValue = BaseValue;
         float percentBonus = GetPercentBonus();
 
-        foreach (Sc_StatEffect effect in Effects)
+        foreach (Sc_StatEffect effect in _effects)
         {
             if (effect.Type != StatModType.Percent)
                 finalValue += effect.Value;
@@ -108,7 +114,7 @@ public class Sc_Stat
         float flatBonus = 0f;
         float percentBonus = GetPercentBonus();
 
-        foreach (Sc_StatEffect effect in Effects)
+        foreach (Sc_StatEffect effect in _effects)
         {
             if (effect.Type != StatModType.Percent)
                 flatBonus += effect.Value;
@@ -124,7 +130,7 @@ public class Sc_Stat
         {
             float totalPercent = 0f;
 
-            foreach (Sc_StatEffect effect in Effects)
+            foreach (Sc_StatEffect effect in _effects)
             {
                 if (effect.Type == StatModType.Percent)
                     totalPercent += effect.Value;
@@ -136,7 +142,7 @@ public class Sc_Stat
         float positivePercent = 0f;
         float strongestNegativePercent = 0f;
 
-        foreach (Sc_StatEffect effect in Effects)
+        foreach (Sc_StatEffect effect in _effects)
         {
             if (effect.Type != StatModType.Percent)
                 continue;
@@ -163,5 +169,40 @@ public class Sc_Stat
     public void NotifyChanged()
     {
         OnStatChanged?.Invoke(GetValue());
+    }
+
+    /// <summary>
+    /// Returns the current value and its computed contributions without exposing
+    /// the mutable runtime effect collection.
+    /// </summary>
+    public Sc_StatBreakdown GetBreakdown()
+    {
+        float flatBonus = 0f;
+        float percentBonus = GetPercentBonus();
+
+        foreach (Sc_StatEffect effect in _effects)
+        {
+            if (effect != null && effect.Type != StatModType.Percent)
+                flatBonus += effect.Value;
+        }
+
+        float finalValue = Mathf.Max(_minimumValue, (BaseValue + flatBonus) * (1f + percentBonus));
+        return new Sc_StatBreakdown(BaseValue, flatBonus, percentBonus, finalValue, _effects.Count);
+    }
+
+    internal void AddEffect(Sc_StatEffect effect)
+    {
+        if (effect != null)
+            _effects.Add(effect);
+    }
+
+    internal bool RemoveEffect(Sc_StatEffect effect)
+    {
+        return _effects.Remove(effect);
+    }
+
+    internal void ClearEffects()
+    {
+        _effects.Clear();
     }
 }
