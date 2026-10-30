@@ -57,8 +57,13 @@ public class Mb_DialogManager : MonoBehaviour
 
     #region Private State       //----------------------------------------
 
-    // The main queue — dialogs wait here until the active one is dismissed
-    private Queue<SO_Dialog> _queue = new Queue<SO_Dialog>();
+    // Requests remain intact in this queue. Dialogs are advanced within their
+    // owning request instead of being flattened into one unrelated queue.
+    private readonly Queue<DialogPlaybackRequest> _queue
+        = new Queue<DialogPlaybackRequest>();
+
+    private DialogPlaybackRequest _activeRequest;
+    private int _nextRequestId = 1;
 
     // The dialog currently being displayed
     private SO_Dialog _activeDialog = null;
@@ -77,6 +82,10 @@ public class Mb_DialogManager : MonoBehaviour
 
     // AudioSource lives on this same GameObject — one central audio player for all dialog
     private AudioSource _audioSource;
+
+    // AudioListener.pause is global, so remember whether this manager paused
+    // the active source before allowing it to resume.
+    private bool _audioPausedByManager;
 
     // Whether dialog panel should be visible at all in the current game state
     private bool _panelAllowed = false;
@@ -107,12 +116,17 @@ public class Mb_DialogManager : MonoBehaviour
     {
         Mb_PauseManager.OnPaused += HandlePause;
         Mb_PauseManager.OnResumed += HandleResume;
-        GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
 
 
-        // On Scene load (dialog manager is not active yet when state is changed to playing
-        // explicit gamestatechaned here
-        HandleGameStateChanged(GameState.Playing);
+        // Refresh from the real state so enabling the component does not
+        // temporarily force a paused/reward/cutscene scene into Playing UI.
+        HandleGameStateChanged(
+            GameManager.Instance != null
+                ? GameManager.Instance.CurrentState
+                : GameState.Playing);
     }
 
 
@@ -124,6 +138,15 @@ public class Mb_DialogManager : MonoBehaviour
         // Guard: GameManager may already be destroyed on scene teardown
         if (GameManager.Instance != null)
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+
+        CancelAllRequests("dialog manager disabled or scene unloaded");
+    }
+
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
 
@@ -189,8 +212,9 @@ public class Mb_DialogManager : MonoBehaviour
             return;
         }
 
-        _queue.Enqueue(dialog);
-        TryPlayNext();
+        EnqueueRequest(
+            new List<SO_Dialog> { dialog },
+            "Compatibility.EnqueueDialog");
     }
 
 
@@ -212,10 +236,21 @@ public class Mb_DialogManager : MonoBehaviour
             return;
         }
 
-        foreach (SO_Dialog dialog in sequence.Dialogs)
-            _queue.Enqueue(dialog);
+        List<SO_Dialog> dialogs = new List<SO_Dialog>(sequence.Dialogs.Count);
 
-        TryPlayNext();
+        foreach (SO_Dialog dialog in sequence.Dialogs)
+        {
+            if (dialog == null)
+            {
+                Debug.LogWarning($"[Mb_DialogManager] Request for sequence '{sequence.name}' " +
+                                 "contains a null dialog entry; skipping it.");
+                continue;
+            }
+
+            dialogs.Add(dialog);
+        }
+
+        EnqueueRequest(dialogs, $"Compatibility.EnqueueSequence:{sequence.name}", sequence);
     }
 
 
@@ -242,10 +277,7 @@ public class Mb_DialogManager : MonoBehaviour
     /// </summary>
     public void ClearAll()
     {
-        _queue.Clear();
-
-        if (_dialogActive)
-            ForceStopActive();
+        CancelAllRequests("ClearAll called");
     }
 
     #endregion                  //----------------------------------------
@@ -261,7 +293,49 @@ public class Mb_DialogManager : MonoBehaviour
 
         if (_queue.Count == 0) return;
 
-        SO_Dialog next = _queue.Dequeue();
+        _activeRequest = _queue.Dequeue();
+        PlayNextDialogInActiveRequest();
+    }
+
+
+    private void EnqueueRequest(
+        List<SO_Dialog> dialogs,
+        string source,
+        SO_DialogSequence sequence = null)
+    {
+        if (dialogs == null || dialogs.Count == 0)
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Rejected request from '{source}': " +
+                             "it contains no valid dialogs.");
+            return;
+        }
+
+        DialogPlaybackRequest request = new DialogPlaybackRequest(
+            _nextRequestId++, source, sequence, dialogs);
+
+        _queue.Enqueue(request);
+        Debug.Log($"[Mb_DialogManager] Accepted request #{request.Id} from " +
+                  $"'{request.Source}' with {request.Dialogs.Count} dialog(s).");
+        TryPlayNext();
+    }
+
+
+    private void PlayNextDialogInActiveRequest()
+    {
+        if (_activeRequest == null)
+        {
+            _dialogActive = false;
+            TryPlayNext();
+            return;
+        }
+
+        if (_activeRequest.NextDialogIndex >= _activeRequest.Dialogs.Count)
+        {
+            CompleteActiveRequest();
+            return;
+        }
+
+        SO_Dialog next = _activeRequest.Dialogs[_activeRequest.NextDialogIndex++];
         PlayDialog(next);
     }
 
@@ -305,6 +379,19 @@ public class Mb_DialogManager : MonoBehaviour
                 }
             }
         }
+        else if (!dialog.IsTutorialInstruction)
+        {
+            Debug.LogError("[Mb_DialogManager] AudioSource is missing. " +
+                           "Using the configured fallback duration for the active dialog.");
+            _usingFallbackTimer = true;
+            _fallbackTimer = _FallbackDismissDuration;
+        }
+        else
+        {
+            Debug.LogError("[Mb_DialogManager] AudioSource is missing for a tutorial " +
+                           "instruction; waiting for its completion event.");
+            EnterWaitForCompletion();
+        }
     }
 
 
@@ -329,21 +416,65 @@ public class Mb_DialogManager : MonoBehaviour
         _fallbackTimer = 0f;
 
         _audioSource?.Stop();
+        _audioPausedByManager = false;
         _DialogUI?.Hide();
 
-        // Chain to the next dialog in the queue if one is waiting
+        if (_activeRequest != null &&
+            _activeRequest.NextDialogIndex < _activeRequest.Dialogs.Count)
+        {
+            _dialogActive = true;
+            PlayNextDialogInActiveRequest();
+            return;
+        }
+
+        CompleteActiveRequest();
+    }
+
+
+    private void CompleteActiveRequest()
+    {
+        if (_activeRequest != null)
+        {
+            Debug.Log($"[Mb_DialogManager] Completed request #{_activeRequest.Id} " +
+                      $"from '{_activeRequest.Source}'.");
+        }
+
+        _activeRequest = null;
+        _dialogActive = false;
+        _activeDialog = null;
+        _waitingForCompletion = false;
+        _usingFallbackTimer = false;
+        _fallbackTimer = 0f;
+        _audioPausedByManager = false;
+
+        _audioSource?.Stop();
+        _DialogUI?.Hide();
         TryPlayNext();
     }
 
 
-    // Hard stop with no chaining — used by ClearAll().
-    private void ForceStopActive()
+    private void CancelAllRequests(string reason)
     {
+        if (_activeRequest != null)
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Cancelled request #{_activeRequest.Id} " +
+                             $"from '{_activeRequest.Source}': {reason}.");
+        }
+
+        while (_queue.Count > 0)
+        {
+            DialogPlaybackRequest request = _queue.Dequeue();
+            Debug.LogWarning($"[Mb_DialogManager] Cancelled queued request #{request.Id} " +
+                             $"from '{request.Source}': {reason}.");
+        }
+
+        _activeRequest = null;
         _activeDialog = null;
         _dialogActive = false;
         _waitingForCompletion = false;
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
+        _audioPausedByManager = false;
 
         _audioSource?.Stop();
         _DialogUI?.Hide();
@@ -358,15 +489,22 @@ public class Mb_DialogManager : MonoBehaviour
     {
         // Pause the voice clip in place — it will resume from the same position
         if (_audioSource != null && _audioSource.isPlaying)
+        {
             _audioSource.Pause();
+            _audioPausedByManager = true;
+        }
     }
 
 
     private void HandleResume()
     {
         // Resume only if a dialog is active and had a clip playing
-        if (_audioSource != null && _dialogActive && !_waitingForCompletion)
+        if (_audioSource != null && _dialogActive && !_waitingForCompletion &&
+            _audioPausedByManager)
+        {
             _audioSource.UnPause();
+            _audioPausedByManager = false;
+        }
     }
 
 
@@ -380,9 +518,36 @@ public class Mb_DialogManager : MonoBehaviour
             // Show or hide the panel based on whether the state allows it,
             // but don't dismiss — the dialog keeps its position in playback
             if (_panelAllowed)
+            {
                 _DialogUI?.Show(_activeDialog);
+                if (_waitingForCompletion)
+                    _DialogUI?.SetContinueIndicatorVisible(true);
+            }
             else
                 _DialogUI?.Hide();
+        }
+    }
+
+
+    private sealed class DialogPlaybackRequest
+    {
+        public readonly int Id;
+        public readonly string Source;
+        public readonly SO_DialogSequence Sequence;
+        public readonly List<SO_Dialog> Dialogs;
+        public int NextDialogIndex;
+
+        public DialogPlaybackRequest(
+            int id,
+            string source,
+            SO_DialogSequence sequence,
+            List<SO_Dialog> dialogs)
+        {
+            Id = id;
+            Source = source;
+            Sequence = sequence;
+            Dialogs = dialogs;
+            NextDialogIndex = 0;
         }
     }
 
