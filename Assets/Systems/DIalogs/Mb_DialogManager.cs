@@ -312,11 +312,49 @@ public class Mb_DialogManager : MonoBehaviour
 
 
     /// <summary>
+    /// Completes the active tutorial instruction using a typed event.
+    /// </summary>
+    public bool CompleteInstruction(E_DialogCompletionEvent completionEvent)
+    {
+        if (!Sc_DialogCompletionContract.TryCreate(
+                completionEvent,
+                out Sc_DialogCompletionContract contract))
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Rejected invalid tutorial completion " +
+                             $"event '{completionEvent}'.");
+            return false;
+        }
+
+        return CompleteInstruction(_activeRequest?.Handle, contract);
+    }
+
+
+    /// <summary>
     /// Completes a tutorial instruction only when the supplied request owns it.
     /// </summary>
     public bool CompleteInstruction(
         Sc_DialogPlaybackHandle handle,
         string eventKey)
+    {
+        if (!Sc_DialogCompletionContract.TryCreate(
+                eventKey,
+                out Sc_DialogCompletionContract contract))
+        {
+            Debug.LogWarning($"[Mb_DialogManager] Rejected invalid tutorial completion " +
+                             $"key '{eventKey ?? "null"}'.");
+            return false;
+        }
+
+        return CompleteInstruction(handle, contract);
+    }
+
+
+    /// <summary>
+    /// Completes a tutorial instruction using a validated completion contract.
+    /// </summary>
+    public bool CompleteInstruction(
+        Sc_DialogPlaybackHandle handle,
+        Sc_DialogCompletionContract contract)
     {
         if (handle == null || _activeRequest == null ||
             _activeRequest.Handle != handle || !_waitingForCompletion ||
@@ -327,7 +365,7 @@ public class Mb_DialogManager : MonoBehaviour
             return false;
         }
 
-        if (_activeDialog.CompletionEventKey != eventKey)
+        if (_activeDialog.CompletionEventKey != contract.Key)
         {
             Debug.LogWarning($"[Mb_DialogManager] Rejected tutorial completion for " +
                              $"request #{handle.RequestId}: event key did not match.");
