@@ -3,7 +3,7 @@
 // Create one instance in Bootstrap and keep it alive across scene loads.
 //
 // AUDIO MIXER:
-//   An AudioMixer gives us three independent volume buses — Music, SFX, and UI.
+//   An AudioMixer gives us independent volume buses — Music, SFX, UI, and Narration.
 //   This means the settings screen can adjust each channel separately without
 //   touching every AudioSource manually. It also lets Unity's mixer handle
 //   ducking and compression per-group if needed later.
@@ -30,7 +30,7 @@
 //        - Crossfade Duration   → default 1.5s feels natural
 //        - Fallback Stage Music → used only if a stage cannot be resolved
 //   3. The AudioMixer asset must expose three float parameters named exactly:
-//        "MusicVolume", "SFXVolume", "UIVolume"
+//        "MusicVolume", "SFXVolume", "UIVolume", "MusicDuckingVolume"
 //      (Right-click each group's Volume in the Mixer → Expose Parameter, then rename it.)
 
 using System.Collections;
@@ -61,6 +61,11 @@ public class Mb_AudioManager : MonoBehaviour
     [SerializeField] private AudioMixerGroup _MusicMixerGroup;
     [SerializeField] private AudioMixerGroup _SFXMixerGroup;
     [SerializeField] private AudioMixerGroup _UIMixerGroup;
+
+    [Header("Narration Ducking")]
+    [Tooltip("Music volume while dialog narration is active. 0.15 is approximately -16.5 dB.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float _NarrationMusicDuckVolume = 0.15f;
 
     [Header("Music Settings")]
     [SerializeField] private float _CrossfadeDuration = 1.5f;
@@ -95,9 +100,14 @@ public class Mb_AudioManager : MonoBehaviour
     // by the round-robin SFX pool, and they don't overlap in a way that needs pooling
     private AudioSource _uiSource;
 
+    // Held for the complete active request so multi-line sequences do not
+    // repeatedly raise and lower the music bus between lines.
+    private bool _dialogDuckingActive;
+
     // AudioMixer parameter name constants — must match the exposed parameter names
     // in the AudioMixer asset exactly. If you rename them there, update these too.
     private const string MIXER_MUSIC_PARAM = "MusicVolume";
+    private const string MIXER_MUSIC_DUCK_PARAM = "MusicDuckingVolume";
     private const string MIXER_SFX_PARAM = "SFXVolume";
     private const string MIXER_UI_PARAM = "UIVolume";
 
@@ -151,6 +161,8 @@ public class Mb_AudioManager : MonoBehaviour
         //Sc_BaseAbility.OnCriticalHit -= HandleCriticalHit;
         Mb_PauseManager.OnPaused -= HandlePaused;
         Mb_PauseManager.OnResumed -= HandleResumed;
+
+        SetDialogDucking(false);
     }
 
 
@@ -285,6 +297,20 @@ public class Mb_AudioManager : MonoBehaviour
     {
         if (Instance == null) return;
         Instance.SetMixerVolume(MIXER_UI_PARAM, volume);
+    }
+
+    /// <summary>Lowers music while a dialog request is active.</summary>
+    public static void BeginDialogDucking()
+    {
+        if (Instance == null) return;
+        Instance.SetDialogDucking(true);
+    }
+
+    /// <summary>Restores music after dialog playback ends.</summary>
+    public static void EndDialogDucking()
+    {
+        if (Instance == null) return;
+        Instance.SetDialogDucking(false);
     }
 
 
@@ -471,6 +497,21 @@ public class Mb_AudioManager : MonoBehaviour
         // We clamp volume to 0.0001f as a floor because Mathf.Log10(0) is -infinity.
         float dB = Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20f;
         _MusicMixerGroup.audioMixer.SetFloat(parameterName, dB);
+    }
+
+
+    private void SetDialogDucking(bool active)
+    {
+        if (_MusicMixerGroup == null || _MusicMixerGroup.audioMixer == null)
+            return;
+
+        if (_dialogDuckingActive == active)
+            return;
+
+        _dialogDuckingActive = active;
+        SetMixerVolume(
+            MIXER_MUSIC_DUCK_PARAM,
+            active ? _NarrationMusicDuckVolume : 1f);
     }
 
 

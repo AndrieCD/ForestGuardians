@@ -484,6 +484,8 @@ public class Mb_DialogManager : MonoBehaviour
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
 
+        Mb_AudioManager.BeginDialogDucking();
+
         // Populate presentation once, then control visibility separately.
         _DialogUI?.Show(dialog);
         _DialogUI?.SetPanelVisible(_panelAllowed);
@@ -585,6 +587,7 @@ public class Mb_DialogManager : MonoBehaviour
         _fallbackTimer = 0f;
         _audioController?.Stop();
         _DialogUI?.Hide();
+        Mb_AudioManager.EndDialogDucking();
         TryPlayNext();
     }
 
@@ -615,6 +618,7 @@ public class Mb_DialogManager : MonoBehaviour
         _fallbackTimer = 0f;
         _audioController?.Stop();
         _DialogUI?.Hide();
+        Mb_AudioManager.EndDialogDucking();
     }
 
 
@@ -673,6 +677,7 @@ public class Mb_DialogManager : MonoBehaviour
         _fallbackTimer = 0f;
         _audioController?.Stop();
         _DialogUI?.Hide();
+        Mb_AudioManager.EndDialogDucking();
     }
 
     #endregion                  //----------------------------------------
