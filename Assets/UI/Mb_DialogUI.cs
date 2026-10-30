@@ -111,6 +111,15 @@ public class Mb_DialogUI : MonoBehaviour
 
 
     /// <summary>
+    /// Changes panel visibility without replacing or resetting its content.
+    /// </summary>
+    public void SetPanelVisible(bool visible)
+    {
+        gameObject.SetActive(visible);
+    }
+
+
+    /// <summary>
     /// Shows or hides the ContinueIndicator.
     /// Called by Mb_DialogManager after audio ends on a tutorial instruction dialog —
     /// signals to the player that they must perform an action to proceed.

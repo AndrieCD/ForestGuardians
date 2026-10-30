@@ -80,12 +80,8 @@ public class Mb_DialogManager : MonoBehaviour
     private float _fallbackTimer = 0f;
     private bool _usingFallbackTimer = false;
 
-    // AudioSource lives on this same GameObject — one central audio player for all dialog
-    private AudioSource _audioSource;
-
-    // AudioListener.pause is global, so remember whether this manager paused
-    // the active source before allowing it to resume.
-    private bool _audioPausedByManager;
+    // AudioSource lives on this same GameObject — one central audio player for all dialog.
+    private Sc_DialogAudioController _audioController;
 
     // Whether dialog panel should be visible at all in the current game state
     private bool _panelAllowed = false;
@@ -98,9 +94,10 @@ public class Mb_DialogManager : MonoBehaviour
     private void Start()
     {
         // Fetch AudioSource on this GameObject — must be added in the Inspector
-        _audioSource = GetComponent<AudioSource>();
+        AudioSource audioSource = GetComponent<AudioSource>();
+        _audioController = new Sc_DialogAudioController(audioSource);
 
-        if (_audioSource == null)
+        if (!_audioController.HasAudioSource)
             Debug.LogError("[Mb_DialogManager] No AudioSource found on this GameObject. " +
                            "Add one in the Inspector.");
 
@@ -177,10 +174,10 @@ public class Mb_DialogManager : MonoBehaviour
         }
 
         // --- AudioSource polling path ---
-        if (_audioSource == null) return;
-
         // Audio has finished playing
-        if (!_audioSource.isPlaying && _dialogActive && !_waitingForCompletion)
+        if (_audioController == null || _audioController.IsPlaying) return;
+
+        if (_dialogActive && !_waitingForCompletion)
         {
             if (_activeDialog != null && _activeDialog.IsTutorialInstruction)
             {
@@ -435,19 +432,16 @@ public class Mb_DialogManager : MonoBehaviour
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
 
-        // Show UI only if the current game state permits it
-        if (_panelAllowed)
-            _DialogUI?.Show(dialog);
+        // Populate presentation once, then control visibility separately.
+        _DialogUI?.Show(dialog);
+        _DialogUI?.SetPanelVisible(_panelAllowed);
 
         // Play voice clip if one is provided
-        if (_audioSource != null)
+        if (_audioController != null && _audioController.HasAudioSource)
         {
-            _audioSource.Stop();
-
             if (dialog.VoiceClip != null)
             {
-                _audioSource.clip = dialog.VoiceClip;
-                _audioSource.Play();
+                _audioController.Play(dialog.VoiceClip);
             }
             else
             {
@@ -501,8 +495,7 @@ public class Mb_DialogManager : MonoBehaviour
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
 
-        _audioSource?.Stop();
-        _audioPausedByManager = false;
+        _audioController?.Stop();
         _DialogUI?.Hide();
 
         if (_activeRequest != null &&
@@ -538,9 +531,7 @@ public class Mb_DialogManager : MonoBehaviour
         _waitingForCompletion = false;
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
-        _audioPausedByManager = false;
-
-        _audioSource?.Stop();
+        _audioController?.Stop();
         _DialogUI?.Hide();
         TryPlayNext();
     }
@@ -570,9 +561,7 @@ public class Mb_DialogManager : MonoBehaviour
         _waitingForCompletion = false;
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
-        _audioPausedByManager = false;
-
-        _audioSource?.Stop();
+        _audioController?.Stop();
         _DialogUI?.Hide();
     }
 
@@ -630,8 +619,7 @@ public class Mb_DialogManager : MonoBehaviour
         _waitingForCompletion = false;
         _usingFallbackTimer = false;
         _fallbackTimer = 0f;
-        _audioPausedByManager = false;
-        _audioSource?.Stop();
+        _audioController?.Stop();
         _DialogUI?.Hide();
     }
 
@@ -642,24 +630,16 @@ public class Mb_DialogManager : MonoBehaviour
 
     private void HandlePause()
     {
-        // Pause the voice clip in place — it will resume from the same position
-        if (_audioSource != null && _audioSource.isPlaying)
-        {
-            _audioSource.Pause();
-            _audioPausedByManager = true;
-        }
+        // Pause the voice clip in place — it will resume from the same position.
+        _audioController?.Pause();
     }
 
 
     private void HandleResume()
     {
         // Resume only if a dialog is active and had a clip playing
-        if (_audioSource != null && _dialogActive && !_waitingForCompletion &&
-            _audioPausedByManager)
-        {
-            _audioSource.UnPause();
-            _audioPausedByManager = false;
-        }
+        if (_dialogActive && !_waitingForCompletion)
+            _audioController?.Resume();
     }
 
 
@@ -674,12 +654,12 @@ public class Mb_DialogManager : MonoBehaviour
             // but don't dismiss — the dialog keeps its position in playback
             if (_panelAllowed)
             {
-                _DialogUI?.Show(_activeDialog);
+                _DialogUI?.SetPanelVisible(true);
                 if (_waitingForCompletion)
                     _DialogUI?.SetContinueIndicatorVisible(true);
             }
             else
-                _DialogUI?.Hide();
+                _DialogUI?.SetPanelVisible(false);
         }
     }
 
