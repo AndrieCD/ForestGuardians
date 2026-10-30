@@ -175,7 +175,11 @@ public class Mb_DialogManager : MonoBehaviour
 
         // --- AudioSource polling path ---
         // Audio has finished playing
-        if (_audioController == null || _audioController.IsPlaying) return;
+        if (_audioController == null || _audioController.IsPaused ||
+            _audioController.IsPlaying)
+        {
+            return;
+        }
 
         if (_dialogActive && !_waitingForCompletion)
         {

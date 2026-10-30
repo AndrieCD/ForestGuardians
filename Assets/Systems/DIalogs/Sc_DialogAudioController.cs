@@ -10,6 +10,7 @@ public sealed class Sc_DialogAudioController
 
     public bool HasAudioSource => _audioSource != null;
     public bool IsPlaying => _audioSource != null && _audioSource.isPlaying;
+    public bool IsPaused => _pausedByController;
 
     public Sc_DialogAudioController(AudioSource audioSource)
     {
