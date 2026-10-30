@@ -152,6 +152,16 @@ public class Mb_DialogManager : MonoBehaviour
         // Only poll when a dialog is active — keeps Update() free otherwise
         if (!_dialogActive) return;
 
+        // AudioListener.pause is applied before Mb_PauseManager raises its
+        // pause event. Do not interpret the resulting isPlaying=false as
+        // dialogue completion while the game is paused.
+        if (Mb_PauseManager.IsPaused ||
+            (GameManager.Instance != null &&
+             GameManager.Instance.CurrentState == GameState.Paused))
+        {
+            return;
+        }
+
         // --- Fallback timer path (no VoiceClip) ---
         if (_usingFallbackTimer)
         {

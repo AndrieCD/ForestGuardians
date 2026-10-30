@@ -7,6 +7,7 @@ public sealed class Sc_DialogAudioController
 {
     private readonly AudioSource _audioSource;
     private bool _pausedByController;
+    private bool _clipActive;
 
     public bool HasAudioSource => _audioSource != null;
     public bool IsPlaying => _audioSource != null && _audioSource.isPlaying;
@@ -26,6 +27,7 @@ public sealed class Sc_DialogAudioController
 
         _audioSource.clip = clip;
         _audioSource.Play();
+        _clipActive = true;
         return true;
     }
 
@@ -36,11 +38,12 @@ public sealed class Sc_DialogAudioController
 
         _audioSource.Stop();
         _pausedByController = false;
+        _clipActive = false;
     }
 
     public void Pause()
     {
-        if (!IsPlaying)
+        if (_audioSource == null || !_clipActive)
             return;
 
         _audioSource.Pause();
