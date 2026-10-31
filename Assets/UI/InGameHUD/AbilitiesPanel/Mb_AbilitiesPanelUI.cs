@@ -72,6 +72,11 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
     [Tooltip("Seconds for one half of the available-state scale pulse.")]
     [SerializeField] private float ReadyPulseDuration = 0.65f;
 
+    [Header("State Tinting")]
+    [SerializeField] private Color CooldownIconTint = new Color(0.58f, 0.58f, 0.58f, 1f);
+    [SerializeField] private Color CooldownPipTint = new Color(0.60f, 0.60f, 0.60f, 1f);
+    [SerializeField] private Color ReadyGlowColor = new Color(0.95f, 0.68f, 0.15f, 1f);
+
     #endregion                  //----------------------------------------
 
 
@@ -198,6 +203,9 @@ public class Mb_AbilitiesPanelUI : MonoBehaviour
             OverlayColor,
             ReadyPulseScale,
             ReadyPulseDuration,
+            CooldownIconTint,
+            CooldownPipTint,
+            ReadyGlowColor,
             showPips        // ← pass through
         );
 

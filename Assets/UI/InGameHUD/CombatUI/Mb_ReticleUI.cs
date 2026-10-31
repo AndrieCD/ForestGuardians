@@ -35,10 +35,10 @@
 //   - ActivatedMoveDistance: pixels the icon moves toward the reticle on activation.
 //   - AnimLerpSpeed: how fast position/scale lerps animate.
 
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Mb_ReticleUI : MonoBehaviour
 {
@@ -48,6 +48,15 @@ public class Mb_ReticleUI : MonoBehaviour
     [SerializeField] private Image ReticleImage;
     [SerializeField] private Image LMBIcon;
     [SerializeField] private Image RMBIcon;
+
+    [Header("Ready Feedback")]
+    [SerializeField] private Color CooldownIconTint = new Color(0.62f, 0.62f, 0.62f, 1f);
+
+    [Header("Reticle Activation Feedback")]
+    [Tooltip("Scale multiplier applied to the central reticle when either basic attack fires.")]
+    [SerializeField] private float ReticleActivatedScaleMultiplier = 1.18f;
+    [Tooltip("Duration of the reticle scale-up and return animation.")]
+    [SerializeField] private float ReticlePulseDuration = 0.22f;
 
     [Header("Cooldown Overlays")]
     [Tooltip("Child Image on LMBIcon. fillMethod = Vertical, fillOrigin = Bottom.")]
@@ -116,28 +125,23 @@ public class Mb_ReticleUI : MonoBehaviour
     private Vector2 _lmbDefaultAnchoredPos;
     private Vector2 _rmbDefaultAnchoredPos;
     private Vector3 _defaultIconScale = Vector3.one;
+    private Vector3 _reticleDefaultScale = Vector3.one;
 
-    // Current animated position and scale targets — lerped toward in Update()
-    private Vector2 _lmbTargetPos;
-    private Vector2 _rmbTargetPos;
-    private Vector3 _lmbTargetScale;
-    private Vector3 _rmbTargetScale;
+    private Color _lmbBaseColor = Color.white;
+    private Color _rmbBaseColor = Color.white;
 
-    // Coroutine handle for deactivation — lets us cancel a running deactivate
-    // if the player fires again before the previous animation finishes
-    private Coroutine _lmbDeactivateCoroutine;
-    private Coroutine _rmbDeactivateCoroutine;
+    private Tween _lmbReadyTween;
+    private Tween _rmbReadyTween;
+    private Tween _lmbActivationTween;
+    private Tween _rmbActivationTween;
+    private Tween _lmbNotificationTween;
+    private Tween _rmbNotificationTween;
+    private Tween _reticleActivationTween;
 
     #endregion                  //----------------------------------------
 
 
     #region Unity Lifecycle     //----------------------------------------
-
-    private void Awake()
-    {
-       
-    }
-
 
     private void Start()
     {
@@ -149,12 +153,11 @@ public class Mb_ReticleUI : MonoBehaviour
         }
         if (RMBIconRect != null)
             _rmbDefaultAnchoredPos = RMBIconRect.anchoredPosition;
+        if (ReticleImage != null)
+            _reticleDefaultScale = ReticleImage.rectTransform.localScale;
 
-        // Initialize animation targets to defaults
-        _lmbTargetPos = _lmbDefaultAnchoredPos;
-        _rmbTargetPos = _rmbDefaultAnchoredPos;
-        _lmbTargetScale = _defaultIconScale;
-        _rmbTargetScale = _defaultIconScale;
+        if (LMBIcon != null) _lmbBaseColor = LMBIcon.color;
+        if (RMBIcon != null) _rmbBaseColor = RMBIcon.color;
 
         // Apply overlay color
         if (LMBOverlay != null) LMBOverlay.color = OverlayColor;
@@ -167,6 +170,9 @@ public class Mb_ReticleUI : MonoBehaviour
         // Set default opacities
         SetIconOpacity(LMBIcon, DefaultOpacity);
         SetIconOpacity(RMBIcon, DefaultOpacity);
+
+        StartReadyVisuals(true);
+        StartReadyVisuals(false);
 
 
         // Start() is now only used to log a final confirmation that refs are ready.
@@ -202,6 +208,7 @@ public class Mb_ReticleUI : MonoBehaviour
     {
         Mb_GuardianBase.OnActiveGuardianChanged -= HandleActiveGuardianChanged;
         UnsubscribeFromAbilities();
+        StopAllVisualTweens();
 
         if (GameManager.Instance != null)
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
@@ -226,24 +233,6 @@ public class Mb_ReticleUI : MonoBehaviour
                 RMBOverlay.fillAmount = Mathf.Clamp01(fill);
         }
 
-        // --- Position and scale animation ---
-        // Lerp icon RectTransforms toward their current targets each frame.
-        // Targets are set by activation/deactivation logic below.
-        if (LMBIconRect != null)
-        {
-            LMBIconRect.anchoredPosition = Vector2.Lerp(
-                LMBIconRect.anchoredPosition, _lmbTargetPos, AnimLerpSpeed * Time.deltaTime);
-            LMBIconRect.localScale = Vector3.Lerp(
-                LMBIconRect.localScale, _lmbTargetScale, AnimLerpSpeed * Time.deltaTime);
-        }
-
-        if (RMBIconRect != null)
-        {
-            RMBIconRect.anchoredPosition = Vector2.Lerp(
-                RMBIconRect.anchoredPosition, _rmbTargetPos, AnimLerpSpeed * Time.deltaTime);
-            RMBIconRect.localScale = Vector3.Lerp(
-                RMBIconRect.localScale, _rmbTargetScale, AnimLerpSpeed * Time.deltaTime);
-        }
     }
 
     #endregion                  //----------------------------------------
@@ -265,9 +254,7 @@ public class Mb_ReticleUI : MonoBehaviour
             _lmbCooldownTotal = remaining;
             _lmbOnCooldown = true;
 
-            SetIconOpacity(LMBIcon, CooldownOpacity);
-
-            // Trigger the activated animation then return to cooldown state
+            ApplyCooldownVisuals(true);
             ActivateLMB();
         }
 
@@ -278,9 +265,8 @@ public class Mb_ReticleUI : MonoBehaviour
 
             if (LMBOverlay != null) LMBOverlay.fillAmount = 0f;
 
-            // Only restore to default if not currently showing the activated state
             if (!_lmbActivated)
-                SetIconOpacity(LMBIcon, DefaultOpacity);
+                ApplyReadyVisuals(true, true);
         }
 
         _lmbPrevCooldown = remaining;
@@ -298,8 +284,7 @@ public class Mb_ReticleUI : MonoBehaviour
             _rmbCooldownTotal = remaining;
             _rmbOnCooldown = true;
 
-            SetIconOpacity(RMBIcon, CooldownOpacity);
-
+            ApplyCooldownVisuals(false);
             ActivateRMB();
         }
 
@@ -310,7 +295,7 @@ public class Mb_ReticleUI : MonoBehaviour
             if (RMBOverlay != null) RMBOverlay.fillAmount = 0f;
 
             if (!_rmbActivated)
-                SetIconOpacity(RMBIcon, DefaultOpacity);
+                ApplyReadyVisuals(true, false);
         }
 
         _rmbPrevCooldown = remaining;
@@ -327,79 +312,182 @@ public class Mb_ReticleUI : MonoBehaviour
     private void ActivateLMB()
     {
         _lmbActivated = true;
+        PlayReticleActivationFeedback();
 
-        // LMB moves RIGHT (toward center) — its default pos is to the LEFT of reticle
-        // so we subtract from X to push it rightward (toward center)
-        _lmbTargetPos = _lmbDefaultAnchoredPos + new Vector2(ActivatedMoveDistance, 0f);
-        _lmbTargetScale = _defaultIconScale * ActivatedScaleMultiplier;
-        SetIconOpacity(LMBIcon, ActiveOpacity);
+        StopReadyVisuals(true);
+        SetIconColor(LMBIcon, _lmbBaseColor, ActiveOpacity);
 
-        // Suppress RMB — slight inward nudge + lower opacity
-        // RMB is to the RIGHT so we subtract X to push it leftward (toward center)
-        //_rmbTargetPos = _rmbDefaultAnchoredPos + new Vector2(-ActivatedMoveDistance * 0.4f, 0f);
-        SetIconOpacity(RMBIcon, CooldownOpacity);
+        _lmbActivationTween?.Kill();
+        _lmbActivationTween = DOTween.Sequence()
+            .Append(LMBIconRect.DOAnchorPos(
+                _lmbDefaultAnchoredPos + new Vector2(ActivatedMoveDistance, 0f),
+                GetActivationDuration()))
+            .Join(LMBIconRect.DOScale(_defaultIconScale * ActivatedScaleMultiplier, GetActivationDuration()))
+            .AppendInterval(0.12f)
+            .Append(LMBIconRect.DOAnchorPos(_lmbDefaultAnchoredPos, GetActivationDuration()))
+            .Join(LMBIconRect.DOScale(_defaultIconScale, GetActivationDuration()))
+            .OnComplete(() => FinishActivation(true))
+            .SetUpdate(true);
 
-        // Cancel any running deactivate coroutine and start a fresh one
-        if (_lmbDeactivateCoroutine != null)
-            StopCoroutine(_lmbDeactivateCoroutine);
-        _lmbDeactivateCoroutine = StartCoroutine(DeactivateLMBRoutine());
+        SuppressOtherAttack(false);
     }
 
 
     private void ActivateRMB()
     {
         _rmbActivated = true;
+        PlayReticleActivationFeedback();
 
-        _rmbTargetPos = _rmbDefaultAnchoredPos + new Vector2(-ActivatedMoveDistance, 0f);
-        _rmbTargetScale = _defaultIconScale * ActivatedScaleMultiplier;
-        SetIconOpacity(RMBIcon, ActiveOpacity);
+        StopReadyVisuals(false);
+        SetIconColor(RMBIcon, _rmbBaseColor, ActiveOpacity);
 
-        //_lmbTargetPos = _lmbDefaultAnchoredPos + new Vector2(ActivatedMoveDistance * 0.4f, 0f);
-        SetIconOpacity(LMBIcon, CooldownOpacity);
+        _rmbActivationTween?.Kill();
+        _rmbActivationTween = DOTween.Sequence()
+            .Append(RMBIconRect.DOAnchorPos(
+                _rmbDefaultAnchoredPos + new Vector2(-ActivatedMoveDistance, 0f),
+                GetActivationDuration()))
+            .Join(RMBIconRect.DOScale(_defaultIconScale * ActivatedScaleMultiplier, GetActivationDuration()))
+            .AppendInterval(0.12f)
+            .Append(RMBIconRect.DOAnchorPos(_rmbDefaultAnchoredPos, GetActivationDuration()))
+            .Join(RMBIconRect.DOScale(_defaultIconScale, GetActivationDuration()))
+            .OnComplete(() => FinishActivation(false))
+            .SetUpdate(true);
 
-        if (_rmbDeactivateCoroutine != null)
-            StopCoroutine(_rmbDeactivateCoroutine);
-        _rmbDeactivateCoroutine = StartCoroutine(DeactivateRMBRoutine());
+        SuppressOtherAttack(true);
     }
 
 
-    // Holds the activated state briefly then returns the icon to its resting state.
-    // The actual lerp back happens in Update() once the targets are reset here.
-    private IEnumerator DeactivateLMBRoutine()
+    private void FinishActivation(bool lmb)
     {
-        // TODO: Tune hold duration — 0.12s is barely perceptible but gives the
-        //       icon a moment to reach its activated position before snapping back.
-        yield return new WaitForSeconds(0.12f);
+        if (lmb)
+        {
+            _lmbActivated = false;
+            if (_lmbOnCooldown)
+                ApplyCooldownVisuals(true);
+            else
+                ApplyReadyVisuals(false, true);
 
-        _lmbActivated = false;
-        _lmbTargetPos = _lmbDefaultAnchoredPos;
-        _lmbTargetScale = _defaultIconScale;
+            if (!_rmbActivated)
+                RestoreIconState(RMBIcon, _rmbOnCooldown, false);
+        }
+        else
+        {
+            _rmbActivated = false;
+            if (_rmbOnCooldown)
+                ApplyCooldownVisuals(false);
+            else
+                ApplyReadyVisuals(false, false);
 
-        // Restore opacity: on cooldown = CooldownOpacity, else DefaultOpacity
-        SetIconOpacity(LMBIcon, _lmbOnCooldown ? CooldownOpacity : DefaultOpacity);
-
-        // Restore RMB suppression
-        //_rmbTargetPos = _rmbDefaultAnchoredPos;
-        SetIconOpacity(RMBIcon, _rmbOnCooldown ? CooldownOpacity : DefaultOpacity);
-
-        _lmbDeactivateCoroutine = null;
+            if (!_lmbActivated)
+                RestoreIconState(LMBIcon, _lmbOnCooldown, true);
+        }
     }
 
 
-    private IEnumerator DeactivateRMBRoutine()
+    private void ApplyCooldownVisuals(bool lmb)
     {
-        yield return new WaitForSeconds(0.12f);
+        Image icon = lmb ? LMBIcon : RMBIcon;
+        RectTransform iconRect = lmb ? LMBIconRect : RMBIconRect;
+        SetIconColor(icon, CooldownIconTint, CooldownOpacity);
+        StopReadyVisuals(lmb);
 
-        _rmbActivated = false;
-        _rmbTargetPos = _rmbDefaultAnchoredPos;
-        _rmbTargetScale = _defaultIconScale;
+        if (iconRect != null)
+            iconRect.localScale = _defaultIconScale;
+    }
 
-        SetIconOpacity(RMBIcon, _rmbOnCooldown ? CooldownOpacity : DefaultOpacity);
 
-        //_lmbTargetPos = _lmbDefaultAnchoredPos;
-        SetIconOpacity(LMBIcon, _lmbOnCooldown ? CooldownOpacity : DefaultOpacity);
+    private void ApplyReadyVisuals(bool playNotification, bool lmb)
+    {
+        Image icon = lmb ? LMBIcon : RMBIcon;
+        RectTransform iconRect = lmb ? LMBIconRect : RMBIconRect;
+        StopReadyVisuals(lmb);
+        SetIconColor(icon, lmb ? _lmbBaseColor : _rmbBaseColor, DefaultOpacity);
 
-        _rmbDeactivateCoroutine = null;
+        if (iconRect == null)
+            return;
+
+        if (playNotification)
+        {
+            Tween notification = iconRect.DOPunchScale(_defaultIconScale * 0.08f, 0.28f, 2, 0.7f)
+                .SetUpdate(true)
+                .OnComplete(() => StartReadyVisuals(lmb));
+
+            if (lmb) _lmbNotificationTween = notification;
+            else _rmbNotificationTween = notification;
+
+        }
+        else
+        {
+            StartReadyVisuals(lmb);
+        }
+    }
+
+
+    private void StartReadyVisuals(bool lmb)
+    {
+        Image icon = lmb ? LMBIcon : RMBIcon;
+        RectTransform iconRect = lmb ? LMBIconRect : RMBIconRect;
+        StopReadyVisuals(lmb);
+        SetIconColor(icon, lmb ? _lmbBaseColor : _rmbBaseColor, DefaultOpacity);
+
+        if (iconRect != null)
+        {
+            Tween readyTween = iconRect.DOScale(_defaultIconScale * 1.04f, 0.7f)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetUpdate(true);
+
+            if (lmb) _lmbReadyTween = readyTween;
+            else _rmbReadyTween = readyTween;
+        }
+
+    }
+
+
+    private void SuppressOtherAttack(bool rmbActivated)
+    {
+        if (rmbActivated)
+        {
+            if (!_lmbActivated)
+                SetIconOpacity(LMBIcon, CooldownOpacity);
+        }
+        else
+        {
+            if (!_rmbActivated)
+                SetIconOpacity(RMBIcon, CooldownOpacity);
+        }
+    }
+
+
+    private void PlayReticleActivationFeedback()
+    {
+        if (ReticleImage == null)
+            return;
+
+        _reticleActivationTween?.Kill();
+        ReticleImage.rectTransform.localScale = _reticleDefaultScale;
+        _reticleActivationTween = DOTween.Sequence()
+            .Append(ReticleImage.rectTransform.DOScale(
+                _reticleDefaultScale * ReticleActivatedScaleMultiplier,
+                ReticlePulseDuration * 0.35f))
+            .Append(ReticleImage.rectTransform.DOScale(
+                _reticleDefaultScale,
+                ReticlePulseDuration * 0.65f))
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .OnComplete(() => _reticleActivationTween = null);
+    }
+
+
+    private void RestoreIconState(Image icon, bool onCooldown, bool lmb)
+    {
+        if (icon == null)
+            return;
+
+        if (onCooldown)
+            SetIconColor(icon, CooldownIconTint, CooldownOpacity);
+        else
+            ApplyReadyVisuals(false, lmb);
     }
 
     #endregion                  //----------------------------------------
@@ -528,6 +616,63 @@ public class Mb_ReticleUI : MonoBehaviour
 
 
     #region Helpers             //----------------------------------------
+
+    private float GetActivationDuration()
+    {
+        return Mathf.Clamp(1f / Mathf.Max(AnimLerpSpeed, 0.01f), 0.04f, 0.12f);
+    }
+
+
+    private void StopReadyVisuals(bool lmb)
+    {
+        if (lmb)
+        {
+            _lmbReadyTween?.Kill();
+            _lmbReadyTween = null;
+        }
+        else
+        {
+            _rmbReadyTween?.Kill();
+            _rmbReadyTween = null;
+        }
+    }
+
+
+    private void StopAllVisualTweens()
+    {
+        _lmbReadyTween?.Kill();
+        _rmbReadyTween?.Kill();
+        _lmbActivationTween?.Kill();
+        _rmbActivationTween?.Kill();
+        _lmbNotificationTween?.Kill();
+        _rmbNotificationTween?.Kill();
+        _reticleActivationTween?.Kill();
+
+        if (LMBIconRect != null)
+        {
+            LMBIconRect.anchoredPosition = _lmbDefaultAnchoredPos;
+            LMBIconRect.localScale = _defaultIconScale;
+        }
+
+        if (RMBIconRect != null)
+        {
+            RMBIconRect.anchoredPosition = _rmbDefaultAnchoredPos;
+            RMBIconRect.localScale = _defaultIconScale;
+        }
+
+        if (ReticleImage != null)
+            ReticleImage.rectTransform.localScale = _reticleDefaultScale;
+    }
+
+
+    private void SetIconColor(Image icon, Color color, float alpha)
+    {
+        if (icon == null)
+            return;
+
+        color.a = alpha;
+        icon.color = color;
+    }
 
     private void SetIconOpacity(Image icon, float alpha)
     {
