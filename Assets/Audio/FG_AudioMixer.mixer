@@ -103,6 +103,8 @@ AudioMixerController:
     name: MasterVolume
   - guid: d98dac0936f978949bcbe329df590e9d
     name: MusicVolume
+  - guid: 03fbd5efd0993cd4a85bb47a5655d9e2
+    name: MusicDuckingVolume
   - guid: 574e73101a413a447b91e8fc66a5abc0
     name: SFXVolume
   - guid: a40506261833b744a9e7f268ca2f6dad
