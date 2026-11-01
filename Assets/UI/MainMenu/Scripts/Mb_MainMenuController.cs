@@ -73,6 +73,7 @@ public class Mb_MainMenuController : MonoBehaviour
     private void Start()
     {
         EnsureApplicationUIAudio();
+        EnsureApplicationUIFeedback();
 
         // Defensive initialization — ensure only the main menu is visible
         // on scene load regardless of what was active in the Editor.
@@ -106,6 +107,38 @@ public class Mb_MainMenuController : MonoBehaviour
 
             trigger.ConfigureApplicationMenuDefaults();
         }
+    }
+
+
+    private void EnsureApplicationUIFeedback()
+    {
+        EnsureCanvasButtonFeedback(MainMenuCanvas);
+        EnsureCanvasButtonFeedback(StageSelectionCanvas);
+        EnsureCanvasButtonFeedback(GuardianSelectionCanvas);
+        EnsureCanvasButtonFeedback(AlmanacCanvas);
+        EnsureCanvasButtonFeedback(CharactersCanvas);
+        EnsureCanvasButtonFeedback(SettingsCanvas);
+    }
+
+
+    private void EnsureCanvasButtonFeedback(GameObject canvasRoot)
+    {
+        if (canvasRoot == null) return;
+
+        Button[] buttons = canvasRoot.GetComponentsInChildren<Button>(true);
+        foreach (Button button in buttons)
+            AddButtonFeedback(button.gameObject);
+
+        Toggle[] toggles = canvasRoot.GetComponentsInChildren<Toggle>(true);
+        foreach (Toggle toggle in toggles)
+            AddButtonFeedback(toggle.gameObject);
+    }
+
+
+    private void AddButtonFeedback(GameObject target)
+    {
+        if (target == null || target.GetComponent<Mb_UIButtonFeedback>() != null) return;
+        target.AddComponent<Mb_UIButtonFeedback>();
     }
 
     #endregion                      //----------------------------------------
