@@ -169,6 +169,8 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
 
         if (MainMenuController == null)
             Debug.LogError("[Mb_GuardianSelectionUI] MainMenuController is not assigned.");
+
+        EnsureHoverAudio();
     }
 
 
@@ -213,6 +215,42 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
     }
 
     #endregion                      //----------------------------------------
+
+
+    private void EnsureHoverAudio()
+    {
+        if (SelectorButtons != null)
+        {
+            foreach (Button button in SelectorButtons)
+                AddHoverAudio(button);
+        }
+
+        if (AbilitySlots != null)
+        {
+            foreach (Mb_SelectionAbilitySlotUI slot in AbilitySlots)
+            {
+                if (slot != null)
+                    AddHoverAudio(slot.gameObject);
+            }
+        }
+
+        AddHoverAudio(LetsGoButton);
+        AddHoverAudio(BackButton);
+    }
+
+
+    private void AddHoverAudio(Component target)
+    {
+        if (target == null) return;
+        AddHoverAudio(target.gameObject);
+    }
+
+
+    private void AddHoverAudio(GameObject target)
+    {
+        if (target == null || target.GetComponent<Mb_UIAudioTrigger>() != null) return;
+        target.AddComponent<Mb_UIAudioTrigger>();
+    }
 
 
     // -------------------------------------------------------------------------

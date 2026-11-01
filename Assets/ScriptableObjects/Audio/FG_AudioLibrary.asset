@@ -82,7 +82,7 @@ MonoBehaviour:
     DefaultVolume: 0.5
   - Key: 8030
     Clip: {fileID: 8300000, guid: 80721227073f0cf4497b42ead9687c56, type: 3}
-    DefaultVolume: 0.25
+    DefaultVolume: 0.5
   - Key: 8200
     Clip: {fileID: 8300000, guid: acbd01cdf53506541ae5c30df72606a1, type: 3}
     DefaultVolume: 0.5

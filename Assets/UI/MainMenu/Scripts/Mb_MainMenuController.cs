@@ -31,6 +31,7 @@
 //     all other canvases should start inactive.
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Mb_MainMenuController : MonoBehaviour
 {
@@ -71,11 +72,40 @@ public class Mb_MainMenuController : MonoBehaviour
 
     private void Start()
     {
+        EnsureApplicationUIAudio();
+
         // Defensive initialization — ensure only the main menu is visible
         // on scene load regardless of what was active in the Editor.
         // This prevents a designer accidentally leaving a sub-canvas active
         // in the scene from causing a visual glitch on first launch.
         ShowMainMenu();
+    }
+
+
+    private void EnsureApplicationUIAudio()
+    {
+        EnsureCanvasInteractableAudio(MainMenuCanvas);
+        EnsureCanvasInteractableAudio(StageSelectionCanvas);
+        EnsureCanvasInteractableAudio(GuardianSelectionCanvas);
+        EnsureCanvasInteractableAudio(AlmanacCanvas);
+        EnsureCanvasInteractableAudio(CharactersCanvas);
+        EnsureCanvasInteractableAudio(SettingsCanvas);
+    }
+
+
+    private void EnsureCanvasInteractableAudio(GameObject canvasRoot)
+    {
+        if (canvasRoot == null) return;
+
+        Selectable[] interactables = canvasRoot.GetComponentsInChildren<Selectable>(true);
+        foreach (Selectable interactable in interactables)
+        {
+            Mb_UIAudioTrigger trigger = interactable.GetComponent<Mb_UIAudioTrigger>();
+            if (trigger == null)
+                trigger = interactable.gameObject.AddComponent<Mb_UIAudioTrigger>();
+
+            trigger.ConfigureApplicationMenuDefaults();
+        }
     }
 
     #endregion                      //----------------------------------------
