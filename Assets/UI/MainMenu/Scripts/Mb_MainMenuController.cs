@@ -74,6 +74,8 @@ public class Mb_MainMenuController : MonoBehaviour
     {
         EnsureApplicationUIAudio();
         EnsureApplicationUIFeedback();
+        EnsureApplicationUITransitions();
+        EnsureApplicationUIIdleMotion();
 
         // Defensive initialization — ensure only the main menu is visible
         // on scene load regardless of what was active in the Editor.
@@ -139,6 +141,71 @@ public class Mb_MainMenuController : MonoBehaviour
     {
         if (target == null || target.GetComponent<Mb_UIButtonFeedback>() != null) return;
         target.AddComponent<Mb_UIButtonFeedback>();
+    }
+
+
+    private void EnsureApplicationUITransitions()
+    {
+        EnsureScreenTransition(MainMenuCanvas);
+        EnsureScreenTransition(StageSelectionCanvas);
+        EnsureScreenTransition(GuardianSelectionCanvas);
+        EnsureScreenTransition(AlmanacCanvas);
+        EnsureScreenTransition(CharactersCanvas);
+        EnsureScreenTransition(SettingsCanvas);
+    }
+
+
+    private void EnsureScreenTransition(GameObject canvasRoot)
+    {
+        if (canvasRoot == null) return;
+        if (canvasRoot.GetComponent<Mb_UIScreenTransition>() == null)
+            canvasRoot.AddComponent<Mb_UIScreenTransition>();
+    }
+
+
+    private void EnsureApplicationUIIdleMotion()
+    {
+        EnsureNamedIdleMotion(MainMenuCanvas, "Logo");
+    EnsureForegroundIdleMotion(StageSelectionCanvas);
+    EnsureForegroundIdleMotion(GuardianSelectionCanvas);
+        EnsureNamedIdleMotion(AlmanacCanvas, "BookRoot");
+    }
+
+private void EnsureForegroundIdleMotion(GameObject canvasRoot)
+{
+    if (canvasRoot == null) return;
+
+    foreach (Transform child in canvasRoot.transform)
+    {
+        if (child.name == "Background") continue;
+        if (child.GetComponent<Mb_UIIdleBob>() == null)
+            child.gameObject.AddComponent<Mb_UIIdleBob>();
+    }
+}
+
+
+    private void EnsureNamedIdleMotion(GameObject canvasRoot, string objectName)
+    {
+        if (canvasRoot == null) return;
+
+        Transform target = FindDeepChild(canvasRoot.transform, objectName);
+        if (target == null || target.GetComponent<Mb_UIIdleBob>() != null) return;
+
+        target.gameObject.AddComponent<Mb_UIIdleBob>();
+    }
+
+
+    private Transform FindDeepChild(Transform parent, string objectName)
+    {
+        if (parent.name == objectName) return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform result = FindDeepChild(child, objectName);
+            if (result != null) return result;
+        }
+
+        return null;
     }
 
     #endregion                      //----------------------------------------
@@ -344,6 +411,9 @@ public class Mb_MainMenuController : MonoBehaviour
         }
 
         canvas.SetActive(active);
+
+        if (active)
+            canvas.GetComponent<Mb_UIScreenTransition>()?.PlayEnter();
     }
 
     #endregion                      //----------------------------------------
