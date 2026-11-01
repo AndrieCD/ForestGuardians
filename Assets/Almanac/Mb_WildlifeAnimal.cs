@@ -47,6 +47,12 @@ public class Mb_WildlifeAnimal : MonoBehaviour
     // TODO: Confirm this naming convention with whoever builds the prefabs.
     private const string VFX_CHILD_NAME = "VFX";
 
+    // Small visual scale pulse applied to the model child. Keeping the values
+    // here makes the effect consistent and avoids adding animation assets or
+    // extra per-frame systems to the scene.
+    private const float SCALE_PULSE_AMOUNT = 0.05f;
+    private const float SCALE_PULSE_FREQUENCY = 0.45f;
+
     private bool _isQuestSpecies = false;
 
     #endregion                          //----------------------------------------
@@ -90,10 +96,55 @@ public class Mb_WildlifeAnimal : MonoBehaviour
     // Layer mask for the Wildlife layer — built once in Initialize()
     private int _wildlifeLayerMask;
 
+    // The visual child is animated instead of the root so the gaze collider
+    // remains stationary at the spawn point.
+    private Transform _scalePulseTarget;
+    private Vector3 _scalePulseBaseLocalScale;
+    private float _scalePulsePhase;
+
     #endregion                          //----------------------------------------
 
 
     #region Initialization              //----------------------------------------
+
+    private void Awake()
+    {
+        CacheScalePulseTarget();
+    }
+
+    private void CacheScalePulseTarget()
+    {
+        _scalePulseTarget = transform.Find("Model");
+
+        // Several prefabs keep an old Model child disabled and use a
+        // species-named child for the visible mesh. Do not animate the
+        // disabled helper object.
+        if (_scalePulseTarget != null && !_scalePulseTarget.gameObject.activeSelf)
+            _scalePulseTarget = null;
+
+        // Some wildlife prefabs use the species name for the visual child.
+        // Find the first direct child containing a renderer while excluding VFX.
+        if (_scalePulseTarget == null)
+        {
+            foreach (Transform child in transform)
+            {
+                if (child.name == VFX_CHILD_NAME || !child.gameObject.activeSelf)
+                    continue;
+
+                if (child.GetComponentInChildren<Renderer>(true) != null)
+                {
+                    _scalePulseTarget = child;
+                    break;
+                }
+            }
+        }
+
+        if (_scalePulseTarget == null)
+            return;
+
+        _scalePulseBaseLocalScale = _scalePulseTarget.localScale;
+        _scalePulsePhase = Mathf.Abs(GetInstanceID() % 1000) * 0.01f;
+    }
 
     /// <summary>
     /// Called by Mb_WildlifeDiscoveryManager immediately after Instantiate().
@@ -152,6 +203,16 @@ public class Mb_WildlifeAnimal : MonoBehaviour
         if (Camera.main == null) return;
 
         UpdateGaze();
+    }
+
+    private void LateUpdate()
+    {
+        if (_scalePulseTarget == null)
+            return;
+
+        float pulse = 1f + Mathf.Sin((Time.time * SCALE_PULSE_FREQUENCY * Mathf.PI * 2f)
+                                     + _scalePulsePhase) * SCALE_PULSE_AMOUNT;
+        _scalePulseTarget.localScale = _scalePulseBaseLocalScale * pulse;
     }
 
     #endregion                          //----------------------------------------
