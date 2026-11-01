@@ -8,6 +8,7 @@
   <Project Path="CFXREditor.csproj" />
   <Project Path="UnityEditor.UI.csproj" />
   <Project Path="UnityEditor.UI.EditorTests.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="UnityEditor.UI.Analytics.csproj" />
   <Project Path="CFXRRuntime.csproj" />
   <Project Path="Unity.TextMeshPro.Editor.Tests.csproj" />

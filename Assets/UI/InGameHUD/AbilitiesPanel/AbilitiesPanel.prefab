@@ -200,14 +200,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.55, g: 0.36, b: 0.15, a: 0.65}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cbc522005d43d96439512aa282fa937a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9920cc5b20be1cd4aa94e1050f2a013b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -634,7 +634,7 @@ MonoBehaviour:
   RSlot: {fileID: 12174052352855916}
   PipFilledSprite: {fileID: 21300000, guid: b38a8ef9f6075e94594f0d3ea76b77a8, type: 3}
   PipEmptySprite: {fileID: 21300000, guid: d77cca61c174f034ab2045c4836374d2, type: 3}
-  LockedIcon: {fileID: 21300000, guid: 6e5ed52a6190f0a4b9e3c571005d7db6, type: 3}
+  LockedIcon: {fileID: 21300000, guid: 9920cc5b20be1cd4aa94e1050f2a013b, type: 3}
   DefaultOpacity: 0.9
   CooldownOpacity: 0.5
   ActiveOpacity: 1
