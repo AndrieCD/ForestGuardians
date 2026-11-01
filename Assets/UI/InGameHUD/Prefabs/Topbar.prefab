@@ -421,6 +421,20 @@ MonoBehaviour:
   PhaseLabel: {fileID: 5347731369007555014}
   WaveClearLerpSpeed: 4
   WaveClearHoldSeconds: 0.8
+  PanoharraHealthyColor: {r: 0.29, g: 0.79, b: 0.54, a: 1}
+  PanoharraHealthyIdleColor: {r: 0.82, g: 1, b: 0.35, a: 1}
+  PanoharraCautionColor: {r: 0.91, g: 0.72, b: 0.24, a: 1}
+  PanoharraDangerColor: {r: 0.91, g: 0.36, b: 0.36, a: 1}
+  PanoharraCautionThreshold: 0.5
+  PanoharraDangerThreshold: 0.15
+  PanoharraColorTweenDuration: 2.5
+  PanoharraHitAccentColor: {r: 1, g: 0.65, b: 0.25, a: 1}
+  PanoharraHitFeedbackDuration: 0.45
+  PanoharraHitFeedbackEnabled: 1
+  PanoharraHealthTextBlinkEnabled: 1
+  PanoharraHealthTextBlinkColor: {r: 1, g: 0, b: 0, a: 1}
+  PanoharraHealthTextBlinkCount: 3
+  PanoharraHealthTextBlinkInterval: 0.2
 --- !u!1 &6885747219240190537
 GameObject:
   m_ObjectHideFlags: 0
