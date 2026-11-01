@@ -301,6 +301,7 @@ public class Mb_SettingsUI : MonoBehaviour
     public void OnSaveClicked()
     {
         Mb_SettingsManager.Instance.Save();
+        gameObject.SetActive(false);
     }
 
     // Called by Btn_Revert.OnClick()
