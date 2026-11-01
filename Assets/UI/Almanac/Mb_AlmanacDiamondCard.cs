@@ -43,8 +43,24 @@ public class Mb_AlmanacDiamondCard : MonoBehaviour
     [SerializeField] private Color LockedIconTint = Color.white;
     [SerializeField] private Color UnlockedIconTint = Color.white;
 
+    private Outline _selectionOutline;
+
 
     #endregion                          //----------------------------------------
+
+
+    private void Awake()
+    {
+        if (CardBackground == null) return;
+
+        _selectionOutline = CardBackground.GetComponent<Outline>();
+        if (_selectionOutline == null)
+            _selectionOutline = CardBackground.gameObject.AddComponent<Outline>();
+
+        _selectionOutline.effectColor = new Color(0.4f, 1f, 0.6f, 0.95f);
+        _selectionOutline.effectDistance = new Vector2(3f, -3f);
+        _selectionOutline.enabled = false;
+    }
 
 
     #region Card State API              //----------------------------------------
@@ -71,6 +87,16 @@ public class Mb_AlmanacDiamondCard : MonoBehaviour
             SetUnlockedVisuals(entry, completionCount);
         else
             SetLockedVisuals(entry);
+
+        SetSelected(false);
+    }
+
+
+    /// <summary>Sets the card's active selection outline.</summary>
+    public void SetSelected(bool isSelected)
+    {
+        if (_selectionOutline != null)
+            _selectionOutline.enabled = isSelected;
     }
 
 

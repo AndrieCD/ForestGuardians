@@ -272,6 +272,7 @@ public class Mb_AlmanacUI : MonoBehaviour
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
 
             card.Initialize(entry, isUnlocked, completionCount, OnCardClicked);
+            card.SetSelected(entry == _selectedEntry);
 
             _cards.Add(card);
             _cardMap[entry] = card;
@@ -300,7 +301,13 @@ public class Mb_AlmanacUI : MonoBehaviour
 
     private void OnCardClicked(SO_WildlifeEntry entry)
     {
+        if (_selectedEntry != null && _cardMap.TryGetValue(_selectedEntry, out Mb_AlmanacDiamondCard previousCard))
+            previousCard.SetSelected(false);
+
         _selectedEntry = entry;
+
+        if (_cardMap.TryGetValue(entry, out Mb_AlmanacDiamondCard selectedCard))
+            selectedCard.SetSelected(true);
 
         bool isUnlocked = Mb_AlmanacManager.Instance != null
             && Mb_AlmanacManager.Instance.IsUnlocked(entry);
@@ -451,6 +458,7 @@ public class Mb_AlmanacUI : MonoBehaviour
         {
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
             card.Initialize(entry, isUnlocked: true, completionCount, OnCardClicked);
+            card.SetSelected(entry == _selectedEntry);
         }
 
         RefreshProgressCounter();
@@ -466,6 +474,7 @@ public class Mb_AlmanacUI : MonoBehaviour
         {
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
             card.Initialize(entry, isUnlocked: true, completionCount, OnCardClicked);
+            card.SetSelected(entry == _selectedEntry);
         }
     }
 
@@ -503,6 +512,7 @@ public class Mb_AlmanacUI : MonoBehaviour
             bool isUnlocked = Mb_AlmanacManager.Instance.IsUnlocked(entry);
             int completionCount = Mb_AlmanacManager.Instance.GetCompletionCount(entry);
             card.Initialize(entry, isUnlocked, completionCount, OnCardClicked);
+            card.SetSelected(entry == _selectedEntry);
         }
     }
 

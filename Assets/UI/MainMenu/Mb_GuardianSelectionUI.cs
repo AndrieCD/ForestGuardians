@@ -393,6 +393,14 @@ public class Mb_GuardianSelectionUI : MonoBehaviour
             btnImage.color = i == _selectedGuardianIndex
                 ? SelectedSelectorColor
                 : UnselectedSelectorColor;
+
+            Outline outline = btnImage.GetComponent<Outline>();
+            if (outline == null)
+                outline = btnImage.gameObject.AddComponent<Outline>();
+
+            outline.effectColor = SelectedSelectorColor;
+            outline.effectDistance = new Vector2(3f, -3f);
+            outline.enabled = i == _selectedGuardianIndex;
         }
     }
 

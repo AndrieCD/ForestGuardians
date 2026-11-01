@@ -24,6 +24,8 @@ public class Mb_StageGemNode : MonoBehaviour
              "Leave unassigned if selection is communicated by color alone.")]
     [SerializeField] private GameObject SelectionIndicator;
 
+    private Outline _selectionOutline;
+
 
     private void Awake()
     {
@@ -32,6 +34,17 @@ public class Mb_StageGemNode : MonoBehaviour
 
         if (GemButton == null)
             Debug.LogError($"[Mb_StageGemNode] GemButton not assigned on {gameObject.name}.");
+
+        if (GemImage != null)
+        {
+            _selectionOutline = GemImage.GetComponent<Outline>();
+            if (_selectionOutline == null)
+                _selectionOutline = GemImage.gameObject.AddComponent<Outline>();
+
+            _selectionOutline.effectColor = new Color(1f, 1f, 1f, 0.9f);
+            _selectionOutline.effectDistance = new Vector2(3f, -3f);
+            _selectionOutline.enabled = false;
+        }
     }
 
 
@@ -69,5 +82,8 @@ public class Mb_StageGemNode : MonoBehaviour
         // Show or hide the optional selection indicator overlay
         if (SelectionIndicator != null)
             SelectionIndicator.SetActive(isSelected);
+
+        if (_selectionOutline != null)
+            _selectionOutline.enabled = isSelected;
     }
 }
