@@ -68,8 +68,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
+  m_sharedMaterial: {fileID: -8117004716575080434, guid: 9160a13bff084c4448cd20d73fd01914, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -150,3 +150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e3e2d0b494b6046bc79e9f93ae5ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_PlayerFloatingText
+  UseOutline: 1
+  DefaultOutlineColor: {r: 0, g: 0, b: 0, a: 0.75}
+  OutlineDistance: {x: 1.5, y: -1.5}

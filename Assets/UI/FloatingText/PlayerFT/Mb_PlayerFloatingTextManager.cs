@@ -21,6 +21,7 @@
 //   - StatusColors: per-status color overrides. Add entries in the Inspector.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -51,9 +52,28 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     [Tooltip("Max random horizontal offset in pixels to prevent texts stacking perfectly.")]
     [SerializeField] private float HorizontalSpread = 30f;
 
+    [Header("Health Event Batching")]
+    [Tooltip("Damage events inside this window are shown as one accumulated value.")]
+    [SerializeField] private float DamageBatchWindow = 0.12f;
+    [Tooltip("Healing events inside this window are shown as one accumulated value.")]
+    [SerializeField] private float HealBatchWindow = 0.18f;
+    [Tooltip("Maximum simultaneous Guardian health messages before new values wait.")]
+    [SerializeField] private int MaxVisibleHealthMessages = 3;
+    [Tooltip("Vertical spacing in pixels between simultaneous health messages.")]
+    [SerializeField] private float HealthMessageStackSpacing = 28f;
+
+    [Header("Text Treatment")]
+    [SerializeField] private Color DamageOutlineColor = new Color(0f, 0f, 0f, 0.8f);
+    [SerializeField] private Color HealOutlineColor = new Color(0f, 0.15f, 0.08f, 0.8f);
+    [SerializeField] private float DamageFontSizeMultiplier = 1.0f;
+    [SerializeField] private float HealFontSizeMultiplier = 0.92f;
+    [SerializeField] private float IntroScale = 0.92f;
+    [SerializeField] private float IntroDuration = 0.1f;
+    [SerializeField] private float HoldDuration = 0.2f;
+
     [Header("Colors")]
-    [SerializeField] private Color DamageColor = Color.red;
-    [SerializeField] private Color HealColor = Color.green;
+    [SerializeField] private Color DamageColor = new Color(1f, 0.38f, 0.37f, 1f);
+    [SerializeField] private Color HealColor = new Color(0.45f, 0.90f, 0.64f, 1f);
     [SerializeField] private Color ShieldColor = new Color(0.4f, 0.7f, 1f); // light blue
 
     [Header("Status Effect Colors")]
@@ -77,6 +97,11 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     // We need this because OnHealthChanged gives us (current, max) — not the delta.
     // Delta = previousHealth - currentHealth → positive = damage, negative = heal.
     private float _previousHealth = -1f;
+    private float _pendingDamage;
+    private float _pendingHealing;
+    private Coroutine _damageBatchCoroutine;
+    private Coroutine _healBatchCoroutine;
+    private HashSet<Mb_PlayerFloatingText> _activeHealthMessages = new HashSet<Mb_PlayerFloatingText>();
 
     #endregion                  //----------------------------------------
 
@@ -142,20 +167,12 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
         // A positive delta means health went DOWN — damage taken
         if (delta > 0.01f)
         {
-            SpawnText(
-                text: $"-{Mathf.CeilToInt(delta)}",
-                color: DamageColor,
-                fontSizeMultiplier: 1.0f
-            );
+            QueueHealthText(delta, true);
         }
         // A negative delta means health went UP — healing received
         else if (delta < -0.01f)
         {
-            SpawnText(
-                text: $"+{Mathf.CeilToInt(-delta)}",
-                color: HealColor,
-                fontSizeMultiplier: 1.0f
-            );
+            QueueHealthText(-delta, false);
         }
         // Deltas smaller than 0.01 are floating-point noise — ignore them
     }
@@ -163,17 +180,21 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
 
     private void HandleShieldChanged(float currentShield)
     {
-        // OnShieldChanged fires whenever shield is added OR consumed.
-        // We only show text when a shield is GAINED (value meaningfully positive),
-        // not when it's being absorbed by incoming damage.
-        if (currentShield > 0.01f)
-        {
-            SpawnText(
-                text: $"+{Mathf.CeilToInt(currentShield)} SHIELD",
-                color: ShieldColor,
-                fontSizeMultiplier: 0.85f
-            );
-        }
+        // Shield consumption only updates the bar. Gain text is handled by
+        // OnShieldAdded so absorbing damage cannot print the remaining total.
+    }
+
+
+    private void HandleShieldAdded(float amount)
+    {
+        if (amount <= 0.01f) return;
+
+        SpawnText(
+            text: $"+{Mathf.CeilToInt(amount)} SHIELD",
+            color: ShieldColor,
+            fontSizeMultiplier: 0.85f,
+            outlineColor: DamageOutlineColor
+        );
     }
 
 
@@ -188,7 +209,8 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
         SpawnText(
             text: label,
             color: color,
-            fontSizeMultiplier: 0.75f  // Status labels are smaller than damage numbers
+            fontSizeMultiplier: 0.75f,
+            outlineColor: DamageOutlineColor // Status labels are smaller than damage numbers
         );
     }
 
@@ -198,7 +220,12 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     #region Spawn               //----------------------------------------
 
     // Core spawn method — pulls an element from the pool and activates it.
-    private void SpawnText(string text, Color color, float fontSizeMultiplier)
+    private void SpawnText(
+        string text,
+        Color color,
+        float fontSizeMultiplier,
+        Color outlineColor,
+        bool countsAsHealthMessage = false)
     {
         if (AnchorZone == null) return;
 
@@ -206,6 +233,9 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
 
         // Random horizontal offset so rapid events don't stack perfectly
         float horizontalOffset = Random.Range(-HorizontalSpread, HorizontalSpread);
+        float verticalOffset = countsAsHealthMessage
+            ? _activeHealthMessages.Count * HealthMessageStackSpacing
+            : 0f;
 
         // Read the anchor's current screen position fresh each spawn
         // so layout changes (e.g. resolution) are automatically respected.
@@ -222,8 +252,73 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
             FloatSpeed,
             FadeDuration,
             horizontalOffset,
-            fontSizeMultiplier
+            verticalOffset,
+            fontSizeMultiplier,
+            outlineColor,
+            IntroScale,
+            IntroDuration,
+            HoldDuration
         );
+
+        if (countsAsHealthMessage)
+            _activeHealthMessages.Add(element);
+    }
+
+    private void QueueHealthText(float amount, bool isDamage)
+    {
+        if (isDamage)
+        {
+            _pendingDamage += amount;
+            if (_damageBatchCoroutine == null)
+                _damageBatchCoroutine = StartCoroutine(FlushHealthBatch(true, DamageBatchWindow));
+        }
+        else
+        {
+            _pendingHealing += amount;
+            if (_healBatchCoroutine == null)
+                _healBatchCoroutine = StartCoroutine(FlushHealthBatch(false, HealBatchWindow));
+        }
+    }
+
+    private IEnumerator FlushHealthBatch(bool isDamage, float delay)
+    {
+        yield return new WaitForSecondsRealtime(Mathf.Max(0f, delay));
+
+        if (isDamage)
+            _damageBatchCoroutine = null;
+        else
+            _healBatchCoroutine = null;
+
+        TryFlushHealthText(isDamage);
+    }
+
+    private void TryFlushHealthText(bool isDamage)
+    {
+        if (_activeHealthMessages.Count >= Mathf.Max(1, MaxVisibleHealthMessages))
+            return;
+
+        float amount = isDamage ? _pendingDamage : _pendingHealing;
+        if (amount <= 0.01f)
+            return;
+
+        if (isDamage)
+            _pendingDamage = 0f;
+        else
+            _pendingHealing = 0f;
+
+        SpawnText(
+            text: isDamage ? $"-{Mathf.CeilToInt(amount)}" : $"+{Mathf.CeilToInt(amount)}",
+            color: isDamage ? DamageColor : HealColor,
+            fontSizeMultiplier: isDamage ? DamageFontSizeMultiplier : HealFontSizeMultiplier,
+            outlineColor: isDamage ? DamageOutlineColor : HealOutlineColor,
+            countsAsHealthMessage: true
+        );
+    }
+
+    private void FlushPendingHealthText()
+    {
+        TryFlushHealthText(true);
+        TryFlushHealthText(false);
     }
 
     #endregion                  //----------------------------------------
@@ -273,6 +368,8 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     private void HandleElementReadyForPool(Mb_PlayerFloatingText element)
     {
         _pool.Enqueue(element);
+        _activeHealthMessages.Remove(element);
+        FlushPendingHealthText();
     }
 
     #endregion                  //----------------------------------------
@@ -346,6 +443,7 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
         {
             _playerHealth.OnHealthChanged += HandleHealthChanged;
             _playerHealth.OnShieldChanged += HandleShieldChanged;
+            _playerHealth.OnShieldAdded += HandleShieldAdded;
         }
         else
         {
@@ -369,6 +467,7 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
         {
             _playerHealth.OnHealthChanged -= HandleHealthChanged;
             _playerHealth.OnShieldChanged -= HandleShieldChanged;
+            _playerHealth.OnShieldAdded -= HandleShieldAdded;
         }
 
         if (_statusEffectController != null)
@@ -385,6 +484,15 @@ public class Mb_PlayerFloatingTextManager : MonoBehaviour
     public void ResetHealthTracking()
     {
         _previousHealth = -1f;
+        _pendingDamage = 0f;
+        _pendingHealing = 0f;
+
+        if (_damageBatchCoroutine != null)
+            StopCoroutine(_damageBatchCoroutine);
+        if (_healBatchCoroutine != null)
+            StopCoroutine(_healBatchCoroutine);
+        _damageBatchCoroutine = null;
+        _healBatchCoroutine = null;
     }
 
     #endregion                  //----------------------------------------

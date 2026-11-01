@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Mb_PlayerFloatingText : MonoBehaviour
 {
@@ -40,6 +41,12 @@ public class Mb_PlayerFloatingText : MonoBehaviour
     // regardless of what fontSizeMultiplier did to it during a previous activation.
     // This was the root cause of font size drift across pool reuses.
     private float _defaultFontSize;
+    private Outline _outline;
+
+    [Header("Text Treatment")]
+    [SerializeField] private bool UseOutline = true;
+    [SerializeField] private Color DefaultOutlineColor = new Color(0f, 0f, 0f, 0.75f);
+    [SerializeField] private Vector2 OutlineDistance = new Vector2(1.5f, -1.5f);
 
     #endregion                  //----------------------------------------
 
@@ -50,6 +57,9 @@ public class Mb_PlayerFloatingText : MonoBehaviour
     {
         _label = GetComponent<TMP_Text>();
         _rectTransform = GetComponent<RectTransform>();
+        _outline = GetComponent<Outline>();
+        if (_outline == null)
+            _outline = gameObject.AddComponent<Outline>();
 
         if (_label == null)
         {
@@ -79,7 +89,12 @@ public class Mb_PlayerFloatingText : MonoBehaviour
         float floatSpeed,
         float fadeDuration,
         float horizontalOffset,
-        float fontSizeMultiplier = 1.0f)
+        float verticalOffset = 0f,
+        float fontSizeMultiplier = 1.0f,
+        Color? outlineColor = null,
+        float introScale = 0.95f,
+        float introDuration = 0.1f,
+        float holdDuration = 0.2f)
     {
         // Stop any in-flight animation before starting fresh — prevents
         // the coroutine from firing OnReadyForPool twice for one element
@@ -95,20 +110,25 @@ public class Mb_PlayerFloatingText : MonoBehaviour
 
         _label.text = text;
         _label.color = color;
+        _label.faceColor = color;
 
         // Apply multiplier against the CACHED default, not the current value.
         // The old code did _label.fontSize *= multiplier which would compound
         // across reuses if ResetVisuals() was ever skipped.
         _label.fontSize = _defaultFontSize * fontSizeMultiplier;
+        _outline.enabled = UseOutline;
+        _outline.effectColor = outlineColor ?? DefaultOutlineColor;
+        _outline.effectDistance = OutlineDistance;
+        _rectTransform.localScale = Vector3.one * introScale;
 
         _rectTransform.position = new Vector3(
             anchorScreenPos.x + horizontalOffset,
-            anchorScreenPos.y,
+            anchorScreenPos.y + verticalOffset,
             0f
         );
 
         gameObject.SetActive(true);
-        StartCoroutine(AnimateRoutine(floatSpeed, fadeDuration));
+        StartCoroutine(AnimateRoutine(floatSpeed, fadeDuration, introScale, introDuration, holdDuration));
     }
 
 
@@ -140,7 +160,12 @@ public class Mb_PlayerFloatingText : MonoBehaviour
 
     #region Animation           //----------------------------------------
 
-    private IEnumerator AnimateRoutine(float floatSpeed, float fadeDuration)
+    private IEnumerator AnimateRoutine(
+        float floatSpeed,
+        float fadeDuration,
+        float introScale,
+        float introDuration,
+        float holdDuration)
     {
         _isAnimating = true;
 
@@ -156,9 +181,11 @@ public class Mb_PlayerFloatingText : MonoBehaviour
 
             _rectTransform.position = startPosition + Vector3.up * (floatSpeed * elapsed);
 
-            // Ease-in on the fade (t²) keeps the text readable longer at the
-            // start and makes it vanish quickly at the end
-            float alpha = Mathf.Lerp(1f, 0f, t * t);
+            float scaleT = Mathf.Clamp01(elapsed / Mathf.Max(0.01f, introDuration));
+            _rectTransform.localScale = Vector3.one * Mathf.Lerp(introScale, 1f, Mathf.SmoothStep(0f, 1f, scaleT));
+
+            float fadeT = Mathf.Clamp01((elapsed - holdDuration) / Mathf.Max(0.01f, fadeDuration - holdDuration));
+            float alpha = Mathf.Lerp(1f, 0f, fadeT * fadeT);
             _label.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
 
             yield return null;
@@ -182,6 +209,8 @@ public class Mb_PlayerFloatingText : MonoBehaviour
 
         _label.text = string.Empty;
         _label.color = Color.white;
+        _outline.enabled = false;
+        _rectTransform.localScale = Vector3.one;
 
         // Restore the exact font size from the prefab — not a hardcoded constant.
         // _defaultFontSize is set once in Awake() from the prefab's configured value.

@@ -807,8 +807,19 @@ MonoBehaviour:
   FloatSpeed: 80
   FadeDuration: 1.2
   HorizontalSpread: 30
-  DamageColor: {r: 1, g: 0, b: 0, a: 1}
-  HealColor: {r: 0, g: 1, b: 0, a: 1}
+  DamageBatchWindow: 0.12
+  HealBatchWindow: 0.18
+  MaxVisibleHealthMessages: 3
+  HealthMessageStackSpacing: 28
+  DamageOutlineColor: {r: 0, g: 0, b: 0, a: 0.8}
+  HealOutlineColor: {r: 0, g: 0.15, b: 0.08, a: 0.8}
+  DamageFontSizeMultiplier: 1.52
+  HealFontSizeMultiplier: 1.22
+  IntroScale: 0.92
+  IntroDuration: 0.1
+  HoldDuration: 0.2
+  DamageColor: {r: 1, g: 0.38, b: 0.37, a: 1}
+  HealColor: {r: 0.45, g: 0.9, b: 0.64, a: 1}
   ShieldColor: {r: 0.4, g: 0.7, b: 1, a: 1}
   StatusColors:
   - StatusType: 0
@@ -2507,6 +2518,14 @@ PrefabInstance:
     - target: {fileID: 827702281353939909, guid: 0b372efa53e1ced4f9b54a479108bab0, type: 3}
       propertyPath: HeartbeatInterval
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1953336695136314282, guid: 0b372efa53e1ced4f9b54a479108bab0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1953336695136314282, guid: 0b372efa53e1ced4f9b54a479108bab0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -27
       objectReference: {fileID: 0}
     - target: {fileID: 1971839175006423157, guid: 0b372efa53e1ced4f9b54a479108bab0, type: 3}
       propertyPath: m_Name

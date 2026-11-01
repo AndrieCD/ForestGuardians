@@ -338,7 +338,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 769f2aadca587d7419033639202fc994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  GuardianObject: {fileID: 0}
   HPFill: {fileID: 6735356336049013278}
   GhostFill: {fileID: 850488570467859089}
   ShieldFill: {fileID: 6557161387736516405}
@@ -346,10 +345,21 @@ MonoBehaviour:
   MaxHPText: {fileID: 0}
   GhostLerpSpeed: 3
   GhostDelaySeconds: 0.6
-  ColorHealthy: {r: 0, g: 1, b: 0, a: 1}
-  ColorCaution: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  ColorDanger: {r: 1, g: 0, b: 0, a: 1}
-  ShieldColor: {r: 0.4, g: 0.7, b: 1, a: 0.85}
+  ColorHealthy: {r: 0.29, g: 0.79, b: 0.54, a: 1}
+  ColorCaution: {r: 0.91, g: 0.72, b: 0.24, a: 1}
+  ColorDanger: {r: 0.91, g: 0.36, b: 0.36, a: 1}
+  ColorHealthyIdle: {r: 0.42924234, g: 1, b: 0.34901965, a: 1}
+  ColorCautionIdle: {r: 1, g: 0.6282373, b: 0, a: 1}
+  ColorDangerIdle: {r: 0.98742133, g: 0.2639332, b: 0.37175444, a: 1}
+  ColorTweenDuration: 3
+  ShieldColor: {r: 0.4, g: 0.7, b: 1, a: 0.78431374}
+  ShieldColorIdle: {r: 0.19182372, g: 0.79837924, b: 1, a: 0.78431374}
+  LowHPThreshold: 0.5
+  CriticalHPThreshold: 0.15
+  HeartbeatInterval: 0.5
+  LowHPVignette: {fileID: 0}
+  VignetteScaleAtLowHP: 1
+  VignetteScaleAtCritical: 2
 --- !u!114 &1164993802801385889
 MonoBehaviour:
   m_ObjectHideFlags: 0

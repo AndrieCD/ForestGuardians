@@ -26,19 +26,28 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
     [SerializeField] private float GhostDelaySeconds = 0.6f;
 
     [Header("Color Thresholds")]
-    [SerializeField] private Color ColorHealthy = Color.green;
-    [SerializeField] private Color ColorCaution = Color.yellow;
-    [SerializeField] private Color ColorDanger = Color.red;
+    [SerializeField] private Color ColorHealthy = new Color(0.29f, 0.79f, 0.54f, 1f);
+    [SerializeField] private Color ColorCaution = new Color(0.91f, 0.72f, 0.24f, 1f);
+    [SerializeField] private Color ColorDanger = new Color(0.91f, 0.36f, 0.36f, 1f);
+
+    [Header("Idle Color Tween")]
+    [Tooltip("Nearby color used by the subtle idle tween while the bar is stable.")]
+    [SerializeField] private Color ColorHealthyIdle = new Color(0.82f, 1f, 0.35f, 1f);
+    [SerializeField] private Color ColorCautionIdle = new Color(1f, 0.72f, 0.05f, 1f);
+    [SerializeField] private Color ColorDangerIdle = new Color(1f, 0.28f, 0.28f, 1f);
+    [Tooltip("Seconds for one complete idle color cycle.")]
+    [SerializeField] private float ColorTweenDuration = 2.5f;
 
     [Header("Shield Fill Color")]
     [SerializeField] private Color ShieldColor = new Color(0.4f, 0.7f, 1f, 0.85f);
+    [SerializeField] private Color ShieldColorIdle = new Color(0.65f, 0.85f, 1f, 0.85f);
 
 
     [Header("Low HP Feedback")]
     [Tooltip("HP fraction below which heartbeat and vignette activate.")]
-    [SerializeField] private float LowHPThreshold = 0.45f;
+    [SerializeField] private float LowHPThreshold = 0.50f;
 
-    [Tooltip("HP fraction below which vignette reaches maximum intensity.")]
+    [Tooltip("HP fraction below which the vignette reaches maximum intensity.")]
     [SerializeField] private float CriticalHPThreshold = 0.15f;
 
     [Tooltip("Seconds between each heartbeat SFX pulse. Default 1.5f.")]
@@ -48,10 +57,10 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
              "Drag the vignette prefab root here.")]
     [SerializeField] private Q_Vignette_Single LowHPVignette;
 
-    [Tooltip("Vignette scale at exactly LowHPThreshold (35% HP). Default 1.0f.")]
+    [Tooltip("Vignette scale at exactly LowHPThreshold. Default 1.0f.")]
     [SerializeField] private float VignetteScaleAtLowHP = 1.0f;
 
-    [Tooltip("Vignette scale at CriticalHPThreshold and below (15% HP). Default 2.0f.")]
+    [Tooltip("Vignette scale at CriticalHPThreshold and below. Default 2.0f.")]
     [SerializeField] private float VignetteScaleAtCritical = 2.0f;
 
     #endregion                  //----------------------------------------
@@ -66,6 +75,7 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
     private float _ghostFillTarget = 1f;
     private Coroutine _ghostDelayCoroutine;
     private bool _ghostWaiting = false;
+    private float _idleColorTime;
 
     // Low HP state
     private bool _isLowHP = false;
@@ -78,9 +88,7 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
 
     private void Start()
     {
-        if (ShieldFill != null)
-            ShieldFill.color = ShieldColor;
-
+        UpdateBarColors();
     }
 
 
@@ -121,6 +129,9 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
             float fillRatio = _healthComponent.CurrentHealth / _cachedMaxHP;
             UpdateVignetteScale(fillRatio);
         }
+
+        _idleColorTime += Time.unscaledDeltaTime;
+        UpdateBarColors();
     }
 
     #endregion                  //----------------------------------------
@@ -191,7 +202,6 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
         if (HPFill != null)
         {
             HPFill.fillAmount = fillRatio;
-            HPFill.color = GetHPColor(fillRatio);
         }
 
         if (HPText != null)
@@ -210,7 +220,6 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
             else
             {
                 GhostFill.fillAmount = fillRatio;
-                GhostFill.color = GetGhostColor(fillRatio);
             }
         }
 
@@ -274,10 +283,10 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
     // Calculates and applies the correct vignette scale based on current HP fraction.
     // Scale grows continuously as HP drops — no snap at any threshold.
     //
-    // Above 30% HP  → 0 (invisible)
-    // At 30% HP     → VignetteScaleAtLowHP (default 1.0) — fully grown in
-    // At 10% HP     → VignetteScaleAtCritical (default 2.0)
-    // Between 10–30% → lerped between the two values
+    // Above LowHPThreshold → 0 (invisible)
+    // At LowHPThreshold    → VignetteScaleAtLowHP — fully grown in
+    // At CriticalHPThreshold → VignetteScaleAtCritical
+    // Between the thresholds → lerped between the two values
     private void UpdateVignetteScale(float fillRatio)
     {
         if (!_isLowHP)
@@ -295,9 +304,8 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
         }
         else
         {
-            // Between 30% and 10% — grow from 0 to VignetteScaleAtLowHP as HP drops toward 30%,
-            // then continue growing to VignetteScaleAtCritical as it drops toward 10%
-            // t = 0 at LowHPThreshold (30%), t = 1 at CriticalHPThreshold (10%)
+            // Between the thresholds, continue growing as HP drops.
+            // t = 0 at LowHPThreshold, t = 1 at CriticalHPThreshold.
             float t = Mathf.InverseLerp(LowHPThreshold, CriticalHPThreshold, fillRatio);
             targetScale = Mathf.Lerp(VignetteScaleAtLowHP, VignetteScaleAtCritical, t);
         }
@@ -330,6 +338,18 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
 
     #region Helpers             //----------------------------------------
 
+    private void UpdateBarColors()
+    {
+        if (HPFill != null)
+            HPFill.color = GetAnimatedHPColor(HPFill.fillAmount);
+
+        if (GhostFill != null)
+            GhostFill.color = GetGhostColor(GhostFill.fillAmount);
+
+        if (ShieldFill != null)
+            ShieldFill.color = GetAnimatedShieldColor();
+    }
+
     private Color GetHPColor(float fillRatio)
     {
         if (fillRatio <= CriticalHPThreshold) return ColorDanger;
@@ -337,10 +357,45 @@ public class Mb_GuardianHealthbarUI : MonoBehaviour
         return ColorHealthy;
     }
 
+    private Color GetAnimatedHPColor(float fillRatio)
+    {
+        Color baseColor;
+        Color idleColor;
+
+        if (fillRatio <= CriticalHPThreshold)
+        {
+            baseColor = ColorDanger;
+            idleColor = ColorDangerIdle;
+        }
+        else if (fillRatio <= LowHPThreshold)
+        {
+            baseColor = ColorCaution;
+            idleColor = ColorCautionIdle;
+        }
+        else
+        {
+            baseColor = ColorHealthy;
+            idleColor = ColorHealthyIdle;
+        }
+
+        float duration = Mathf.Max(0.01f, ColorTweenDuration);
+        float cycle = Mathf.PingPong(_idleColorTime / duration, 1f);
+        cycle = Mathf.SmoothStep(0f, 1f, cycle);
+        return Color.Lerp(baseColor, idleColor, cycle);
+    }
+
     private Color GetGhostColor(float fillRatio)
     {
-        Color baseColor = GetHPColor(fillRatio);
-        return new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
+        Color animatedColor = GetAnimatedHPColor(fillRatio);
+        return new Color(animatedColor.r, animatedColor.g, animatedColor.b, 0.5f);
+    }
+
+    private Color GetAnimatedShieldColor()
+    {
+        float duration = Mathf.Max(0.01f, ColorTweenDuration);
+        float cycle = Mathf.PingPong(_idleColorTime / duration, 1f);
+        cycle = Mathf.SmoothStep(0f, 1f, cycle);
+        return Color.Lerp(ShieldColor, ShieldColorIdle, cycle);
     }
 
     private void RefreshFromCurrentHealth()
