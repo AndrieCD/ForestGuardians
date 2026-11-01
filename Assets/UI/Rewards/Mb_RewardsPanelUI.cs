@@ -36,6 +36,7 @@
 
 using System;
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -81,12 +82,51 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     [Tooltip("Seconds the full panel takes to fade to transparent before deactivating.")]
     [SerializeField] private float FadeOutDuration = 0.3f;
 
+    [Header("Panel Open Animation")]
+    [Tooltip("Seconds the panel takes to scale from its start scale to its normal scale.")]
+    [SerializeField] private float PanelOpenDuration = 0.35f;
+
+    [Tooltip("Panel scale multiplier at the start of the open animation.")]
+    [SerializeField] private float PanelOpenStartScale = 0.8f;
+
+    [Tooltip("Ease used when the panel opens.")]
+    [SerializeField] private Ease PanelOpenEase = Ease.OutBack;
+
+    [Tooltip("Seconds used for the panel alpha fade during opening. Set to 0 to disable the alpha fade.")]
+    [SerializeField] private float PanelOpenFadeDuration = 0.2f;
+
+    [Header("Idle Bob Animation")]
+    [Tooltip("Enables a subtle shared vertical bob on both reward cards while waiting for a selection.")]
+    [SerializeField] private bool EnableIdleBob = true;
+
+    [Tooltip("Vertical movement of each card in UI pixels.")]
+    [SerializeField] private float IdleBobAmplitude = 4f;
+
+    [Tooltip("Seconds for one half of the idle bob movement.")]
+    [SerializeField] private float IdleBobDuration = 1.5f;
+
+    [Tooltip("Ease used for the idle bob movement.")]
+    [SerializeField] private Ease IdleBobEase = Ease.InOutSine;
+
     #endregion                      //----------------------------------------
 
 
     #region Private State           //----------------------------------------
 
     private CanvasGroup _canvasGroup;
+    private Mb_UIAudioTrigger _panelAudioTrigger;
+    private RectTransform _panelRectTransform;
+    private RectTransform _leftCardRectTransform;
+    private RectTransform _rightCardRectTransform;
+    private Mb_RewardsCardUIAnimation _leftCardAnimation;
+    private Mb_RewardsCardUIAnimation _rightCardAnimation;
+    private Vector3 _panelBaseScale;
+    private Vector2 _leftCardBasePosition;
+    private Vector2 _rightCardBasePosition;
+    private Tween _panelOpenTween;
+    private Tween _panelFadeInTween;
+    private Tween _leftIdleTween;
+    private Tween _rightIdleTween;
     private Coroutine _feedbackCoroutine;
 
     #endregion                      //----------------------------------------
@@ -97,6 +137,22 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        _panelAudioTrigger = GetComponent<Mb_UIAudioTrigger>();
+        _panelRectTransform = GetComponent<RectTransform>();
+        _leftCardRectTransform = _LeftCard != null ? _LeftCard.GetComponent<RectTransform>() : null;
+        _rightCardRectTransform = _RightCard != null ? _RightCard.GetComponent<RectTransform>() : null;
+        _leftCardAnimation = _LeftCard != null ? _LeftCard.GetComponent<Mb_RewardsCardUIAnimation>() : null;
+        _rightCardAnimation = _RightCard != null ? _RightCard.GetComponent<Mb_RewardsCardUIAnimation>() : null;
+
+        _panelBaseScale = _panelRectTransform != null && _panelRectTransform.localScale != Vector3.zero
+            ? _panelRectTransform.localScale
+            : Vector3.one;
+
+        if (_leftCardRectTransform != null)
+            _leftCardBasePosition = _leftCardRectTransform.anchoredPosition;
+
+        if (_rightCardRectTransform != null)
+            _rightCardBasePosition = _rightCardRectTransform.anchoredPosition;
 
         if (_canvasGroup == null)
             Debug.LogError("[Mb_RewardsPanelUI] No CanvasGroup found on this GameObject. " +
@@ -120,6 +176,7 @@ public class Mb_RewardsPanelUI : MonoBehaviour
     private void OnDisable()
     {
         Mb_RewardsManager.OnRewardsTimerTick -= HandleTimerTick;
+        KillPanelAnimationTweens();
     }
 
     #endregion                      //----------------------------------------
@@ -146,6 +203,11 @@ public class Mb_RewardsPanelUI : MonoBehaviour
             _TimerText.gameObject.SetActive(false);
 
         gameObject.SetActive(true);
+
+        _panelAudioTrigger?.OnOpen();
+
+        ResetAnimationStateForShow();
+        PlayOpenAnimation();
 
         StartCoroutine(EnableInteractionAfterDelay(left, right));
 
@@ -198,6 +260,8 @@ public class Mb_RewardsPanelUI : MonoBehaviour
             _feedbackCoroutine = null;
         }
 
+        ResetAnimationState();
+
         if (_canvasGroup != null)
             _canvasGroup.alpha = 1f;
 
@@ -228,6 +292,10 @@ public class Mb_RewardsPanelUI : MonoBehaviour
 
     private IEnumerator FeedbackRoutine(GameObject chosenCard, GameObject hiddenCard)
     {
+        StopIdleBob();
+        _leftCardAnimation?.StopAndReset();
+        _rightCardAnimation?.StopAndReset();
+
         // Step 1: Instantly hide the unchosen card and timer
         hiddenCard.SetActive(false);
 
@@ -292,6 +360,129 @@ public class Mb_RewardsPanelUI : MonoBehaviour
         }
 
         _canvasGroup.alpha = 0f;
+    }
+
+    #endregion                      //----------------------------------------
+
+
+    #region Panel Animations         //----------------------------------------
+
+    private void ResetAnimationStateForShow()
+    {
+        KillPanelAnimationTweens();
+
+        if (_panelRectTransform != null)
+            _panelRectTransform.localScale = _panelBaseScale * Mathf.Max(0f, PanelOpenStartScale);
+
+        if (_leftCardRectTransform != null)
+            _leftCardRectTransform.anchoredPosition = _leftCardBasePosition;
+
+        if (_rightCardRectTransform != null)
+            _rightCardRectTransform.anchoredPosition = _rightCardBasePosition;
+
+        _leftCardAnimation?.StopAndReset();
+        _rightCardAnimation?.StopAndReset();
+
+        if (_canvasGroup != null)
+            _canvasGroup.alpha = PanelOpenFadeDuration > 0f ? 0f : 1f;
+    }
+
+
+    private void ResetAnimationState()
+    {
+        KillPanelAnimationTweens();
+
+        if (_panelRectTransform != null)
+            _panelRectTransform.localScale = _panelBaseScale;
+
+        if (_leftCardRectTransform != null)
+            _leftCardRectTransform.anchoredPosition = _leftCardBasePosition;
+
+        if (_rightCardRectTransform != null)
+            _rightCardRectTransform.anchoredPosition = _rightCardBasePosition;
+
+        _leftCardAnimation?.StopAndReset();
+        _rightCardAnimation?.StopAndReset();
+    }
+
+
+    private void PlayOpenAnimation()
+    {
+        if (_panelRectTransform == null)
+            return;
+
+        float duration = Mathf.Max(0f, PanelOpenDuration);
+        _panelOpenTween = _panelRectTransform
+            .DOScale(_panelBaseScale, duration)
+            .SetEase(PanelOpenEase)
+            .SetUpdate(true)
+            .OnComplete(StartIdleBob);
+
+        if (_canvasGroup != null && PanelOpenFadeDuration > 0f)
+        {
+            _panelFadeInTween = _canvasGroup
+                .DOFade(1f, PanelOpenFadeDuration)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true);
+        }
+        else
+        {
+            StartIdleBob();
+        }
+    }
+
+
+    private void StartIdleBob()
+    {
+        if (!EnableIdleBob || !isActiveAndEnabled)
+            return;
+
+        StopIdleBob();
+
+        float duration = Mathf.Max(0.01f, IdleBobDuration);
+
+        if (_leftCardRectTransform != null)
+        {
+            _leftIdleTween = _leftCardRectTransform
+                .DOAnchorPosY(_leftCardBasePosition.y + IdleBobAmplitude, duration)
+                .SetEase(IdleBobEase)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetUpdate(true);
+        }
+
+        if (_rightCardRectTransform != null)
+        {
+            _rightIdleTween = _rightCardRectTransform
+                .DOAnchorPosY(_rightCardBasePosition.y + IdleBobAmplitude, duration)
+                .SetEase(IdleBobEase)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetUpdate(true);
+        }
+    }
+
+
+    private void StopIdleBob()
+    {
+        _leftIdleTween?.Kill();
+        _rightIdleTween?.Kill();
+        _leftIdleTween = null;
+        _rightIdleTween = null;
+
+        if (_leftCardRectTransform != null)
+            _leftCardRectTransform.anchoredPosition = _leftCardBasePosition;
+
+        if (_rightCardRectTransform != null)
+            _rightCardRectTransform.anchoredPosition = _rightCardBasePosition;
+    }
+
+
+    private void KillPanelAnimationTweens()
+    {
+        _panelOpenTween?.Kill();
+        _panelFadeInTween?.Kill();
+        _panelOpenTween = null;
+        _panelFadeInTween = null;
+        StopIdleBob();
     }
 
     #endregion                      //----------------------------------------

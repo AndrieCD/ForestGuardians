@@ -716,6 +716,7 @@ GameObject:
   - component: {fileID: 8547592411285692237}
   - component: {fileID: 4015477302748956092}
   - component: {fileID: 8070277022970669749}
+  - component: {fileID: 8070277022970669750}
   m_Layer: 5
   m_Name: LeftCard
   m_TagString: Untagged
@@ -867,6 +868,21 @@ MonoBehaviour:
   _OnHoverSFX: 8220
   _HasOpenSound: 0
   _OnOpenSFX: 8200
+--- !u!114 &8070277022970669750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4971402440595790720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1d1b98c2b04b98a9d51f9f77490f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_RewardsCardUIAnimation
+  HoverScaleMultiplier: 1.05
+  HoverDuration: 0.12
+  HoverEase: 4
 --- !u!1 &5060273369640457653
 GameObject:
   m_ObjectHideFlags: 0
@@ -956,6 +972,7 @@ GameObject:
   - component: {fileID: 569107991790292940}
   - component: {fileID: 8518538974542765819}
   - component: {fileID: 5073624401788798482}
+  - component: {fileID: 8070277022970669752}
   m_Layer: 5
   m_Name: Rewards_Canvas
   m_TagString: Untagged
@@ -972,7 +989,7 @@ RectTransform:
   m_GameObject: {fileID: 5301433488553143412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9099499075155731911}
@@ -1010,6 +1027,14 @@ MonoBehaviour:
   _RewardsManager: {fileID: 0}
   CardHoldDuration: 1.75
   FadeOutDuration: 0.5
+  PanelOpenDuration: 0.85
+  PanelOpenStartScale: 0.8
+  PanelOpenEase: 27
+  PanelOpenFadeDuration: 0.2
+  EnableIdleBob: 1
+  IdleBobAmplitude: 7
+  IdleBobDuration: 1.5
+  IdleBobEase: 4
 --- !u!223 &616701936923461645
 Canvas:
   m_ObjectHideFlags: 0
@@ -1085,6 +1110,22 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &8070277022970669752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5301433488553143412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10da5c230aa6e3947a3e5f7f431b13aa, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_UIAudioTrigger
+  _OnClickSFX: 8000
+  _OnHoverSFX: 8030
+  _HasOpenSound: 1
+  _OnOpenSFX: 8200
 --- !u!1 &5466925219527652260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1310,6 +1351,7 @@ GameObject:
   - component: {fileID: 5496210369477601279}
   - component: {fileID: 8506346670080677247}
   - component: {fileID: 3881782016121490787}
+  - component: {fileID: 8070277022970669751}
   m_Layer: 5
   m_Name: RightCard
   m_TagString: Untagged
@@ -1461,6 +1503,21 @@ MonoBehaviour:
   _OnHoverSFX: 8220
   _HasOpenSound: 0
   _OnOpenSFX: 8200
+--- !u!114 &8070277022970669751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6937107188762544582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1d1b98c2b04b98a9d51f9f77490f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_RewardsCardUIAnimation
+  HoverScaleMultiplier: 1.05
+  HoverDuration: 0.12
+  HoverEase: 4
 --- !u!1 &8840931209563145444
 GameObject:
   m_ObjectHideFlags: 0
