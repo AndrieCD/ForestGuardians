@@ -9,9 +9,9 @@
 //
 // TIER SYSTEM (cumulative — higher tiers include all lower bonuses):
 //   Tier 0 (0–24 takedowns)  : +AS per stack
-//   Tier 1 (25–49 takedowns) : +AS, +ATK per stack
-//   Tier 2 (50–99 takedowns) : +AS, +ATK, +CritChance per stack
-//   Tier 3 (100+ takedowns)  : All bonuses are 50% more effective
+//   Tier 1 (50–99 takedowns)  : +AS, +ATK per stack
+//   Tier 2 (100–149 takedowns) : +AS, +ATK, +CritChance per stack
+//   Tier 3 (150+ takedowns)   : All bonuses are 50% more effective
 //
 // MODIFIER PATTERN:
 //   One Sc_Modifier is active at a time. It is removed and rebuilt whenever
@@ -51,12 +51,12 @@ public class Passive_Ability : Sc_BaseAbility
 
     private const int TIER_1_THRESHOLD = 50;
     private const int TIER_2_THRESHOLD = 100;
-    private const int TIER_3_THRESHOLD = 200;
+    private const int TIER_3_THRESHOLD = 150;
 
     // Base bonus per stack — TODO: move to SO_Ability scaling table when tuning frequently
-    private const float AS_PER_STACK = 0.04f; // +4% AttackSpeed per stack (Percent)
-    private const float ATK_PER_STACK = 5f;    // +5 flat AttackPower per stack (Flat)
-    private const float CRIT_CHANCE_PER_STACK = 0.03f;    // +3% CritChance per stack (Flat)
+    private const float AS_PER_STACK = 0.05f; // +5% AttackSpeed per stack (Percent)
+    private const float ATK_PER_STACK = 10f;  // +10 flat AttackPower per stack (Flat)
+    private const float CRIT_CHANCE_PER_STACK = 0.04f; // +4% CritChance per stack (Flat)
     private const float TIER_3_MULTIPLIER = 1.5f;  // Tier 3 makes all bonuses 50% stronger
 
 

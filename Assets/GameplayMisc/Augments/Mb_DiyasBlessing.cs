@@ -1,6 +1,6 @@
 ﻿// Augment_DiyasBlessing.cs
 // Passively steal HP from all nearby enemies on a fixed timer tick.
-// Each tick: deal (2% of player's Max HP) to every enemy in range,
+// Each tick: deal (3% of player's Max HP) to every enemy in range,
 // and heal the player by the same amount per enemy hit.
 //
 // Range is based on the player's BASE Max HP at level 1 so it stays
@@ -30,7 +30,7 @@ public class Mb_DiyasBlessing : Sc_AugmentBase
     private const float RANGE_DIVISOR = 250f;
 
     // Percentage of current Max HP dealt as damage (and healed) per tick per enemy.
-    private const float STEAL_PERCENT = 0.02f;
+    private const float STEAL_PERCENT = 0.03f;
 
     // Set to false on unequip to stop the coroutine cleanly without StopCoroutine
     // (StopCoroutine needs the exact IEnumerator reference; a flag is simpler and safer)
@@ -87,7 +87,7 @@ public class Mb_DiyasBlessing : Sc_AugmentBase
 
     private void ExecuteStealTick(Mb_CharacterBase owner)
     {
-        // How much to steal per enemy this tick — 5% of current Max HP
+        // How much to steal per enemy this tick — 3% of current Max HP
         float stealAmount = owner.Stats.MaxHealth.GetValue() * STEAL_PERCENT;
 
         // Find all colliders within range of the player

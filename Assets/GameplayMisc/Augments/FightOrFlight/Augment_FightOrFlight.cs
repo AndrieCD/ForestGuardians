@@ -1,5 +1,5 @@
 ﻿// Augment_FightOrFlight.cs
-// Below 40% HP: +AP and +ATK (amounts scale with how close to death the player is).
+// Below 50% HP: +AP and +ATK (amounts scale with how close to death the player is).
 // Below 20% HP: additional +HST, +AS, and +MS on top of the above.
 //
 // HOW IT WORKS:
@@ -12,13 +12,14 @@
 // The HST buff in the below-20% tier is marked TODO until the stat is added.
 
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
-/// Fight or Flight : When below 40% HP, gain 50 - 200 AP and ATK. Gain 50 HST, 50% AS and MS when below 20% HP.
+/// Fight or Flight : When below 50% HP, gain 100 - 400 AP and ATK. Gain 50 HST, 50% AS and MS when below 20% HP.
 /// </summary>
 public class Augment_FightOrFlight : Sc_AugmentBase
 {
-    // Which tier is currently active: 0 = none, 1 = below 40%, 2 = below 20%
+    // Which tier is currently active: 0 = none, 1 = below 50%, 2 = below 20%
     private int _currentTier = 0;
 
     // We track the modifier we applied so we can swap it when the tier changes
@@ -35,6 +36,9 @@ public class Augment_FightOrFlight : Sc_AugmentBase
 
         // Subscribe to HP changes so we react every time the player takes damage or heals
         owner.Health.OnHealthChanged += HandleHealthChanged;
+
+        // Evaluate immediately in case the augment is equipped while already below a threshold.
+        HandleHealthChanged(owner.Health.CurrentHealth, owner.Stats.MaxHealth.GetValue());
     }
 
 
@@ -86,21 +90,21 @@ public class Augment_FightOrFlight : Sc_AugmentBase
     }
 
 
-    // Below 40% HP: +50 AP (flat), +50 ATK (flat)
+    // Below 50% HP: +100 AP (flat), +100 ATK (flat)
     // TODO: Scale these values with difficulty or guardian level when that system exists
     private Sc_Modifier BuildTier1Modifier()
     {
-        var APBonus = 50f;   // Base AP bonus at 40% HP
-        var ATKBonus = 50f;  // Base ATK bonus at 40% HP
+        var APBonus = 100f;  // Base AP bonus at 50% HP
+        var ATKBonus = 100f; // Base ATK bonus at 50% HP
 
         var hpPercent = _Owner.Health.CurrentHealth / _Owner.Stats.MaxHealth.GetValue();
 
         var minHpPercent = 0.20f; // Minimum HP percentage for scaling (20%)
 
-        // Scale the bonuses linearly between 50 flat at 40% HP and 200 flat at 20% HP
-        float scalingFactor = (0.40f - hpPercent) / (0.40f - minHpPercent);
-        float scaledAP = APBonus + (200f - APBonus) * scalingFactor;
-        float scaledATK = ATKBonus + (200f - ATKBonus) * scalingFactor;
+        // Scale the bonuses linearly between 100 flat at 50% HP and 400 flat at 20% HP.
+        float scalingFactor = Mathf.Clamp01((0.50f - hpPercent) / (0.50f - minHpPercent));
+        float scaledAP = APBonus + (400f - APBonus) * scalingFactor;
+        float scaledATK = ATKBonus + (400f - ATKBonus) * scalingFactor;
 
         return new Sc_Modifier(
             "Fight or Flight — Tier 1",
@@ -114,28 +118,16 @@ public class Augment_FightOrFlight : Sc_AugmentBase
     }
 
 
-    // Below 20% HP: +200 AP (flat), +200 ATK (flat), +50% AS, +50% MS
+    // Below 20% HP: +400 AP (flat), +400 ATK (flat), +50% AS, +50% MS
     private Sc_Modifier BuildTier2Modifier()
     {
-        var APBonus = 50f;   // Base AP bonus at 40% HP
-        var ATKBonus = 50f;  // Base ATK bonus at 40% HP
-
-        var hpPercent = _Owner.Health.CurrentHealth / _Owner.Stats.MaxHealth.GetValue();
-
-        var minHpPercent = 0.20f; // Minimum HP percentage for scaling (20%)
-
-        // Scale the bonuses linearly between 50 flat at 40% HP and 200 flat at 20% HP
-        float scalingFactor = (0.40f - hpPercent) / (0.40f - minHpPercent);
-        float scaledAP = APBonus + (200f - APBonus) * scalingFactor;
-        float scaledATK = ATKBonus + (200f - ATKBonus) * scalingFactor;
-
         return new Sc_Modifier(
             "Fight or Flight — Tier 2",
             ModifierSource.Augment,
             new List<Sc_StatEffect>
             {
-                new Sc_StatEffect(StatType.AbilityPower,  scaledAP, StatModType.Flat),
-                new Sc_StatEffect(StatType.AttackPower,   scaledATK, StatModType.Flat),
+                new Sc_StatEffect(StatType.AbilityPower,  400f, StatModType.Flat),
+                new Sc_StatEffect(StatType.AttackPower,   400f, StatModType.Flat),
                 new Sc_StatEffect(StatType.AttackSpeed,   0.50f, StatModType.Percent),
                 new Sc_StatEffect(StatType.MoveSpeed,     0.50f, StatModType.Percent),
                 new Sc_StatEffect(StatType.Haste, 50f, StatModType.Flat),
