@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6029454692436417426}
   - component: {fileID: 7921925749228680811}
   - component: {fileID: 2250491562688574169}
-  - component: {fileID: 7328483917136476640}
   m_Layer: 1
   m_Name: Shockwave  (2)
   m_TagString: Untagged
@@ -51,7 +50,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -605,7 +604,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -4913,19 +4912,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &7328483917136476640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180286145905843001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 7921925749228680811}
 --- !u!1 &1357764505312298686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4937,7 +4923,6 @@ GameObject:
   - component: {fileID: 6226632381436610704}
   - component: {fileID: 395508658475967712}
   - component: {fileID: 2013369830210341655}
-  - component: {fileID: 2463819875914095905}
   m_Layer: 1
   m_Name: Flash 2
   m_TagString: Untagged
@@ -4977,7 +4962,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -5531,7 +5516,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -9821,19 +9806,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &2463819875914095905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1357764505312298686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 395508658475967712}
 --- !u!1 &1708104973766718558
 GameObject:
   m_ObjectHideFlags: 0
@@ -9845,7 +9817,6 @@ GameObject:
   - component: {fileID: 7274587751365889342}
   - component: {fileID: 4850865706355516184}
   - component: {fileID: 8105809407069378105}
-  - component: {fileID: 3455318305846603579}
   m_Layer: 1
   m_Name: Sparks
   m_TagString: Untagged
@@ -9885,7 +9856,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -10439,7 +10410,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -14738,19 +14709,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &3455318305846603579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1708104973766718558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 4850865706355516184}
 --- !u!1 &2278517339410236161
 GameObject:
   m_ObjectHideFlags: 0
@@ -14762,7 +14720,6 @@ GameObject:
   - component: {fileID: 2849543498211878332}
   - component: {fileID: 2764298040344008746}
   - component: {fileID: 510601314733870315}
-  - component: {fileID: 3445153352227577402}
   m_Layer: 1
   m_Name: Shockwave  (3)
   m_TagString: Untagged
@@ -14802,7 +14759,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -15356,7 +15313,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -19664,19 +19621,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &3445153352227577402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2278517339410236161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 2764298040344008746}
 --- !u!1 &4350903869781540738
 GameObject:
   m_ObjectHideFlags: 0
@@ -19688,7 +19632,6 @@ GameObject:
   - component: {fileID: 6286011839229649268}
   - component: {fileID: 4278162022496051767}
   - component: {fileID: 7947288572217989413}
-  - component: {fileID: 3365435376598027179}
   m_Layer: 1
   m_Name: 'Shockwave '
   m_TagString: Untagged
@@ -19728,7 +19671,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -20282,7 +20225,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -24590,19 +24533,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &3365435376598027179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4350903869781540738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 4278162022496051767}
 --- !u!1 &5846345608395555922
 GameObject:
   m_ObjectHideFlags: 0
@@ -24614,7 +24544,6 @@ GameObject:
   - component: {fileID: 4279669658404265113}
   - component: {fileID: 8356049057095850976}
   - component: {fileID: 4977616428155078443}
-  - component: {fileID: 4072141552357850650}
   m_Layer: 1
   m_Name: Flash
   m_TagString: Untagged
@@ -24654,7 +24583,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -25208,7 +25137,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -29498,19 +29427,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &4072141552357850650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5846345608395555922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 8356049057095850976}
 --- !u!1 &6564432694108736921
 GameObject:
   m_ObjectHideFlags: 0
@@ -29522,7 +29438,6 @@ GameObject:
   - component: {fileID: 8672665778698497215}
   - component: {fileID: 7271723070578189211}
   - component: {fileID: 6725910769975039092}
-  - component: {fileID: 470103202768462011}
   m_Layer: 1
   m_Name: Spark 2
   m_TagString: Untagged
@@ -29562,7 +29477,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -30116,7 +30031,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -34406,19 +34321,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &470103202768462011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6564432694108736921}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 7271723070578189211}
 --- !u!1 &7391640138327888454
 GameObject:
   m_ObjectHideFlags: 0
@@ -34478,7 +34380,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -35032,7 +34934,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -39346,7 +39248,6 @@ GameObject:
   - component: {fileID: 5225607719688381307}
   - component: {fileID: 61756058503477474}
   - component: {fileID: 4144019772320211766}
-  - component: {fileID: 4408385076867340239}
   m_Layer: 1
   m_Name: Shockwave  (1)
   m_TagString: Untagged
@@ -39386,7 +39287,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -39940,7 +39841,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -44248,16 +44149,3 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &4408385076867340239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8909253150702735224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1123a9ff676814797bdc6f5e0c5d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_VFXInstance
-  _ParticleSystem: {fileID: 61756058503477474}
