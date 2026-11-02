@@ -6,9 +6,9 @@
 // LIFECYCLE OF ONE VFX PLAY:
 //   1. Mb_VFXManager fetches an inactive instance from its pool.
 //   2. Mb_VFXManager calls Play() — positions the object, optionally parents it,
-//      activates the GameObject, and starts the return-to-pool timer.
-//   3. The ParticleSystem plays. The return timer counts down.
-//   4a. Timer hits zero → ReturnToPool() is called automatically.
+//      activates the GameObject, and starts the ParticleSystem.
+//   3. The ParticleSystem reports completion after its child systems finish.
+//   4a. Completion returns the instance to the pool automatically.
 //   4b. OR: Stop() is called externally (e.g. a status effect was removed early)
 //       → particles stop and ReturnToPool() is called immediately.
 //
@@ -21,8 +21,7 @@
 // PAUSE HANDLING:
 //   Subscribes to Mb_PauseManager events in OnEnable/OnDisable.
 //   Pauses and resumes the ParticleSystem directly so VFX freeze with the game.
-//   The return-to-pool coroutine uses WaitForSeconds which already freezes
-//   when Time.timeScale = 0, so no extra handling is needed for the timer.
+//   Particle playback follows the same pause/resume events as the game.
 //
 // INSPECTOR SETUP:
 //   - Attach this component to your particle system prefab.
@@ -31,7 +30,6 @@
 //   - Do NOT set "Stop Action" on the ParticleSystem to "Destroy" —
 //     this system manages lifetime itself. Set it to "None" or "Disable".
 
-using System.Collections;
 using UnityEngine;
 
 public class Mb_VFXInstance : MonoBehaviour
@@ -53,13 +51,15 @@ public class Mb_VFXInstance : MonoBehaviour
     // which pool to return it to.
     private VFXType _vfxType;
 
-    // Handle to the active return-to-pool coroutine.
-    // Stored so we can cancel it if Stop() is called before the timer expires.
-    private Coroutine _returnCoroutine;
+    // Preserve the prefab-authored scale whenever an instance is recycled.
+    private Vector3 _authoredLocalScale;
 
     // Tracks whether this instance is currently in use.
     // Prevents double-returns if Stop() is called while a return is already queued.
     private bool _isPlaying = false;
+
+    public bool IsPlaying => _isPlaying;
+    public VFXType VFXType => _vfxType;
 
     #endregion                      //----------------------------------------
 
@@ -75,6 +75,14 @@ public class Mb_VFXInstance : MonoBehaviour
         if (_ParticleSystem == null)
             Debug.LogError($"[Mb_VFXInstance] No ParticleSystem found on {gameObject.name}. " +
                            "Attach a ParticleSystem component or assign it in the Inspector.");
+
+        _authoredLocalScale = transform.localScale;
+
+        if (_ParticleSystem != null)
+        {
+            ParticleSystem.MainModule main = _ParticleSystem.main;
+            main.stopAction = ParticleSystemStopAction.Callback;
+        }
     }
 
 
@@ -95,10 +103,9 @@ public class Mb_VFXInstance : MonoBehaviour
 
         // If this object was deactivated externally (e.g. its parent CuBot was pooled)
         // before Stop() was called, clean up state so this instance is safe to reuse.
-        // We don't call ReturnToPool() here because the object is already inactive —
-        // we just need to reset the playing flag and stop the coroutine reference.
+        // We don't call ReturnToPool() here because the object is already inactive.
         _isPlaying = false;
-        _returnCoroutine = null;
+        ResetParticleState();
     }
 
     #endregion                      //----------------------------------------
@@ -122,11 +129,13 @@ public class Mb_VFXInstance : MonoBehaviour
     ///
     /// parent: pass a Transform to attach this VFX to a character (status effects).
     ///         Pass null for world-space one-shots (hit sparks, ability casts).
-    /// lifetime: how many seconds before auto-returning to the pool.
-    ///           Sourced from VFXEntry.Lifetime in SO_VFXLibrary.
+    /// lifetime is retained for source compatibility with existing callers.
+    /// Particle completion, rather than a guessed timer, controls recycling.
     /// </summary>
     public void Play(Vector3 position, Quaternion rotation, float lifetime, Transform parent = null)
     {
+        _ = lifetime;
+
         // Safety: if somehow called while already playing, stop cleanly first
         if (_isPlaying)
             StopImmediate();
@@ -148,22 +157,23 @@ public class Mb_VFXInstance : MonoBehaviour
             transform.SetPositionAndRotation(position, rotation);
         }
 
+        transform.localScale = _authoredLocalScale;
+
         gameObject.SetActive(true);
 
         // Play the particle system from the beginning.
         // withChildren: true ensures sub-emitters (e.g. trail particles) also play.
         if (_ParticleSystem != null)
         {
-            _ParticleSystem.Clear();
+            ResetParticleState();
+            _isPlaying = true;
             _ParticleSystem.Play(withChildren: true);
         }
-
-        _isPlaying = true;
-
-        // Start the return-to-pool countdown.
-        // WaitForSeconds respects Time.timeScale = 0 (pause), so the timer
-        // naturally freezes when the game is paused — no extra handling needed.
-        _returnCoroutine = StartCoroutine(ReturnAfterLifetime(lifetime));
+        else
+        {
+            _isPlaying = true;
+            ReturnToPool();
+        }
     }
 
 
@@ -190,17 +200,10 @@ public class Mb_VFXInstance : MonoBehaviour
     // Called by both Stop() and before re-playing a still-active instance.
     private void StopImmediate()
     {
-        // Cancel the pending return coroutine — we are handling the return ourselves
-        if (_returnCoroutine != null)
-        {
-            StopCoroutine(_returnCoroutine);
-            _returnCoroutine = null;
-        }
-
         // Stop the particle system and all child emitters immediately.
         // withChildren: true so sub-emitters (trails, bursts) also stop.
         if (_ParticleSystem != null)
-            _ParticleSystem.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmitting);
+            _ParticleSystem.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         _isPlaying = false;
     }
@@ -211,8 +214,18 @@ public class Mb_VFXInstance : MonoBehaviour
     // deactivated, unparenting here prevents the VFX from being deactivated with it.
     private void ReturnToPool()
     {
+        if (!_isPlaying && !gameObject.activeSelf)
+            return;
+
+        _isPlaying = false;
+
+        ResetParticleState();
+
         // Unparent so we don't get swept up in a parent's deactivation
         transform.SetParent(null);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        transform.localScale = _authoredLocalScale;
 
         // Deactivate — Mb_VFXManager recognises inactive objects as available pool slots
         gameObject.SetActive(false);
@@ -223,15 +236,18 @@ public class Mb_VFXInstance : MonoBehaviour
     }
 
 
-    // Waits for the configured lifetime, then returns to the pool.
-    // The coroutine is cancelled by StopImmediate() if Stop() is called early.
-    private IEnumerator ReturnAfterLifetime(float lifetime)
+    private void OnParticleSystemStopped()
     {
-        yield return new WaitForSeconds(lifetime);
+        if (_isPlaying)
+            ReturnToPool();
+    }
 
-        // Lifetime elapsed naturally — stop particles and return cleanly
-        StopImmediate();
-        ReturnToPool();
+    private void ResetParticleState()
+    {
+        if (_ParticleSystem == null) return;
+
+        _ParticleSystem.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        _ParticleSystem.Clear(withChildren: true);
     }
 
     #endregion                      //----------------------------------------
@@ -242,8 +258,6 @@ public class Mb_VFXInstance : MonoBehaviour
     private void HandlePause()
     {
         // Pause the particle system so effects freeze mid-animation with the game.
-        // The return-to-pool coroutine (WaitForSeconds) already freezes automatically
-        // when Time.timeScale = 0, so no coroutine handling is needed here.
         if (_ParticleSystem != null && _isPlaying)
             _ParticleSystem.Pause(withChildren: true);
     }

@@ -137,14 +137,14 @@ public class SO_VFXLibrary : ScriptableObject
     {
         _lookup = new Dictionary<VFXType, VFXEntry>();
 
-        AddEntries(GenericCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(RajahVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(MariVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(CuBotCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(StatusEffectVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(EnvironmentVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(FootstepVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
-        AddEntries(UIVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize);
+        AddEntries(GenericCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(RajahVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(MariVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(CuBotCombatVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(StatusEffectVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(EnvironmentVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(FootstepVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
+        AddEntries(UIVFX, entry => entry.Type, entry => entry.Prefab, entry => entry.Lifetime, entry => entry.PoolSize, entry => entry.MaxInstances, entry => entry.Priority, entry => entry.ExhaustionPolicy);
     }
 
     private void AddEntries<TEntry, TEnum>(
@@ -152,7 +152,10 @@ public class SO_VFXLibrary : ScriptableObject
         Func<TEntry, TEnum> getType,
         Func<TEntry, GameObject> getPrefab,
         Func<TEntry, float> getLifetime,
-        Func<TEntry, int> getPoolSize) where TEnum : Enum
+        Func<TEntry, int> getPoolSize,
+        Func<TEntry, int> getMaxInstances,
+        Func<TEntry, VFXPriority> getPriority,
+        Func<TEntry, VFXPoolExhaustionPolicy> getExhaustionPolicy) where TEnum : Enum
     {
         foreach (TEntry sourceEntry in entries)
         {
@@ -162,7 +165,10 @@ public class SO_VFXLibrary : ScriptableObject
                 Type = runtimeType,
                 Prefab = getPrefab(sourceEntry),
                 Lifetime = getLifetime(sourceEntry),
-                PoolSize = getPoolSize(sourceEntry)
+                PoolSize = getPoolSize(sourceEntry),
+                MaxInstances = Mathf.Max(getMaxInstances(sourceEntry), getPoolSize(sourceEntry)),
+                Priority = getPriority(sourceEntry),
+                ExhaustionPolicy = getExhaustionPolicy(sourceEntry)
             };
 
             if (_lookup.ContainsKey(runtimeType))
@@ -182,6 +188,20 @@ public class SO_VFXLibrary : ScriptableObject
 // Supporting Data Type
 // ─────────────────────────────────────────────────────────────────────────────
 
+public enum VFXPriority
+{
+    Low,
+    Normal,
+    High,
+    Critical
+}
+
+public enum VFXPoolExhaustionPolicy
+{
+    ExpandUntilCap,
+    Drop
+}
+
 /// <summary>
 /// Runtime VFX row used by Mb_VFXManager after category entries are converted.
 /// </summary>
@@ -195,17 +215,23 @@ public class VFXEntry
              "Must have an Mb_VFXInstance component attached.")]
     public GameObject Prefab;
 
-    [Tooltip("How long (seconds) before the instance returns to the pool after playing. " +
-             "Set slightly longer than the particle system's visual duration. " +
-             "For looping status VFX, set this to a very large value — " +
-             "Mb_StatusVFXHandler calls Stop() explicitly when the status ends.")]
+    [Tooltip("Legacy lifetime metadata retained for asset compatibility. " +
+             "One-shot effects now return when their particle systems complete.")]
     public float Lifetime = 2f;
 
-    [Tooltip("How many instances of this VFX to pre-warm at scene start. " +
-             "Increase this if the VFX fires frequently (e.g. Hit_Generic should be ~10). " +
-             "Mb_VFXManager expands the pool with a warning if this is too small.")]
+    [Tooltip("How many instances of this VFX to pre-warm at scene start.")]
     [Min(1)]
     public int PoolSize = 3;
+
+    [Tooltip("Maximum number of instances this VFX may create, including pre-warmed instances.")]
+    [Min(1)]
+    public int MaxInstances = 20;
+
+    [Tooltip("Importance used when the global VFX active-instance budget is full.")]
+    public VFXPriority Priority = VFXPriority.Normal;
+
+    [Tooltip("Behavior when this VFX reaches MaxInstances and no pooled instance is available.")]
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -215,6 +241,9 @@ public class GenericCombatVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -224,6 +253,9 @@ public class RajahVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -233,6 +265,9 @@ public class MariVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -242,6 +277,9 @@ public class CuBotVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -251,6 +289,9 @@ public class StatusVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -260,6 +301,9 @@ public class EnvironmentVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -269,6 +313,9 @@ public class FootstepVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }
 
 [Serializable]
@@ -278,4 +325,7 @@ public class UIVFXEntry
     public GameObject Prefab;
     public float Lifetime = 2f;
     [Min(1)] public int PoolSize = 3;
+    [Min(1)] public int MaxInstances = 20;
+    public VFXPriority Priority = VFXPriority.Normal;
+    public VFXPoolExhaustionPolicy ExhaustionPolicy = VFXPoolExhaustionPolicy.ExpandUntilCap;
 }

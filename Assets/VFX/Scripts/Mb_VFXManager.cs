@@ -16,10 +16,8 @@
 //   Mb_VFXManager.Stop(VFXType.Status_Burn, targetGameObject);
 //
 // POOL EXHAUSTION STRATEGY:
-//   If a pool runs out, one new instance is allocated, a warning is logged, and
-//   the instance is used normally. The warning flags which VFXType needs a larger
-//   pool size in SO_VFXLibrary. Silent failure (skipping the effect) was rejected
-//   because missing VFX during combat are harder to diagnose than a console warning.
+//   Pools may expand only up to each VFXEntry.MaxInstances. Once a cap is reached,
+//   the entry's exhaustion policy decides whether the request is dropped.
 //
 // EVENT HOOKS:
 //   MB_CuBotBase.OnCuBotSpawn     → intentionally skipped here; spawn position is set after activation
@@ -61,6 +59,10 @@ public class Mb_VFXManager : MonoBehaviour
              "All prefab references and pool sizes are read from this asset.")]
     [SerializeField] private SO_VFXLibrary _VFXLibrary;
 
+    [Header("Runtime Budget")]
+    [Tooltip("Maximum number of VFX instances allowed to play at once.")]
+    [SerializeField, Min(1)] private int _MaxActiveInstances = 128;
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // Private State
@@ -83,6 +85,9 @@ public class Mb_VFXManager : MonoBehaviour
     // Key: (VFXType, target GameObject)  Value: the active Mb_VFXInstance
     private Dictionary<(VFXType, GameObject), Mb_VFXInstance> _activeOnTarget
         = new Dictionary<(VFXType, GameObject), Mb_VFXInstance>();
+
+    // Tracks only currently playing instances for the global runtime budget.
+    private HashSet<Mb_VFXInstance> _activeInstances = new HashSet<Mb_VFXInstance>();
 
     // Parent transform that holds all pooled VFX GameObjects in the hierarchy.
     // Keeps the scene tidy — all inactive instances live under "VFXPool" in the hierarchy.
@@ -232,7 +237,7 @@ public class Mb_VFXManager : MonoBehaviour
 
 
     /// <summary>
-    /// Called by Mb_VFXInstance when its lifetime expires or Stop() is called.
+    /// Called by Mb_VFXInstance when particle playback completes or Stop() is called.
     /// Returns the instance to the correct pool so it can be reused.
     /// Static so Mb_VFXInstance can call it without a direct manager reference.
     /// </summary>
@@ -265,10 +270,14 @@ public class Mb_VFXManager : MonoBehaviour
             return;
         }
 
+        if (!TryReserveActiveSlot(entry.Priority, type))
+            return;
+
         Mb_VFXInstance instance = FetchFromPool(type, entry);
-        if (instance == null) return; // FetchFromPool logs its own error if something went wrong
+        if (instance == null) return;
 
         instance.Play(position, rotation, entry.Lifetime, parent);
+        _activeInstances.Add(instance);
 
         // If a parent was provided, register this instance as active on that target
         // so Stop(type, parent.gameObject) can find it later
@@ -306,6 +315,8 @@ public class Mb_VFXManager : MonoBehaviour
 
     private void ReturnInstanceInternal(VFXType type, Mb_VFXInstance instance)
     {
+        _activeInstances.Remove(instance);
+
         // Re-parent to the pool root so it lives tidily under VFXPool in the hierarchy
         instance.transform.SetParent(_poolRoot);
 
@@ -344,7 +355,7 @@ public class Mb_VFXManager : MonoBehaviour
 
 
     // Fetches an available instance from the pool for the given type.
-    // If the pool is exhausted, creates a new instance and logs a warning.
+    // If exhausted, expands only while the entry's per-effect cap allows it.
     private Mb_VFXInstance FetchFromPool(VFXType type, VFXEntry entry)
     {
         if (!_availablePools.TryGetValue(type, out Stack<Mb_VFXInstance> pool))
@@ -358,11 +369,23 @@ public class Mb_VFXManager : MonoBehaviour
         if (pool.Count > 0)
             return pool.Pop();
 
-        // Pool exhausted — expand it rather than silently skipping the effect.
-        // Log a warning so the team knows to increase PoolSize in SO_VFXLibrary.
+        if (entry.ExhaustionPolicy == VFXPoolExhaustionPolicy.Drop)
+        {
+            Debug.LogWarning($"[Mb_VFXManager] Pool exhausted for VFXType.{type}; " +
+                             "the entry is configured to drop requests instead of expanding.");
+            return null;
+        }
+
+        int createdCount = _allInstances[type].Count;
+        if (createdCount >= entry.MaxInstances)
+        {
+            Debug.LogWarning($"[Mb_VFXManager] Pool cap reached for VFXType.{type} " +
+                             $"({entry.MaxInstances} instances). Request dropped.");
+            return null;
+        }
+
         Debug.LogWarning($"[Mb_VFXManager] Pool exhausted for VFXType.{type}. " +
-                         $"Allocating a new instance. Consider increasing PoolSize " +
-                         $"for this entry in SO_VFXLibrary.");
+                         $"Allocating instance {createdCount + 1}/{entry.MaxInstances}.");
 
         return CreateNewInstance(type, entry);
     }
@@ -413,6 +436,48 @@ public class Mb_VFXManager : MonoBehaviour
 
         foreach (var key in keysToRemove)
             _activeOnTarget.Remove(key);
+    }
+
+
+    private bool TryReserveActiveSlot(VFXPriority requestedPriority, VFXType requestedType)
+    {
+        if (_activeInstances.Count < Mathf.Max(1, _MaxActiveInstances))
+            return true;
+
+        Mb_VFXInstance victim = FindLowerPriorityInstance(requestedPriority);
+        if (victim == null)
+        {
+            Debug.LogWarning($"[Mb_VFXManager] Active VFX budget {_MaxActiveInstances} is full. " +
+                             $"VFXType.{requestedType} was dropped because no lower-priority effect can be evicted.");
+            return false;
+        }
+
+        victim.Stop();
+        return _activeInstances.Count < Mathf.Max(1, _MaxActiveInstances);
+    }
+
+
+    private Mb_VFXInstance FindLowerPriorityInstance(VFXPriority requestedPriority)
+    {
+        Mb_VFXInstance best = null;
+        VFXPriority bestPriority = VFXPriority.Critical;
+
+        foreach (Mb_VFXInstance candidate in _activeInstances)
+        {
+            if (!_VFXLibrary.TryGetEntry(candidate.VFXType, out VFXEntry candidateEntry))
+                continue;
+
+            if (candidateEntry.Priority >= requestedPriority)
+                continue;
+
+            if (best == null || candidateEntry.Priority < bestPriority)
+            {
+                best = candidate;
+                bestPriority = candidateEntry.Priority;
+            }
+        }
+
+        return best;
     }
 
 
