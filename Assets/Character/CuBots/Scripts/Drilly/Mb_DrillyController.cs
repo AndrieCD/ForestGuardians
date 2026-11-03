@@ -15,9 +15,12 @@ public class Mb_DrillyController : Mb_CuBotController
     [SerializeField] private float _WindupDuration = 0.75f;
     [SerializeField] private float _LaunchDuration = 0.35f;
     [SerializeField] private float _ImpactRadius = 1.5f;
+    [SerializeField] private float _LaunchRotationSpeed = 1080f;
 
     private Vector3 _visualRootDefaultLocalPosition;
+    private Quaternion _visualRootDefaultLocalRotation;
     private bool _hasTriggeredAttack;
+    private bool _isLaunchSpinning;
 
     protected override void Awake()
     {
@@ -27,7 +30,10 @@ public class Mb_DrillyController : Mb_CuBotController
             _VisualRoot = transform.GetChild(0);
 
         if (_VisualRoot != null)
+        {
             _visualRootDefaultLocalPosition = _VisualRoot.localPosition;
+            _visualRootDefaultLocalRotation = _VisualRoot.localRotation;
+        }
     }
 
     protected override void AssignAbilities()
@@ -43,6 +49,8 @@ public class Mb_DrillyController : Mb_CuBotController
             this,
             getCurrentTarget: () => _CurrentTarget,
             onSurface: BeginAttackVulnerableState,
+            onLaunchStarted: BeginLaunchSpin,
+            onLaunchFinished: EndLaunchSpin,
             windupDuration: _WindupDuration,
             launchDuration: _LaunchDuration,
             impactRadius: _ImpactRadius
@@ -69,6 +77,14 @@ public class Mb_DrillyController : Mb_CuBotController
 
     protected override void UpdateAnimator()
     {
+        if (_isLaunchSpinning && _VisualRoot != null)
+        {
+            _VisualRoot.Rotate(
+                Vector3.forward,
+                _LaunchRotationSpeed * Time.deltaTime,
+                Space.Self);
+        }
+
         if (_BasicCuBotAnimator == null || _Agent == null) return;
 
         _BasicCuBotAnimator.SetSpeed(_Agent.velocity.magnitude);
@@ -77,6 +93,11 @@ public class Mb_DrillyController : Mb_CuBotController
     protected override void OnControllerReset()
     {
         _hasTriggeredAttack = false;
+        _isLaunchSpinning = false;
+
+        if (_VisualRoot != null)
+            _VisualRoot.localRotation = _visualRootDefaultLocalRotation;
+
         SetBurrowedState(true);
     }
 
@@ -101,5 +122,15 @@ public class Mb_DrillyController : Mb_CuBotController
             : Vector3.zero;
 
         _VisualRoot.localPosition = _visualRootDefaultLocalPosition + offset;
+    }
+
+    private void BeginLaunchSpin()
+    {
+        _isLaunchSpinning = true;
+    }
+
+    private void EndLaunchSpin()
+    {
+        _isLaunchSpinning = false;
     }
 }

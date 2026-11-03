@@ -674,10 +674,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de62bdaa48231ef428b4b50cde857b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_CuBotHealthBar
-  _HealthBarCanvas: {fileID: 0}
-  _HealthFillImage: {fileID: 0}
-  _ShieldFillImage: {fileID: 0}
-  _NameLabel: {fileID: 0}
+  _HealthBarCanvas: {fileID: 8240740912451221638}
+  _HealthFillImage: {fileID: 7272370535149869707}
+  _ShieldFillImage: {fileID: 953211369513866670}
+  _NameLabel: {fileID: 8819575181527992293}
   HeightOffset: 1.5
   BarSize: {x: 1.5, y: 1}
 --- !u!114 &-4576071011141976685
@@ -729,6 +729,7 @@ MonoBehaviour:
   _WindupDuration: 0.5
   _LaunchDuration: 0.4
   _ImpactRadius: 1.7
+  _LaunchRotationSpeed: 2160
 --- !u!1 &6813430728635059545
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,6 +971,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8234218238527994870, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9108017846077009569, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
       propertyPath: m_text
       value: Drilly
@@ -979,11 +984,49 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+--- !u!114 &953211369513866670 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 664630243792370922, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+  m_PrefabInstance: {fileID: 289146405829044548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &6782377331754383925 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6493233127096636273, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
   m_PrefabInstance: {fileID: 289146405829044548}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7272370535149869707 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6985055978003985359, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+  m_PrefabInstance: {fileID: 289146405829044548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!223 &8240740912451221638 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 8529746419579064770, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+  m_PrefabInstance: {fileID: 289146405829044548}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8819575181527992293 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9108017846077009569, guid: 3062cbfc03b65fe40a8f8f820fa49e9e, type: 3}
+  m_PrefabInstance: {fileID: 289146405829044548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &7227411554344977321
 PrefabInstance:
   m_ObjectHideFlags: 0

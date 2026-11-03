@@ -12,6 +12,8 @@ public class Sc_DrillyBurrowStrike : Sc_BaseAbility
 {
     private readonly Func<Transform> _getCurrentTarget;
     private readonly Action _onSurface;
+    private readonly Action _onLaunchStarted;
+    private readonly Action _onLaunchFinished;
     private readonly float _windupDuration;
     private readonly float _launchDuration;
     private readonly float _impactRadius;
@@ -21,6 +23,8 @@ public class Sc_DrillyBurrowStrike : Sc_BaseAbility
         Mb_CharacterBase user,
         Func<Transform> getCurrentTarget,
         Action onSurface,
+        Action onLaunchStarted,
+        Action onLaunchFinished,
         float windupDuration,
         float launchDuration,
         float impactRadius)
@@ -28,6 +32,8 @@ public class Sc_DrillyBurrowStrike : Sc_BaseAbility
     {
         _getCurrentTarget = getCurrentTarget;
         _onSurface = onSurface;
+        _onLaunchStarted = onLaunchStarted;
+        _onLaunchFinished = onLaunchFinished;
         _windupDuration = Mathf.Max(0f, windupDuration);
         _launchDuration = Mathf.Max(0.01f, launchDuration);
         _impactRadius = Mathf.Max(0.1f, impactRadius);
@@ -79,6 +85,8 @@ public class Sc_DrillyBurrowStrike : Sc_BaseAbility
         if (direction.sqrMagnitude > 0.001f)
             user.transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
 
+        _onLaunchStarted?.Invoke();
+
         float elapsed = 0f;
         while (elapsed < _launchDuration)
         {
@@ -89,6 +97,7 @@ public class Sc_DrillyBurrowStrike : Sc_BaseAbility
         }
 
         MoveUser(user, agent, end);
+        _onLaunchFinished?.Invoke();
     }
 
     private void MoveUser(Mb_CharacterBase user, NavMeshAgent agent, Vector3 position)

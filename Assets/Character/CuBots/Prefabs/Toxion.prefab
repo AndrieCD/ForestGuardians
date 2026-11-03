@@ -658,7 +658,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 039bfea7ef966854eb33abff32bb54df, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
   LaunchOrigin: {fileID: 4442097538704993733}
   AimLayerMask:
