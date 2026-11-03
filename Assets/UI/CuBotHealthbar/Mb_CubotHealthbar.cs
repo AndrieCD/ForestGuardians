@@ -34,7 +34,7 @@ public class Mb_CuBotHealthBar : MonoBehaviour
     [SerializeField] private TMP_Text _NameLabel;
 
     [Header("Layout")]
-    [Tooltip("How far above the CuBot's pivot the bar floats, in world units.")]
+    [Tooltip("Legacy offset retained for prefab compatibility. World-space canvas placement is configured on each prefab.")]
     [SerializeField] private float HeightOffset = 2.5f;
 
     [Tooltip("Width and height of the health bar in world-space units.")]
@@ -93,28 +93,36 @@ public class Mb_CuBotHealthBar : MonoBehaviour
             _health.OnDeath += HandleDeath;
         }
 
-        // Reposition the canvas at the correct height above the pivot
+        // Re-enable the canvas using its prefab-authored local/anchored position.
         if (_HealthBarCanvas != null)
         {
-            _HealthBarCanvas.transform.localPosition = new Vector3(0f, HeightOffset, 0f);
             _HealthBarCanvas.gameObject.SetActive(true);
         }
 
-        // Read the name directly from the CuBot component — it's populated in Awake
-        // before OnEnable fires, so _CharacterName is always ready here
-        MB_CuBotBase cuBot = GetComponent<MB_CuBotBase>();
-        if (_NameLabel != null && cuBot != null)
-        {
-            // _CharacterName is protected, so we read it via the public GetLevel() sibling
-            // pattern — but _CharacterName has no public accessor. We'll grab it from the
-            // GameObject name as a fallback, or you can add a public property to Mb_CharacterBase.
-            // TODO: Add `public string CharacterName => _CharacterName;` to Mb_CharacterBase
-            //       so this reads the clean SO name instead of the prefab instance name.
-            _NameLabel.text = cuBot.CharacterName   ;
-        }
+        // Refresh here for pooled CuBots that are being re-enabled.
+        RefreshNameLabel();
 
         // Reset both bars to full so a pool-reused CuBot starts looking healthy
         ResetBars();
+    }
+
+
+    private void Start()
+    {
+        // Start runs after all scene/object Awake calls, including the CuBot
+        // template initialization that populates CharacterName.
+        RefreshNameLabel();
+    }
+
+
+    private void RefreshNameLabel()
+    {
+        if (_NameLabel == null) return;
+
+        MB_CuBotBase cuBot = GetComponent<MB_CuBotBase>();
+        if (cuBot == null) return;
+
+        _NameLabel.text = cuBot.CharacterName;
     }
 
 
