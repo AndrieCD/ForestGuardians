@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: TestStage1Data
   m_EditorClassIdentifier: Assembly-CSharp::SO_StageData
   WaveDataList:
-  - {fileID: 11400000, guid: 2c466782b9e2224458490293bd0ab09b, type: 2}
+  - {fileID: 11400000, guid: 177c76840b2e7d04ea687a853aa4770e, type: 2}
   - {fileID: 11400000, guid: 2c466782b9e2224458490293bd0ab09b, type: 2}
   - {fileID: 11400000, guid: 2c466782b9e2224458490293bd0ab09b, type: 2}

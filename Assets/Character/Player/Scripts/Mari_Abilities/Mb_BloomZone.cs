@@ -78,7 +78,9 @@ public class Mb_BloomZone : MonoBehaviour
             rb.useGravity = false;
         }
 
-        _visualRoot = transform.Find("BloomVisualRoot");
+        _visualRoot = transform.Find("BloomVisual");
+        if (_visualRoot == null)
+            _visualRoot = transform.Find("BloomVisualRoot");
         if (_visualRoot != null)
             _visualRoot.localScale = Vector3.one;
 
@@ -97,9 +99,9 @@ public class Mb_BloomZone : MonoBehaviour
 
     private void Update()
     {
-        if (_isDeactivated || _visualRoot == null) return;
+        if (_isDeactivated) return;
 
-        _visualRoot.localRotation *= Quaternion.Euler(
+        transform.localRotation *= Quaternion.Euler(
             0f,
             _VisualRotationDegreesPerSecond * Time.deltaTime,
             0f
