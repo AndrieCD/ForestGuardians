@@ -400,6 +400,7 @@ GameObject:
   - component: {fileID: 3675195709672866577}
   - component: {fileID: 5640617715653784319}
   - component: {fileID: 3257162095500812342}
+  - component: {fileID: -910000000000000000}
   m_Layer: 2
   m_Name: Toxion
   m_TagString: CuBot
@@ -647,6 +648,23 @@ MonoBehaviour:
   _ToxionSludgeProjectile: {fileID: 3219433225871713132, guid: dda025d64be859a4fa54581cc7493550, type: 3}
   _ToxionSludgeZone: {fileID: 4983956781468417975, guid: d2ada4ca38ae2034295055b3090cf7fe, type: 3}
   _LuxionBulletProjectile: {fileID: 0}
+--- !u!114 &-910000000000000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080076912440207996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 039bfea7ef966854eb33abff32bb54df, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Mb_ProjectileLauncher
+  LaunchOrigin: {fileID: 4442097538704993733}
+  AimLayerMask:
+    serializedVersion: 2
+    m_Bits: 65
+  AimRaycastDistance: 100
 --- !u!1 &8387413640466025317
 GameObject:
   m_ObjectHideFlags: 0

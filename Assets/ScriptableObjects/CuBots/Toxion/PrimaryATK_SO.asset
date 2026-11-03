@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Ability
   AbilityName: Toxic Sludge
   Icon: {fileID: 0}
-  AbilityDescription: Lobs toxic sludge that damages on impact and creates a poison zone.
+  AbilityDescription: Fires a toxic projectile that damages on impact and creates a poison zone on the ground.
   Cooldown:
   - 1
-  ProjectileData: {fileID: 0}
+  ProjectileData: {fileID: 11400000, guid: a7e9f4d16c2b4e72a9f03d5c8610b4e1, type: 2}
   MaxLevel: 6
   ScalingStats:
   - StatName: ImpactDamage

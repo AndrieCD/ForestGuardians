@@ -138,7 +138,7 @@ public class Mb_ProjectileLauncher : MonoBehaviour
         if (!ValidateBeforeFire(prefab, data)) return null;
 
         Vector3 aimDirection = ResolveAimDirection();
-        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection);
+        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection, null);
     }
 
 
@@ -164,7 +164,45 @@ public class Mb_ProjectileLauncher : MonoBehaviour
             aimDirection = transform.forward;
         }
 
-        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection);
+        return SpawnAndLaunch(prefab, data, owner, baseDamage, aimDirection, null);
+    }
+
+    /// <summary>
+    /// Fires a projectile and configures it before initialization launches it.
+    /// This is useful for abilities that need to subscribe to projectile events
+    /// before the first physics update can produce an impact.
+    /// </summary>
+    public Mb_Projectile FireToward(
+        GameObject prefab,
+        SO_ProjectileData data,
+        Mb_CharacterBase owner,
+        float baseDamage,
+        Vector3 direction,
+        System.Action<Mb_Projectile> configureBeforeLaunch)
+    {
+        if (!ValidateBeforeFire(prefab, data)) return null;
+
+        Vector3 aimDirection = direction.normalized;
+        if (aimDirection == Vector3.zero)
+        {
+            Debug.LogWarning($"[Mb_ProjectileLauncher] FireToward called with zero direction. " +
+                             $"Falling back to forward.");
+            aimDirection = transform.forward;
+        }
+
+        return SpawnAndLaunch(
+            prefab,
+            data,
+            owner,
+            baseDamage,
+            aimDirection,
+            configureBeforeLaunch);
+    }
+
+    /// <summary>Returns the world position used to spawn launched projectiles.</summary>
+    public Vector3 GetLaunchOriginPosition()
+    {
+        return LaunchOrigin != null ? LaunchOrigin.position : transform.position;
     }
 
     public Mb_Projectile FireToward(
@@ -232,7 +270,8 @@ public class Mb_ProjectileLauncher : MonoBehaviour
         SO_ProjectileData data,
         Mb_CharacterBase owner,
         float baseDamage,
-        Vector3 direction)
+        Vector3 direction,
+        System.Action<Mb_Projectile> configureBeforeLaunch)
     {
         Mb_Projectile projectile = SpawnProjectile(prefab);
         if (projectile == null) return null;
@@ -242,6 +281,7 @@ public class Mb_ProjectileLauncher : MonoBehaviour
             Quaternion.LookRotation(direction)
         );
 
+        configureBeforeLaunch?.Invoke(projectile);
         projectile.Initialize(data, owner, baseDamage);
 
         return projectile;

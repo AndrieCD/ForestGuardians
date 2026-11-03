@@ -66,6 +66,13 @@ public class Mb_Projectile : MonoBehaviour
     public event Action<Mb_CharacterBase, Vector3, Vector3> OnHit;
 
     /// <summary>
+    /// Fired when the projectile impacts a damageable target or a blocking
+    /// world collider. Parameters are the impact point, surface normal, and
+    /// impacted collider.
+    /// </summary>
+    public event Action<Vector3, Vector3, Collider> OnImpact;
+
+    /// <summary>
     /// Static version of OnHit — fired for every projectile hit in the scene.
     /// Use this for systems that need to react to all hits without per-instance
     /// subscriptions, such as a VFX manager or audio manager.
@@ -244,7 +251,12 @@ public class Mb_Projectile : MonoBehaviour
         if (damageable == null)
         {
             if (ShouldBlockProjectile(other))
+            {
+                Vector3 impactPoint = other.ClosestPoint(transform.position);
+                Vector3 impactNormal = (transform.position - impactPoint).normalized;
+                OnImpact?.Invoke(impactPoint, impactNormal, other);
                 Deactivate();
+            }
 
             return;
         }
@@ -295,6 +307,8 @@ public class Mb_Projectile : MonoBehaviour
             OnAnyProjectileHit?.Invoke(this, _owner,target);
         }
 
+        OnImpact?.Invoke(hitPoint, hitNormal, other);
+
         bool shouldDeactivate = !_data.IsPiercing ||
                                 _hitCount >= _data.MaxPierceTargets;
 
@@ -341,6 +355,7 @@ public class Mb_Projectile : MonoBehaviour
         // Static events (OnAnyProjectileHit) are intentionally NOT cleared here —
         // global listeners manage their own subscriptions.
         OnHit = null;
+        OnImpact = null;
 
         OnDeactivated?.Invoke(this);
         OnDeactivated = null;

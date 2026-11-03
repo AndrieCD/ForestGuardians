@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 5632847829216607657}
   - component: {fileID: 9038297148714371102}
   - component: {fileID: 4186994995872982876}
-  - component: {fileID: -3732228519399440207}
   m_Layer: 3
   m_Name: ToxionSludgeProjectile
   m_TagString: Untagged
@@ -154,15 +153,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490f7f92abb568f4687a2cd61a165d2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mb_Projectile
---- !u!114 &-3732228519399440207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3219433225871713132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6cbe81d96e5d6d4b96199fc3736c837, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mb_ToxionSludgeProjectile
