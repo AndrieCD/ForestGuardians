@@ -246,19 +246,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
-      value: 0.17565508
+      value: 0.20980056
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.maxColor.g
-      value: 0.5018867
+      value: 0.5019608
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.maxColor.r
-      value: 0.05208253
+      value: 0.050980397
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.minColor.b
-      value: 0.25471687
+      value: 0.254902
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.minColor.g
@@ -266,7 +266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.minColor.r
-      value: 0.47495002
+      value: 0.55534136
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.ctime2
@@ -332,6 +332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MindSpike
       objectReference: {fileID: 0}
+    - target: {fileID: 8698178791706641721, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ca170c232fa764b4d9b803209b3d75b8, type: 2}
     - target: {fileID: 9164646473471751612, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

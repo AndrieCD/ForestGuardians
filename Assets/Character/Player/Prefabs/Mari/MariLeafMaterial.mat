@@ -77,7 +77,7 @@ Material:
     - _BlackCutoutThreshold: 0.08
     - _BumpScale: 1
     - _CrossHatch: 0
-    - _Cutoff: 0.5
+    - _Cutoff: 0.14
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 0
@@ -109,8 +109,8 @@ Material:
     - _PosterizeStrength: 0.12
     - _RampSmoothness: 0.5
     - _RampThreshold: 1
-    - _RimPower: 0.5
-    - _RimStrength: 0
+    - _RimPower: 1
+    - _RimStrength: 0.31
     - _ScreenSpaceHalftone: 0
     - _ShadowBands: 1
     - _ShadowStrength: 1
@@ -121,13 +121,13 @@ Material:
     - _UseBlackCutout: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.1566037, g: 1, b: 0.40223902, a: 1}
+    - _BaseColor: {r: 0, g: 1, b: 0.29302335, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightTint: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.9, g: 0.86, b: 1, a: 1}
+    - _RimColor: {r: 0.14040518, g: 1, b: 0, a: 1}
     - _ShadowTint: {r: 0.9, g: 0.86, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
