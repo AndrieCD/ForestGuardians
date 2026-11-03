@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_CuBots
   CharacterName: Luxion
   AttackRange: 28
-  MaxHealth: 1800
+  MaxHealth: 2000
   HealthRegen: 0
   MoveSpeed: 5
   AttackSpeed: 1
-  AttackPower: 90
+  AttackPower: 130
   AbilityPower: 100
   Haste: 25
   CriticalChance: 0.15

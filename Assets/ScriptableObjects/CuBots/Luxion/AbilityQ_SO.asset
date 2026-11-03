@@ -19,4 +19,11 @@ MonoBehaviour:
   - 7
   ProjectileData: {fileID: 0}
   MaxLevel: 1
-  ScalingStats: []
+  ScalingStats:
+  - StatName: SpinDamage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 0.35
+    APScalingPerLevel:
+    - 0

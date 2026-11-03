@@ -19,4 +19,18 @@ MonoBehaviour:
   - 8
   ProjectileData: {fileID: 0}
   MaxLevel: 1
-  ScalingStats: []
+  ScalingStats:
+  - StatName: ImpactDamage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 1
+    APScalingPerLevel:
+    - 0
+  - StatName: CrackedAreaDamage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 0.2
+    APScalingPerLevel:
+    - 0

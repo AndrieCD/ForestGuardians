@@ -274,9 +274,9 @@ public class Mb_LuxionController : MB_CuBotBase
 
         DealArcDamage(
             _CuBotTemplate.PrimaryAttack,
+            "AxeDamage",
             _AxeSlashRadius,
-            _AxeSlashArcDegrees,
-            1.0f
+            _AxeSlashArcDegrees
         );
 
         _axeSlashCooldownRemaining = _AxeSlashCooldown;
@@ -310,7 +310,11 @@ public class Mb_LuxionController : MB_CuBotBase
             if (damageTimer <= 0f)
             {
                 damagedThisTick.Clear();
-                DealRadiusDamage(_CuBotTemplate.AbilityQ, _SpinHarvestRadius, 0.35f, damagedThisTick);
+                DealRadiusDamage(
+                    _CuBotTemplate.AbilityQ,
+                    "SpinDamage",
+                    _SpinHarvestRadius,
+                    damagedThisTick);
                 damageTimer = _SpinHarvestDamageInterval;
             }
 
@@ -327,7 +331,7 @@ public class Mb_LuxionController : MB_CuBotBase
         _luxionAnimator?.TriggerRifleShot();
         yield return new WaitForSeconds(0.2f);
 
-        FireProjectileAt(target, _CuBotTemplate.SecondaryAttack, 1.3f);
+        FireProjectileAt(target, _CuBotTemplate.SecondaryAttack, "RifleDamage");
 
         _rifleShotCooldownRemaining = _RifleShotCooldown;
         EndCast();
@@ -342,7 +346,7 @@ public class Mb_LuxionController : MB_CuBotBase
 
         for (int volley = 0; volley < _BulletRainVolleyCount; volley++)
         {
-            FireProjectileSpread(aimDirection, _CuBotTemplate.AbilityE);
+            FireProjectileSpread(aimDirection, _CuBotTemplate.AbilityE, "BulletDamage");
             yield return new WaitForSeconds(_BulletRainVolleyInterval);
         }
 
@@ -356,7 +360,7 @@ public class Mb_LuxionController : MB_CuBotBase
         _luxionAnimator?.TriggerPickaxeSlam();
         yield return new WaitForSeconds(0.45f);
 
-        DealRadiusDamage(_CuBotTemplate.PrimaryAttack, _PickaxeSlamRadius, 1.15f);
+        DealRadiusDamage(_CuBotTemplate.PrimaryAttack, "PickaxeDamage", _PickaxeSlamRadius);
 
         _pickaxeSlamCooldownRemaining = _PickaxeSlamCooldown;
         EndCast();
@@ -380,7 +384,7 @@ public class Mb_LuxionController : MB_CuBotBase
             yield return null;
         }
 
-        DealRadiusDamage(_CuBotTemplate.AbilityR, _EarthBreakerImpactRadius, 1.0f);
+        DealRadiusDamage(_CuBotTemplate.AbilityR, "ImpactDamage", _EarthBreakerImpactRadius);
         SpawnCrackedArea(transform.position);
 
         _earthBreakerCooldownRemaining = _EarthBreakerCooldown;
@@ -428,7 +432,11 @@ public class Mb_LuxionController : MB_CuBotBase
         _isTransitioning = false;
     }
 
-    private void DealArcDamage(SO_Ability abilityData, float radius, float arcDegrees, float fallbackMultiplier)
+    private void DealArcDamage(
+        SO_Ability abilityData,
+        string damageStatName,
+        float radius,
+        float arcDegrees)
     {
         Collider[] hits = Physics.OverlapSphere(transform.position + Vector3.up, radius);
         float halfArc = arcDegrees * 0.5f;
@@ -444,24 +452,27 @@ public class Mb_LuxionController : MB_CuBotBase
             if (direction.sqrMagnitude <= 0.001f) continue;
             if (Vector3.Angle(transform.forward, direction.normalized) > halfArc) continue;
 
-            target.Health.TakeDamage(GetDamage(abilityData, fallbackMultiplier));
+            target.Health.TakeDamage(GetDamage(abilityData, damageStatName));
             break;
         }
     }
 
-    private void DealRadiusDamage(SO_Ability abilityData, float radius, float fallbackMultiplier)
+    private void DealRadiusDamage(
+        SO_Ability abilityData,
+        string damageStatName,
+        float radius)
     {
-        DealRadiusDamage(abilityData, radius, fallbackMultiplier, null);
+        DealRadiusDamage(abilityData, damageStatName, radius, null);
     }
 
     private void DealRadiusDamage(
         SO_Ability abilityData,
+        string damageStatName,
         float radius,
-        float fallbackMultiplier,
         HashSet<Mb_CharacterBase> damagedTargets)
     {
         Collider[] hits = Physics.OverlapSphere(transform.position + Vector3.up, radius);
-        float damage = GetDamage(abilityData, fallbackMultiplier);
+        float damage = GetDamage(abilityData, damageStatName);
 
         foreach (Collider hit in hits)
         {
@@ -473,7 +484,10 @@ public class Mb_LuxionController : MB_CuBotBase
         }
     }
 
-    private void FireProjectileAt(Transform target, SO_Ability abilityData, float fallbackMultiplier)
+    private void FireProjectileAt(
+        Transform target,
+        SO_Ability abilityData,
+        string damageStatName)
     {
         if (_projectileLauncher == null || _projectilePrefab == null || target == null) return;
 
@@ -485,12 +499,15 @@ public class Mb_LuxionController : MB_CuBotBase
             _projectilePrefab,
             projectileData,
             this,
-            GetDamage(abilityData, fallbackMultiplier),
+            GetDamage(abilityData, damageStatName),
             direction
         );
     }
 
-    private void FireProjectileSpread(Vector3 centerDirection, SO_Ability abilityData)
+    private void FireProjectileSpread(
+        Vector3 centerDirection,
+        SO_Ability abilityData,
+        string damageStatName)
     {
         if (_projectileLauncher == null || _projectilePrefab == null) return;
 
@@ -498,7 +515,7 @@ public class Mb_LuxionController : MB_CuBotBase
         if (projectileData == null) return;
 
         int projectileCount = Mathf.Max(1, _BulletRainProjectilesPerVolley);
-        float damage = GetDamage(abilityData, 0.45f);
+        float damage = GetDamage(abilityData, damageStatName);
         Vector3 spawnPosition = GetProjectileOriginPosition();
 
         for (int i = 0; i < projectileCount; i++)
@@ -533,7 +550,7 @@ public class Mb_LuxionController : MB_CuBotBase
 
         Mb_LuxionCrackedArea crackedArea = crackedAreaObject.AddComponent<Mb_LuxionCrackedArea>();
         crackedArea.Initialize(
-            GetDamage(_CuBotTemplate.AbilityR, 0.2f),
+            GetDamage(_CuBotTemplate.AbilityR, "CrackedAreaDamage"),
             _CrackedAreaTickInterval,
             _CrackedAreaDuration
         );
@@ -717,21 +734,27 @@ public class Mb_LuxionController : MB_CuBotBase
         return _CuBotTemplate.PrimaryAttack != null ? _CuBotTemplate.PrimaryAttack.ProjectileData : null;
     }
 
-    private float GetDamage(SO_Ability abilityData, float fallbackAtkMultiplier)
+    private float GetDamage(
+        SO_Ability abilityData,
+        string damageStatName)
     {
-        if (abilityData != null &&
-            abilityData.ScalingStats != null &&
-            abilityData.ScalingStats.Count > 0)
+        if (abilityData != null && abilityData.ScalingStats != null)
         {
-            return abilityData.GetStat(
-                "Damage",
-                1,
-                Stats.AttackPower.GetValue(),
-                Stats.AbilityPower.GetValue()
-            );
+            foreach (Sc_AbilityScalingEntry entry in abilityData.ScalingStats)
+            {
+                if (entry.StatName != damageStatName) continue;
+
+                return entry.GetValue(
+                    1,
+                    Stats.AttackPower.GetValue(),
+                    Stats.AbilityPower.GetValue());
+            }
         }
 
-        return Stats.AttackPower.GetValue() * Mathf.Max(0f, fallbackAtkMultiplier);
+        Debug.LogError(
+            $"[Mb_LuxionController] Missing scaling stat '{damageStatName}' " +
+            $"on ability '{abilityData?.AbilityName}'.");
+        return 0f;
     }
 
     private void BeginCast(Transform target)

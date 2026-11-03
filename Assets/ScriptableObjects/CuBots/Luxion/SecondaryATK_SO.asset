@@ -19,4 +19,11 @@ MonoBehaviour:
   - 1.2
   ProjectileData: {fileID: 11400000, guid: d4eb161432f665747ad5cffc77a711e4, type: 2}
   MaxLevel: 1
-  ScalingStats: []
+  ScalingStats:
+  - StatName: RifleDamage
+    BaseValuePerLevel:
+    - 0
+    ATKScalingPerLevel:
+    - 1.3
+    APScalingPerLevel:
+    - 0
