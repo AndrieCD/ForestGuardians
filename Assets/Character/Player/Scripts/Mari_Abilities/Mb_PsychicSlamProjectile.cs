@@ -13,6 +13,8 @@ using System.Collections;
 
 public class Mb_PsychicSlamProjectile : MonoBehaviour
 {
+    private const float EXIT_TRANSITION_DURATION = 0.2f;
+
     // -------------------------------------------------------------------------
     // Runtime State (set by Initialize())
     // -------------------------------------------------------------------------
@@ -261,7 +263,8 @@ public class Mb_PsychicSlamProjectile : MonoBehaviour
     {
         _isInitialized = false;
 
-        // Stop travel VFX — let particles fade naturally
+        // Stop travel VFX — let particles fade naturally during the exit
+        // transition instead of removing them immediately.
         if (_shockwaveVFX != null)
             _shockwaveVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
@@ -269,8 +272,9 @@ public class Mb_PsychicSlamProjectile : MonoBehaviour
         if (_collider != null)
             _collider.enabled = false;
 
-        // Destroy after a short window for VFX to finish fading
-        // TODO: Tune delay to match VFX fade duration Leo sets on the prefab
-        Destroy(gameObject, 0f);
+        StartCoroutine(Sc_VFXExitTransition.ScaleDownAndDestroy(
+            transform,
+            EXIT_TRANSITION_DURATION
+        ));
     }
 }

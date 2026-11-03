@@ -237,12 +237,20 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startSpeed.minScalar
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3235638128080842052, guid: dd43e50ae6ae82445952e5dbe9a75e51, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b

@@ -262,6 +262,13 @@ public class Mari_R_Branch2 : Sc_BaseAbility
             return;
         }
 
+        Transform projectileOrigin = _Guardian?.ProjectileOrigin;
+        if (projectileOrigin == null)
+        {
+            Debug.LogError("[Mari_R_Branch2] ProjectileOrigin is not set on Mari's guardian prefab.");
+            return;
+        }
+
         float laserDps = _AbilityData.GetStat(
             "Damage",
             CurrentLevel,
@@ -272,8 +279,9 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         // Spawn the laser GO — it lives for the duration of the beam
         GameObject laserGO = GameObject.Instantiate(
             _laserPrefab,
-            Vector3.zero,   // Positioned each frame by Mb_LaserBeam.UpdateBeam()
-            Quaternion.identity
+            projectileOrigin.position,
+            projectileOrigin.rotation,
+            projectileOrigin
         );
 
         Mb_LaserBeam laser = laserGO.GetComponent<Mb_LaserBeam>();
@@ -286,7 +294,7 @@ public class Mari_R_Branch2 : Sc_BaseAbility
 
         laser.Initialize(
             owner: user,
-            origin: _Guardian.ProjectileOrigin,
+            origin: projectileOrigin,
             dps: laserDps,
             tickInterval: DAMAGE_TICK_INTERVAL,
             maxRange: _LaserMaxRange,
@@ -337,8 +345,8 @@ public class Mari_R_Branch2 : Sc_BaseAbility
         {
             elapsed += Time.deltaTime;
 
-            // Tell the laser beam to fire this frame — it handles raycast,
-            // damage application, LineRenderer update, and hit VFX positioning
+            // Update the laser aim/visuals and apply its interval-based damage
+            // to CuBots currently inside the beam trigger.
             laser.FireThisFrame();
 
             yield return null;

@@ -14,6 +14,8 @@ using UnityEngine;
 
 public class Mb_MindspikesZone : MonoBehaviour
 {
+    private const float EXIT_TRANSITION_DURATION = 0.2f;
+
     // -------------------------------------------------------------------------
     // Runtime State (set by Initialize())
     // -------------------------------------------------------------------------
@@ -25,6 +27,7 @@ public class Mb_MindspikesZone : MonoBehaviour
     private float _slowDuration;
     private float _duration;
     private bool _isOvercharged;
+    private bool _isDeactivated;
 
     // Shared by every tile from the same cast so overlapping tiles cannot
     // multiply the damage tick rate.
@@ -66,6 +69,7 @@ public class Mb_MindspikesZone : MonoBehaviour
         _slowDuration = slowDuration;
         _duration = duration;
         _isOvercharged = isOvercharged;
+        _isDeactivated = false;
         _tickTracker = sharedTickTracker ?? new Sc_MindspikesTickTracker();
 
         // --- Resize BoxCollider to match final resolved dimensions ---
@@ -138,6 +142,7 @@ public class Mb_MindspikesZone : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (_isDeactivated) return;
         if (_owner != null && other.gameObject == _owner.gameObject) return;
 
         MB_CuBotBase enemy = other.GetComponentInParent<MB_CuBotBase>();
@@ -189,25 +194,23 @@ public class Mb_MindspikesZone : MonoBehaviour
 
     private void DeactivateZone()
     {
-        // Stop field VFX before deactivating so particles fade out naturally
-        // rather than popping off instantly
+        if (_isDeactivated) return;
+
+        _isDeactivated = true;
+
+        // Stop emitting before the exit transition so existing particles can
+        // finish naturally while the complete VFX root scales down.
         if (_fieldVFX != null)
             _fieldVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
-        // Give the VFX a short window to finish emitting before destroying.
-        // TODO: Tune this delay to match the VFX fade-out duration Leo sets.
-        StartCoroutine(DestroyAfterDelay(0.2f));
-    }
-
-
-    private IEnumerator DestroyAfterDelay(float delay)
-    {
         // Disable the collider immediately so no more damage ticks fire
-        // during the VFX fade window
+        // during the VFX exit transition.
         if (_collider != null)
             _collider.enabled = false;
 
-        yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
+        StartCoroutine(Sc_VFXExitTransition.ScaleDownAndDestroy(
+            transform,
+            EXIT_TRANSITION_DURATION
+        ));
     }
 }

@@ -9,7 +9,11 @@ using UnityEngine;
 
 public class Mb_BloomZone : MonoBehaviour
 {
-    private const float EXPIRE_DESTROY_DELAY = 1.5f;
+    private const float EXIT_TRANSITION_DURATION = 0.2f;
+
+    [Header("Bloom Visual Animation")]
+    [SerializeField]
+    private float _VisualRotationDegreesPerSecond = 60f;
 
     private Mb_CharacterBase _owner;
     private float _damage;
@@ -91,6 +95,17 @@ public class Mb_BloomZone : MonoBehaviour
         StartCoroutine(DurationRoutine());
     }
 
+    private void Update()
+    {
+        if (_isDeactivated || _visualRoot == null) return;
+
+        _visualRoot.localRotation *= Quaternion.Euler(
+            0f,
+            _VisualRotationDegreesPerSecond * Time.deltaTime,
+            0f
+        );
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (_isDeactivated) return;
@@ -149,6 +164,10 @@ public class Mb_BloomZone : MonoBehaviour
             _fieldVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
         _tickTimers.Clear();
-        Destroy(gameObject, EXPIRE_DESTROY_DELAY);
+
+        StartCoroutine(Sc_VFXExitTransition.ScaleDownAndDestroy(
+            transform,
+            EXIT_TRANSITION_DURATION
+        ));
     }
 }
