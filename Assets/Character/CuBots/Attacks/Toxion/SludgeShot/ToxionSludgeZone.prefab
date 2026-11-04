@@ -4848,7 +4848,7 @@ GameObject:
   - component: {fileID: 6678912332428472401}
   - component: {fileID: 1060383563020090264}
   m_Layer: 11
-  m_Name: VFX (2)
+  m_Name: ImpactVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
